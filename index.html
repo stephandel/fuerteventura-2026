@@ -1937,7 +1937,7 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <div class="tide-box">
       <h2>🌊 Gezeiten (Live)</h2>
       <p class="sub">Der Atlantik an Fuerteventura hat zwei Hochwasser und zwei Niedrigwasser pro Tag (halbtägiger Gezeitenrhythmus), im Abstand von jeweils gut 6 Std. Der Tidenhub liegt meist bei 2–3 m. Unten die echte, tagesaktuelle Vorhersage für unsere Koordinaten (Widget von marea.ooo, nicht für Navigation geeignet).</p>
-      <iframe src="https://marea.ooo/en/widget/28.505/-13.862?padding=m&components=text%2Cchart&background=theme&theme=dark" style="border:0;border-radius:10px;margin-top:12px" width="100%" height="500" loading="lazy" title="Live-Gezeiten Corralejo"></iframe>
+      <iframe src="https://marea.ooo/en/widget/28.729694/-13.86715?padding=m&components=text%2Cchart&background=theme&theme=dark" style="border:0;border-radius:10px;margin-top:12px" width="100%" height="500" loading="lazy" title="Live-Gezeiten Corralejo"></iframe>
       <a class="btn" style="margin-top:14px" href="https://de.tideschart.com/Spain/Canary-Islands/Provincia-de-Las-Palmas/Puerto-del-Rosario-(Fuerteventura)/" target="_blank" rel="noopener">Zweitquelle: Gezeiten für Puerto del Rosario ↗</a>
     </div>
 
@@ -3378,7 +3378,7 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     var gridEl = document.getElementById('live-now-grid');
     var forecastEl = document.getElementById('live-forecast-grid');
     if (!statusEl) return;
-    fetch('https://api.open-meteo.com/v1/forecast?latitude=28.505&longitude=-13.862&current=temperature_2m,wind_speed_10m,relative_humidity_2m,uv_index&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,wind_speed_10m_max&forecast_days=4&timezone=Atlantic%2FCanary')
+    fetch('https://api.open-meteo.com/v1/forecast?latitude=28.729694&longitude=-13.86715&current=temperature_2m,wind_speed_10m,relative_humidity_2m,uv_index&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,wind_speed_10m_max&forecast_days=4&timezone=Atlantic%2FCanary')
       .then(function(r){ return r.json(); })
       .then(function(d){
         var c = d.current;
