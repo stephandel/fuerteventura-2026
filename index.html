@@ -329,7 +329,24 @@ table.price-table tfoot td.num { color: var(--teal); }
 /* ---- events / restaurants / insider ---- */
 .markets-section, .events-section, .restaurants-section, .insider-section { margin-top: 48px; }
 .events-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; margin-top: 16px; }
-.event-card { background: var(--surface); border: 1px solid var(--teal); border-radius: 14px; padding: 20px; box-shadow: var(--shadow); }
+.event-card { position: relative; background: var(--surface); border: 1px solid var(--teal); border-radius: 14px; padding: 20px; box-shadow: var(--shadow); transition: outline-color .15s; outline: 2px solid transparent; outline-offset: -1px; }
+.event-card.is-favorited { outline-color: var(--ochre); }
+.event-card.is-hidden { opacity: 0.42; filter: grayscale(0.7); }
+.event-card.is-hidden:hover { opacity: 0.7; filter: grayscale(0.3); }
+.event-card .card-fav-actions { top: 14px; right: 14px; }
+.rc-media .card-fav-actions { top: auto; bottom: 10px; right: 10px; }
+.cal-strip { display: flex; flex-direction: column; gap: 2px; margin-top: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow); overflow: hidden; }
+.cal-day { display: flex; align-items: flex-start; gap: 16px; padding: 12px 18px; border-top: 1px solid var(--border); }
+.cal-day:first-child { border-top: none; }
+.cal-day-empty { opacity: 0.55; }
+.cal-date { font-family: "JetBrains Mono", monospace; font-weight: 700; color: var(--teal); font-size: 13px; width: 56px; flex-shrink: 0; line-height: 1.4; }
+.cal-weekday { display: block; font-size: 11px; color: var(--ink-dim); font-weight: 600; }
+.cal-items { flex: 1; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.cal-chip { border-radius: 999px; padding: 3px 10px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.cal-chip-market { background: var(--surface-2); border: 1px solid var(--border); color: var(--ink); }
+.cal-chip-event { background: var(--warn-bg); color: var(--warn); }
+.cal-chip-trip { background: var(--good-bg); color: var(--good); }
+.cal-chip-note { background: transparent; color: var(--ink-dim); font-weight: 400; }
 .event-date { font-family: "JetBrains Mono", monospace; font-size: 12px; font-weight: 700; color: var(--teal); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; }
 .event-card h3 { font-size: 1.1rem; margin-bottom: 6px; }
 .event-card p { margin: 0; font-size: 13.5px; color: var(--ink-dim); }
@@ -364,6 +381,11 @@ table.price-table tfoot td.num { color: var(--teal); }
 .insider-list { display: flex; flex-direction: column; gap: 2px; margin-top: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow); overflow: hidden; }
 .insider-row { display: flex; align-items: center; gap: 14px; padding: 12px 18px; border-top: 1px solid var(--border); }
 .insider-row:first-child { border-top: none; }
+.insider-row.is-favorited { background: var(--warn-bg); }
+.insider-row.is-hidden { opacity: 0.42; filter: grayscale(0.7); }
+.insider-row.is-hidden:hover { opacity: 0.7; filter: grayscale(0.3); }
+.fav-btn-inline { position: static; background: transparent; width: auto; height: auto; font-size: 16px; }
+.fav-btn-inline:hover { transform: scale(1.15); }
 .insider-n { font-family: "JetBrains Mono", monospace; font-weight: 700; color: var(--teal); font-size: 13px; width: 20px; flex-shrink: 0; }
 .insider-body { flex: 1; }
 .insider-body strong { font-size: 13.5px; color: var(--ink); }
@@ -419,6 +441,7 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
       <a class="nav-link" data-page="packliste" href="#packliste">Packliste<span class="nav-badge nav-badge-muted" id="nav-pack-badge"></span></a>
       <a class="nav-link" data-page="wetter" href="#wetter">Wetter</a>
       <a class="nav-link" data-page="ausfluege" href="#ausfluege">Ausflüge</a>
+      <a class="nav-link" data-page="kalender" href="#kalender">Kalender</a>
       <a class="nav-link" data-page="gastro" href="#gastro">Gastro</a>
       <a class="nav-link" data-page="links" href="#links">Links &amp; Tipps</a>
     </div>
@@ -452,13 +475,13 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
         <div class="hl-figure">24–28°C</div>
         <p>Tagsüber Sonne pur, dazu 22–23°C Wassertemperatur – perfekt zum Baden. Aktuelle Werte &amp; Live-Webcams auf der Wetterseite.</p>
       </a>
-      <a class="highlight-card" href="#ausfluege">
+      <a class="highlight-card" href="#kalender">
         <span class="hl-icon">🎉</span>
         <div class="hl-tag">25.09.–07.10.2026</div>
         <div class="hl-figure">Fiestas del Rosario</div>
         <p>Das große Patronatsfest von Puerto del Rosario überschneidet sich mit unserer Anreise – Umzüge, Live-Konzerte, Straßenfest. Kostenlos.</p>
       </a>
-      <a class="highlight-card" href="#ausfluege">
+      <a class="highlight-card" href="#kalender">
         <span class="hl-icon">🗝️</span>
         <div class="hl-tag">Insider-Tipp</div>
         <div class="hl-figure">Playa de Cofete</div>
@@ -470,7 +493,7 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <p class="sub" style="margin:-6px 0 16px">Je nach Wetter und Laune – hier geht's direkt zu den passenden Ideen.</p>
     <div class="mood-grid">
       <a class="mood-card" href="#ausfluege"><span class="mood-emoji">🏖️</span><span class="mood-label">Strandtag</span><span class="mood-hint">Grandes Playas, Cofete, Sotavento</span></a>
-      <a class="mood-card" href="#ausfluege"><span class="mood-emoji">🛍️</span><span class="mood-label">Shopping &amp; Markt</span><span class="mood-hint">Corralejo, Lajares-Markt (Sa.), La Oliva</span></a>
+      <a class="mood-card" href="#kalender"><span class="mood-emoji">🛍️</span><span class="mood-label">Shopping &amp; Markt</span><span class="mood-hint">Corralejo, Lajares-Markt (Sa.), La Oliva</span></a>
       <a class="mood-card" href="#ausfluege"><span class="mood-emoji">🚙</span><span class="mood-label">Tour &amp; Ausflug</span><span class="mood-hint">Lobos, Cofete, Betancuria, Dünen</span></a>
       <a class="mood-card" href="#ausfluege"><span class="mood-emoji">💨</span><span class="mood-label">Zu windig – lieber drinnen</span><span class="mood-hint">Restaurant-Tipps &amp; Museen</span></a>
     </div>
@@ -488,6 +511,7 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
       <a class="qn-card" href="#wetter"><span class="qn-emoji">🌤️</span><h3>Wetter</h3><p>Live-Webcams, Wassertemperatur, Gezeiten</p></a>
       <a class="qn-card" href="#packliste"><span class="qn-emoji">🎒</span><h3>Packliste</h3><p>Zum Abhaken, wird gespeichert</p></a>
       <a class="qn-card" href="#ausfluege"><span class="qn-emoji">🗺️</span><h3>Ausflüge</h3><p>Top 20 Highlights der Insel</p></a>
+      <a class="qn-card" href="#kalender"><span class="qn-emoji">📅</span><h3>Kalender</h3><p>Märkte, Events &amp; Insider-Tipps nach Datum</p></a>
       <a class="qn-card" href="#gastro"><span class="qn-emoji">🍽️</span><h3>Gastro</h3><p>50 Restaurants &amp; Bäckereien, sortiert nach Bewertung</p></a>
       <a class="qn-card" href="#links"><span class="qn-emoji">🔗</span><h3>Links &amp; Tipps</h3><p>Alle Direktlinks gesammelt</p></a>
     </div>
@@ -2015,13 +2039,22 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
   <div class="page-header wrap">
     <div class="eyebrow">Vor Ort</div>
     <h1>Ausflüge &amp; Highlights</h1>
-    <p class="sub">Top 20 der ganzen Insel — von Isla de Lobos und den Wochenmärkten bis hinunter nach Cofete und Jandía.</p>
+    <p class="sub">Top 20 der ganzen Insel — von Isla de Lobos bis hinunter nach Cofete und Jandía. Märkte, Events &amp; Insider-Tipps stehen jetzt auf der <a href="#kalender">Kalender-Seite</a>.</p>
   </div>
   <div class="wrap">
-    <div class="excursion-grid">
-      <article class="ex-card">
+    <div class="sort-filter-bar">
+      <label class="sf-label">Sortieren
+        <select id="ex-sort-select">
+          <option value="rank">Empfehlung (Standard)</option>
+          <option value="az">A–Z</option>
+        </select>
+      </label>
+    </div>
+    <div class="excursion-grid" id="excursion-grid">
+      <article class="ex-card" data-id="isla-de-lobos" data-rank="1" data-title="Isla de Lobos">
   <div class="ex-media">
     <img src="images/isla-de-lobos.jpg" alt="Isla de Lobos">
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     <div class="ex-rank">#1</div>
   </div>
   <div class="ex-body">
@@ -2031,9 +2064,10 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.7469,-13.8237" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
-<article class="ex-card">
+<article class="ex-card" data-id="grandes-playas-d-nen-von-corralejo" data-rank="2" data-title="Grandes Playas &amp; Dünen von Corralejo">
   <div class="ex-media">
     <img src="images/grandes-playas-amp-d-nen-von-corralejo.jpg" alt="Grandes Playas &amp;amp; Dünen von Corralejo">
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     <div class="ex-rank">#2</div>
   </div>
   <div class="ex-body">
@@ -2043,9 +2077,10 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.728,-13.858" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
-<article class="ex-card">
+<article class="ex-card" data-id="lajares-kunsthandwerkermarkt" data-rank="3" data-title="Lajares Kunsthandwerkermarkt">
   <div class="ex-media">
     <img src="images/lajares-kunsthandwerkermarkt.jpg" alt="Lajares Kunsthandwerkermarkt">
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     <div class="ex-rank">#3</div>
   </div>
   <div class="ex-body">
@@ -2055,9 +2090,10 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.7286,-13.9207" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
-<article class="ex-card">
+<article class="ex-card" data-id="markt-am-aqua-water-park-corralejo" data-rank="4" data-title="Markt am Aqua Water Park (Corralejo)">
   <div class="ex-media">
     <img src="images/markt-am-aqua-water-park-corralejo.jpg" alt="Markt am Aqua Water Park (Corralejo)">
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     <div class="ex-rank">#4</div>
   </div>
   <div class="ex-body">
@@ -2067,9 +2103,10 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.728,-13.859" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
-<article class="ex-card">
+<article class="ex-card" data-id="el-cotillo-lagunen-sonnenuntergang" data-rank="5" data-title="El Cotillo – Lagunen &amp; Sonnenuntergang">
   <div class="ex-media">
     <img src="images/el-cotillo-lagunen-amp-sonnenuntergang.jpg" alt="El Cotillo – Lagunen &amp;amp; Sonnenuntergang">
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     <div class="ex-rank">#5</div>
   </div>
   <div class="ex-body">
@@ -2079,9 +2116,10 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.7089,-14.0138" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
-<article class="ex-card">
+<article class="ex-card" data-id="betancuria" data-rank="6" data-title="Betancuria">
   <div class="ex-media">
     <img src="images/betancuria.jpg" alt="Betancuria">
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     <div class="ex-rank">#6</div>
   </div>
   <div class="ex-body">
@@ -2091,9 +2129,10 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.4254,-14.0556" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
-<article class="ex-card">
+<article class="ex-card" data-id="ajuy-schwarzer-strand-h-hlen" data-rank="7" data-title="Ajuy – Schwarzer Strand &amp; Höhlen">
   <div class="ex-media">
     <img src="images/ajuy-schwarzer-strand-amp-h-hlen.jpg" alt="Ajuy – Schwarzer Strand &amp;amp; Höhlen">
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     <div class="ex-rank">#7</div>
   </div>
   <div class="ex-body">
@@ -2103,9 +2142,10 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.3958,-14.1975" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
-<article class="ex-card">
+<article class="ex-card" data-id="tindaya" data-rank="8" data-title="Tindaya">
   <div class="ex-media">
     <img src="images/tindaya.jpg" alt="Tindaya">
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     <div class="ex-rank">#8</div>
   </div>
   <div class="ex-body">
@@ -2115,9 +2155,10 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.5658,-13.9376" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
-<article class="ex-card">
+<article class="ex-card" data-id="la-oliva-casa-de-los-coroneles" data-rank="9" data-title="La Oliva – Casa de los Coroneles">
   <div class="ex-media">
     <img src="images/la-oliva-casa-de-los-coroneles.jpg" alt="La Oliva – Casa de los Coroneles">
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     <div class="ex-rank">#9</div>
   </div>
   <div class="ex-body">
@@ -2127,9 +2168,10 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.6108,-13.927" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
-<article class="ex-card">
+<article class="ex-card" data-id="surfen-kitesurfen-in-lajares-el-cotillo" data-rank="10" data-title="Surfen &amp; Kitesurfen in Lajares/El Cotillo">
   <div class="ex-media">
     <img src="images/surfen-amp-kitesurfen-in-lajares-el-cotillo.jpg" alt="Surfen &amp;amp; Kitesurfen in Lajares/El Cotillo">
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     <div class="ex-rank">#10</div>
   </div>
   <div class="ex-body">
@@ -2139,9 +2181,10 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.6825,-14.0086" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
-<article class="ex-card">
+<article class="ex-card" data-id="faro-de-jand-a-playas-de-sotavento" data-rank="11" data-title="Faro de Jandía &amp; Playas de Sotavento">
   <div class="ex-media">
     <img src="images/faro-de-jand-a-amp-playas-de-sotavento.jpg" alt="Faro de Jandía &amp;amp; Playas de Sotavento">
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     <div class="ex-rank">#11</div>
   </div>
   <div class="ex-body">
@@ -2151,9 +2194,10 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.0546,-14.3287" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
-<article class="ex-card">
+<article class="ex-card" data-id="cofete-villa-winter" data-rank="12" data-title="Cofete &amp; Villa Winter">
   <div class="ex-media">
     <img src="images/cofete-amp-villa-winter.jpg" alt="Cofete &amp;amp; Villa Winter">
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     <div class="ex-rank">#12</div>
   </div>
   <div class="ex-body">
@@ -2163,9 +2207,10 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.073,-14.4106" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
-<article class="ex-card">
+<article class="ex-card" data-id="la-pared" data-rank="13" data-title="La Pared">
   <div class="ex-media">
     <img src="images/la-pared.jpg" alt="La Pared">
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     <div class="ex-rank">#13</div>
   </div>
   <div class="ex-body">
@@ -2175,9 +2220,10 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.254,-14.22" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
-<article class="ex-card">
+<article class="ex-card" data-id="caleta-de-fuste-hafenpromenade" data-rank="14" data-title="Caleta de Fuste – Hafenpromenade">
   <div class="ex-media">
     <img src="images/caleta-de-fuste-hafenpromenade.jpg" alt="Caleta de Fuste – Hafenpromenade">
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     <div class="ex-rank">#14</div>
   </div>
   <div class="ex-body">
@@ -2187,9 +2233,10 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.3986,-13.8623" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
-<article class="ex-card">
+<article class="ex-card" data-id="antigua-windm-hlenmuseum" data-rank="15" data-title="Antigua – Windmühlenmuseum">
   <div class="ex-media">
     <img src="images/antigua-windm-hlenmuseum.jpg" alt="Antigua – Windmühlenmuseum">
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     <div class="ex-rank">#15</div>
   </div>
   <div class="ex-body">
@@ -2199,9 +2246,10 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.4322,-13.993" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
-<article class="ex-card">
+<article class="ex-card" data-id="p-jara-kirche-dorfplatz" data-rank="16" data-title="Pájara – Kirche &amp; Dorfplatz">
   <div class="ex-media">
     <img src="images/p-jara-kirche-amp-dorfplatz.jpg" alt="Pájara – Kirche &amp;amp; Dorfplatz">
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     <div class="ex-rank">#16</div>
   </div>
   <div class="ex-body">
@@ -2211,9 +2259,10 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.3572,-14.0765" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
-<article class="ex-card">
+<article class="ex-card" data-id="puerto-del-rosario-skulpturenroute-hafen" data-rank="17" data-title="Puerto del Rosario – Skulpturenroute &amp; Hafen">
   <div class="ex-media">
     <img src="images/puerto-del-rosario-skulpturenroute-amp-hafen.jpg" alt="Puerto del Rosario – Skulpturenroute &amp;amp; Hafen">
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     <div class="ex-rank">#17</div>
   </div>
   <div class="ex-body">
@@ -2223,9 +2272,10 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.5004,-13.8627" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
-<article class="ex-card">
+<article class="ex-card" data-id="playas-de-sotavento-risco-del-paso" data-rank="18" data-title="Playas de Sotavento – Risco del Paso">
   <div class="ex-media">
     <img src="images/playas-de-sotavento-risco-del-paso.jpg" alt="Playas de Sotavento – Risco del Paso">
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     <div class="ex-rank">#18</div>
   </div>
   <div class="ex-body">
@@ -2235,9 +2285,10 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.118,-14.287" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
-<article class="ex-card">
+<article class="ex-card" data-id="costa-calma-whale-watching" data-rank="19" data-title="Costa Calma – Whale-Watching">
   <div class="ex-media">
     <img src="images/costa-calma-whale-watching.jpg" alt="Costa Calma – Whale-Watching">
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     <div class="ex-rank">#19</div>
   </div>
   <div class="ex-body">
@@ -2247,9 +2298,10 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.1567,-14.2233" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
-<article class="ex-card">
+<article class="ex-card" data-id="faro-de-la-entallada" data-rank="20" data-title="Faro de la Entallada">
   <div class="ex-media">
     <img src="images/faro-de-la-entallada.jpg" alt="Faro de la Entallada">
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     <div class="ex-rank">#20</div>
   </div>
   <div class="ex-body">
@@ -2260,6 +2312,82 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
   </div>
 </article>
     </div>
+
+  </div>
+</section>
+
+<!-- ============ LINKS & TIPPS ============ -->
+<!-- ============ KALENDER ============ -->
+<section class="page" id="page-kalender">
+  <div class="page-header wrap">
+    <div class="eyebrow">Vor Ort</div>
+    <h1>Kalender</h1>
+    <p class="sub">Alle wichtigen Termine unserer 14 Tage (29.09.–12.10.2026) auf einen Blick — Märkte, Feste, Shows — danach die Top-10-Insider-Tipps.</p>
+  </div>
+  <div class="wrap">
+    <div class="cal-strip">
+      <div class="cal-day"><div class="cal-date">29.09.<span class="cal-weekday">Di</span></div><div class="cal-items"><span class="cal-chip cal-chip-trip">✈️ Anreise</span><span class="cal-chip cal-chip-market">🏪 Acua Water Park</span><span class="cal-chip cal-chip-market">🏪 Mercado Tradiciones</span><span class="cal-chip cal-chip-event">🎉 Fiestas del Rosario läuft</span></div></div>
+      <div class="cal-day cal-day-empty"><div class="cal-date">30.09.<span class="cal-weekday">Mi</span></div><div class="cal-items"><span class="cal-chip cal-chip-event">🎉 Fiestas del Rosario läuft</span></div></div>
+      <div class="cal-day cal-day-empty"><div class="cal-date">01.10.<span class="cal-weekday">Do</span></div><div class="cal-items"><span class="cal-chip cal-chip-event">🎉 Fiestas del Rosario läuft</span></div></div>
+      <div class="cal-day"><div class="cal-date">02.10.<span class="cal-weekday">Fr</span></div><div class="cal-items"><span class="cal-chip cal-chip-market">🏪 Acua Water Park</span><span class="cal-chip cal-chip-market">🏪 Mercado Tradiciones</span><span class="cal-chip cal-chip-market">🏪 El Cotillo Sunset Market (abends)</span><span class="cal-chip cal-chip-event">🎉 Fiestas del Rosario läuft</span></div></div>
+      <div class="cal-day"><div class="cal-date">03.10.<span class="cal-weekday">Sa</span></div><div class="cal-items"><span class="cal-chip cal-chip-market">🏪 Lajares Kunsthandwerksmarkt</span><span class="cal-chip cal-chip-event">🎊 A.F. Dunas – 50º Aniversario</span><span class="cal-chip cal-chip-event">🎉 Fiestas del Rosario läuft</span></div></div>
+      <div class="cal-day"><div class="cal-date">04.10.<span class="cal-weekday">So</span></div><div class="cal-items"><span class="cal-chip cal-chip-market">🏪 El Campanario (Kunsthandwerk &amp; Folklore)</span><span class="cal-chip cal-chip-event">🎉 Fiestas del Rosario läuft</span></div></div>
+      <div class="cal-day cal-day-empty"><div class="cal-date">05.10.<span class="cal-weekday">Mo</span></div><div class="cal-items"><span class="cal-chip cal-chip-event">🎉 Fiestas del Rosario läuft</span></div></div>
+      <div class="cal-day"><div class="cal-date">06.10.<span class="cal-weekday">Di</span></div><div class="cal-items"><span class="cal-chip cal-chip-market">🏪 Acua Water Park</span><span class="cal-chip cal-chip-market">🏪 Mercado Tradiciones</span><span class="cal-chip cal-chip-event">🎉 Fiestas del Rosario läuft</span></div></div>
+      <div class="cal-day cal-day-empty"><div class="cal-date">07.10.<span class="cal-weekday">Mi</span></div><div class="cal-items"><span class="cal-chip cal-chip-event">🎉 Fiestas del Rosario endet heute</span></div></div>
+      <div class="cal-day cal-day-empty"><div class="cal-date">08.10.<span class="cal-weekday">Do</span></div><div class="cal-items"><span class="cal-chip cal-chip-note">nichts Bekanntes</span></div></div>
+      <div class="cal-day"><div class="cal-date">09.10.<span class="cal-weekday">Fr</span></div><div class="cal-items"><span class="cal-chip cal-chip-market">🏪 Acua Water Park</span><span class="cal-chip cal-chip-market">🏪 Mercado Tradiciones</span><span class="cal-chip cal-chip-market">🏪 El Cotillo Sunset Market (abends)</span></div></div>
+      <div class="cal-day"><div class="cal-date">10.10.<span class="cal-weekday">Sa</span></div><div class="cal-items"><span class="cal-chip cal-chip-market">🏪 Lajares Kunsthandwerksmarkt</span><span class="cal-chip cal-chip-event">🌌 ELARA – Puerto del Rosario</span></div></div>
+      <div class="cal-day"><div class="cal-date">11.10.<span class="cal-weekday">So</span></div><div class="cal-items"><span class="cal-chip cal-chip-market">🏪 El Campanario (Kunsthandwerk &amp; Folklore)</span><span class="cal-chip cal-chip-event">🌌 ELARA – Auditorio de Antigua</span></div></div>
+      <div class="cal-day"><div class="cal-date">12.10.<span class="cal-weekday">Mo</span></div><div class="cal-items"><span class="cal-chip cal-chip-trip">🛫 Abreise</span></div></div>
+    </div>
+    <p class="dim" style="font-size:12px;margin-top:10px">Märkte sind wiederkehrend (Wochentag entscheidet), Termine können sich kurzfristig ändern — Quelle: Fuerteventura TV Market Calendar, Fuerteventura Rural, Cultura Fuerteventura. Vor Ort kurz gegenchecken.</p>
+
+    <section class="events-section" style="margin-top:40px">
+      <div class="results-head">
+        <h2>Veranstaltungen im Detail</h2>
+      </div>
+      <p class="sub">Was während unserer Reise auf der Insel los ist, jenseits der üblichen Ausflugsziele.</p>
+      <div class="sort-filter-bar">
+        <label class="sf-label">Sortieren
+          <select id="event-sort-select">
+            <option value="date-asc">Datum: früh → spät</option>
+            <option value="date-desc">Datum: spät → früh</option>
+          </select>
+        </label>
+      </div>
+      <div class="events-grid" id="events-grid">
+        <div class="event-card" data-id="fiestas-del-rosario" data-date="2026-09-25">
+  <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button></div>
+  <div class="event-date">25.09.–07.10.2026</div>
+  <h3>Fiestas del Rosario – Puerto del Rosario</h3>
+  <p>Das große Patronatsfest der Inselhauptstadt: Umzug in kanarischer Tracht, Live-Konzerte (u. a. Verbena, Pop-Konzert, Viernes Joven mit Cruz Cafuné), Kinderfest „La Cabrita de Colores“ und Sport wie Bola Canaria. Überschneidet sich mit dem Beginn unserer Reise!</p>
+  <div class="event-foot"><span class="event-price">kostenlos (öffentliches Stadtfest)</span><a class="btn btn-outline" href="https://www.google.com/maps/search/?api=1&query=28.5004,-13.8627" target="_blank" rel="noopener">Google Maps ↗</a></div>
+</div>
+<div class="event-card" data-id="af-dunas-corralejo" data-date="2026-10-03">
+  <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button></div>
+  <div class="event-date">03.10.2026</div>
+  <h3>A.F. Dunas de Corralejo – 50º Aniversario</h3>
+  <p>Jubiläumsfeier des Fußballvereins Agrupación Fotográfica Dunas de Corralejo zum 50-jährigen Bestehen, mit Programm im Kulturkalender des Cabildo.</p>
+  <div class="event-foot"><span class="event-price">Details bei Cultura Fuerteventura prüfen</span><a class="btn btn-outline" href="https://www.google.com/maps/search/?api=1&query=28.7333,-13.8667" target="_blank" rel="noopener">Google Maps ↗</a></div>
+</div>
+<div class="event-card" data-id="elara-puerto-del-rosario" data-date="2026-10-10">
+  <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button></div>
+  <div class="event-date">10.10.2026</div>
+  <h3>ELARA – Un viaje a las estrellas (Puerto del Rosario)</h3>
+  <p>Multimediale Planetarium-/Sternenshow, buchbar über EcoEntradas – schöner ruhiger Abend abseits vom Strand.</p>
+  <div class="event-foot"><span class="event-price">Ticket über EcoEntradas</span><a class="btn btn-outline" href="https://www.google.com/maps/search/?api=1&query=28.5004,-13.8627" target="_blank" rel="noopener">Google Maps ↗</a></div>
+</div>
+<div class="event-card" data-id="elara-antigua" data-date="2026-10-11">
+  <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button></div>
+  <div class="event-date">11.10.2026</div>
+  <h3>ELARA – Un viaje a las estrellas (Auditorio de Antigua)</h3>
+  <p>Gleiche Sternenshow wie in Puerto del Rosario, diesmal im Auditorio de Antigua – falls der 10.10. nicht passt.</p>
+  <div class="event-foot"><span class="event-price">Ticket über EcoEntradas</span><a class="btn btn-outline" href="https://www.google.com/maps/search/?api=1&query=28.4322,-13.993" target="_blank" rel="noopener">Google Maps ↗</a></div>
+</div>
+      </div>
+      <p class="dim" style="margin-top:12px;font-size:12.5px">Außerdem im Oktober (Datum noch offen, <a href="https://www.visitfuerteventura.com/eventos/fuerteventura/fiestas-de-nuestra-senora-del-rosario/" target="_blank" rel="noopener">bei Visit Fuerteventura prüfen</a>): Fiestas de Nuestra Señora del Rosario in La Oliva. Weitere Termine wie das X. International Blues &amp; Jazz Festival in Corralejo (23.–25.10.) oder das Pablo-López-Konzert (30.10.) liegen leider erst nach unserer Abreise am 12.10.</p>
+    </section>
 
     <section class="markets-section">
       <h2>Wochenmärkte im Norden</h2>
@@ -2276,62 +2404,27 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
       </table>
     </section>
 
-    <section class="events-section">
-      <h2>Veranstaltungen — auch etwas weiter weg</h2>
-      <p class="sub">Was während unserer Reise auf der Insel los ist, jenseits der üblichen Ausflugsziele.</p>
-      <div class="events-grid">
-        <div class="event-card">
-  <div class="event-date">25.09.–07.10.2026</div>
-  <h3>Fiestas del Rosario – Puerto del Rosario</h3>
-  <p>Das große Patronatsfest der Inselhauptstadt: Umzug in kanarischer Tracht, Live-Konzerte (u. a. Verbena, Pop-Konzert, Viernes Joven mit Cruz Cafuné), Kinderfest „La Cabrita de Colores“ und Sport wie Bola Canaria. Überschneidet sich mit dem Beginn unserer Reise!</p>
-  <div class="event-foot"><span class="event-price">kostenlos (öffentliches Stadtfest)</span><a class="btn btn-outline" href="https://www.google.com/maps/search/?api=1&query=28.5004,-13.8627" target="_blank" rel="noopener">Google Maps ↗</a></div>
-</div>
-<div class="event-card">
-  <div class="event-date">03.10.2026</div>
-  <h3>A.F. Dunas de Corralejo – 50º Aniversario</h3>
-  <p>Jubiläumsfeier des Fußballvereins Agrupación Fotográfica Dunas de Corralejo zum 50-jährigen Bestehen, mit Programm im Kulturkalender des Cabildo.</p>
-  <div class="event-foot"><span class="event-price">Details bei Cultura Fuerteventura prüfen</span><a class="btn btn-outline" href="https://www.google.com/maps/search/?api=1&query=28.7333,-13.8667" target="_blank" rel="noopener">Google Maps ↗</a></div>
-</div>
-<div class="event-card">
-  <div class="event-date">10.10.2026</div>
-  <h3>ELARA – Un viaje a las estrellas (Puerto del Rosario)</h3>
-  <p>Multimediale Planetarium-/Sternenshow, buchbar über EcoEntradas – schöner ruhiger Abend abseits vom Strand.</p>
-  <div class="event-foot"><span class="event-price">Ticket über EcoEntradas</span><a class="btn btn-outline" href="https://www.google.com/maps/search/?api=1&query=28.5004,-13.8627" target="_blank" rel="noopener">Google Maps ↗</a></div>
-</div>
-<div class="event-card">
-  <div class="event-date">11.10.2026</div>
-  <h3>ELARA – Un viaje a las estrellas (Auditorio de Antigua)</h3>
-  <p>Gleiche Sternenshow wie in Puerto del Rosario, diesmal im Auditorio de Antigua – falls der 10.10. nicht passt.</p>
-  <div class="event-foot"><span class="event-price">Ticket über EcoEntradas</span><a class="btn btn-outline" href="https://www.google.com/maps/search/?api=1&query=28.4322,-13.993" target="_blank" rel="noopener">Google Maps ↗</a></div>
-</div>
-      </div>
-      <p class="dim" style="margin-top:12px;font-size:12.5px">Außerdem im Oktober (Datum noch offen, <a href="https://www.visitfuerteventura.com/eventos/fuerteventura/fiestas-de-nuestra-senora-del-rosario/" target="_blank" rel="noopener">bei Visit Fuerteventura prüfen</a>): Fiestas de Nuestra Señora del Rosario in La Oliva. Weitere Termine wie das X. International Blues &amp; Jazz Festival in Corralejo (23.–25.10.) oder das Pablo-López-Konzert (30.10.) liegen leider erst nach unserer Abreise am 12.10.</p>
-    </section>
-
-    <section class="restaurants-teaser" style="margin-top:48px">
-      <a class="qn-card" href="#gastro" style="max-width:440px"><span class="qn-emoji">🍽️</span><h3>Zur Gastro-Seite</h3><p>50 handverlesene Restaurants &amp; Bäckereien, sortiert nach Bewertung — jetzt eigene Unterseite</p></a>
-    </section>
-
     <section class="insider-section">
-      <h2>Top 10 Insider-Tipps</h2>
+      <div class="results-head">
+        <h2>Top 10 Insider-Tipps</h2>
+      </div>
       <p class="sub">Abseits der Hauptrouten — für alle, die noch tiefer in die Insel eintauchen wollen.</p>
-      <div class="insider-list">
-        <div class="insider-row"><span class="insider-n">1</span><div class="insider-body"><strong>Mirador de Morro Velosa</strong><p>Spektakulärer Aussichtspunkt bei Betancuria über die Berge im Inselinneren.</p></div><a class="rest-map" href="https://www.google.com/maps/search/?api=1&query=28.4419,-14.0733" target="_blank" rel="noopener">📍</a></div>
-<div class="insider-row"><span class="insider-n">2</span><div class="insider-body"><strong>La Escalera</strong><p>Versteckter Strand, über eine Treppe von der Klippe erreichbar – kaum Touristen.</p></div><a class="rest-map" href="https://www.google.com/maps/search/?api=1&query=28.759,-13.92" target="_blank" rel="noopener">📍</a></div>
-<div class="insider-row"><span class="insider-n">3</span><div class="insider-body"><strong>Aguas Verdes</strong><p>Natürliche Felspools an der einsamen Westküste.</p></div><a class="rest-map" href="https://www.google.com/maps/search/?api=1&query=28.585,-14.045" target="_blank" rel="noopener">📍</a></div>
-<div class="insider-row"><span class="insider-n">4</span><div class="insider-body"><strong>Castillo de El Tostón</strong><p>Kleiner historischer Wachturm direkt am Hafen von El Cotillo.</p></div><a class="rest-map" href="https://www.google.com/maps/search/?api=1&query=28.7089,-14.0138" target="_blank" rel="noopener">📍</a></div>
-<div class="insider-row"><span class="insider-n">5</span><div class="insider-body"><strong>Ecomuseo La Alcogida (Tefía)</strong><p>Freilichtmuseum zum traditionellen Inselleben vor der Tourismus-Ära.</p></div><a class="rest-map" href="https://www.google.com/maps/search/?api=1&query=28.5775,-13.9247" target="_blank" rel="noopener">📍</a></div>
-<div class="insider-row"><span class="insider-n">6</span><div class="insider-body"><strong>Ermita Virgen de la Peña</strong><p>Kleine Wallfahrtskapelle im grünen Tal von Vega de Río Palmas, Schutzpatronin der Insel.</p></div><a class="rest-map" href="https://www.google.com/maps/search/?api=1&query=28.4028,-14.0392" target="_blank" rel="noopener">📍</a></div>
-<div class="insider-row"><span class="insider-n">7</span><div class="insider-body"><strong>Salinas del Carmen</strong><p>Historische Salinen mit kleinem Salzmuseum.</p></div><a class="rest-map" href="https://www.google.com/maps/search/?api=1&query=28.3714,-13.8631" target="_blank" rel="noopener">📍</a></div>
-<div class="insider-row"><span class="insider-n">8</span><div class="insider-body"><strong>Playa de Cofete</strong><p>Wilder, einsamer Traumstrand im Süden (Jandía) – lohnt als längerer Tagesausflug.</p></div><a class="rest-map" href="https://www.google.com/maps/search/?api=1&query=28.0928,-14.3733" target="_blank" rel="noopener">📍</a></div>
-<div class="insider-row"><span class="insider-n">9</span><div class="insider-body"><strong>Barranco de las Peñitas</strong><p>Schluchtwanderung mit Stausee bei Vega de Río Palmas.</p></div><a class="rest-map" href="https://www.google.com/maps/search/?api=1&query=28.405,-14.043" target="_blank" rel="noopener">📍</a></div>
-<div class="insider-row"><span class="insider-n">10</span><div class="insider-body"><strong>Puerto Lajas</strong><p>Kleiner, unaufgeregter Fischerort bei Puerto del Rosario mit günstigen Fischrestaurants.</p></div><a class="rest-map" href="https://www.google.com/maps/search/?api=1&query=28.5375,-13.8386" target="_blank" rel="noopener">📍</a></div>
+      <div class="insider-list" id="insider-list">
+        <div class="insider-row" data-id="mirador-morro-velosa"><span class="insider-n">1</span><div class="insider-body"><strong>Mirador de Morro Velosa</strong><p>Spektakulärer Aussichtspunkt bei Betancuria über die Berge im Inselinneren.</p></div><a class="rest-map" href="https://www.google.com/maps/search/?api=1&query=28.4419,-14.0733" target="_blank" rel="noopener">📍</a><button type="button" class="fav-btn fav-btn-inline" title="Favorit">🤍</button></div>
+<div class="insider-row" data-id="la-escalera"><span class="insider-n">2</span><div class="insider-body"><strong>La Escalera</strong><p>Versteckter Strand, über eine Treppe von der Klippe erreichbar – kaum Touristen.</p></div><a class="rest-map" href="https://www.google.com/maps/search/?api=1&query=28.759,-13.92" target="_blank" rel="noopener">📍</a><button type="button" class="fav-btn fav-btn-inline" title="Favorit">🤍</button></div>
+<div class="insider-row" data-id="aguas-verdes"><span class="insider-n">3</span><div class="insider-body"><strong>Aguas Verdes</strong><p>Natürliche Felspools an der einsamen Westküste.</p></div><a class="rest-map" href="https://www.google.com/maps/search/?api=1&query=28.585,-14.045" target="_blank" rel="noopener">📍</a><button type="button" class="fav-btn fav-btn-inline" title="Favorit">🤍</button></div>
+<div class="insider-row" data-id="castillo-el-toston"><span class="insider-n">4</span><div class="insider-body"><strong>Castillo de El Tostón</strong><p>Kleiner historischer Wachturm direkt am Hafen von El Cotillo.</p></div><a class="rest-map" href="https://www.google.com/maps/search/?api=1&query=28.7089,-14.0138" target="_blank" rel="noopener">📍</a><button type="button" class="fav-btn fav-btn-inline" title="Favorit">🤍</button></div>
+<div class="insider-row" data-id="ecomuseo-la-alcogida"><span class="insider-n">5</span><div class="insider-body"><strong>Ecomuseo La Alcogida (Tefía)</strong><p>Freilichtmuseum zum traditionellen Inselleben vor der Tourismus-Ära.</p></div><a class="rest-map" href="https://www.google.com/maps/search/?api=1&query=28.5775,-13.9247" target="_blank" rel="noopener">📍</a><button type="button" class="fav-btn fav-btn-inline" title="Favorit">🤍</button></div>
+<div class="insider-row" data-id="ermita-virgen-pena"><span class="insider-n">6</span><div class="insider-body"><strong>Ermita Virgen de la Peña</strong><p>Kleine Wallfahrtskapelle im grünen Tal von Vega de Río Palmas, Schutzpatronin der Insel.</p></div><a class="rest-map" href="https://www.google.com/maps/search/?api=1&query=28.4028,-14.0392" target="_blank" rel="noopener">📍</a><button type="button" class="fav-btn fav-btn-inline" title="Favorit">🤍</button></div>
+<div class="insider-row" data-id="salinas-del-carmen"><span class="insider-n">7</span><div class="insider-body"><strong>Salinas del Carmen</strong><p>Historische Salinen mit kleinem Salzmuseum.</p></div><a class="rest-map" href="https://www.google.com/maps/search/?api=1&query=28.3714,-13.8631" target="_blank" rel="noopener">📍</a><button type="button" class="fav-btn fav-btn-inline" title="Favorit">🤍</button></div>
+<div class="insider-row" data-id="playa-cofete"><span class="insider-n">8</span><div class="insider-body"><strong>Playa de Cofete</strong><p>Wilder, einsamer Traumstrand im Süden (Jandía) – lohnt als längerer Tagesausflug.</p></div><a class="rest-map" href="https://www.google.com/maps/search/?api=1&query=28.0928,-14.3733" target="_blank" rel="noopener">📍</a><button type="button" class="fav-btn fav-btn-inline" title="Favorit">🤍</button></div>
+<div class="insider-row" data-id="barranco-penitas"><span class="insider-n">9</span><div class="insider-body"><strong>Barranco de las Peñitas</strong><p>Schluchtwanderung mit Stausee bei Vega de Río Palmas.</p></div><a class="rest-map" href="https://www.google.com/maps/search/?api=1&query=28.405,-14.043" target="_blank" rel="noopener">📍</a><button type="button" class="fav-btn fav-btn-inline" title="Favorit">🤍</button></div>
+<div class="insider-row" data-id="puerto-lajas"><span class="insider-n">10</span><div class="insider-body"><strong>Puerto Lajas</strong><p>Kleiner, unaufgeregter Fischerort bei Puerto del Rosario mit günstigen Fischrestaurants.</p></div><a class="rest-map" href="https://www.google.com/maps/search/?api=1&query=28.5375,-13.8386" target="_blank" rel="noopener">📍</a><button type="button" class="fav-btn fav-btn-inline" title="Favorit">🤍</button></div>
       </div>
     </section>
   </div>
 </section>
 
-<!-- ============ LINKS & TIPPS ============ -->
 <!-- ============ GASTRO ============ -->
 <section class="page" id="page-gastro">
   <div class="page-header wrap">
@@ -2345,14 +2438,24 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
         <h2>Unsere Restaurant-Liste</h2>
         <button type="button" class="btn btn-outline" id="toggle-all-rc-details">Alle Details anzeigen</button>
       </div>
-      <p class="sub">50 handverlesene Adressen aus einer gemeinsam gepflegten Google-Maps-Liste — jede einzeln mit aktueller Bewertung, Öffnungszeiten, Kontakt und Gästestimmen geprüft. Sortiert nach Bewertung.</p>
-      <div class="rest-items">
-        <article class="rc-card">
+      <p class="sub">50 handverlesene Adressen aus einer gemeinsam gepflegten Google-Maps-Liste — jede einzeln mit aktueller Bewertung, Öffnungszeiten, Kontakt und Gästestimmen geprüft.</p>
+      <div class="sort-filter-bar">
+        <label class="sf-label">Sortieren
+          <select id="rc-sort-select">
+            <option value="rating-desc">Bewertung: beste zuerst</option>
+            <option value="reviews-desc">Meiste Bewertungen zuerst</option>
+            <option value="az">A–Z</option>
+          </select>
+        </label>
+      </div>
+      <div class="rest-items" id="rest-items">
+        <article class="rc-card" data-id="lumos" data-rating="5.0" data-reviews="1104" data-title="Lumos">
   <div class="rc-media">
     <img src="images/lumos.jpg" alt="Lumos" loading="lazy">
     <div class="rc-rating">⭐ 5.0 (1.104)</div>
     <div class="rc-price">10–20 €</div>
-    
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
+
   </div>
   <div class="rc-body">
     <h4>Lumos</h4>
@@ -2365,11 +2468,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geöffnet · schließt 15:00, öffnet wieder 19:00</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, auch an der Straße</span></div><a class="rc-website" href="https://instagram.com/lumos_fuerteventura" target="_blank" rel="noopener">🌐 instagram.com/lumos_fuerteventura ↗</a><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Puccia</span><span class="rc-chip">Panzerotto</span><span class="rc-chip">Pizza fritta</span><span class="rc-chip">Gnocco fritto</span></div></div><div class="rc-quotes"><blockquote>„Super lecker, eine Empfehlung wert. Die Inhaber sind sehr freundlich und lieben was sie da machen.“</blockquote></div><p class="rc-fact">💡 Apulisches Streetfood-Konzept (Puccia, Panzerotto) – ungewöhnlich für die Insel.</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="imperfecto-gastrobar" data-rating="5.0" data-reviews="578" data-title="Imperfecto Gastrobar">
   <div class="rc-media">
     <img src="images/imperfecto-gastrobar.jpg" alt="Imperfecto Gastrobar" loading="lazy">
     <div class="rc-rating">⭐ 5.0 (578)</div>
     <div class="rc-price">10–20 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -2383,11 +2487,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 12:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Bao (vegan/vegetarisch)</span><span class="rc-chip">Gyozas</span></div></div><div class="rc-quotes"><blockquote>„Wir hatten die Baos in vegan und vegetarisch und die veggie Gyozas. Sooo lecker!“</blockquote><blockquote>„Mein absoluter Tipp an alle die was Pfiffiges suchen. Liegt am Spielplatz in der Innenstadt, super auch für Veganer!“</blockquote></div><p class="rc-fact">💡 Liegt am Spielplatz in der Corralejo-Innenstadt.</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="restaurante-el-lugar" data-rating="5.0" data-reviews="128" data-title="Restaurante &quot;El Lugar&quot;">
   <div class="rc-media">
     <img src="images/restaurante-el-lugar.jpg" alt="Restaurante &quot;El Lugar&quot;" loading="lazy">
     <div class="rc-rating">⭐ 5.0 (128)</div>
     <div class="rc-price">10–20 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -2401,11 +2506,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 13:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Aioli mit warmem Baguette</span><span class="rc-chip">Fisch des Tages (Oktopus, Dorade)</span><span class="rc-chip">Warmer Apfelkuchen</span></div></div><div class="rc-quotes"><blockquote>„Sehr gutes Restaurant mit tollem Essen. Aioli mit warmem Baguette und den Fisch des Tages. Zum Abschluss warmer Apfelkuchen mit Vanilleeis.“</blockquote><blockquote>„Der Besitzer ist super nett und zuvorkommend, spricht mehrere Sprachen. Das Essen ist super lecker und frisch.“</blockquote></div><p class="rc-fact">💡 Mehrsprachiger, sehr zuvorkommender Inhaber.</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="nuestro-estilo-empanadas-lajares" data-rating="5.0" data-reviews="110" data-title="Nuestro Estilo Empanadas - Lajares">
   <div class="rc-media">
     <img src="images/nuestro-estilo-empanadas-lajares.jpg" alt="Nuestro Estilo Empanadas - Lajares" loading="lazy">
     <div class="rc-rating">⭐ 5.0 (110)</div>
     <div class="rc-price">1–10 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -2419,11 +2525,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geöffnet, schließt um 15:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, auch an der Straße, viele frei</span></div><a class="rc-website" href="https://nuestroestiloempanadas.com" target="_blank" rel="noopener">🌐 nuestroestiloempanadas.com ↗</a><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Empanadas (herzhaft &amp; süß)</span><span class="rc-chip">Cheeseburger-Empanada</span><span class="rc-chip">Prawns-Empanada</span><span class="rc-chip">Alfajor</span></div></div><div class="rc-quotes"><blockquote>„Versteckter kleiner Imbiss, modern, super netter Mitarbeiter und köstliche Empanadas zu angemessenen Preisen!“</blockquote><blockquote>„Schöner Laden mit sehr leckeren süßen und salzigen Snacks und freundlichem Personal.“</blockquote></div><p class="rc-fact">💡 Von Frauen geführt; LGBTQ+-freundlich, als sicherer Ort für Transgender gelistet.</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="la-herencia-del-gallego" data-rating="5.0" data-reviews="101" data-title="La Herencia del gallego">
   <div class="rc-media">
     <img src="images/la-herencia-del-gallego.jpg" alt="La Herencia del gallego" loading="lazy">
     <div class="rc-rating">⭐ 5.0 (101)</div>
     <div class="rc-price">10–20 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -2437,11 +2544,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 13:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">empfohlen (nur drei Tische)</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Parkplätze vorhanden (teils kostenlos, teils gebührenpflichtig an der Straße)</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Oktopus nach galicischer Art</span><span class="rc-chip">Geschmortes Rindfleisch</span><span class="rc-chip">Eier mit gebratenem Schweinebauch</span><span class="rc-chip">Polvito (uruguayisch)</span></div></div><div class="rc-quotes"><blockquote>„Super sympathische kleine Tapas-Bar mit ganz lieben Menschen. Die Tapas sind sensationell und mit viel Können zubereitet.“</blockquote><blockquote>„Eine winzige, aber wirklich charmante Tapas-Bar mit nur drei Tischen draußen in der Fußgängerzone unter einem Baum.“</blockquote></div><p class="rc-fact">💡 Nur drei Tische, alle draußen unter einem Baum in der Fußgängerzone von Morro Jable.</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="o-m" data-rating="4.9" data-reviews="1996" data-title="OÚM">
   <div class="rc-media">
     <img src="images/o-m.jpg" alt="OÚM" loading="lazy">
     <div class="rc-rating">⭐ 4.9 (1.996)</div>
     <div class="rc-price">20–30 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -2455,11 +2563,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geöffnet, schließt um 23:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">erforderlich</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Parkplätze vorhanden, teils gebührenpflichtig, teils kostenlos/an der Straße</span></div><a class="rc-website" href="https://instagram.com" target="_blank" rel="noopener">🌐 instagram.com ↗</a><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Spieße</span><span class="rc-chip">Auberginensalat</span><span class="rc-chip">libanesische Tapas</span></div></div><div class="rc-quotes"><blockquote>„Dieses wunderschöne Restaurant ist für uns eine ganz klare 5-Sterne-Empfehlung. Von der Reservierung bis zum herzlichen Abschied haben wir jede Minute genossen.“</blockquote><blockquote>„Gut eingerichtet, angenehmes Ambiente, freundliche Menschen, mega Koch, super leckeres Essen.“</blockquote></div><p class="rc-fact">💡 LGBTQ+-freundlich; sehr beliebt, Reservierung meist zwingend nötig.</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="santa-ana-del-cotillo" data-rating="4.9" data-reviews="1582" data-title="Santa Ana DEL Cotillo">
   <div class="rc-media">
     <img src="images/santa-ana-del-cotillo.jpg" alt="Santa Ana DEL Cotillo" loading="lazy">
     <div class="rc-rating">⭐ 4.9 (1.582)</div>
     <div class="rc-price">20–30 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -2473,11 +2582,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 19:00 (genaue Wochenzeiten prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">erforderlich</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Nein, nur Bar</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, auch an der Straße, viele frei</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Ziegenfleisch</span><span class="rc-chip">Thunfisch</span><span class="rc-chip">Gazpacho</span><span class="rc-chip">Sardinen</span><span class="rc-chip">Riesengarnelen</span><span class="rc-chip">Ziegeneintopf</span><span class="rc-chip">Mojo</span><span class="rc-chip">Gofio</span></div></div><div class="rc-quotes"><blockquote>„Ein wunderschönes, kleines Restaurant! Die Inhaber strahlen eine Freude und Herzlichkeit aus, die sofort ansteckt.“</blockquote><blockquote>„Man fühlt sich sofort willkommen wie unter Freunden. Ana und ihr Mann sind die perfekten Gastgeber!“</blockquote></div><p class="rc-fact">💡 Sehr kleines, familiär geführtes Lokal – Ana und ihr Mann führen es persönlich. NUR BARZAHLUNG, Reservierung zwingend.</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="kuma-lajares" data-rating="4.9" data-reviews="1051" data-title="Kuma Lajares">
   <div class="rc-media">
     <img src="images/kuma-lajares.jpg" alt="Kuma Lajares" loading="lazy">
     <div class="rc-rating">⭐ 4.9 (1.051)</div>
     <div class="rc-price">10–20 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -2491,11 +2601,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 19:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">möglich</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, auch an der Straße, viele frei</span></div><a class="rc-website" href="https://kumaburguer.es" target="_blank" rel="noopener">🌐 kumaburguer.es ↗</a><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Smash Burger</span><span class="rc-chip">Süßkartoffel-Fries</span><span class="rc-chip">Pulled Pork</span><span class="rc-chip">Captain-America-Burger</span><span class="rc-chip">Uruguayer-Burger</span><span class="rc-chip">Ziegenkäse-Burger</span></div></div><div class="rc-quotes"><blockquote>„Mit Abstand die besten Burger, die wir je gegessen haben! Selbstgemachte Buns, Smash-Patties und eine unglaublich gute selbstgemachte Soße.“</blockquote><blockquote>„Sehr guter Smash Burger, gute Variationen und die besten Pommes, die ich seit langem gegessen habe.“</blockquote></div><p class="rc-fact">💡 Große Auswahl an Biersorten, reines Smash-Burger-Konzept.</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="restaurante-5-sentidos-arroces-y-tapas" data-rating="4.9" data-reviews="889" data-title="Restaurante 5 Sentidos Arroces y Tapas">
   <div class="rc-media">
     <img src="images/restaurante-5-sentidos-arroces-y-tapas.jpg" alt="Restaurante 5 Sentidos Arroces y Tapas" loading="lazy">
     <div class="rc-rating">⭐ 4.9 (889)</div>
     <div class="rc-price">20–30 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -2509,11 +2620,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 13:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><a class="rc-website" href="https://arrocesytapas.es" target="_blank" rel="noopener">🌐 arrocesytapas.es ↗</a><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Arroces (Reisgerichte)</span></div></div><div class="rc-quotes"><blockquote>„Nettes Ambiente, freundliches und herzliches Personal – man fühlt sich einfach wohl.“</blockquote><blockquote>„Sehr feines Restaurant, super Personal, Essen für alle Sinne.“</blockquote></div><p class="rc-fact">💡 Karte ist auf Spanisch, wird aber per digitaler Speisekarte am Tisch übersetzt.</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="el-invernadero-restaurante" data-rating="4.9" data-reviews="868" data-title="El Invernadero Restaurante">
   <div class="rc-media">
     <img src="images/el-invernadero-restaurante.jpg" alt="El Invernadero Restaurante" loading="lazy">
     <div class="rc-rating">⭐ 4.9 (868)</div>
     <div class="rc-price">30–40 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -2527,11 +2639,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 13:30 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">möglich (Tisch reservieren)</span></div><a class="rc-website" href="https://elinvernaderorestaurante.makro.rest" target="_blank" rel="noopener">🌐 elinvernaderorestaurante.makro.rest ↗</a><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">5-Gänge-Menü (34 €)</span><span class="rc-chip">Gemüse aus eigenem Garten</span></div></div><div class="rc-quotes"><blockquote>„Ein wirklich ganz besonderes kulinarisches Erlebnis. Das Fünf-Gänge-Menü war unglaublich beeindruckend – mit viel Kreativität und außergewöhnlichen Texturen.“</blockquote><blockquote>„Das Essen ist super und kommt direkt aus dem Gemüsegarten. 5-Gänge-Menü für 34 Euro, absolut ok.“</blockquote></div><p class="rc-fact">💡 Geführt von Alexis Morales und seiner Tochter Rosa, Gemüse stammt aus dem eigenen Garten.</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="camello-bandido" data-rating="4.9" data-reviews="761" data-title="Camello Bandido">
   <div class="rc-media">
     <img src="images/camello-bandido.jpg" alt="Camello Bandido" loading="lazy">
     <div class="rc-rating">⭐ 4.9 (761)</div>
     <div class="rc-price">10–20 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -2545,11 +2658,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Öffnet um 18:00 (Abendrestaurant, genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">für Abendessen empfohlen</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, auch an der Straße, meist viele frei</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">100%-Rind-Burger</span><span class="rc-chip">Süßkartoffeln mit Knoblauch-Koriander-Sauce</span><span class="rc-chip">Cheesecake</span></div></div><div class="rc-quotes"><blockquote>„Cooles kleines Restaurant mit tollem Außenbereich. Man sitzt entspannt auf der Terrasse mit Blick über Lajares. Und die Burger waren mega lecker.“</blockquote><blockquote>„Einfach der beste Burger, den wir je gegessen haben. 100% Rind, selbstgemachte Soßen, viel Liebe und ein tolles Team.“</blockquote></div><p class="rc-fact">💡 Terrasse mit Blick über Lajares; LGBTQ+-freundlich und als sicherer Ort für Transgender gelistet.</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="chirate-restaurante" data-rating="4.9" data-reviews="380" data-title="Chirate Restaurante">
   <div class="rc-media">
     <img src="images/chirate-restaurante.jpg" alt="Chirate Restaurante" loading="lazy">
     <div class="rc-rating">⭐ 4.9 (380)</div>
     <div class="rc-price">20–30 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -2563,11 +2677,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 13:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">empfohlen</span></div><a class="rc-website" href="https://chiraterestaurante.com" target="_blank" rel="noopener">🌐 chiraterestaurante.com ↗</a><div class="rc-quotes"><blockquote>„Ich muss sagen, dass ich mich selbst als kleinen Gourmet bezeichne – die Bewertungen sprechen für sich.“</blockquote><blockquote>„Abseits über eine kleine Schotterpiste – ein Restaurant, das man auf jeden Fall besuchen sollte.“</blockquote></div><p class="rc-fact">💡 Liegt abgelegen in Giniginamar, Anfahrt über Schotterpiste — vorher auf Google Maps die Route ansehen.</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="nature-by-kuba" data-rating="4.9" data-reviews="345" data-title="Nature by Kuba">
   <div class="rc-media">
     <img src="images/nature-by-kuba.jpg" alt="Nature by Kuba" loading="lazy">
     <div class="rc-rating">⭐ 4.9 (345)</div>
     <div class="rc-price">10–20 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -2581,11 +2696,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geöffnet, schließt um 15:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">möglich</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, auch an der Straße, meist viele frei</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Smashed Avocado</span><span class="rc-chip">Smoked Salmon</span></div></div><div class="rc-quotes"><blockquote>„Stunningly fresh and beautifully presented food. An absolute must for Breakfast, Brunch and Lunch.“ (übersetzt)</blockquote><blockquote>„Wir waren hier mehrmals frühstücken. Sehr leckere, hausgemachte Gerichte zu fairen Preisen, sehr freundlicher und aufmerksamer Service.“</blockquote></div><p class="rc-fact">💡 Liegt im Velazquez Puerta del Sol Complex in Caleta de Fuste, bekannt für große Teeauswahl und guten Kaffee.</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="3-calici" data-rating="4.9" data-reviews="279" data-title="3 Calici">
   <div class="rc-media">
     <img src="images/3-calici.jpg" alt="3 Calici" loading="lazy">
     <div class="rc-rating">⭐ 4.9 (279)</div>
     <div class="rc-price">30–70 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -2599,11 +2715,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet Fr um 18:30 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">empfohlen (Tisch bekommen ist Glückssache)</span></div><div class="rc-quotes"><blockquote>„Unheimlich herzliche Gastgeber, die jeden Gast auf Händen tragen. Dazu wirklich köstliches Essen.“</blockquote><blockquote>„Unglaublich toll! Wenn ihr einen Tisch bekommt, könnt ihr euch glücklich schätzen – wie in einer italienischen Familie!“</blockquote></div><p class="rc-fact">💡 Im Einkaufszentrum El Campanario, sehr familiär geführt.</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="vala-food-open-club" data-rating="4.9" data-reviews="195" data-title="Vala · Food Open Club">
   <div class="rc-media">
     <img src="images/vala-food-open-club.jpg" alt="Vala · Food Open Club" loading="lazy">
     <div class="rc-rating">⭐ 4.9 (195)</div>
     <div class="rc-price">10–20 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -2617,11 +2734,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet Fr um 08:30 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-quotes"><blockquote>„Schönes Café mit einer guten Auswahl an kleineren Gerichten. Man kann herrlich entspannt im &#x27;Garten&#x27; bei angenehmer Musik sitzen.“</blockquote><blockquote>„Nettes neues Frühstückslokal. Leckere Smoothies und gute Speisen.“</blockquote></div><p class="rc-fact">💡 LGBTQ+-freundlich; Sitzbereich im &#x27;Garten&#x27; hinter dem Café.</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="nuestro-estilo-empanadas" data-rating="4.9" data-reviews="183" data-title="Nuestro Estilo Empanadas">
   <div class="rc-media">
     <img src="images/nuestro-estilo-empanadas.jpg" alt="Nuestro Estilo Empanadas" loading="lazy">
     <div class="rc-rating">⭐ 4.9 (183)</div>
     <div class="rc-price">1–10 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -2635,11 +2753,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geöffnet · schließt 15:00, öffnet wieder 19:00 (Mittagspause, genaue Wochenzeiten prüfen)</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Empanadas</span><span class="rc-chip">Pizza (laut Review neu im Angebot)</span></div></div><div class="rc-quotes"><blockquote>„Die leckersten Empanadas ever!!! Von Einheimischen rege besucht, noch ein Geheimtipp für Touristen.“</blockquote><blockquote>„Alle Empanadas die ich ausgesucht habe waren mehr als köstlich. Mein neuer Favorit für Empanadas in Corralejo!“</blockquote></div><p class="rc-fact">💡 Zweiter, eigenständiger Standort in Corralejo (nicht identisch mit &#x27;Nuestro Estilo Empanadas - Lajares&#x27;).</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="dulcis-in-fundo" data-rating="4.9" data-reviews="65" data-title="Dulcis in fundo">
   <div class="rc-media">
     <img src="images/dulcis-in-fundo.jpg" alt="Dulcis in fundo" loading="lazy">
     <div class="rc-rating">⭐ 4.9 (65)</div>
     <div class="rc-price">1–10 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -2653,11 +2772,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 08:30 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">🥡 Zum Mitnehmen</span><span class="rc-attr-value">Ja</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Cornetti</span><span class="rc-chip">Gebäck/Törtchen</span><span class="rc-chip">Brioche</span></div></div><div class="rc-quotes"><blockquote>„Super freundliches Personal. Super gute Patisserie-Auswahl. Habe auch schon eine Torte machen lassen – mit ganz viel Liebe gemacht.“</blockquote><blockquote>„Ein wahres italienisches Juwel im Herzen von Corralejo – endlich die authentischen Aromen Italiens gefunden.“ (übersetzt, gekürzt)</blockquote></div><p class="rc-fact">💡 Italienische Patisserie/Bäckerei, macht auch Torten auf Bestellung.</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="caf-del-mar-ajuy" data-rating="4.8" data-reviews="2124" data-title="Café del Mar ajuy">
   <div class="rc-media">
     <img src="images/caf-del-mar-ajuy.jpg" alt="Café del Mar ajuy" loading="lazy">
     <div class="rc-rating">⭐ 4.8 (2.124)</div>
     <div class="rc-price">20–30 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -2671,11 +2791,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Öffnet um 12:30 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, auch an der Straße, meist viele frei</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Parrillada de Mariscos</span><span class="rc-chip">Parrillada de Pescado</span></div></div><div class="rc-quotes"><blockquote>„Una comida para repetir, simpatía de María, buen servicio y excelente comida. Muy recomendable.“ (übersetzt: „Ein Essen, das man wiederholen möchte, sympathische María, guter Service und exzellentes Essen. Sehr empfehlenswert.“)</blockquote><blockquote>„Die Fischplatte war eine der besten, die wir je gegessen haben.“</blockquote></div><p class="rc-fact">💡 Bezeichnet sich bei Google als von Frauen geführt („von Frauen geführt“-Label).</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="restaurante-casa-marcos" data-rating="4.8" data-reviews="1719" data-title="Restaurante Casa Marcos">
   <div class="rc-media">
     <img src="images/restaurante-casa-marcos.jpg" alt="Restaurante Casa Marcos" loading="lazy">
     <div class="rc-rating">⭐ 4.8 (1.719)</div>
     <div class="rc-price">20–30 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -2689,11 +2810,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Öffnet um 12:30 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">für Brunch, Mittag- und Abendessen empfohlen</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, auch an der Straße</span></div><a class="rc-website" href="https://instagram.com" target="_blank" rel="noopener">🌐 instagram.com (kein eigener Domain-Auftritt, Speisekarte/Updates über Instagram) ↗</a><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Tarta de Queso Horneada (gebackener Käsekuchen)</span><span class="rc-chip">Tiramisu</span></div></div><div class="rc-quotes"><blockquote>„Posiblemente el mejor restaurante de la isla.“ (übersetzt: „Möglicherweise das beste Restaurant der Insel.“)</blockquote><blockquote>„Alles 5 Sterne, nur mit Reservierung.“</blockquote></div><p class="rc-fact">💡 Keine feste Speisekarte — wird laut Gästen täglich neu geschrieben, je nach verfügbaren Zutaten.</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="casa-manolo" data-rating="4.8" data-reviews="1502" data-title="Casa Manolo">
   <div class="rc-media">
     <img src="images/casa-manolo.jpg" alt="Casa Manolo" loading="lazy">
     <div class="rc-rating">⭐ 4.8 (1.502)</div>
     <div class="rc-price">20–30 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -2707,11 +2829,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Öffnet um 18:30 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">für Abendessen dringend empfohlen (ohne Reservierung abends oft nichts frei)</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, aber laut Bewertungen nicht immer leicht zu finden</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Paella de Pescado</span><span class="rc-chip">Pulpo A la Gallega</span></div></div><div class="rc-quotes"><blockquote>„Tolles kleines Restaurant, wo ohne Reservierung am Abend schon mal gar nichts geht. Super freundliches Personal vom Empfang bis zur Küche.“</blockquote></div><p class="rc-fact">💡 Auch glutenfrei/für Zöliakie gut geeignet laut Gästebewertung.</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="caprichos-del-mar" data-rating="4.8" data-reviews="1051" data-title="Caprichos Del Mar">
   <div class="rc-media">
     <img src="images/caprichos-del-mar.jpg" alt="Caprichos Del Mar" loading="lazy">
     <div class="rc-rating">⭐ 4.8 (1.051)</div>
     <div class="rc-price">20–30 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -2725,11 +2848,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Öffnet Fr um 18:30 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">möglich</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, auch an der Straße</span></div><a class="rc-website" href="https://caprichosdelmar.net" target="_blank" rel="noopener">🌐 caprichosdelmar.net ↗</a><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Frische Austern mit Zitrone</span><span class="rc-chip">Fritto Misto</span></div></div><div class="rc-quotes"><blockquote>„Un posto dove si mangia bene e ti senti a casa. Mi raccomando provate le ostriche, sono buonissime e fresche!“ (übersetzt)</blockquote><blockquote>„Risotto Meeresfrüchte und die kanarische Ziege waren spitze.“</blockquote></div><p class="rc-fact">💡 Dachterrasse mit Kamin und hervorragender Weinkarte.</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="pez-gordo-fuerteventura" data-rating="4.8" data-reviews="1028" data-title="Pez Gordo Fuerteventura">
   <div class="rc-media">
     <img src="images/pez-gordo-fuerteventura.jpg" alt="Pez Gordo Fuerteventura" loading="lazy">
     <div class="rc-rating">⭐ 4.8 (1.028)</div>
     <div class="rc-price">20–30 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -2743,11 +2867,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 13:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">für Mittag- und Abendessen empfohlen</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, auch an der Straße</span></div><a class="rc-website" href="https://instagram.com" target="_blank" rel="noopener">🌐 instagram.com ↗</a><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Oktopus</span><span class="rc-chip">Thunfisch</span><span class="rc-chip">Gofio-Butter-Brot</span><span class="rc-chip">Pappardelle</span><span class="rc-chip">Kabeljau-Burger</span></div></div><div class="rc-quotes"><blockquote>„Der Ausblick auf der Dachterrasse ist wunderschön und wir haben uns mit dem Service rundum wohl gefühlt!“</blockquote><blockquote>„Hausgemachtes Brot mit Gofio-Butter sehr zu empfehlen. Frische Zutaten und kreative Umsetzung.“</blockquote></div><p class="rc-fact">💡 Dachterrasse mit Sonnenuntergangsblick in El Cotillo.</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="casa-de-comidas-valtarajal" data-rating="4.8" data-reviews="876" data-title="Casa de comidas Valtarajal">
   <div class="rc-media">
     <img src="images/casa-de-comidas-valtarajal.jpg" alt="Casa de comidas Valtarajal" loading="lazy">
     <div class="rc-rating">⭐ 4.8 (876)</div>
     <div class="rc-price">10–20 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -2761,11 +2886,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen, öffnet Mi um 13:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">möglich</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, meist viele frei</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Ropa Vieja de Cabra</span><span class="rc-chip">Estofado de Cabra</span></div></div><div class="rc-quotes"><blockquote>„Amazing food and great staff. I loved their pepper stuffed with rice and meat with goat cheese on top, baked in the oven. Lovely place to eat in Betancuria.“ (übersetzt)</blockquote></div><p class="rc-fact">💡 Bestellung und Selbstservice an der Bar (kein klassischer Tischservice) — dafür sehr gutes Preis-Leistungs-Verhältnis für lokale Küche.</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="restaurante-la-bah-a-de-puerto-lajas" data-rating="4.8" data-reviews="710" data-title="Restaurante La Bahía de Puerto Lajas">
   <div class="rc-media">
     <img src="images/restaurante-la-bah-a-de-puerto-lajas.jpg" alt="Restaurante La Bahía de Puerto Lajas" loading="lazy">
     <div class="rc-rating">⭐ 4.8 (710)</div>
     <div class="rc-price">20–30 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -2779,11 +2905,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 12:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Thunfisch</span><span class="rc-chip">Steaks</span><span class="rc-chip">Apfelkuchen</span><span class="rc-chip">Brownie</span></div></div><div class="rc-quotes"><blockquote>„Ein echter Geheimtipp – super gelegen, herzlich geführt und perfekt mit Baby!“</blockquote><blockquote>„Sehr lecker gegessen mit Blick auf Surfer und Kiter. Thunfisch ist sehr lecker, Apfelkuchen und Brownie himmlisch.“</blockquote></div><p class="rc-fact">💡 Terrasse mit Blick auf Surfer und Kiter in Puerto Lajas.</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="domenoteca-wine-bar-and-food" data-rating="4.8" data-reviews="448" data-title="Domenoteca - Wine Bar And Food">
   <div class="rc-media">
     <img src="images/domenoteca-wine-bar-and-food.jpg" alt="Domenoteca - Wine Bar And Food" loading="lazy">
     <div class="rc-rating">⭐ 4.8 (448)</div>
     <div class="rc-price">20–30 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -2797,11 +2924,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet Fr um 19:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Oktopus</span><span class="rc-chip">Frischer Tagesfisch</span></div></div><div class="rc-quotes"><blockquote>„Wir wurden als Fleischesser und Veganerin beide vollkommen glücklich! Domenoteca beriet uns toll zu Wein und Gerichten.“</blockquote><blockquote>„Der Oktopus ist wunderbar zum Start, danach nach dem frischen Tagesfisch fragen – perfekt gekocht!“</blockquote></div><p class="rc-fact">💡 Gute Weinberatung/Weinkarte, empfohlen für Fleischesser wie Veganer gleichermaßen.</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="restaurante-des-rtico" data-rating="4.8" data-reviews="444" data-title="Restaurante Desértico">
   <div class="rc-media">
     <img src="images/restaurante-des-rtico.jpg" alt="Restaurante Desértico" loading="lazy">
     <div class="rc-rating">⭐ 4.8 (444)</div>
     <div class="rc-price">20–30 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -2815,11 +2943,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 18:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">empfohlen</span></div><a class="rc-website" href="https://instagram.com/restaurantedesertico" target="_blank" rel="noopener">🌐 instagram.com/restaurantedesertico ↗</a><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Bao Brot</span><span class="rc-chip">Chicken Fingers</span><span class="rc-chip">Getrüffelte Pasta</span></div></div><div class="rc-quotes"><blockquote>„Wir hatten wirklich einen richtig schönen Abend im Desértico. Der Service war unglaublich herzlich und aufmerksam.“</blockquote><blockquote>„Tolles spanisches Restaurant mit interessanter Karte. Bao Brot und Chicken Fingers als Vorspeise, danach getrüffelte Pasta.“</blockquote></div></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="gioli-gourmet-club" data-rating="4.8" data-reviews="438" data-title="Gioli Gourmet Club">
   <div class="rc-media">
     <img src="images/gioli-gourmet-club.jpg" alt="Gioli Gourmet Club" loading="lazy">
     <div class="rc-rating">⭐ 4.8 (438)</div>
     <div class="rc-price">10–20 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -2833,11 +2962,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 15:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Pizza (ausgefallene Rezepte)</span><span class="rc-chip">Hummus des Tages</span></div></div><div class="rc-quotes"><blockquote>„Hier sollte man unbedingt mal Pizza essen! Der Teig ist unglaublich knusprig und fluffig zugleich.“</blockquote><blockquote>„Eines meiner Lieblingsrestaurants! Sehr schönes Ambiente und ausgezeichnete Pizza.“</blockquote></div><p class="rc-fact">💡 Kleines Restaurant, von zwei Frauen geführt, in La Lajita.</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="the-ugly-duckling" data-rating="4.8" data-reviews="436" data-title="The Ugly Duckling">
   <div class="rc-media">
     <img src="images/the-ugly-duckling.jpg" alt="The Ugly Duckling" loading="lazy">
     <div class="rc-rating">⭐ 4.8 (436)</div>
     <div class="rc-price">20–60 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -2851,11 +2981,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet Fr um 17:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">über Kontaktformular der Webseite empfohlen</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Digestif-Menü</span></div></div><div class="rc-quotes"><blockquote>„WOW. Von der Tischreservierung über das Kontaktformular bis zum Digestif professionell, reibungslos, freundlich.“</blockquote><blockquote>„Es ist verrückt, für ein Abendessen über die ganze Insel zu fahren, aber wir fanden es wert. Henrik ist ein Unterhaltungskünstler.“</blockquote></div><p class="rc-fact">💡 Küchenchef Henrik sorgt laut Gästen für ein unterhaltsames Erlebnis am Tisch.</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="restaurante-mamacita" data-rating="4.8" data-reviews="424" data-title="Restaurante Mamacita">
   <div class="rc-media">
     <img src="images/restaurante-mamacita.jpg" alt="Restaurante Mamacita" loading="lazy">
     <div class="rc-rating">⭐ 4.8 (424)</div>
     <div class="rc-price">10–20 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -2869,11 +3000,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 18:30 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">dringend empfohlen</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Carbonara</span></div></div><div class="rc-quotes"><blockquote>„Tisch reservieren! Der Gastgeber und die Köchin sind unglaublich nett. Das Essen schmeckt wie in den besten Lokalen Italiens.“</blockquote><blockquote>„So ein tolles Restaurant mit wahnsinnig herzlichen Inhabern. Die beste Carbonara, die ich jemals gegessen habe.“</blockquote></div></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="sucr" data-rating="4.8" data-reviews="377" data-title="Sucré">
   <div class="rc-media">
     <img src="images/sucr.jpg" alt="Sucré" loading="lazy">
     <div class="rc-rating">⭐ 4.8 (377)</div>
     <div class="rc-price">1–10 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -2887,11 +3019,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet Fr um 08:00</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze an der Straße</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Pistazien-Törtchen</span><span class="rc-chip">Zitronen-Tarte</span><span class="rc-chip">Croissants</span></div></div><div class="rc-quotes"><blockquote>„Tolle Auswahl an kleinen Torten von Frucht bis Schokolade oder Pistazie. Kaffee gut, Service sehr freundlich.“</blockquote></div></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="buddha-restaurant-lounge" data-rating="4.8" data-reviews="261" data-title="Buddha restaurant &amp; Lounge">
   <div class="rc-media">
     <img src="images/buddha-restaurant-lounge.jpg" alt="Buddha restaurant &amp; Lounge" loading="lazy">
     <div class="rc-rating">⭐ 4.8 (261)</div>
     <div class="rc-price">30–50 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -2905,11 +3038,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 16:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">empfohlen (Menü dauert bewusst mehrere Stunden)</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">3-Gänge-Menü</span></div></div><div class="rc-quotes"><blockquote>„Wer den schnellen Imbiss sucht, ist hier total verkehrt. Drei Stunden für 3 Gänge inkl. einer Flasche Wein.“</blockquote><blockquote>„Ein sehr schönes und stilvolles Restaurant mit besonderer Atmosphäre. Der Chef war sehr zuvorkommend.“</blockquote></div><p class="rc-fact">💡 Bewusst entschleunigtes Fine-Dining-Erlebnis, kein schneller Imbiss.</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="saladar-bistrot-restaurant" data-rating="4.8" data-reviews="192" data-title="Saladar Bistrot Restaurant">
   <div class="rc-media">
     <img src="images/saladar-bistrot-restaurant.jpg" alt="Saladar Bistrot Restaurant" loading="lazy">
     <div class="rc-rating">⭐ 4.8 (192)</div>
     <div class="rc-price">30–60 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -2923,11 +3057,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 18:00</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">möglich</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, viele frei, auch Kundenstellplätze</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Steak</span></div></div><div class="rc-quotes"><blockquote>„Hidden champion in einer Seitenstraße. Kreative Küche außerhalb vom Mainstream. Freundlicher Service, gute Weinkarte von den Kanaren, Rioja und Ribera del Duero.“</blockquote></div></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="restaurante-la-jaira" data-rating="4.7" data-reviews="2642" data-title="Restaurante La Jaira">
   <div class="rc-media">
     <img src="images/restaurante-la-jaira.jpg" alt="Restaurante La Jaira" loading="lazy">
     <div class="rc-rating">⭐ 4.7 (2.642)</div>
     <div class="rc-price">20–30 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -2941,11 +3076,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 13:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">für Brunch/Mittag/Abendessen empfohlen, Tisch online reservierbar</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, auch an der Straße, viele frei</span></div><a class="rc-website" href="https://lajairadedemian.es" target="_blank" rel="noopener">🌐 lajairadedemian.es ↗</a><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Thunfisch</span><span class="rc-chip">Tempura</span><span class="rc-chip">Ziegenfleisch</span></div></div><div class="rc-quotes"><blockquote>„Demian kreiiert die Gerichte selbst und bedient seine Gäste wirklich sehr zuvorkommend.“</blockquote><blockquote>„Sehr leckere Tapas aus regionalen Produkten, Service sehr aufmerksam, hebt sich aus der Gastronomie hier deutlich heraus!“</blockquote></div><p class="rc-fact">💡 Firmiert auf Google auch als „La Jaira de Demian“ — dieselbe Adresse/derselbe Ort.</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="restaurante-marab" data-rating="4.7" data-reviews="1610" data-title="Restaurante Marabú">
   <div class="rc-media">
     <img src="images/restaurante-marab.jpg" alt="Restaurante Marabú" loading="lazy">
     <div class="rc-rating">⭐ 4.7 (1.610)</div>
     <div class="rc-price">20–40 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -2959,11 +3095,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 13:00</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">erforderlich</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, viele frei</span></div><a class="rc-website" href="https://e-marabu.com" target="_blank" rel="noopener">🌐 e-marabu.com ↗</a><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Cannelloni</span><span class="rc-chip">Weißer Thun</span><span class="rc-chip">Ziegenkäse</span><span class="rc-chip">Gazpacho</span></div></div><div class="rc-quotes"><blockquote>„Ein Abend, der sechs Jahre Warten mehr als wettgemacht hat – nach sechs Jahren des Versuchens haben wir endlich einen Tisch bekommen.“</blockquote></div><p class="rc-fact">💡 Internationale Küche und edle Weine in schickem Restaurant mit Holzbalkendecke und schattiger Terrasse. Sehr schwer zu reservieren.</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="arepas-llaneras-venezolanas" data-rating="4.7" data-reviews="1230" data-title="Arepas Llaneras Venezolanas">
   <div class="rc-media">
     <img src="images/arepas-llaneras-venezolanas.jpg" alt="Arepas Llaneras Venezolanas" loading="lazy">
     <div class="rc-rating">⭐ 4.7 (1.230)</div>
     <div class="rc-price">1–10 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -2977,11 +3114,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Öffnet um 12:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">möglich</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, auch an der Straße, meist viele frei</span></div><a class="rc-website" href="https://arepasllaneras.com" target="_blank" rel="noopener">🌐 arepasllaneras.com ↗</a><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Llanera Especial</span><span class="rc-chip">Llaneros Nachos</span></div></div><div class="rc-quotes"><blockquote>„Die Arepas sind köstlich. Alles super frisch zubereitet. Sehr nette Leute dort. Eine absolute Empfehlung für Puerto del Rosario.“</blockquote></div><p class="rc-fact">💡 Laut einer aktuelleren Bewertung vor Kurzem umgezogen (nur wenige Meter vom alten Standort) — Google-Adresse vor der Reise gegenchecken.</p></div></details>
   </div>
 </article>
-<article class="rc-card rc-card-closed">
+<article class="rc-card rc-card-closed" data-id="divino-bounty" data-rating="4.7" data-reviews="1214" data-title="DiVino Bounty">
   <div class="rc-media">
     <img src="images/divino-bounty.jpg" alt="DiVino Bounty" loading="lazy">
     <div class="rc-rating">⭐ 4.7 (1.214)</div>
     <div class="rc-price">20–30 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     <div class="rc-closed-badge">Vorübergehend geschlossen</div>
   </div>
   <div class="rc-body">
@@ -2995,11 +3133,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Fritura de Pescado</span><span class="rc-chip">Paella Su Prenotazione</span></div></div><div class="rc-quotes"><blockquote>„Einfach fantastisches Essen und super freundliches Personal. Die Fischplatte war ein Genuss.“</blockquote></div><p class="rc-fact">💡 Kleines, familiengeführtes Restaurant mit rustikalem Flair, laut eigener Google-Beschreibung. Firmiert auch unter dem Namen „Restaurante El Bounty del Muelle“.</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="d-vales-bay" data-rating="4.7" data-reviews="1083" data-title="D&#x27;Vales Bay">
   <div class="rc-media">
     <img src="images/d-vales-bay.jpg" alt="D&#x27;Vales Bay" loading="lazy">
     <div class="rc-rating">⭐ 4.7 (1.083)</div>
     <div class="rc-price">30–70 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -3013,11 +3152,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Öffnet um 13:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">erforderlich</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, aber laut Bewertungen schwer zu finden</span></div><a class="rc-website" href="https://dvalesbay.com" target="_blank" rel="noopener">🌐 dvalesbay.com ↗</a><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Sea Bass Tiradito</span><span class="rc-chip">Iberian Ham Croquettes</span></div></div><div class="rc-quotes"><blockquote>„Fantastic steak and service.“ (übersetzt: „Fantastisches Steak und Service.“)</blockquote><blockquote>„Das Essen war ein Genuss. Das Fleisch war eine Fantasie. Der Cheesecake war auch sehr lecker.“</blockquote></div><p class="rc-fact">💡 Dachterrasse mit Livemusik, gehobenes Ambiente, Online-Reservierung über covermanager.com verfügbar.</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="la-casa-de-las-paellas" data-rating="4.7" data-reviews="920" data-title="La Casa de las Paellas">
   <div class="rc-media">
     <img src="images/la-casa-de-las-paellas.jpg" alt="La Casa de las Paellas" loading="lazy">
     <div class="rc-rating">⭐ 4.7 (920)</div>
     <div class="rc-price">20–30 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -3031,11 +3171,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 13:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">erforderlich</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Nein, nur Bar</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, auch an der Straße, viele frei</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Paella (vegetaria/montaña/marina)</span><span class="rc-chip">Oktopus</span><span class="rc-chip">Nachos</span><span class="rc-chip">Crema Catalana</span><span class="rc-chip">Guacamole</span><span class="rc-chip">Sangria</span></div></div><div class="rc-quotes"><blockquote>„Ausgezeichnetes Essen in einem kleinen Restaurant in zweiter Reihe zur Küste. Sehr nette Besitzer.“</blockquote><blockquote>„Wir sitzen noch draußen auf der Terrasse und sind so begeistert, dass wir sofort bewerten wollten.“</blockquote></div><p class="rc-fact">💡 Unscheinbares kleines Restaurant – NUR BARZAHLUNG, Reservierung dringend empfohlen.</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="restaurante-salvaje" data-rating="4.7" data-reviews="650" data-title="Restaurante Salvaje">
   <div class="rc-media">
     <img src="images/restaurante-salvaje.jpg" alt="Restaurante Salvaje" loading="lazy">
     <div class="rc-rating">⭐ 4.7 (650)</div>
     <div class="rc-price">20–40 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -3049,11 +3190,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><p class="rc-fact">💡 Bereits aus früherer Recherche bekannt (Original-Tapas), diesmal nicht erneut vom Fork gefunden — Basisdaten aus vorheriger Prüfung übernommen.</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="el-pellizco-by-rigoberto-almeida" data-rating="4.7" data-reviews="634" data-title="El Pellizco by Rigoberto Almeida">
   <div class="rc-media">
     <img src="images/el-pellizco-by-rigoberto-almeida.jpg" alt="El Pellizco by Rigoberto Almeida" loading="lazy">
     <div class="rc-rating">⭐ 4.7 (634)</div>
     <div class="rc-price">40–90 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -3067,10 +3209,11 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 14:00</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">für Mittag- und Abendessen empfohlen</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, auch an der Straße</span></div><a class="rc-website" href="https://elpellizco.es" target="_blank" rel="noopener">🌐 elpellizco.es ↗</a><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Thunfisch-Tatar</span><span class="rc-chip">Degustationsmenü</span><span class="rc-chip">Gofio</span></div></div><div class="rc-quotes"><blockquote>„Eines vorweg: Wer nur isst um satt zu werden, braucht hier nicht weiterzulesen – das ist ein besonderes Erlebnis.“</blockquote></div><p class="rc-fact">💡 In Rezensionen mehrfach im Zusammenhang mit „Michelin“ erwähnt; gilt als eines der besten Restaurants der Insel, Dachterrasse mit hervorragender Weinkarte.</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="restaurante-casa-isaitas" data-rating="4.7" data-reviews="494" data-title="Restaurante Casa Isaitas">
   <div class="rc-media">
     <img src="images/restaurante-casa-isaitas.jpg" alt="Restaurante Casa Isaitas" loading="lazy">
     <div class="rc-rating">⭐ 4.7 (494)</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
     
   </div>
@@ -3085,11 +3228,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 12:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><a class="rc-website" href="https://casaisaitasmm.com" target="_blank" rel="noopener">🌐 casaisaitasmm.com ↗</a><p class="rc-fact">💡 Google führt den Ort primär als &#x27;Landhaus&#x27; (vermietet auch Rural-Unterkünfte), separate belastbare Restaurant-Rezensionen waren nicht sauber auffindbar.</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="la-catrina-mexican-food" data-rating="4.7" data-reviews="158" data-title="La Catrina Mexican Food">
   <div class="rc-media">
     <img src="images/la-catrina-mexican-food.jpg" alt="La Catrina Mexican Food" loading="lazy">
     <div class="rc-rating">⭐ 4.7 (158)</div>
     <div class="rc-price">10–20 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -3103,11 +3247,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 12:30 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-quotes"><blockquote>„Ein tolles Ort für mexikanische Küche. Die Chefin sehr freundlich und zuvorkommend, hilft bei der Auswahl.“</blockquote><blockquote>„Echte Empfehlung für authentische Mexican-Food-Liebhaber – Service und Essen waren perfekt.“</blockquote></div><p class="rc-fact">💡 Sehr persönlich von der Inhaberin geführt.</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="avenida-restaurant" data-rating="4.6" data-reviews="3756" data-title="Avenida Restaurant">
   <div class="rc-media">
     <img src="images/avenida-restaurant.jpg" alt="Avenida Restaurant" loading="lazy">
     <div class="rc-rating">⭐ 4.6 (3.756)</div>
     <div class="rc-price">20–30 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -3121,11 +3266,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 13:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">möglich (oft Warteschlange ohne Reservierung)</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, auch an der Straße</span></div><a class="rc-website" href="https://avenidarestaurante2.wixsite.com" target="_blank" rel="noopener">🌐 avenidarestaurante2.wixsite.com ↗</a><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Paella</span><span class="rc-chip">BBQ/Grillplatte</span><span class="rc-chip">Mojo</span><span class="rc-chip">Papas Arrugadas</span><span class="rc-chip">Sangria</span><span class="rc-chip">Dorade</span></div></div><div class="rc-quotes"><blockquote>„XXL-Portionen zu lecker-günstigen Preisen. Die Portionen sind 50% größer als anderswo.“</blockquote><blockquote>„Top-Adresse für bodenständige Küche. Seit Jahren eine der besten Adressen in der Stadt.“</blockquote></div></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="la-pulperia-tapas-bar" data-rating="4.6" data-reviews="3156" data-title="La Pulperia - Tapas Bar">
   <div class="rc-media">
     <img src="images/la-pulperia-tapas-bar.jpg" alt="La Pulperia - Tapas Bar" loading="lazy">
     <div class="rc-rating">⭐ 4.6 (3.156)</div>
     <div class="rc-price">20–30 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -3139,11 +3285,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geöffnet, schließt um 01:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">möglich</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, aber laut Bewertungen nicht leicht zu finden</span></div><a class="rc-website" href="https://pulperiaftv.es" target="_blank" rel="noopener">🌐 pulperiaftv.es ↗</a><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Pulpo (Krake)</span><span class="rc-chip">Pulpo mit Jack Daniel&#x27;s</span><span class="rc-chip">Octopus Teriyaki</span></div></div><div class="rc-quotes"><blockquote>„Das Essen war insgesamt ultra lecker – unser Favorit war der Pulpo mit Jack Daniels und Süßkartoffelpüree.“</blockquote><blockquote>„Ein MUSS für Pulpo-Liebhaber! Sehr frisch, sehr freundlicher und aufmerksamer Service.“</blockquote></div><p class="rc-fact">💡 LGBTQ+-freundlich, als sicherer Ort für Transgender gelistet.</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="azzurro-chill-out-restaurant" data-rating="4.6" data-reviews="2582" data-title="Azzurro Chill Out Restaurant">
   <div class="rc-media">
     <img src="images/azzurro-chill-out-restaurant.jpg" alt="Azzurro Chill Out Restaurant" loading="lazy">
     <div class="rc-rating">⭐ 4.6 (2.582)</div>
     <div class="rc-price">20–30 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -3157,11 +3304,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 13:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">für Mittag- und Abendessen empfohlen</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Parkmöglichkeiten vorhanden, Details auf Google Maps prüfen</span></div><a class="rc-website" href="https://azzurro.es" target="_blank" rel="noopener">🌐 azzurro.es ↗</a><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Paella</span><span class="rc-chip">Thunfisch-Tatar</span><span class="rc-chip">Cremiger Reis</span><span class="rc-chip">Meeresfrüchteplatte</span></div></div><div class="rc-quotes"><blockquote>„Mein absolutes bestes Sunset-Restaurant in Fuerte. Der Fisch war der Hammer! Super frisch und wunderschön beim Sonnenuntergang.“</blockquote><blockquote>„Essen wirklich lecker, Service sehr gut, Ambiente sehr schön, mit Ausblick auf das Meer.“</blockquote></div><p class="rc-fact">💡 Dachterrasse mit Meerblick, sehr beliebt zum Sonnenuntergang direkt am Strand von El Cotillo.</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="casa-naturaleza" data-rating="4.6" data-reviews="1616" data-title="Casa Naturaleza">
   <div class="rc-media">
     <img src="images/casa-naturaleza.jpg" alt="Casa Naturaleza" loading="lazy">
     <div class="rc-rating">⭐ 4.6 (1.616)</div>
     <div class="rc-price">20–30 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -3175,10 +3323,11 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geöffnet · schließt um 17:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">empfohlen</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><a class="rc-website" href="https://casanaturaleza.net" target="_blank" rel="noopener">🌐 casanaturaleza.net ↗</a><div class="rc-quotes"><blockquote>„Echt urige Taverne. Super Ambiente mit Liebe zum Detail. Viele kleine Nischen im Schatten, toller Ausblick ins Tal.“</blockquote><blockquote>„Umwerfend war das Ambiente, jede Ecke liebevoll gestaltet. Wir bekamen einen Tisch auch ohne Reservierung.“</blockquote></div><p class="rc-fact">💡 Liegt im grünen Tal von Vega de Río Palmas nahe Betancuria, viele schattige Sitznischen.</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="sabor-a-espa-a" data-rating="4.6" data-reviews="20" data-title="Sabor a España">
   <div class="rc-media">
     <img src="images/sabor-a-espa-a.jpg" alt="Sabor a España" loading="lazy">
     <div class="rc-rating">⭐ 4.6 (20)</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
     
   </div>
@@ -3193,11 +3342,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geöffnet · schließt um 22:30</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Marzipan</span><span class="rc-chip">Obst &amp; Gemüse</span></div></div><div class="rc-quotes"><blockquote>„Wir haben dort Marzipan gekauft, da hat man nur auf dem Zucker gekaut.“</blockquote><blockquote>„Hervorragendes Obst und Gemüse, schneller Einkauf möglich.“</blockquote></div><p class="rc-fact">💡 Kein Restaurant, sondern ein Feinkost-/Delikatessenladen (zwei Standorte auf Fuerteventura, dies der Corralejo-Standort).</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="caretta-beach-la-pared" data-rating="4.5" data-reviews="1410" data-title="Caretta Beach La Pared">
   <div class="rc-media">
     <img src="images/caretta-beach-la-pared.jpg" alt="Caretta Beach La Pared" loading="lazy">
     <div class="rc-rating">⭐ 4.5 (1.410)</div>
     <div class="rc-price">20–30 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -3211,11 +3361,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 14:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-quotes"><blockquote>„Ein Hotspot auf Fuerteventura – hier kann man tolle Wellen und den Sonnenuntergang beobachten.“</blockquote><blockquote>„Wir wollten nur etwas trinken, aber der Ausblick war zu schön – also haben wir noch etwas gegessen.“</blockquote></div><p class="rc-fact">💡 Direkt am Surfspot La Pared mit Sonnenuntergangsblick, moderate Preise.</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="the-roof-chill-out" data-rating="4.5" data-reviews="399" data-title="The Roof Chill out">
   <div class="rc-media">
     <img src="images/the-roof-chill-out.jpg" alt="The Roof Chill out" loading="lazy">
     <div class="rc-rating">⭐ 4.5 (399)</div>
     <div class="rc-price">10–20 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -3229,11 +3380,12 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Frühstücksbuffet</span><span class="rc-chip">Kaffee zur Selbstbedienung</span><span class="rc-chip">Cocktails</span></div></div><div class="rc-quotes"><blockquote>„Ein toller Ort zum Verweilen und zum leckeren Frühstücken. Eine tolle Auswahl und eine Kaffeemaschine zur Selbstbedienung.“</blockquote><blockquote>„Rooftop Bar mit Cocktails, Food und Frühstücksangebot. Zudem gibt es regelmäßig Livemusik. Toller Blick auf den Sonnenuntergang.“</blockquote></div><p class="rc-fact">💡 Dachterrasse mit regelmäßiger Livemusik (auch Nebensaison) und Sonnenuntergangsblick; Speisekarte per QR-Code.</p></div></details>
   </div>
 </article>
-<article class="rc-card">
+<article class="rc-card" data-id="caf-la-ola" data-rating="4.4" data-reviews="601" data-title="Café La Ola">
   <div class="rc-media">
     <img src="images/caf-la-ola.jpg" alt="Café La Ola" loading="lazy">
     <div class="rc-rating">⭐ 4.4 (601)</div>
     <div class="rc-price">1–10 €</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     
   </div>
   <div class="rc-body">
@@ -3365,7 +3517,7 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
   var DEFAULT_CAR = "autoreisen-basis";
   var FLIGHT = {label: "Condor-Flüge Frankfurt ↔ Fuerteventura", sub: "Gebucht 26.08.2026 · inkl. Menüwahl · 29.09.–12.10.2026, 2 Personen", total: 999.92,
     link: "https://www.condor.com/tcibe/de/mybooking/login"};
-  var pages = ['home','unterkuenfte','kosten','wetter','packliste','ausfluege','gastro','links'];
+  var pages = ['home','unterkuenfte','kosten','wetter','packliste','ausfluege','kalender','gastro','links'];
 
   function showPage(id, opts){
     opts = opts || {};
@@ -3679,6 +3831,112 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     });
   });
   applySortFilter();
+
+  // ---- generic favorite/hide/sort collection (excursions, events, restaurants, insider tips) ----
+  function initCollection(cfg){
+    var grid = document.getElementById(cfg.gridId);
+    if (!grid) return;
+    var items = Array.prototype.slice.call(grid.querySelectorAll(cfg.itemSelector));
+    if (!items.length) return;
+    var favKey = 'fuerte-fav-' + cfg.key;
+    var hideKey = 'fuerte-hidden-' + cfg.key;
+    function getArr(k){ try { return JSON.parse(localStorage.getItem(k) || '[]'); } catch(e){ return []; } }
+    function setArr(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+    var sortSelect = cfg.sortSelectId ? document.getElementById(cfg.sortSelectId) : null;
+
+    function apply(){
+      var favs = getArr(favKey);
+      var hidden = getArr(hideKey);
+      var mode = sortSelect ? sortSelect.value : cfg.defaultMode;
+
+      items.forEach(function(item){
+        var id = item.getAttribute('data-id');
+        var isFav = favs.indexOf(id) !== -1;
+        var isHidden = hidden.indexOf(id) !== -1;
+        item.classList.toggle('is-favorited', isFav && !isHidden);
+        item.classList.toggle('is-hidden', isHidden);
+        var favBtn = item.querySelector('.fav-btn');
+        if (favBtn) { favBtn.classList.toggle('active', isFav); favBtn.textContent = isFav ? '❤️' : '🤍'; favBtn.title = isFav ? 'Favorit entfernen' : 'Zu Favoriten'; }
+        var hideBtn = item.querySelector('.hide-btn');
+        if (hideBtn) { hideBtn.classList.toggle('active', isHidden); hideBtn.textContent = isHidden ? '🙉' : '🙈'; hideBtn.title = isHidden ? 'Wieder einblenden' : 'Ausblenden'; }
+      });
+
+      items.sort(function(a, b){
+        var idA = a.getAttribute('data-id'), idB = b.getAttribute('data-id');
+        var hiddenA = hidden.indexOf(idA) !== -1, hiddenB = hidden.indexOf(idB) !== -1;
+        if (hiddenA !== hiddenB) return hiddenA ? 1 : -1;
+        if (!hiddenA) {
+          var favA = favs.indexOf(idA), favB = favs.indexOf(idB);
+          var isFavA = favA !== -1, isFavB = favB !== -1;
+          if (isFavA !== isFavB) return isFavA ? -1 : 1;
+          if (isFavA && isFavB) return favB - favA;
+        }
+        var cmp = cfg.comparators[mode];
+        return cmp ? cmp(a, b) : 0;
+      });
+      items.forEach(function(item){ grid.appendChild(item); });
+    }
+
+    items.forEach(function(item){
+      var id = item.getAttribute('data-id');
+      var favBtn = item.querySelector('.fav-btn');
+      var hideBtn = item.querySelector('.hide-btn');
+      if (favBtn) favBtn.addEventListener('click', function(){
+        var favs = getArr(favKey);
+        var i = favs.indexOf(id);
+        if (i === -1) favs.push(id); else favs.splice(i, 1);
+        setArr(favKey, favs);
+        apply();
+      });
+      if (hideBtn) hideBtn.addEventListener('click', function(){
+        var hidden = getArr(hideKey);
+        var i = hidden.indexOf(id);
+        if (i === -1) hidden.push(id); else hidden.splice(i, 1);
+        setArr(hideKey, hidden);
+        apply();
+      });
+    });
+    if (sortSelect) sortSelect.addEventListener('change', apply);
+    apply();
+  }
+
+  function textCmp(a, b, attr){
+    return (a.getAttribute(attr) || '').localeCompare(b.getAttribute(attr) || '', 'de');
+  }
+
+  initCollection({
+    gridId: 'excursion-grid', itemSelector: '.ex-card', key: 'excursions',
+    sortSelectId: 'ex-sort-select', defaultMode: 'rank',
+    comparators: {
+      rank: function(a,b){ return parseInt(a.dataset.rank,10) - parseInt(b.dataset.rank,10); },
+      az: function(a,b){ return textCmp(a,b,'data-title'); }
+    }
+  });
+
+  initCollection({
+    gridId: 'events-grid', itemSelector: '.event-card', key: 'events',
+    sortSelectId: 'event-sort-select', defaultMode: 'date-asc',
+    comparators: {
+      'date-asc': function(a,b){ return a.dataset.date.localeCompare(b.dataset.date); },
+      'date-desc': function(a,b){ return b.dataset.date.localeCompare(a.dataset.date); }
+    }
+  });
+
+  initCollection({
+    gridId: 'rest-items', itemSelector: '.rc-card', key: 'restaurants',
+    sortSelectId: 'rc-sort-select', defaultMode: 'rating-desc',
+    comparators: {
+      'rating-desc': function(a,b){ return (parseFloat(b.dataset.rating)-parseFloat(a.dataset.rating)) || (parseInt(b.dataset.reviews,10)-parseInt(a.dataset.reviews,10)); },
+      'reviews-desc': function(a,b){ return parseInt(b.dataset.reviews,10) - parseInt(a.dataset.reviews,10); },
+      az: function(a,b){ return textCmp(a,b,'data-title'); }
+    }
+  });
+
+  initCollection({
+    gridId: 'insider-list', itemSelector: '.insider-row', key: 'insider',
+    defaultMode: 'none',
+    comparators: {}
+  });
 
   // ---- nav indicators ----
   function updateNavIndicators(){
