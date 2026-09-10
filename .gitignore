@@ -2,5 +2,7 @@
 !.gitignore
 !index.html
 !README.md
+!manifest.json
+!sw.js
 !images/
 !images/**
