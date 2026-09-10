@@ -303,6 +303,10 @@ input[type=range]::-moz-range-thumb { width: 26px; height: 26px; border: 2px sol
 .price-table { min-width: 0; }
 .price-table td, .price-table th { word-break: normal; overflow-wrap: anywhere; }
 
+/* Hinweis, wenn gespeicherte Auswahl nicht mehr existiert */
+.stale-note { background: var(--warn-bg); color: var(--warn); border: 1px solid var(--warn); border-radius: 12px; padding: 12px 14px; margin-top: 14px; font-size: var(--fs-sub); line-height: 1.5; display: flex; gap: 10px; align-items: flex-start; }
+.stale-note button { margin-left: auto; flex-shrink: 0; background: none; border: none; color: var(--warn); font-size: 20px; cursor: pointer; padding: 0 4px; min-height: var(--tap); min-width: var(--tap); }
+
 /* ---- Countdown und Hero: Bild soll durchscheinen ---- */
 :root { --cd-bg: rgba(255,255,255,0.20); --cd-bd: rgba(28,26,23,0.16); }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --cd-bg: rgba(255,255,255,0.10); --cd-bd: rgba(255,255,255,0.18); } }
@@ -909,7 +913,7 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
       <a class="qn-card" href="#packliste"><span class="qn-emoji">🎒</span><h3>Packliste</h3><p>Zum Abhaken, wird gespeichert</p></a>
       <a class="qn-card" href="#ausfluege"><span class="qn-emoji">🗺️</span><h3>Ausflüge</h3><p>Top 20 Highlights der Insel</p></a>
       <a class="qn-card" href="#kalender"><span class="qn-emoji">📅</span><h3>Kalender</h3><p>Märkte, Events &amp; Insider-Tipps nach Datum</p></a>
-      <a class="qn-card" href="#gastro"><span class="qn-emoji">🍽️</span><h3>Gastro</h3><p>50 Restaurants &amp; Bäckereien, sortiert nach Bewertung</p></a>
+      <a class="qn-card" href="#gastro"><span class="qn-emoji">🍽️</span><h3>Gastro</h3><p>53 Restaurants &amp; Bäckereien, sortiert nach Bewertung</p></a>
       <a class="qn-card" href="#links"><span class="qn-emoji">🔗</span><h3>Links &amp; Tipps</h3><p>Alle Direktlinks gesammelt</p></a>
     </div>
   </div>
@@ -2496,6 +2500,57 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
         </label>
       </div>
       <div class="rest-items" id="rest-items">
+<article class="rc-card" data-id="h2o-juice-bar" data-rating="4.6" data-reviews="670" data-title="H2O Juice Bar &amp; Vegan Caf&#232;">
+  <div class="rc-media">
+    <img src="images/h2o-juice-bar.webp" alt="H2O Juice Bar &amp; Vegan Caf&#232;" loading="lazy">
+    <div class="rc-rating">&#11088; 4.6 (670)</div>
+    <div class="rc-price">10&#8211;20 &#8364;</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">&#x1f90d;</button><button type="button" class="hide-btn" title="Ausblenden">&#x1f648;</button></div>
+  </div>
+  <div class="rc-body">
+    <h4>H2O Juice Bar &amp; Vegan Caf&#232;</h4>
+    <p class="rc-category">Veganes Caf&#233; / Saftbar</p>
+    <p class="rc-address">&#128205; C. la Milagrosa, 29, 35660 Corralejo, Las Palmas, Spanien</p>
+    <div class="rc-actions">
+      <a class="btn btn-outline" href="https://www.google.com/maps/search/?api=1&amp;query=28.7391761,-13.8685833" target="_blank" rel="noopener">Google Maps &#8599;</a>
+    </div>
+    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">&#128336; &#214;ffnungszeiten</span><span class="rc-attr-value">Wochenzeiten auf Google Maps pr&#252;fen</span></div><div class="rc-attr-row"><span class="rc-attr-label">&#127788;&#65039; Au&#223;enbereich</span><span class="rc-attr-value">Ja, begr&#252;nte Terrasse</span></div><div class="rc-attr-row"><span class="rc-attr-label">&#129388; Zum Mitnehmen</span><span class="rc-attr-value">Ja, auch Lieferdienst</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von G&#228;sten empfohlen</span><div class="rc-chips"><span class="rc-chip">Frisch gepresste S&#228;fte</span><span class="rc-chip">Vegane Burger</span><span class="rc-chip">Sandwiches</span><span class="rc-chip">Kuchen</span></div></div><p class="rc-fact">&#128161; Komplett vegan &#8211; mit Casita Maracuya und dem Imperfecto eine der wenigen zuverl&#228;ssigen Adressen daf&#252;r in Corralejo. Startpunkt unseres <a href="#tagestrips">Vegan-Tagestrips</a>.</p></div></details>
+  </div>
+</article>
+<article class="rc-card" data-id="coco-banana" data-rating="4.4" data-reviews="545" data-title="Coco Banana">
+  <div class="rc-media">
+    <img src="images/coco-banana.webp" alt="Coco Banana Eisdiele" loading="lazy">
+    <div class="rc-rating">&#11088; 4.4 (545)</div>
+    <div class="rc-price">1&#8211;10 &#8364;</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">&#x1f90d;</button><button type="button" class="hide-btn" title="Ausblenden">&#x1f648;</button></div>
+  </div>
+  <div class="rc-body">
+    <h4>Coco Banana</h4>
+    <p class="rc-category">Eisdiele</p>
+    <p class="rc-address">&#128205; Av. Ntra. Sra. del Carmen, 35660 Corralejo, Las Palmas, Spanien</p>
+    <div class="rc-actions">
+      <a class="btn btn-outline" href="https://www.google.com/maps/search/?api=1&amp;query=28.7348799,-13.8692232" target="_blank" rel="noopener">Google Maps &#8599;</a>
+    </div>
+    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">&#128336; &#214;ffnungszeiten</span><span class="rc-attr-value">Bis in den Abend ge&#246;ffnet &#8211; Wochenzeiten auf Google Maps pr&#252;fen</span></div><div class="rc-dishes"><span class="rc-dishes-label">Vegane Sorten</span><div class="rc-chips"><span class="rc-chip">Erdbeer-Sorbet</span><span class="rc-chip">Zitronen-Sorbet</span><span class="rc-chip">Mango-Sorbet</span><span class="rc-chip">Zartbitterschokolade</span></div></div><p class="rc-fact">&#128161; Laut mehreren Vegan-F&#252;hrern das beste vegane Eis in Corralejo &#8211; es sind allerdings nur zwei bis vier Sorten, vor Ort nach der aktuellen Auswahl fragen.</p></div></details>
+  </div>
+</article>
+<article class="rc-card" data-id="vrebac-gelato" data-rating="4.3" data-reviews="51" data-title="Vrebac Gelato">
+  <div class="rc-media">
+    <img src="images/vrebac-gelato.webp" alt="Vrebac Gelato" loading="lazy">
+    <div class="rc-rating">&#11088; 4.3 (51)</div>
+    <div class="rc-price">1&#8211;10 &#8364;</div>
+    <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">&#x1f90d;</button><button type="button" class="hide-btn" title="Ausblenden">&#x1f648;</button></div>
+  </div>
+  <div class="rc-body">
+    <h4>Vrebac Gelato</h4>
+    <p class="rc-category">Italienisches Speiseeis</p>
+    <p class="rc-address">&#128205; C. Francisco Pi y Arsuaga, 35600 Puerto del Rosario, Las Palmas, Spanien</p>
+    <div class="rc-actions">
+      <a class="btn btn-outline" href="https://www.google.com/maps/search/?api=1&amp;query=Vrebac+Gelato+Puerto+del+Rosario" target="_blank" rel="noopener">Google Maps &#8599;</a>
+    </div>
+    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">&#128336; &#214;ffnungszeiten</span><span class="rc-attr-value">Wochenzeiten auf Google Maps pr&#252;fen</span></div><div class="rc-attr-row"><span class="rc-attr-label">&#129388; Zum Mitnehmen</span><span class="rc-attr-value">Ja, auch Online-Bestellung</span></div><p class="rc-fact">&#128161; Handwerkliches Gelato in der Inselhauptstadt. Sorbets kommen ohne Milch aus &#8211; welche Sorten gerade vegan sind, wechselt, also kurz nachfragen. Nachmittagsstopp im <a href="#tagestrips">Vegan-Tagestrip</a>.</p></div></details>
+  </div>
+</article>
         <article class="rc-card" data-id="lumos" data-rating="5.0" data-reviews="1104" data-title="Lumos">
   <div class="rc-media">
     <img src="images/lumos.webp" alt="Lumos" loading="lazy">
@@ -4171,6 +4226,46 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
             accTotal: accTotal, split: isSplit()};
   }
 
+  // ---- Gespeicherte Auswahl gegen den aktuellen Bestand prüfen ----
+  // Wird eine Unterkunft aus der Liste genommen, zeigte die Seite vorher
+  // dauerhaft "noch nichts gewählt", ohne zu sagen warum. Jetzt wird der
+  // verwaiste Eintrag entfernt und der Grund einmal angezeigt.
+  function pruneStaleSelections(){
+    var removed = [];
+    function nameOf(slug){ return (LISTINGS[slug] && LISTINGS[slug].name) || slug; }
+
+    [SEL_KEY, SEL2_KEY].forEach(function(key){
+      var v = lsGet(key, '');
+      if (v && !LISTINGS[v]) { removed.push(v); lsSet(key, ''); }
+    });
+
+    var favs = getFavs().filter(function(x){ return !!LISTINGS[x]; });
+    if (favs.length !== getFavs().length) setFavs(favs);
+    var hid = getHiddenAccs().filter(function(x){ return !!LISTINGS[x]; });
+    if (hid.length !== getHiddenAccs().length) setHiddenAccs(hid);
+
+    var tripIds = (typeof TRIPS !== 'undefined') ? TRIPS.map(function(t){ return t.id; }) : null;
+    if (tripIds) {
+      [TRIP_FAV_KEY, TRIP_HIDE_KEY].forEach(function(k){
+        var a = tripArr(k), b = a.filter(function(x){ return tripIds.indexOf(x) !== -1; });
+        if (a.length !== b.length) tripSetArr(k, b);
+      });
+    }
+
+    if (!removed.length) return;
+    var host = document.getElementById('selection-summary');
+    if (!host) return;
+    var el = document.createElement('div');
+    el.className = 'stale-note';
+    el.innerHTML = '<span>⚠️ <strong>Deine frühere Auswahl ist nicht mehr verfügbar.</strong> ' +
+      (removed.length === 1 ? 'Die Unterkunft „' + escapeHtml(removed[0]) + '" steht' : 'Die Unterkünfte stehen') +
+      ' nicht mehr auf der Liste — sie war für unseren Zeitraum ausgebucht oder wurde aussortiert. ' +
+      'Bitte such dir unten eine neue aus.</span>' +
+      '<button type="button" aria-label="Hinweis schließen">×</button>';
+    el.querySelector('button').addEventListener('click', function(){ el.remove(); });
+    host.parentNode.insertBefore(el, host.nextSibling);
+  }
+
   // ---- card buttons ----
   // Build the two part-buttons for every card once.
   document.querySelectorAll('#card-grid .card').forEach(function(card){
@@ -4716,21 +4811,22 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     },
     {
       id: 'trip-lanzarote',
-      title: 'Lanzarote: Playa Blanca und die Papagayo-Buchten',
-      zone: 'Ganzer Tag · Nachbarinsel',
-      img: 'images/lanzarote-playa-blanca.webp',
-      summary: 'Die Nachbarinsel liegt keine halbe Stunde entfernt — vom Hafen Corralejo fahren bis zu 26 Fähren am Tag nach Playa Blanca. Drüben warten die Marina Rubicón, eine ruhige Promenade und die Playas de Papagayo: geschützte Buchten mit hellem Sand und klarem Wasser, die zu den schönsten der Kanaren zählen.',
-      warn: 'Für die Fähre braucht ihr den Personalausweis. Der Mietwagen darf nur mit, wenn der Vertrag das erlaubt — sonst das Auto am Hafen Corralejo stehen lassen und drüben Taxi oder Wassertaxi nehmen, für Playa Blanca und Papagayo reicht das gut.',
+      title: 'Lanzarote: Bummeln und Essen in Playa Blanca',
+      zone: 'Ganzer Tag \u00b7 Nachbarinsel',
+      img: 'images/marina-rubicon.webp',
+      summary: 'Die Nachbarinsel liegt keine halbe Stunde entfernt \u2014 vom Hafen Corralejo fahren bis zu 26 F\u00e4hren am Tag. Dr\u00fcben wartet die Marina Rubic\u00f3n mit Boutiquen, Kunsthandwerksst\u00e4nden und Restaurants am Hafenbecken, dazu die breite Uferpromenade bis ins Ortszentrum. Ein Tag zum Schlendern, Schauen und gut Essen \u2014 kein Strandtag.',
+      warn: 'Der Kunsthandwerkermarkt an der Marina Rubic\u00f3n ist nur mittwochs und samstags von 09:00 bis 14:00. In unserem Zeitraum passen also Mi 30.09., Sa 03.10., Mi 07.10. und Sa 10.10. F\u00fcr die F\u00e4hre den Personalausweis mitnehmen. Das Auto kann in Corralejo stehen bleiben \u2014 in Playa Blanca ist alles zu Fu\u00df erreichbar.',
       stops: [
         {t:'drive', min:10,  label:'Zum Hafen Corralejo', note:'Parkhaus am Hafen, Tickets abholen'},
-        {t:'ferry', min:30,  label:'Fähre nach Playa Blanca', note:'Fred Olsen, Naviera Armas oder Líneas Romero · ab 17 € pro Strecke'},
-        {t:'stop',  min:75,  label:'Playa Blanca & Marina Rubicón', note:'Promenade, Hafenbecken, Cafés'},
-        {t:'drive', min:20,  label:'Weiter nach Papagayo', note:'Taxi oder Wassertaxi ab der Marina'},
-        {t:'stop',  min:180, label:'Playas de Papagayo', note:'Mehrere geschützte Buchten, heller Sand, ruhiges Wasser — die Anfahrt kostet 3 € Naturpark-Gebühr'},
-        {t:'drive', min:20,  label:'Zurück nach Playa Blanca'},
-        {t:'stop',  min:75,  label:'Frühes Abendessen am Hafen'},
-        {t:'ferry', min:30,  label:'Fähre zurück nach Corralejo', note:'Letzte Verbindungen am frühen Abend — Rückfahrtzeit vorher prüfen'},
-        {t:'drive', min:10,  label:'Zurück in die Unterkunft'}
+        {t:'ferry', min:30,  label:'F\u00e4hre nach Playa Blanca', note:'Fred Olsen, Naviera Armas oder L\u00edneas Romero \u00b7 ab 17 \u20ac pro Strecke'},
+        {t:'stop',  min:135, label:'Marina Rubic\u00f3n: Markt und Boutiquen', note:'Kunsthandwerk, Schmuck, Leder, Weine und Kleidung entlang des Hafenbeckens, dazwischen Designerl\u00e4den'},
+        {t:'stop',  min:90,  label:'Mittagessen an der Marina', note:'Reihe von Restaurants direkt am Wasser mit Blick auf die Yachten'},
+        {t:'stop',  min:60,  label:'Paseo Mar\u00edtimo Richtung Ortskern', note:'Breite Uferpromenade, gem\u00fctliche 20 bis 40 Minuten \u2014 unterwegs immer wieder B\u00e4nke mit Blick auf Fuerteventura'},
+        {t:'stop',  min:90,  label:'Playa Blanca: Ortszentrum', note:'Gesch\u00e4fte, Cafeter\u00edas und der alte Ortskern rund um die Kirche'},
+        {t:'stop',  min:45,  label:'Kaffee und Pause am Wasser'},
+        {t:'drive', min:15,  label:'Zur\u00fcck zum F\u00e4hrhafen'},
+        {t:'ferry', min:30,  label:'F\u00e4hre zur\u00fcck nach Corralejo', note:'Letzte Verbindungen am fr\u00fchen Abend \u2014 R\u00fcckfahrtzeit vorher pr\u00fcfen'},
+        {t:'drive', min:10,  label:'Zur\u00fcck in die Unterkunft'}
       ]
     },
     {
@@ -5329,6 +5425,11 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
       }, delay);
     }
   }
+
+  pruneStaleSelections();
+  applySelState();
+  renderSelectionSummary();
+  renderKosten();
 
   renderSunTable();
   updateNotifUi();
