@@ -6,3 +6,5 @@
 !sw.js
 !images/
 !images/**
+!vendor/
+!vendor/**
