@@ -228,6 +228,54 @@ details[open] summary::before { content: "− "; }
 .legend span { display: inline-flex; align-items: center; gap: 5px; }
 .legend .dot { width: 9px; height: 9px; border-radius: 3px; display: inline-block; }
 
+/* ---- Ausflugskarten: Zusatzinfos ---- */
+.ex-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 2px 0 4px; }
+.ex-chip { font-size: 11.5px; font-family: "JetBrains Mono", monospace; background: var(--muted-bg); border: 1px solid var(--border); color: var(--ink-dim); padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+.ex-tip { font-size: 13px !important; background: var(--surface-2); border-left: 3px solid var(--ochre); border-radius: 0 8px 8px 0; padding: 9px 12px; margin-top: 8px !important; line-height: 1.5; }
+.ex-tip strong { color: var(--ochre); }
+.ex-card.is-favorited { outline: 2px solid var(--ochre); outline-offset: -1px; }
+.ex-card.is-hidden { opacity: 0.42; filter: grayscale(0.7); }
+.ex-card.is-hidden:hover { opacity: 0.75; filter: grayscale(0.2); }
+
+/* ---- Tagestrips ---- */
+.trip-intro { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px 22px; box-shadow: var(--shadow); margin-top: 16px; }
+.trip-controls { display: flex; gap: 18px; flex-wrap: wrap; align-items: flex-end; margin-top: 16px; }
+.trip-field { display: flex; flex-direction: column; gap: 5px; }
+.trip-field label { font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-dim); font-weight: 700; }
+.trip-field input[type=time], .trip-field select { padding: 8px 11px; border-radius: 9px; border: 1px solid var(--border); background: var(--surface-2); color: var(--ink); font-family: "JetBrains Mono", monospace; font-size: 14px; }
+.trip-field input[type=time]:focus, .trip-field select:focus { outline: 2px solid var(--teal); outline-offset: -1px; }
+.trip-sunhint { font-size: 12.5px; color: var(--ink-dim); margin: 12px 0 0; }
+.trip-sunhint b { color: var(--ochre); font-family: "JetBrains Mono", monospace; }
+
+.trip-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 20px; margin-top: 20px; }
+.trip-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow); display: flex; flex-direction: column; }
+.trip-card.is-favorited { outline: 2px solid var(--ochre); outline-offset: -1px; }
+.trip-card.is-hidden { opacity: 0.42; filter: grayscale(0.7); }
+.trip-media { position: relative; aspect-ratio: 16/9; background: var(--surface-2); }
+.trip-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.trip-media::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10,20,24,0) 45%, rgba(10,20,24,0.78) 100%); }
+.trip-titlebox { position: absolute; left: 16px; right: 16px; bottom: 12px; z-index: 1; }
+.trip-titlebox h3 { color: #fff; font-size: 1.14rem; line-height: 1.25; text-shadow: 0 1px 8px rgba(0,0,0,0.5); }
+.trip-zone { display: inline-block; background: rgba(255,255,255,0.18); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); color: #fff; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.07em; font-weight: 700; padding: 2px 9px; border-radius: 999px; margin-bottom: 6px; }
+.trip-body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 9px; flex: 1; }
+.trip-body > p { margin: 0; font-size: 13.5px; color: var(--ink-dim); line-height: 1.55; }
+.trip-verdict { display: flex; align-items: center; gap: 9px; border-radius: 10px; padding: 10px 13px; font-size: 13px; font-weight: 600; line-height: 1.45; }
+.trip-verdict.fits { background: var(--good-bg); color: var(--good); }
+.trip-verdict.tight { background: var(--warn-bg); color: var(--warn); }
+.trip-verdict.late { background: var(--bad-bg); color: var(--bad); }
+.trip-verdict .tv-time { font-family: "JetBrains Mono", monospace; font-size: 1.05rem; font-weight: 700; }
+.trip-plan { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--border); }
+.trip-plan li { display: flex; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13.5px; align-items: baseline; }
+.trip-plan li:last-child { border-bottom: none; }
+.trip-plan .tp-time { font-family: "JetBrains Mono", monospace; font-weight: 700; color: var(--teal); flex-shrink: 0; min-width: 52px; }
+.trip-plan .tp-what { flex: 1; color: var(--ink); }
+.trip-plan .tp-what small { display: block; color: var(--ink-dim); font-size: 12px; margin-top: 1px; }
+.trip-plan li.is-drive .tp-what { color: var(--ink-dim); font-style: italic; }
+.trip-plan li.is-dark { background: var(--bad-bg); border-radius: 6px; padding-left: 8px; padding-right: 8px; }
+.trip-foot { display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; padding-top: 4px; }
+.trip-stats { display: flex; gap: 12px; flex-wrap: wrap; font-size: 12px; font-family: "JetBrains Mono", monospace; color: var(--ink-dim); }
+.trip-stats b { color: var(--ink); }
+
 /* ---- Wetter-Sneak-Peek auf der Startseite ---- */
 .sneak-weather { --sneak-img: url("images/strand-tuerkis.webp"); margin-top: 18px; border-radius: 16px; overflow: hidden; border: 1px solid var(--border); box-shadow: var(--shadow); background: var(--surface); position: relative; }
 .sneak-weather::before { content: ""; position: absolute; inset: 0; background-image: var(--sneak-img, none); background-size: cover; background-position: center 62%; opacity: 0.9; }
@@ -432,7 +480,8 @@ table.price-table tfoot td.num { color: var(--teal); }
 .ex-card h3 { font-size: 1.03rem; }
 .ex-card p { margin: 0; font-size: 13.5px; color: var(--ink-dim); }
 .ex-meta { font-size: 12.5px; color: var(--ochre); font-weight: 600; margin-top: auto; padding-top: 6px; }
-.ex-link { margin-top: 8px; align-self: flex-start; }
+.ex-link { margin-top: auto; align-self: flex-start; }
+.ex-meta { margin-top: 8px !important; padding-top: 0 !important; }
 
 .rest-items { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; }
 .rc-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; box-shadow: var(--shadow); display: flex; flex-direction: column; }
@@ -1579,7 +1628,7 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
       <div class="remind-box">
         <div class="remind-card">
           <h3>1. Kalender-Eintr&#228;ge &#9989;</h3>
-          <p>Erzeugt eine Kalenderdatei mit allen 13 Sonnenunterg&#228;ngen unseres Urlaubs. Beim Antippen fragt das iPhone, in welchen Kalender es sie legen soll &#8211; danach erinnert es dich ganz normal, auch offline und auch wenn diese Seite geschlossen ist. <strong>Das ist der einzige Weg, der garantiert funktioniert.</strong></p>
+          <p>Erzeugt eine Kalenderdatei mit allen 14 Sonnenunterg&#228;ngen unseres Urlaubs (29.09. bis 12.10.). Beim Antippen fragt das iPhone, in welchen Kalender es sie legen soll &#8211; danach erinnert es dich ganz normal, auch offline und auch wenn diese Seite geschlossen ist. <strong>Das ist der einzige Weg, der garantiert funktioniert.</strong></p>
           <button class="btn" type="button" id="btn-ics">Kalenderdatei erzeugen</button>
           <div class="remind-status ok" id="ics-status" hidden></div>
         </div>
@@ -1735,19 +1784,23 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
   <div class="page-header wrap">
     <div class="eyebrow">Vor Ort</div>
     <h1>Ausflüge &amp; Highlights</h1>
-    <p class="sub">Top 20 der ganzen Insel — von Isla de Lobos bis hinunter nach Cofete und Jandía. Märkte, Events &amp; Insider-Tipps stehen jetzt auf der <a href="#kalender">Kalender-Seite</a>.</p>
+    <p class="sub">Zwanzig einzelne Ziele quer über die Insel, jeweils mit Fahrzeit ab Corralejo, realistischem Zeitaufwand, Kosten und einem Tipp aus der Recherche. Darunter sieben <a href="#tagestrips">fertige Tagestrips</a>, bei denen du die Abfahrtszeit einstellst und die Seite den ganzen Tag durchrechnet. Märkte, Events &amp; Insider-Tipps stehen auf der <a href="#kalender">Kalender-Seite</a>.</p>
   </div>
   <div class="wrap">
     <div class="sort-filter-bar">
       <label class="sf-label">Sortieren
         <select id="ex-sort-select">
           <option value="rank">Empfehlung (Standard)</option>
-          <option value="az">A–Z</option>
+          <option value="drive-asc">Fahrzeit: nah &#8594; weit</option>
+          <option value="stay-asc">Zeitaufwand: kurz &#8594; lang</option>
+          <option value="stay-desc">Zeitaufwand: lang &#8594; kurz</option>
+          <option value="cost-asc">Kosten: g&#252;nstig &#8594; teuer</option>
+          <option value="az">A&#8211;Z</option>
         </select>
       </label>
     </div>
     <div class="excursion-grid" id="excursion-grid">
-      <article class="ex-card" data-id="isla-de-lobos" data-rank="1" data-title="Isla de Lobos">
+      <article class="ex-card" data-id="isla-de-lobos" data-rank="1" data-title="Isla de Lobos" data-drive="20" data-stay="240" data-cost="17" data-cat="natur strand aktiv">
   <div class="ex-media">
     <img src="images/isla-de-lobos.webp" alt="Isla de Lobos" loading="lazy">
     <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
@@ -1755,12 +1808,15 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
   </div>
   <div class="ex-body">
     <h3>Isla de Lobos</h3>
+    
+    <div class="ex-chips"><span class="ex-chip">&#128663; 15 Min. Fähre</span><span class="ex-chip">&#9201;&#65039; 3–4 Std.</span><span class="ex-chip">&#128181; ab 17 €</span></div>
     <p>Naturschutzinsel direkt vor Corralejo. Fähre ab dem Hafen (ca. 15–20 Min. Überfahrt), dann zu Fuß zum Leuchtturm „El Faro Martiño“ und zur türkisen Playa de la Concha.</p>
-    <p class="ex-meta">ca. 17–79 € p.P. je nach Anbieter · Insel-Genehmigung vorher online beantragen</p>
+    <p class="ex-tip"><strong>Tipp:</strong> Die Genehmigung ist kostenlos, aber Pflicht und streng limitiert: 400 Menschen pro Tag, aufgeteilt in zwei Schichten à 200. In der Hochsaison sind beliebte Tage Wochen im Voraus vergeben — also früh sichern. Auf der Insel gibt es genau ein Restaurant und keinen Laden: Wasser und Sonnenschutz mitnehmen. Wer den Leuchtturm mitnehmen will, sollte die volle Vier-Stunden-Schicht buchen, drei Stunden werden knapp.</p>
+    <p class="ex-meta">&#128197; Genehmigung ist Pflicht &#8211; nur 400 Pl&#228;tze pro Tag</p>
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.7469,-13.8237" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
-<article class="ex-card" data-id="grandes-playas-d-nen-von-corralejo" data-rank="2" data-title="Grandes Playas &amp; Dünen von Corralejo">
+<article class="ex-card" data-id="grandes-playas-d-nen-von-corralejo" data-rank="2" data-title="Grandes Playas &amp; Dünen von Corralejo" data-drive="8" data-stay="180" data-cost="0" data-cat="strand natur">
   <div class="ex-media">
     <img src="images/grandes-playas-amp-d-nen-von-corralejo.webp" alt="Grandes Playas &amp;amp; Dünen von Corralejo" loading="lazy">
     <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
@@ -1768,12 +1824,14 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
   </div>
   <div class="ex-body">
     <h3>Grandes Playas &amp; Dünen von Corralejo</h3>
+    
+    <div class="ex-chips"><span class="ex-chip">&#128663; 8 Min.</span><span class="ex-chip">&#9201;&#65039; beliebig</span><span class="ex-chip">&#128181; kostenlos</span></div>
     <p>3,5 km feiner weißer Sand direkt vor der Haustür, Naturpark mit den höchsten Dünen der Kanaren. Perfekt für einen Spaziergang zum Sonnenuntergang.</p>
-    <p class="ex-meta">kostenlos · von den meisten Unterkünften fußläufig</p>
+    <p class="ex-tip"><strong>Tipp:</strong> Je weiter südlich man parkt, desto leerer wird es. Der Wind kommt fast immer von Nordost — hinter den Dünenkämmen auf der Südwestseite liegt man windgeschützt. Am Nachmittag frischt es meist auf; ein Windschutz oder eine Strandmuschel macht hier den Unterschied zwischen zwei und fünf Stunden Aufenthalt.</p>
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.728,-13.858" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
-<article class="ex-card" data-id="lajares-kunsthandwerkermarkt" data-rank="3" data-title="Lajares Kunsthandwerkermarkt">
+<article class="ex-card" data-id="lajares-kunsthandwerkermarkt" data-rank="3" data-title="Lajares Kunsthandwerkermarkt" data-drive="15" data-stay="120" data-cost="0" data-cat="dorf kultur">
   <div class="ex-media">
     <img src="images/lajares-kunsthandwerkermarkt.webp" alt="Lajares Kunsthandwerkermarkt" loading="lazy">
     <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
@@ -1781,12 +1839,15 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
   </div>
   <div class="ex-body">
     <h3>Lajares Kunsthandwerkermarkt</h3>
+    
+    <div class="ex-chips"><span class="ex-chip">&#128663; 15 Min.</span><span class="ex-chip">&#9201;&#65039; 1–2 Std.</span><span class="ex-chip">&#128181; kostenlos</span></div>
     <p>Jeden Samstagvormittag verwandelt sich der beschauliche Dorfplatz von Lajares in einen bunten Markt: Kunsthandwerk, Schmuck, lokale Produkte.</p>
-    <p class="ex-meta">samstags ca. 10:00–14:00/15:00 Uhr</p>
+    <p class="ex-tip"><strong>Tipp:</strong> Nur samstags — und wirklich nur vormittags, gegen 14 Uhr ist Schluss. Lajares selbst lohnt auch ohne Markt: der Ort ist die Surfer- und Aussteigerecke der Insel, mit den besten Cafés im Norden. Danach passt ein Abstecher zum Vulkan Calderón Hondo, der Wanderweg startet gleich am Ortsrand.</p>
+    <p class="ex-meta">&#128197; Nur samstags &#183; ca. 10:00&#8211;14:00/15:00 Uhr</p>
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.7286,-13.9207" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
-<article class="ex-card" data-id="markt-am-aqua-water-park-corralejo" data-rank="4" data-title="Markt am Aqua Water Park (Corralejo)">
+<article class="ex-card" data-id="markt-am-aqua-water-park-corralejo" data-rank="4" data-title="Markt am Aqua Water Park (Corralejo)" data-drive="8" data-stay="60" data-cost="0" data-cat="dorf">
   <div class="ex-media">
     <img src="images/markt-am-aqua-water-park-corralejo.webp" alt="Markt am Aqua Water Park (Corralejo)" loading="lazy">
     <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
@@ -1794,12 +1855,15 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
   </div>
   <div class="ex-body">
     <h3>Markt am Aqua Water Park (Corralejo)</h3>
+    
+    <div class="ex-chips"><span class="ex-chip">&#128663; 8 Min.</span><span class="ex-chip">&#9201;&#65039; ca. 1 Std.</span><span class="ex-chip">&#128181; kostenlos</span></div>
     <p>Der touristische Markt beim Wasserpark mit Souvenirs, Accessoires und Kunsthandwerk.</p>
-    <p class="ex-meta">dienstags &amp; freitags ca. 9:00–14:00 Uhr</p>
+    <p class="ex-tip"><strong>Tipp:</strong> Ehrlich gesagt der schwächste der Inselmärkte: viel Souvenirware, wenig Handgemachtes. Wenn die Wahl besteht, lieber den Samstagsmarkt in Lajares oder den Sonntagsmarkt in Corralejo nehmen. Für einen halben Stündchen Bummeln zwischen zwei Strandabschnitten reicht er aber.</p>
+    <p class="ex-meta">&#128197; Dienstags &amp; freitags &#183; ca. 9:00&#8211;14:00 Uhr</p>
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.728,-13.859" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
-<article class="ex-card" data-id="el-cotillo-lagunen-sonnenuntergang" data-rank="5" data-title="El Cotillo – Lagunen &amp; Sonnenuntergang">
+<article class="ex-card" data-id="el-cotillo-lagunen-sonnenuntergang" data-rank="5" data-title="El Cotillo – Lagunen &amp; Sonnenuntergang" data-drive="25" data-stay="240" data-cost="0" data-cat="strand aussicht dorf">
   <div class="ex-media">
     <img src="images/el-cotillo-lagunen-amp-sonnenuntergang.webp" alt="El Cotillo – Lagunen &amp;amp; Sonnenuntergang" loading="lazy">
     <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
@@ -1807,12 +1871,14 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
   </div>
   <div class="ex-body">
     <h3>El Cotillo – Lagunen &amp; Sonnenuntergang</h3>
+    
+    <div class="ex-chips"><span class="ex-chip">&#128663; 25 Min.</span><span class="ex-chip">&#9201;&#65039; 3–4 Std.</span><span class="ex-chip">&#128181; kostenlos</span></div>
     <p>Türkise, ruhige Lagunen (Lagunas de El Cotillo) zum entspannten Baden – ideal bei Wind. Am Leuchtturm Faro de El Tostón einer der schönsten Sonnenuntergänge der Insel.</p>
-    <p class="ex-meta">kostenlos · ca. 30–40 Min. von Corralejo</p>
+    <p class="ex-tip"><strong>Tipp:</strong> Die perfekte Kombination für einen halben Tag: nachmittags in den flachen, türkisen Lagunen nördlich des Orts baden — die sind windgeschützt und ruhig, anders als fast alle anderen Strände der Insel. Zum Sonnenuntergang zum Faro de El Tostón hochfahren, danach im Ort essen. Die Fischrestaurants am alten Hafen sind abends voll, also vorher reservieren.</p>
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.7089,-14.0138" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
-<article class="ex-card" data-id="betancuria" data-rank="6" data-title="Betancuria">
+<article class="ex-card" data-id="betancuria" data-rank="6" data-title="Betancuria" data-drive="60" data-stay="150" data-cost="0" data-cat="kultur dorf aussicht">
   <div class="ex-media">
     <img src="images/betancuria.webp" alt="Betancuria" loading="lazy">
     <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
@@ -1820,12 +1886,14 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
   </div>
   <div class="ex-body">
     <h3>Betancuria</h3>
+    
+    <div class="ex-chips"><span class="ex-chip">&#128663; 60 Min.</span><span class="ex-chip">&#9201;&#65039; 2–3 Std.</span><span class="ex-chip">&#128181; kostenlos</span></div>
     <p>Ehemalige Inselhauptstadt im grünen Inselinneren: historisches Kloster, enge Gassen, gute Mittagsrestaurants.</p>
-    <p class="ex-meta">ca. 1 Std. Fahrzeit ab Corralejo</p>
+    <p class="ex-tip"><strong>Tipp:</strong> Die Anfahrt ist der halbe Ausflug: Die Straße FV-30 windet sich durch das grünste Stück der Insel. Unbedingt am Mirador Morro Velosa halten (kurz vor Betancuria) — von dort sieht man bei klarer Sicht über das halbe Inselinnere. Der Ort selbst ist in einer Stunde erlaufen; die Kirche Santa María ist der einzige Punkt, für den sich Eintritt lohnt.</p>
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.4254,-14.0556" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
-<article class="ex-card" data-id="ajuy-schwarzer-strand-h-hlen" data-rank="7" data-title="Ajuy – Schwarzer Strand &amp; Höhlen">
+<article class="ex-card" data-id="ajuy-schwarzer-strand-h-hlen" data-rank="7" data-title="Ajuy – Schwarzer Strand &amp; Höhlen" data-drive="70" data-stay="120" data-cost="0" data-cat="natur strand">
   <div class="ex-media">
     <img src="images/ajuy-schwarzer-strand-amp-h-hlen.webp" alt="Ajuy – Schwarzer Strand &amp;amp; Höhlen" loading="lazy">
     <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
@@ -1833,12 +1901,14 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
   </div>
   <div class="ex-body">
     <h3>Ajuy – Schwarzer Strand &amp; Höhlen</h3>
+    
+    <div class="ex-chips"><span class="ex-chip">&#128663; 70 Min.</span><span class="ex-chip">&#9201;&#65039; ca. 2 Std.</span><span class="ex-chip">&#128181; kostenlos</span></div>
     <p>Vulkanischer Sandstrand mit Meereshöhlen (Cuevas de Ajuy), über einen kurzen Küstenweg erreichbar. Eindrucksvoller Kontrast aus schwarzem Sand und türkisem Wasser.</p>
-    <p class="ex-meta">kostenlos · ca. 1 Std. 15 Min. ab Corralejo</p>
+    <p class="ex-tip"><strong>Tipp:</strong> Der schwarze Lavastrand ist zum Anschauen da, nicht zum Baden — die Strömung ist gefährlich. Das eigentliche Ziel sind die Höhlen: ein gut ausgebauter Weg führt in etwa 20 Minuten die Steilküste hoch und wieder hinunter zu den ausgewaschenen Kalksteinhöhlen. Feste Schuhe, kein Flip-Flop-Gelände. Die Gesteinsschichten hier sind über 100 Millionen Jahre alt und damit das älteste sichtbare Gestein der Kanaren.</p>
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.3958,-14.1975" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
-<article class="ex-card" data-id="tindaya" data-rank="8" data-title="Tindaya">
+<article class="ex-card" data-id="tindaya" data-rank="8" data-title="Tindaya" data-drive="20" data-stay="90" data-cost="0" data-cat="natur aussicht kultur">
   <div class="ex-media">
     <img src="images/tindaya.webp" alt="Tindaya" loading="lazy">
     <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
@@ -1846,12 +1916,14 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
   </div>
   <div class="ex-body">
     <h3>Tindaya</h3>
+    
+    <div class="ex-chips"><span class="ex-chip">&#128663; 20 Min.</span><span class="ex-chip">&#9201;&#65039; 1–2 Std.</span><span class="ex-chip">&#128181; kostenlos</span></div>
     <p>Markanter, den Ureinwohnern (Guanchen) heiliger Tafelberg mit erhaltenen Felsritzungen und weitem Blick über die Insel.</p>
-    <p class="ex-meta">kostenlos · ca. 45 Min. ab Corralejo</p>
+    <p class="ex-tip"><strong>Tipp:</strong> Der Berg selbst ist heilige Stätte der Ureinwohner und gesperrt — die Podomorfos, in den Fels geritzte Fußabdrücke, sieht man nicht ohne Führung. Was sich lohnt: die Umrundung auf dem Feldweg und der Blick auf den markanten Bergkegel im Abendlicht. Beim Nachbardorf Tindaya gibt es außerdem eine der besten Ziegenkäsereien der Insel.</p>
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.5658,-13.9376" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
-<article class="ex-card" data-id="la-oliva-casa-de-los-coroneles" data-rank="9" data-title="La Oliva – Casa de los Coroneles">
+<article class="ex-card" data-id="la-oliva-casa-de-los-coroneles" data-rank="9" data-title="La Oliva – Casa de los Coroneles" data-drive="12" data-stay="75" data-cost="3" data-cat="kultur">
   <div class="ex-media">
     <img src="images/la-oliva-casa-de-los-coroneles.webp" alt="La Oliva – Casa de los Coroneles" loading="lazy">
     <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
@@ -1859,12 +1931,15 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
   </div>
   <div class="ex-body">
     <h3>La Oliva – Casa de los Coroneles</h3>
+    
+    <div class="ex-chips"><span class="ex-chip">&#128663; 12 Min.</span><span class="ex-chip">&#9201;&#65039; ca. 1 Std.</span><span class="ex-chip">&#128181; ca. 3 €</span></div>
     <p>Historisches Herrenhaus mit angeschlossenem Kunstzentrum (Centro de Arte Canario) – guter Zwischenstopp auf dem Weg ins Inselinnere.</p>
-    <p class="ex-meta">kleiner Eintritt · ca. 20 Min. ab Corralejo</p>
+    <p class="ex-tip"><strong>Tipp:</strong> Das herrschaftliche Haus der Militärgouverneure aus dem 18. Jahrhundert, heute Museum und Ausstellungsraum. Öffnungszeiten sind unzuverlässig und wechseln saisonal — vorher kurz auf Google Maps nachsehen, ob offen ist. Direkt nebenan liegt die Kirche La Candelaria; zusammen ergibt das einen kompakten Kulturstopp auf dem Weg nach El Cotillo.</p>
+    <p class="ex-meta">&#128197; &#214;ffnungszeiten wechseln saisonal &#8211; vorher auf Google Maps pr&#252;fen</p>
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.6108,-13.927" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
-<article class="ex-card" data-id="surfen-kitesurfen-in-lajares-el-cotillo" data-rank="10" data-title="Surfen &amp; Kitesurfen in Lajares/El Cotillo">
+<article class="ex-card" data-id="surfen-kitesurfen-in-lajares-el-cotillo" data-rank="10" data-title="Surfen &amp; Kitesurfen in Lajares/El Cotillo" data-drive="20" data-stay="240" data-cost="45" data-cat="aktiv">
   <div class="ex-media">
     <img src="images/surfen-amp-kitesurfen-in-lajares-el-cotillo.webp" alt="Surfen &amp;amp; Kitesurfen in Lajares/El Cotillo" loading="lazy">
     <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
@@ -1872,12 +1947,14 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
   </div>
   <div class="ex-body">
     <h3>Surfen &amp; Kitesurfen in Lajares/El Cotillo</h3>
+    
+    <div class="ex-chips"><span class="ex-chip">&#128663; 20 Min.</span><span class="ex-chip">&#9201;&#65039; 3–4 Std.</span><span class="ex-chip">&#128181; 35–60 €</span></div>
     <p>Die Nordküste zählt zu den besten Wassersport-Spots Europas. Zahlreiche Schulen bieten Schnupperkurse für Anfänger, auch ohne Vorerfahrung.</p>
-    <p class="ex-meta">Schnupperkurs ab ca. 40–60 € p.P.</p>
+    <p class="ex-tip"><strong>Tipp:</strong> Oktober ist eine gute Zeit: Der Sommerwind lässt nach, die ersten Herbstswells kommen an. Für Anfänger sind die Schulen in Lajares und El Cotillo die richtige Adresse, für Fortgeschrittene die Spots an der Nordküste. Kiten geht besser am Flag Beach direkt bei Corralejo. Kurse besser einen Tag vorher buchen als spontan.</p>
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.6825,-14.0086" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
-<article class="ex-card" data-id="faro-de-jand-a-playas-de-sotavento" data-rank="11" data-title="Faro de Jandía &amp; Playas de Sotavento">
+<article class="ex-card" data-id="faro-de-jand-a-playas-de-sotavento" data-rank="11" data-title="Faro de Jandía &amp; Playas de Sotavento" data-drive="110" data-stay="180" data-cost="0" data-cat="strand aussicht natur">
   <div class="ex-media">
     <img src="images/faro-de-jand-a-amp-playas-de-sotavento.webp" alt="Faro de Jandía &amp;amp; Playas de Sotavento" loading="lazy">
     <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
@@ -1885,12 +1962,14 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
   </div>
   <div class="ex-body">
     <h3>Faro de Jandía &amp; Playas de Sotavento</h3>
+    
+    <div class="ex-chips"><span class="ex-chip">&#128663; 110 Min.</span><span class="ex-chip">&#9201;&#65039; ca. 3 Std.</span><span class="ex-chip">&#128181; kostenlos</span></div>
     <p>60 m hoher Leuchtturm am südlichsten Punkt der Insel, direkt daneben die kilometerlangen türkisen Sotavento-Strände – einer der besten Kitespots weltweit.</p>
-    <p class="ex-meta">kostenlos · ca. 1 Std. 45 Min. ab Corralejo</p>
+    <p class="ex-tip"><strong>Tipp:</strong> Knapp zwei Stunden eine Strecke — das ist kein Nachmittagsausflug, sondern ein ganzer Tag. Die Autobahn FV-2 macht die Fahrt aber angenehm. Wer schon so weit fährt, sollte Morro Jable und Cofete gleich mitnehmen. Am Leuchtturm selbst ist außer Aussicht und Wind wenig los.</p>
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.0546,-14.3287" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
-<article class="ex-card" data-id="cofete-villa-winter" data-rank="12" data-title="Cofete &amp; Villa Winter">
+<article class="ex-card" data-id="cofete-villa-winter" data-rank="12" data-title="Cofete &amp; Villa Winter" data-drive="130" data-stay="210" data-cost="5" data-cat="natur aussicht kultur">
   <div class="ex-media">
     <img src="images/cofete-amp-villa-winter.webp" alt="Cofete &amp;amp; Villa Winter" loading="lazy">
     <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
@@ -1898,12 +1977,14 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
   </div>
   <div class="ex-body">
     <h3>Cofete &amp; Villa Winter</h3>
+    
+    <div class="ex-chips"><span class="ex-chip">&#128663; 130 Min.</span><span class="ex-chip">&#9201;&#65039; 3–4 Std.</span><span class="ex-chip">&#128181; Villa ca. 5 €</span></div>
     <p>Wildester, einsamster Strand der Insel im Naturpark Jandía, dahinter die sagenumwobene Villa Winter. Nur über Bergpiste erreichbar, am besten per Allrad-/Jeeptour.</p>
-    <p class="ex-meta">kostenlos · ca. 2 Std. ab Corralejo, Allradfahrzeug empfohlen</p>
+    <p class="ex-tip"><strong>Tipp:</strong> Der spektakulärste Ort der Insel — und der aufwendigste. Ab Morro Jable führen rund 20 km Schotterpiste über den Pass, dafür allein je Richtung 45 bis 60 Minuten einplanen. <strong>Wichtig für uns:</strong> Nach kanarischer Verordnung darf man die Piste mit jedem Fahrzeug befahren, die meisten Mietwagenfirmen schließen Schotterpisten aber in ihren Bedingungen aus — bei einem Schaden zahlt dann niemand. Vor der Fahrt in den Mietvertrag schauen. Kein Netz, keine Tankstelle, kein Laden: vollgetankt losfahren, Wasser mitnehmen.</p>
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.073,-14.4106" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
-<article class="ex-card" data-id="la-pared" data-rank="13" data-title="La Pared">
+<article class="ex-card" data-id="la-pared" data-rank="13" data-title="La Pared" data-drive="80" data-stay="120" data-cost="0" data-cat="strand aussicht">
   <div class="ex-media">
     <img src="images/la-pared.webp" alt="La Pared" loading="lazy">
     <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
@@ -1911,12 +1992,14 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
   </div>
   <div class="ex-body">
     <h3>La Pared</h3>
+    
+    <div class="ex-chips"><span class="ex-chip">&#128663; 80 Min.</span><span class="ex-chip">&#9201;&#65039; ca. 2 Std.</span><span class="ex-chip">&#128181; kostenlos</span></div>
     <p>Kleiner Ort an der schmalsten Stelle der Insel mit spektakulärer Steilküste und Surfspot.</p>
-    <p class="ex-meta">kostenlos · ca. 1 Std. 20 Min. ab Corralejo</p>
+    <p class="ex-tip"><strong>Tipp:</strong> Die schmalste Stelle der Insel, wo die Ureinwohner einst eine Mauer als Grenze zwischen zwei Königreichen zogen. Die Steilküste bei Sonnenuntergang ist grandios, der Strand allerdings mit kräftiger Brandung und Strömung — schön zum Schauen, riskant zum Schwimmen. Gute Kombination mit Pájara und Ajuy an einem Tag.</p>
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.254,-14.22" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
-<article class="ex-card" data-id="caleta-de-fuste-hafenpromenade" data-rank="14" data-title="Caleta de Fuste – Hafenpromenade">
+<article class="ex-card" data-id="caleta-de-fuste-hafenpromenade" data-rank="14" data-title="Caleta de Fuste – Hafenpromenade" data-drive="50" data-stay="120" data-cost="0" data-cat="dorf strand">
   <div class="ex-media">
     <img src="images/caleta-de-fuste-hafenpromenade.webp" alt="Caleta de Fuste – Hafenpromenade" loading="lazy">
     <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
@@ -1924,12 +2007,14 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
   </div>
   <div class="ex-body">
     <h3>Caleta de Fuste – Hafenpromenade</h3>
+    
+    <div class="ex-chips"><span class="ex-chip">&#128663; 50 Min.</span><span class="ex-chip">&#9201;&#65039; ca. 2 Std.</span><span class="ex-chip">&#128181; kostenlos</span></div>
     <p>Familienfreundlicher Ferienort mit ruhiger Bucht, Yachthafen und dichter Restaurantauswahl direkt am Wasser.</p>
-    <p class="ex-meta">kostenlos · ca. 45 Min. ab Corralejo</p>
+    <p class="ex-tip"><strong>Tipp:</strong> Ein durchgeplanter Ferienort ohne viel eigenen Charakter, aber mit dem ruhigsten Badewasser der Ostküste: Die künstliche Bucht ist praktisch wellenfrei. Praktisch als Stopp auf dem Rückweg vom Süden oder als Schlechtwetter-Alternative, wenn es im Norden zu windig ist.</p>
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.3986,-13.8623" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
-<article class="ex-card" data-id="antigua-windm-hlenmuseum" data-rank="15" data-title="Antigua – Windmühlenmuseum">
+<article class="ex-card" data-id="antigua-windm-hlenmuseum" data-rank="15" data-title="Antigua – Windmühlenmuseum" data-drive="50" data-stay="90" data-cost="3" data-cat="kultur">
   <div class="ex-media">
     <img src="images/antigua-windm-hlenmuseum.webp" alt="Antigua – Windmühlenmuseum" loading="lazy">
     <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
@@ -1937,12 +2022,15 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
   </div>
   <div class="ex-body">
     <h3>Antigua – Windmühlenmuseum</h3>
+    
+    <div class="ex-chips"><span class="ex-chip">&#128663; 50 Min.</span><span class="ex-chip">&#9201;&#65039; 1–2 Std.</span><span class="ex-chip">&#128181; ca. 3 €</span></div>
     <p>Centro de Interpretación de los Molinos: historische Windmühlen und Gofio-Handwerk im grünen Inselinneren.</p>
-    <p class="ex-meta">kleiner Eintritt · ca. 45 Min. ab Corralejo</p>
+    <p class="ex-tip"><strong>Tipp:</strong> Das Molino de Antigua ist eine restaurierte Gofio-Mühle mit Museum, Kaktusgarten und Kunsthandwerksladen — kompakt, gepflegt und in einer guten Stunde durch. Gofio, das geröstete Getreidemehl, ist bis heute Grundnahrungsmittel auf den Kanaren; hier versteht man, wie es hergestellt wurde. Montags meist geschlossen.</p>
+    <p class="ex-meta">&#128197; Montags meist geschlossen</p>
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.4322,-13.993" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
-<article class="ex-card" data-id="p-jara-kirche-dorfplatz" data-rank="16" data-title="Pájara – Kirche &amp; Dorfplatz">
+<article class="ex-card" data-id="p-jara-kirche-dorfplatz" data-rank="16" data-title="Pájara – Kirche &amp; Dorfplatz" data-drive="60" data-stay="60" data-cost="0" data-cat="kultur dorf">
   <div class="ex-media">
     <img src="images/p-jara-kirche-amp-dorfplatz.webp" alt="Pájara – Kirche &amp;amp; Dorfplatz" loading="lazy">
     <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
@@ -1950,12 +2038,14 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
   </div>
   <div class="ex-body">
     <h3>Pájara – Kirche &amp; Dorfplatz</h3>
+    
+    <div class="ex-chips"><span class="ex-chip">&#128663; 60 Min.</span><span class="ex-chip">&#9201;&#65039; ca. 1 Std.</span><span class="ex-chip">&#128181; kostenlos</span></div>
     <p>Pittoreskes Bergdorf mit der Kirche Nuestra Señora de Regla (aztekisch anmutende Steinmetzarbeiten) und lauschigem Platz.</p>
-    <p class="ex-meta">kostenlos · ca. 1 Std. 20 Min. ab Corralejo</p>
+    <p class="ex-tip"><strong>Tipp:</strong> Klein, aber ein echtes Kleinod: Das Barockportal der Kirche Nuestra Señora de Regla zeigt aztekisch anmutende Ornamente — Schlangen, Sonnen, Vögel — wie man sie sonst nirgends auf den Kanaren findet. Woher die Motive stammen, ist bis heute ungeklärt. Der Dorfplatz mit den Lorbeerbäumen ist einer der wenigen schattigen Plätze der Insel.</p>
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.3572,-14.0765" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
-<article class="ex-card" data-id="puerto-del-rosario-skulpturenroute-hafen" data-rank="17" data-title="Puerto del Rosario – Skulpturenroute &amp; Hafen">
+<article class="ex-card" data-id="puerto-del-rosario-skulpturenroute-hafen" data-rank="17" data-title="Puerto del Rosario – Skulpturenroute &amp; Hafen" data-drive="35" data-stay="120" data-cost="0" data-cat="kultur dorf">
   <div class="ex-media">
     <img src="images/puerto-del-rosario-skulpturenroute-amp-hafen.webp" alt="Puerto del Rosario – Skulpturenroute &amp;amp; Hafen" loading="lazy">
     <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
@@ -1963,12 +2053,14 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
   </div>
   <div class="ex-body">
     <h3>Puerto del Rosario – Skulpturenroute &amp; Hafen</h3>
+    
+    <div class="ex-chips"><span class="ex-chip">&#128663; 35 Min.</span><span class="ex-chip">&#9201;&#65039; ca. 2 Std.</span><span class="ex-chip">&#128181; kostenlos</span></div>
     <p>Die Inselhauptstadt überrascht mit über 100 Freiluft-Skulpturen im Zentrum und einer lebendigen Uferpromenade.</p>
-    <p class="ex-meta">kostenlos · ca. 30 Min. ab Corralejo</p>
+    <p class="ex-tip"><strong>Tipp:</strong> Die Inselhauptstadt wird von Urlaubern gern übersehen. Über hundert Skulpturen stehen frei im Stadtraum verteilt, dazu das Geburtshaus des Dichters Unamuno. Ein guter Regentag-Ausflug. <strong>Achtung für unseren Zeitraum:</strong> Vom 25.09. bis 07.10. laufen hier die Fiestas del Rosario — Umzüge, Konzerte, Straßenfest, aber auch Sperrungen und volle Parkplätze.</p>
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.5004,-13.8627" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
-<article class="ex-card" data-id="playas-de-sotavento-risco-del-paso" data-rank="18" data-title="Playas de Sotavento – Risco del Paso">
+<article class="ex-card" data-id="playas-de-sotavento-risco-del-paso" data-rank="18" data-title="Playas de Sotavento – Risco del Paso" data-drive="95" data-stay="180" data-cost="0" data-cat="strand aktiv natur">
   <div class="ex-media">
     <img src="images/playas-de-sotavento-risco-del-paso.webp" alt="Playas de Sotavento – Risco del Paso" loading="lazy">
     <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
@@ -1976,12 +2068,14 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
   </div>
   <div class="ex-body">
     <h3>Playas de Sotavento – Risco del Paso</h3>
+    
+    <div class="ex-chips"><span class="ex-chip">&#128663; 95 Min.</span><span class="ex-chip">&#9201;&#65039; ca. 3 Std.</span><span class="ex-chip">&#128181; kostenlos</span></div>
     <p>Türkise Lagune bei Ebbe, gilt als eine der schönsten Strandkulissen der Kanaren und beliebtes Fotomotiv.</p>
-    <p class="ex-meta">kostenlos · ca. 1 Std. 30 Min. ab Corralejo</p>
+    <p class="ex-tip"><strong>Tipp:</strong> Das Postkartenmotiv der Insel: Bei Niedrigwasser entsteht eine kilometerlange türkise Lagune vor weißem Sand. Der Zeitpunkt entscheidet alles — bei Hochwasser ist die Lagune einfach Meer. Vorher die <a href="#wetter">Gezeiten checken</a> und die Ankunft auf ablaufendes Wasser legen. Risco del Paso ist außerdem einer der berühmtesten Windsurf-Spots der Welt.</p>
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.118,-14.287" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
-<article class="ex-card" data-id="costa-calma-whale-watching" data-rank="19" data-title="Costa Calma – Whale-Watching">
+<article class="ex-card" data-id="costa-calma-whale-watching" data-rank="19" data-title="Costa Calma – Whale-Watching" data-drive="85" data-stay="240" data-cost="50" data-cat="aktiv natur">
   <div class="ex-media">
     <img src="images/costa-calma-whale-watching.webp" alt="Costa Calma – Whale-Watching" loading="lazy">
     <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
@@ -1989,12 +2083,14 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
   </div>
   <div class="ex-body">
     <h3>Costa Calma – Whale-Watching</h3>
+    
+    <div class="ex-chips"><span class="ex-chip">&#128663; 85 Min.</span><span class="ex-chip">&#9201;&#65039; ca. 4 Std.</span><span class="ex-chip">&#128181; 40–60 €</span></div>
     <p>Bootsausflug ab Costa Calma mit guten Chancen auf Delfine und (saisonal) Wale.</p>
-    <p class="ex-meta">ab ca. 35–45 € p.P. · ca. 1 Std. 30 Min. ab Corralejo</p>
+    <p class="ex-tip"><strong>Tipp:</strong> Im Atlantik vor Fuerteventura leben Grindwale, Delfine und mit Glück Pilotwale. Touren starten meist von Morro Jable, seltener von Costa Calma. Auf Anbieter achten, die sich an die Abstandsregeln halten — seriöse Veranstalter werben nicht mit „Schwimmen mit Delfinen“. Vormittags ist die See ruhiger als nachmittags.</p>
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.1567,-14.2233" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
-<article class="ex-card" data-id="faro-de-la-entallada" data-rank="20" data-title="Faro de la Entallada">
+<article class="ex-card" data-id="faro-de-la-entallada" data-rank="20" data-title="Faro de la Entallada" data-drive="70" data-stay="90" data-cost="0" data-cat="aussicht natur">
   <div class="ex-media">
     <img src="images/faro-de-la-entallada.webp" alt="Faro de la Entallada" loading="lazy">
     <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
@@ -2002,17 +2098,61 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
   </div>
   <div class="ex-body">
     <h3>Faro de la Entallada</h3>
+    
+    <div class="ex-chips"><span class="ex-chip">&#128663; 70 Min.</span><span class="ex-chip">&#9201;&#65039; 1–2 Std.</span><span class="ex-chip">&#128181; kostenlos</span></div>
     <p>Einsamer Leuchtturm auf dramatischer Steilküste bei Las Playitas – einer der spektakulärsten und am wenigsten besuchten Aussichtspunkte der Insel.</p>
-    <p class="ex-meta">kostenlos · ca. 1 Std. ab Corralejo</p>
+    <p class="ex-tip"><strong>Tipp:</strong> Der Punkt Afrikas nächstgelegene Stelle der Kanaren — bei sehr klarer Sicht ahnt man die marokkanische Küste am Horizont, gut 100 km entfernt. Die letzte Serpentinenstraße hoch zum Leuchtturm ist schmal und ohne Leitplanke, aber asphaltiert. Am schönsten am frühen Morgen, wenn die Sonne über dem Wasser aufgeht.</p>
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.2789,-13.935" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
     </div>
 
+    <section class="trip-section" id="tagestrips" style="margin-top:44px">
+      <h2 style="font-size:1.6rem">&#128663; Ganze Tagestrips</h2>
+      <p class="sub">Fertige Routen f&#252;r einen kompletten Tag &#8211; jeweils mehrere Ziele, die geografisch zusammenpassen, mit realistischen Fahrzeiten ab Corralejo. Stell unten ein, wann wir losfahren wollen: Die Seite rechnet den ganzen Tagesablauf durch und sagt dir, ob wir es vor Einbruch der Dunkelheit zur&#252;ck schaffen.</p>
+
+      <div class="trip-intro">
+        <div class="trip-controls">
+          <div class="trip-field">
+            <label for="trip-start">Abfahrt in Corralejo</label>
+            <input type="time" id="trip-start" value="12:00" step="900">
+          </div>
+          <div class="trip-field">
+            <label for="trip-limit">Sp&#228;testens zur&#252;ck</label>
+            <select id="trip-limit">
+              <option value="dark">bei Einbruch der Dunkelheit</option>
+              <option value="sunset">zum Sonnenuntergang</option>
+              <option value="2200">22:00 Uhr</option>
+              <option value="2300" selected>23:00 Uhr</option>
+              <option value="2400">Mitternacht</option>
+            </select>
+          </div>
+          <div class="trip-field">
+            <label for="trip-day">Reisetag</label>
+            <select id="trip-day"></select>
+          </div>
+        </div>
+        <p class="trip-sunhint" id="trip-sunhint"></p>
+      </div>
+
+      <div class="sort-filter-bar" style="margin-top:20px">
+        <label class="sf-label">Sortieren
+          <select id="trip-sort-select">
+            <option value="fit">Passt zur Startzeit</option>
+            <option value="short">Dauer: kurz &#8594; lang</option>
+            <option value="long">Dauer: lang &#8594; kurz</option>
+            <option value="drive">Fahrzeit: wenig &#8594; viel</option>
+            <option value="az">A&#8211;Z</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="trip-grid" id="trip-grid"></div>
+    </section>
+
   </div>
 </section>
 
-<!-- ============ LINKS & TIPPS ============ -->
 <!-- ============ KALENDER ============ -->
 <section class="page" id="page-kalender">
   <div class="page-header wrap">
@@ -3994,6 +4134,10 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     sortSelectId: 'ex-sort-select', defaultMode: 'rank',
     comparators: {
       rank: function(a,b){ return parseInt(a.dataset.rank,10) - parseInt(b.dataset.rank,10); },
+      'drive-asc': function(a,b){ return parseInt(a.dataset.drive,10) - parseInt(b.dataset.drive,10); },
+      'stay-asc': function(a,b){ return parseInt(a.dataset.stay,10) - parseInt(b.dataset.stay,10); },
+      'stay-desc': function(a,b){ return parseInt(b.dataset.stay,10) - parseInt(a.dataset.stay,10); },
+      'cost-asc': function(a,b){ return (parseInt(a.dataset.cost,10) - parseInt(b.dataset.cost,10)) || (parseInt(a.dataset.drive,10) - parseInt(b.dataset.drive,10)); },
       az: function(a,b){ return textCmp(a,b,'data-title'); }
     }
   });
@@ -4035,6 +4179,321 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     }
   }
   updateNavIndicators();
+
+  // ---- Tagestrips ----
+  // min = Minuten. 'drive' sind reine Fahrzeiten, 'stop' die Zeit vor Ort.
+  var TRIPS = [
+    {
+      id: 'trip-sueden',
+      title: 'Der große Süden: Jandía, Cofete & Villa Winter',
+      zone: 'Ganzer Tag · Süden',
+      img: 'images/cofete-amp-villa-winter.webp',
+      summary: 'Die spektakulärste Tour der Insel und mit Abstand die längste. Über die Autobahn bis Morro Jable, dann 20 km Schotterpiste über den Pass an die menschenleere Westküste. Wer Fuerteventura einmal von seiner wildesten Seite sehen will, muss hier hin — aber nur mit genug Zeit.',
+      warn: 'Vor der Fahrt in den Mietvertrag schauen: Die meisten Vermieter schließen Schotterpisten aus. Vollgetankt losfahren, Wasser mitnehmen, unterwegs gibt es weder Netz noch Tankstelle.',
+      stops: [
+        {t:'drive', min:110, label:'Corralejo → Morro Jable', note:'Autobahn FV-2, gut ausgebaut'},
+        {t:'stop',  min:50,  label:'Mittagessen in Morro Jable', note:'Letzte Gelegenheit für Essen, Tanken und Toilette'},
+        {t:'drive', min:55,  label:'Schotterpiste über den Pass', note:'20 km, Schritttempo, spektakuläre Aussicht am Mirador'},
+        {t:'stop',  min:75,  label:'Playa de Cofete', note:'14 km wilder Strand vor Bergkulisse — Baden lebensgefährlich, Strömung'},
+        {t:'stop',  min:45,  label:'Villa Winter', note:'Das rätselhafte Haus des deutschen Ingenieurs Gustav Winter, ca. 5 € Eintritt'},
+        {t:'drive', min:55,  label:'Zurück über die Piste'},
+        {t:'stop',  min:30,  label:'Faro de Jandía', note:'Kurzer Abstecher zum Leuchtturm an der Südspitze'},
+        {t:'drive', min:115, label:'Rückfahrt nach Corralejo'}
+      ]
+    },
+    {
+      id: 'trip-lobos',
+      title: 'Isla de Lobos: der Insel-Tag vor der Haustür',
+      zone: 'Halber bis ganzer Tag · Norden',
+      img: 'images/lobos-vom-strand.webp',
+      summary: 'Die kleine Naturschutzinsel liegt zum Greifen nah vor Corralejo — 15 Minuten mit der Fähre. Kein Auto, keine Straßen, keine Läden: nur Wanderwege, ein Leuchtturm und die türkise Playa de la Concha. Der entspannteste Ausflugstag überhaupt, weil man nicht fahren muss.',
+      warn: 'Die Genehmigung des Cabildo ist kostenlos, aber Pflicht und auf 400 Personen pro Tag begrenzt. Fähre und Genehmigung unbedingt vorher online sichern.',
+      stops: [
+        {t:'drive', min:10,  label:'Zum Hafen Corralejo', note:'Parken am Hafen, Ticket abholen'},
+        {t:'drive', min:15,  label:'Überfahrt nach Lobos'},
+        {t:'stop',  min:75,  label:'Playa de la Concha', note:'Flache türkise Bucht, der beste Badeplatz der Insel'},
+        {t:'stop',  min:90,  label:'Wanderung zum Faro Martiño', note:'Etwa 4 km je Richtung, flach, kaum Schatten'},
+        {t:'stop',  min:60,  label:'Mittagessen im Casa Antoñita', note:'Das einzige Lokal der Insel — vorher reservieren'},
+        {t:'drive', min:15,  label:'Rückfahrt mit der Fähre'},
+        {t:'drive', min:10,  label:'Zurück in die Unterkunft'}
+      ]
+    },
+    {
+      id: 'trip-westen',
+      title: 'Der wilde Westen: Betancuria, Pájara & Ajuy',
+      zone: 'Ganzer Tag · Inselmitte und Westküste',
+      img: 'images/ajuy-schwarzer-strand-amp-h-hlen.webp',
+      summary: 'Die Kultur- und Landschaftsrunde durch das grüne Inselinnere: die alte Hauptstadt Betancuria, das aztekisch anmutende Kirchenportal von Pájara und zum Schluss der schwarze Lavastrand von Ajuy mit seinen Millionen Jahre alten Höhlen. Kurvige Straßen, viele Aussichtspunkte.',
+      stops: [
+        {t:'drive', min:45,  label:'Corralejo → Mirador Morro Velosa', note:'Über die FV-30 durchs Bergland'},
+        {t:'stop',  min:30,  label:'Mirador Morro Velosa', note:'Weitester Blick übers Inselinnere, kleines Café'},
+        {t:'drive', min:15,  label:'Weiter nach Betancuria'},
+        {t:'stop',  min:75,  label:'Betancuria', note:'Kirche Santa María, Gassen, Mittagessen'},
+        {t:'drive', min:20,  label:'Nach Pájara'},
+        {t:'stop',  min:40,  label:'Pájara', note:'Das Barockportal mit den rätselhaften Ornamenten, schattiger Dorfplatz'},
+        {t:'drive', min:25,  label:'Hinunter nach Ajuy'},
+        {t:'stop',  min:90,  label:'Ajuy: Strand & Höhlen', note:'20 Min. Aufstieg zu den Kalksteinhöhlen, feste Schuhe'},
+        {t:'drive', min:75,  label:'Rückfahrt nach Corralejo'}
+      ]
+    },
+    {
+      id: 'trip-norden',
+      title: 'Der Norden: Lajares, Cotillo-Lagunen & Sonnenuntergang',
+      zone: 'Halber Tag · Norden',
+      img: 'images/el-cotillo-lagunen-amp-sonnenuntergang.webp',
+      summary: 'Die entspannteste Runde, komplett in unserer Nachbarschaft. Vormittags der Markt und die Cafés von Lajares, nachmittags baden in den windgeschützten Lagunen von El Cotillo, zum Schluss der Sonnenuntergang am Leuchtturm und Fisch essen am alten Hafen.',
+      stops: [
+        {t:'drive', min:15,  label:'Corralejo → Lajares'},
+        {t:'stop',  min:75,  label:'Lajares', note:'Samstags Kunsthandwerkermarkt, sonst Cafés und Surfshops'},
+        {t:'drive', min:15,  label:'Weiter nach El Cotillo'},
+        {t:'stop',  min:150, label:'Lagunas de El Cotillo', note:'Flache türkise Becken, windgeschützt — der beste Badeplatz im Norden'},
+        {t:'drive', min:10,  label:'Zum Faro de El Tostón'},
+        {t:'stop',  min:60,  label:'Sonnenuntergang am Leuchtturm', note:'Einer der schönsten der Insel'},
+        {t:'stop',  min:90,  label:'Abendessen am alten Hafen', note:'Fischlokale in El Cotillo — abends voll, vorher reservieren'},
+        {t:'drive', min:25,  label:'Rückfahrt nach Corralejo'}
+      ]
+    },
+    {
+      id: 'trip-vulkane',
+      title: 'Vulkane & Dörfer: Tindaya, La Oliva und Calderón Hondo',
+      zone: 'Halber Tag · Norden und Inselmitte',
+      img: 'images/tindaya.webp',
+      summary: 'Der kurze Kultur- und Naturausflug direkt vor der Haustür: der heilige Berg der Ureinwohner, das Herrenhaus der Militärgouverneure in La Oliva und zum Abschluss die Wanderung auf einen echten Vulkankrater. Wenig Fahrzeit, viel Landschaft.',
+      stops: [
+        {t:'drive', min:12,  label:'Corralejo → La Oliva'},
+        {t:'stop',  min:60,  label:'La Oliva', note:'Casa de los Coroneles und Kirche La Candelaria'},
+        {t:'drive', min:12,  label:'Weiter nach Tindaya'},
+        {t:'stop',  min:60,  label:'Montaña de Tindaya', note:'Umrundung auf dem Feldweg, der Berg selbst ist gesperrt'},
+        {t:'drive', min:20,  label:'Nach Lajares'},
+        {t:'stop',  min:120, label:'Wanderung Calderón Hondo', note:'Rund 2 Std. hin und zurück, am Kraterrand leben zutrauliche Streifenhörnchen'},
+        {t:'drive', min:15,  label:'Rückfahrt nach Corralejo'}
+      ]
+    },
+    {
+      id: 'trip-sotavento',
+      title: 'Sotavento: die türkise Lagune',
+      zone: 'Ganzer Tag · Südosten',
+      img: 'images/strand-tuerkis.webp',
+      summary: 'Das Postkartenmotiv der Insel. Bei ablaufendem Wasser entsteht vor dem weißen Sand eine kilometerlange, knietiefe Lagune in unwirklichem Türkis. Der Zeitpunkt entscheidet alles — bei Hochwasser ist davon nichts zu sehen.',
+      warn: 'Vor der Fahrt die Gezeiten prüfen und die Ankunft auf ablaufendes Wasser legen. Die Zeiten stehen live auf der Wetterseite.',
+      stops: [
+        {t:'drive', min:95,  label:'Corralejo → Risco del Paso', note:'Über die FV-2, dann kurz auf die Halbinsel'},
+        {t:'stop',  min:180, label:'Playa de Sotavento', note:'Baden in der Lagune, Kite- und Windsurfer beobachten'},
+        {t:'drive', min:15,  label:'Nach Costa Calma'},
+        {t:'stop',  min:75,  label:'Costa Calma', note:'Mittagessen und Strandpromenade'},
+        {t:'drive', min:85,  label:'Rückfahrt nach Corralejo'}
+      ]
+    },
+    {
+      id: 'trip-stadt',
+      title: 'Stadt & Küste: Puerto del Rosario, Antigua, Caleta de Fuste',
+      zone: 'Halber bis ganzer Tag · Osten',
+      img: 'images/puerto-del-rosario-skulpturenroute-amp-hafen.webp',
+      summary: 'Die Runde für einen windigen Tag, an dem der Strand keinen Spaß macht: Skulpturen und Hafen in der Inselhauptstadt, die alte Gofio-Mühle in Antigua, zum Ausklang die wellenfreie Bucht von Caleta de Fuste.',
+      warn: 'Vom 25.09. bis 07.10. laufen in Puerto del Rosario die Fiestas del Rosario — viel los, aber auch Straßensperrungen und volle Parkplätze.',
+      stops: [
+        {t:'drive', min:35,  label:'Corralejo → Puerto del Rosario'},
+        {t:'stop',  min:105, label:'Skulpturenroute & Hafen', note:'Über 100 Skulpturen im Stadtraum, dazu das Unamuno-Haus'},
+        {t:'drive', min:20,  label:'Nach Antigua'},
+        {t:'stop',  min:70,  label:'Molino de Antigua', note:'Restaurierte Gofio-Mühle mit Museum und Kaktusgarten, montags meist zu'},
+        {t:'drive', min:15,  label:'Nach Caleta de Fuste'},
+        {t:'stop',  min:90,  label:'Caleta de Fuste', note:'Wellenfreie künstliche Bucht, Promenade, Kaffee'},
+        {t:'drive', min:50,  label:'Rückfahrt nach Corralejo'}
+      ]
+    }
+  ];
+
+  var TRIP_FAV_KEY = 'fuerte-fav-trips';
+  var TRIP_HIDE_KEY = 'fuerte-hidden-trips';
+  var TRIP_START_KEY = 'fuerte-trip-start';
+  var TRIP_LIMIT_KEY = 'fuerte-trip-limit';
+  var TRIP_DAY_KEY = 'fuerte-trip-day';
+
+  function tripArr(k){ try { return JSON.parse(localStorage.getItem(k) || '[]'); } catch(e){ return []; } }
+  function tripSetArr(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+
+  function tripTotals(t){
+    var drive = 0, stay = 0;
+    t.stops.forEach(function(s){ if (s.t === 'drive') drive += s.min; else stay += s.min; });
+    return {drive: drive, stay: stay, total: drive + stay};
+  }
+
+  // Der gewählte Reisetag als Date, Mitternacht Ortszeit des Geräts.
+  function tripSelectedDay(){
+    var v = lsGet(TRIP_DAY_KEY, '');
+    var d;
+    if (v) { var p = v.split('-'); d = new Date(+p[0], +p[1]-1, +p[2]); }
+    else { d = new Date(TRIP_START.getTime()); }
+    return d;
+  }
+  function tripStartMinutes(){
+    var v = lsGet(TRIP_START_KEY, '12:00').split(':');
+    return (+v[0]) * 60 + (+v[1]);
+  }
+  function fmtClock(mins){
+    var m = ((mins % 1440) + 1440) % 1440;
+    return ('0' + Math.floor(m / 60)).slice(-2) + ':' + ('0' + (m % 60)).slice(-2);
+  }
+  // Sonnenzeiten des gewählten Tages, in Minuten seit Mitternacht Ortszeit Fuerteventura
+  function tripSunMinutes(day){
+    var s = sunFor(day);
+    function toMin(d){
+      if (!d) return null;
+      var parts = fmtCanary(d).split(':');
+      return (+parts[0]) * 60 + (+parts[1]);
+    }
+    return {sunset: toMin(s.sunset), dark: toMin(s.duskEnd), golden: toMin(s.goldenStart), sunrise: toMin(s.sunrise)};
+  }
+  function tripLimitMinutes(day){
+    var mode = lsGet(TRIP_LIMIT_KEY, '2300');
+    var sun = tripSunMinutes(day);
+    if (mode === 'dark') return {min: sun.dark, label: 'Einbruch der Dunkelheit (' + fmtClock(sun.dark) + ')'};
+    if (mode === 'sunset') return {min: sun.sunset, label: 'Sonnenuntergang (' + fmtClock(sun.sunset) + ')'};
+    if (mode === '2400') return {min: 24 * 60, label: 'Mitternacht'};
+    var h = parseInt(mode, 10) / 100;
+    return {min: h * 60, label: fmtClock(h * 60) + ' Uhr'};
+  }
+
+  function renderTrips(){
+    var grid = document.getElementById('trip-grid');
+    if (!grid) return;
+    var day = tripSelectedDay();
+    var start = tripStartMinutes();
+    var limit = tripLimitMinutes(day);
+    var sun = tripSunMinutes(day);
+    var favs = tripArr(TRIP_FAV_KEY), hidden = tripArr(TRIP_HIDE_KEY);
+    var mode = (document.getElementById('trip-sort-select') || {}).value || 'fit';
+
+    var computed = TRIPS.map(function(t){
+      var tot = tripTotals(t);
+      var endMin = start + tot.total;
+      var over = endMin - limit.min;
+      return {t: t, tot: tot, endMin: endMin, over: over};
+    });
+
+    computed.sort(function(a, b){
+      var ha = hidden.indexOf(a.t.id) !== -1, hb = hidden.indexOf(b.t.id) !== -1;
+      if (ha !== hb) return ha ? 1 : -1;
+      if (!ha) {
+        var fa = favs.indexOf(a.t.id), fb = favs.indexOf(b.t.id);
+        var isFa = fa !== -1, isFb = fb !== -1;
+        if (isFa !== isFb) return isFa ? -1 : 1;
+        if (isFa && isFb) return fb - fa;
+      }
+      if (mode === 'short') return a.tot.total - b.tot.total;
+      if (mode === 'long')  return b.tot.total - a.tot.total;
+      if (mode === 'drive') return a.tot.drive - b.tot.drive;
+      if (mode === 'az')    return a.t.title.localeCompare(b.t.title, 'de');
+      // 'fit': was zeitlich aufgeht zuerst, danach die knappsten
+      if ((a.over <= 0) !== (b.over <= 0)) return a.over <= 0 ? -1 : 1;
+      return a.over - b.over;
+    });
+
+    grid.innerHTML = computed.map(function(c){
+      var t = c.t, tot = c.tot;
+      var isFav = favs.indexOf(t.id) !== -1, isHidden = hidden.indexOf(t.id) !== -1;
+
+      // Zeitplan aufbauen
+      var cur = start, rows = '';
+      t.stops.forEach(function(s){
+        var isDark = sun.dark !== null && cur >= sun.dark;
+        rows += '<li class="' + (s.t === 'drive' ? 'is-drive' : '') + (isDark ? ' is-dark' : '') + '">' +
+          '<span class="tp-time">' + fmtClock(cur) + '</span>' +
+          '<span class="tp-what">' + (s.t === 'drive' ? '🚗 ' : '') + escapeHtml(s.label) +
+          (s.note ? '<small>' + escapeHtml(s.note) + '</small>' : '') + '</span></li>';
+        cur += s.min;
+      });
+      rows += '<li><span class="tp-time">' + fmtClock(cur) + '</span><span class="tp-what"><strong>Zurück in Corralejo</strong></span></li>';
+
+      var verdictCls, verdictTxt;
+      if (c.over <= -60) { verdictCls = 'fits'; verdictTxt = 'Passt bequem — ' + fmtDuration(-c.over) + ' Puffer bis ' + limit.label + '.'; }
+      else if (c.over <= 0) { verdictCls = 'tight'; verdictTxt = 'Geht auf, aber knapp — nur ' + (-c.over) + ' Min. Puffer bis ' + limit.label + '.'; }
+      else { verdictCls = 'late'; verdictTxt = 'Zu spät: ' + fmtDuration(c.over) + ' über ' + limit.label + '. Früher losfahren oder etwas weglassen.'; }
+
+      var backAfterDark = sun.dark !== null && c.endMin > sun.dark;
+
+      return '<article class="trip-card' + (isFav ? ' is-favorited' : '') + (isHidden ? ' is-hidden' : '') + '" data-trip="' + t.id + '">' +
+        '<div class="trip-media">' +
+          '<img src="' + t.img + '" alt="' + escapeHtml(t.title) + '" loading="lazy">' +
+          '<div class="card-fav-actions">' +
+            '<button type="button" class="fav-btn' + (isFav ? ' active' : '') + '" data-tripfav="' + t.id + '" title="' + (isFav ? 'Favorit entfernen' : 'Zu Favoriten') + '">' + (isFav ? '❤️' : '🤍') + '</button>' +
+            '<button type="button" class="hide-btn' + (isHidden ? ' active' : '') + '" data-triphide="' + t.id + '" title="' + (isHidden ? 'Wieder einblenden' : 'Ausblenden') + '">' + (isHidden ? '🙉' : '🙈') + '</button>' +
+          '</div>' +
+          '<div class="trip-titlebox"><span class="trip-zone">' + escapeHtml(t.zone) + '</span><h3>' + escapeHtml(t.title) + '</h3></div>' +
+        '</div>' +
+        '<div class="trip-body">' +
+          '<div class="trip-stats"><span>🚗 <b>' + fmtDuration(tot.drive) + '</b> Fahrt</span>' +
+            '<span>📍 <b>' + fmtDuration(tot.stay) + '</b> vor Ort</span>' +
+            '<span>Σ <b>' + fmtDuration(tot.total) + '</b></span></div>' +
+          '<p>' + escapeHtml(t.summary) + '</p>' +
+          (t.warn ? '<div class="trip-verdict tight">⚠️ <span>' + t.warn + '</span></div>' : '') +
+          '<div class="trip-verdict ' + verdictCls + '"><span class="tv-time">' + fmtClock(c.endMin) + '</span><span>' + verdictTxt +
+            (backAfterDark && c.over <= 0 ? ' Die letzte Etappe liegt dann im Dunkeln.' : '') + '</span></div>' +
+          '<ul class="trip-plan">' + rows + '</ul>' +
+        '</div>' +
+      '</article>';
+    }).join('');
+  }
+
+  function initTrips(){
+    var startEl = document.getElementById('trip-start');
+    var limitEl = document.getElementById('trip-limit');
+    var dayEl = document.getElementById('trip-day');
+    var sortEl = document.getElementById('trip-sort-select');
+    if (!startEl) return;
+
+    // Reisetage befüllen
+    if (dayEl) {
+      var opts = '';
+      for (var i = 0; i <= TOTAL_NIGHTS; i++) {
+        var d = new Date(TRIP_START.getTime());
+        d.setDate(d.getDate() + i);
+        var val = d.getFullYear() + '-' + ('0'+(d.getMonth()+1)).slice(-2) + '-' + ('0'+d.getDate()).slice(-2);
+        opts += '<option value="' + val + '">' + DAY_SHORT[d.getDay()] + ' ' +
+                ('0'+d.getDate()).slice(-2) + '.' + ('0'+(d.getMonth()+1)).slice(-2) + '.' +
+                (i === 0 ? ' (Anreise)' : (i === TOTAL_NIGHTS ? ' (Abreise)' : '')) + '</option>';
+      }
+      dayEl.innerHTML = opts;
+      dayEl.value = lsGet(TRIP_DAY_KEY, dayEl.options[1] ? dayEl.options[1].value : dayEl.options[0].value);
+    }
+    startEl.value = lsGet(TRIP_START_KEY, '12:00');
+    if (limitEl) limitEl.value = lsGet(TRIP_LIMIT_KEY, '2300');
+
+    function updHint(){
+      var day = tripSelectedDay();
+      var sun = tripSunMinutes(day);
+      var hint = document.getElementById('trip-sunhint');
+      if (hint) {
+        hint.innerHTML = 'An diesem Tag geht die Sonne um <b>' + fmtClock(sun.sunrise) + '</b> auf und um <b>' +
+          fmtClock(sun.sunset) + '</b> unter. Die goldene Stunde beginnt um <b>' + fmtClock(sun.golden) +
+          '</b>, richtig dunkel wird es gegen <b>' + fmtClock(sun.dark) + '</b>.';
+      }
+    }
+
+    startEl.addEventListener('change', function(){ lsSet(TRIP_START_KEY, startEl.value); renderTrips(); });
+    startEl.addEventListener('input', function(){ lsSet(TRIP_START_KEY, startEl.value); renderTrips(); });
+    if (limitEl) limitEl.addEventListener('change', function(){ lsSet(TRIP_LIMIT_KEY, limitEl.value); renderTrips(); });
+    if (dayEl) dayEl.addEventListener('change', function(){ lsSet(TRIP_DAY_KEY, dayEl.value); updHint(); renderTrips(); });
+    if (sortEl) sortEl.addEventListener('change', renderTrips);
+
+    document.addEventListener('click', function(e){
+      var fav = e.target.closest ? e.target.closest('[data-tripfav]') : null;
+      var hide = e.target.closest ? e.target.closest('[data-triphide]') : null;
+      if (fav) {
+        var id = fav.getAttribute('data-tripfav'), a = tripArr(TRIP_FAV_KEY), i = a.indexOf(id);
+        if (i === -1) a.push(id); else a.splice(i, 1);
+        tripSetArr(TRIP_FAV_KEY, a); renderTrips();
+      } else if (hide) {
+        var id2 = hide.getAttribute('data-triphide'), b = tripArr(TRIP_HIDE_KEY), j = b.indexOf(id2);
+        if (j === -1) b.push(id2); else b.splice(j, 1);
+        tripSetArr(TRIP_HIDE_KEY, b); renderTrips();
+      }
+    });
+
+    updHint();
+    renderTrips();
+  }
+  initTrips();
 
   // ---- Sonnen-Tabelle & Erinnerungen ----
   var LEAD_KEY = "fuerte-sunset-lead";
@@ -4114,7 +4573,16 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
       out.push('END:VEVENT');
     }
     out.push('END:VCALENDAR');
-    return out.join('\r\n');
+    // Der Kalender-Standard erlaubt höchstens 75 Zeichen pro Zeile;
+    // längere werden umgebrochen und mit einem Leerzeichen fortgesetzt.
+    return out.map(function(line){
+      if (line.length <= 74) return line;
+      var parts = [line.slice(0, 74)];
+      var rest = line.slice(74);
+      while (rest.length > 73) { parts.push(' ' + rest.slice(0, 73)); rest = rest.slice(73); }
+      if (rest.length) parts.push(' ' + rest);
+      return parts.join('\r\n');
+    }).join('\r\n');
   }
 
   var icsBtn = document.getElementById('btn-ics');
@@ -4235,10 +4703,22 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     });
   }
 
+  var swRefreshing = false;
   function registerSw(){
     if (!('serviceWorker' in navigator) || location.protocol === 'file:') return Promise.resolve(null);
+    // Übernimmt ein neuer Service Worker die Kontrolle, einmal neu laden —
+    // sonst sähe man nach einem Update der Seite noch die alte Fassung.
+    navigator.serviceWorker.addEventListener('controllerchange', function(){
+      if (swRefreshing) return;
+      swRefreshing = true;
+      location.reload();
+    });
     return navigator.serviceWorker.register('sw.js')
-      .then(function(reg){ swReg = reg; return reg; })
+      .then(function(reg){
+        swReg = reg;
+        try { reg.update(); } catch(e){}
+        return reg;
+      })
       .catch(function(){ return null; });
   }
 
@@ -4284,6 +4764,10 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
   updateNotifUi();
   if (location.protocol !== 'file:') {
     registerSw().then(function(){ scheduleLocalSunsetNotice(); });
+    // Beim Zurückkehren zur Seite auf eine neuere Fassung prüfen
+    document.addEventListener('visibilitychange', function(){
+      if (!document.hidden && swReg) { try { swReg.update(); } catch(e){} }
+    });
   }
 
   // ---- To-do / Aufgaben ----
