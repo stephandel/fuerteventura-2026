@@ -1995,7 +1995,7 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
   <div class="page-header wrap">
     <div class="eyebrow">Vor Ort</div>
     <h1>Ausflüge &amp; Highlights</h1>
-    <p class="sub">Zwanzig einzelne Ziele quer über die Insel, jeweils mit Fahrzeit ab Corralejo, realistischem Zeitaufwand, Kosten und einem Tipp aus der Recherche. Darunter neun <a href="#tagestrips">fertige Tagestrips</a>, zwei davon mit der Fähre auf die Nachbarinseln, bei denen du die Abfahrtszeit einstellst und die Seite den ganzen Tag durchrechnet. Märkte, Events &amp; Insider-Tipps stehen auf der <a href="#kalender">Kalender-Seite</a>.</p>
+    <p class="sub">Zwanzig einzelne Ziele quer über die Insel, jeweils mit Fahrzeit ab Corralejo, realistischem Zeitaufwand, Kosten und einem Tipp aus der Recherche. Darunter zehn <a href="#tagestrips">fertige Tagestrips</a>, zwei davon mit der Fähre auf die Nachbarinseln, bei denen du die Abfahrtszeit einstellst und die Seite den ganzen Tag durchrechnet. Märkte, Events &amp; Insider-Tipps stehen auf der <a href="#kalender">Kalender-Seite</a>.</p>
   </div>
   <div class="wrap">
     <div class="sort-filter-bar">
@@ -4694,6 +4694,26 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
   // ---- Tagestrips ----
   // min = Minuten. 'drive' sind reine Fahrzeiten, 'stop' die Zeit vor Ort.
   var TRIPS = [
+    {
+      id: 'trip-vegan',
+      title: 'Vegan-Tag: Höhlen von Los Estancos & El Invernadero',
+      zone: 'Ganzer Tag · Osten · nur Dienstag bis Freitag',
+      img: 'images/vegan-tag.webp',
+      summary: 'Ein Tag rund um das einzige komplett vegane Restaurant der Insel. Vormittags die versteinerte Sandschlucht von Los Estancos — eine kaum bekannte Höhlenlandschaft im Inselinneren, keine zehn Minuten vom Restaurant entfernt. Mittags das wechselnde Fünf-Gänge-Menü im El Invernadero, danach Skulpturen und Eis in der Inselhauptstadt.',
+      warn: 'Der ganze Tag hängt an der Tischreservierung um 13:30 — stell die Abfahrt oben auf 09:15, dann geht die Rechnung auf. El Invernadero öffnet nur Dienstag bis Freitag, die Küche schließt um 15:30. In unserem Zeitraum passen Mi 30.09., Do 01.10., Fr 02.10., Di 06.10., Mi 07.10., Do 08.10. und Fr 09.10. Vorher über DISH reservieren, das Lokal ist mit 4,9 aus 879 Bewertungen gut gebucht.',
+      stops: [
+        {t:'stop',  min:60,  label:'Frühstück im H2O Juice Bar & Vegan Cafè', note:'C. la Milagrosa 29, Corralejo · vegane Bowls, Säfte, Burger und Kuchen, begrünte Terrasse · 4,6 aus 670 Bewertungen'},
+        {t:'drive', min:40,  label:'Corralejo → Los Estancos', note:'Über die FV-1 bis Puerto del Rosario, dann landeinwärts auf die FV-20'},
+        {t:'stop',  min:105, label:'Cuevas de Los Estancos', note:'Versteinerte Sanddünen-Schlucht mit ausgewaschenen Höhlen, teils früher als Unterstände genutzt. Nicht ausgeschildert und unbefestigt — feste Schuhe, Wasser mitnehmen'},
+        {t:'drive', min:10,  label:'Weiter zum Restaurant', note:'Nur gut 3 km nach Süden, beide liegen westlich der Hauptstadt'},
+        {t:'stop',  min:40,  label:'Ankommen und durchatmen', note:'Puffer, damit die Reservierung um 13:30 sicher steht'},
+        {t:'stop',  min:135, label:'El Invernadero: Fünf-Gänge-Menü', note:'Travesia Llanos Pelados 4C · 100 % vegan und glutenfrei, Gemüse größtenteils aus dem eigenen Garten, Karte wechselt wöchentlich · ca. 34 € p.P.'},
+        {t:'drive', min:10,  label:'Ins Zentrum von Puerto del Rosario'},
+        {t:'stop',  min:70,  label:'Skulpturenroute & Hafen', note:'Über 100 Skulpturen frei im Stadtraum verteilt, dazu das Geburtshaus des Dichters Unamuno'},
+        {t:'stop',  min:30,  label:'Eis bei Vrebac Gelato', note:'C. Francisco Pi y Arsuaga · italienisches Gelato, die Sorbets sind ohne Milch — vor Ort kurz nachfragen'},
+        {t:'drive', min:35,  label:'Rückfahrt nach Corralejo'}
+      ]
+    },
     {
       id: 'trip-lanzarote',
       title: 'Lanzarote: Playa Blanca und die Papagayo-Buchten',
