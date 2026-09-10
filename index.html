@@ -1784,7 +1784,7 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
   <div class="page-header wrap">
     <div class="eyebrow">Vor Ort</div>
     <h1>Ausflüge &amp; Highlights</h1>
-    <p class="sub">Zwanzig einzelne Ziele quer über die Insel, jeweils mit Fahrzeit ab Corralejo, realistischem Zeitaufwand, Kosten und einem Tipp aus der Recherche. Darunter sieben <a href="#tagestrips">fertige Tagestrips</a>, bei denen du die Abfahrtszeit einstellst und die Seite den ganzen Tag durchrechnet. Märkte, Events &amp; Insider-Tipps stehen auf der <a href="#kalender">Kalender-Seite</a>.</p>
+    <p class="sub">Zwanzig einzelne Ziele quer über die Insel, jeweils mit Fahrzeit ab Corralejo, realistischem Zeitaufwand, Kosten und einem Tipp aus der Recherche. Darunter neun <a href="#tagestrips">fertige Tagestrips</a>, zwei davon mit der Fähre auf die Nachbarinseln, bei denen du die Abfahrtszeit einstellst und die Seite den ganzen Tag durchrechnet. Märkte, Events &amp; Insider-Tipps stehen auf der <a href="#kalender">Kalender-Seite</a>.</p>
   </div>
   <div class="wrap">
     <div class="sort-filter-bar">
@@ -2109,7 +2109,7 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
 
     <section class="trip-section" id="tagestrips" style="margin-top:44px">
       <h2 style="font-size:1.6rem">&#128663; Ganze Tagestrips</h2>
-      <p class="sub">Fertige Routen f&#252;r einen kompletten Tag &#8211; jeweils mehrere Ziele, die geografisch zusammenpassen, mit realistischen Fahrzeiten ab Corralejo. Stell unten ein, wann wir losfahren wollen: Die Seite rechnet den ganzen Tagesablauf durch und sagt dir, ob wir es vor Einbruch der Dunkelheit zur&#252;ck schaffen.</p>
+      <p class="sub">Fertige Routen f&#252;r einen kompletten Tag &#8211; jeweils mehrere Ziele, die geografisch zusammenpassen, mit realistischen Fahrzeiten ab Corralejo. Zwei Touren f&#252;hren mit der F&#228;hre auf die Nachbarinseln. Stell unten ein, wann wir losfahren wollen: Die Seite rechnet den ganzen Tagesablauf durch und sagt dir, ob wir es vor Einbruch der Dunkelheit zur&#252;ck schaffen.</p>
 
       <div class="trip-intro">
         <div class="trip-controls">
@@ -4184,6 +4184,44 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
   // min = Minuten. 'drive' sind reine Fahrzeiten, 'stop' die Zeit vor Ort.
   var TRIPS = [
     {
+      id: 'trip-lanzarote',
+      title: 'Lanzarote: Playa Blanca und die Papagayo-Buchten',
+      zone: 'Ganzer Tag · Nachbarinsel',
+      img: 'images/lanzarote-playa-blanca.webp',
+      summary: 'Die Nachbarinsel liegt keine halbe Stunde entfernt — vom Hafen Corralejo fahren bis zu 26 Fähren am Tag nach Playa Blanca. Drüben warten die Marina Rubicón, eine ruhige Promenade und die Playas de Papagayo: geschützte Buchten mit hellem Sand und klarem Wasser, die zu den schönsten der Kanaren zählen.',
+      warn: 'Für die Fähre braucht ihr den Personalausweis. Der Mietwagen darf nur mit, wenn der Vertrag das erlaubt — sonst das Auto am Hafen Corralejo stehen lassen und drüben Taxi oder Wassertaxi nehmen, für Playa Blanca und Papagayo reicht das gut.',
+      stops: [
+        {t:'drive', min:10,  label:'Zum Hafen Corralejo', note:'Parkhaus am Hafen, Tickets abholen'},
+        {t:'ferry', min:30,  label:'Fähre nach Playa Blanca', note:'Fred Olsen, Naviera Armas oder Líneas Romero · ab 17 € pro Strecke'},
+        {t:'stop',  min:75,  label:'Playa Blanca & Marina Rubicón', note:'Promenade, Hafenbecken, Cafés'},
+        {t:'drive', min:20,  label:'Weiter nach Papagayo', note:'Taxi oder Wassertaxi ab der Marina'},
+        {t:'stop',  min:180, label:'Playas de Papagayo', note:'Mehrere geschützte Buchten, heller Sand, ruhiges Wasser — die Anfahrt kostet 3 € Naturpark-Gebühr'},
+        {t:'drive', min:20,  label:'Zurück nach Playa Blanca'},
+        {t:'stop',  min:75,  label:'Frühes Abendessen am Hafen'},
+        {t:'ferry', min:30,  label:'Fähre zurück nach Corralejo', note:'Letzte Verbindungen am frühen Abend — Rückfahrtzeit vorher prüfen'},
+        {t:'drive', min:10,  label:'Zurück in die Unterkunft'}
+      ]
+    },
+    {
+      id: 'trip-grancanaria',
+      title: 'Gran Canaria: Las Palmas an einem Tag',
+      zone: 'Sehr langer Tag · Nachbarinsel',
+      img: 'images/gran-canaria-las-palmas.webp',
+      summary: 'Die zweitgrößte Stadt der Kanaren mit Altstadt Vegueta, Kolumbus-Haus und der Playa de las Canteras, einem der besten Stadtstrände Europas. Als Tagestrip geht das — aber nur mit einem sehr frühen Start, weil die Fähre in Morro Jable abfährt und das allein schon knapp zwei Stunden Fahrt sind.',
+      warn: 'Der härteste Trip der Liste: rund 14 Stunden von Tür zu Tür, davon etwa 7,5 unterwegs. Die Fähre kostet für zwei Personen etwa 240 € hin und zurück. Wer den Tag entspannter will, fliegt mit Binter ab Puerto del Rosario in 40 Minuten — dann ist es ein ganz anderer Ausflug.',
+      stops: [
+        {t:'drive', min:115, label:'Corralejo → Morro Jable', note:'Sehr früh los, die erste Fähre geht um 08:00'},
+        {t:'stop',  min:45,  label:'Einchecken am Fährhafen', note:'Mindestens eine Stunde vor Abfahrt da sein, Ausweis nicht vergessen'},
+        {t:'ferry', min:105, label:'Fähre nach Las Palmas', note:'08:00 ab Morro Jable, Ankunft 09:45 · Fred Olsen, Armas oder Balearia'},
+        {t:'stop',  min:105, label:'Altstadt Vegueta', note:'Kathedrale Santa Ana, Casa de Colón, Gassen aus dem 15. Jahrhundert'},
+        {t:'stop',  min:75,  label:'Mittagessen im Mercado de Vegueta'},
+        {t:'stop',  min:120, label:'Playa de las Canteras', note:'Drei Kilometer Stadtstrand, durch ein Naturriff wellengeschützt'},
+        {t:'stop',  min:45,  label:'Zurück zum Hafen'},
+        {t:'ferry', min:120, label:'Fähre zurück', note:'16:00 ab Las Palmas, Ankunft 18:00 in Morro Jable — die letzte brauchbare Verbindung'},
+        {t:'drive', min:115, label:'Morro Jable → Corralejo'}
+      ]
+    },
+    {
       id: 'trip-sueden',
       title: 'Der große Süden: Jandía, Cofete & Villa Winter',
       zone: 'Ganzer Tag · Süden',
@@ -4314,7 +4352,7 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
 
   function tripTotals(t){
     var drive = 0, stay = 0;
-    t.stops.forEach(function(s){ if (s.t === 'drive') drive += s.min; else stay += s.min; });
+    t.stops.forEach(function(s){ if (s.t === 'drive' || s.t === 'ferry') drive += s.min; else stay += s.min; });
     return {drive: drive, stay: stay, total: drive + stay};
   }
 
@@ -4397,9 +4435,10 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
       var cur = start, rows = '';
       t.stops.forEach(function(s){
         var isDark = sun.dark !== null && cur >= sun.dark;
-        rows += '<li class="' + (s.t === 'drive' ? 'is-drive' : '') + (isDark ? ' is-dark' : '') + '">' +
+        var moving = (s.t === 'drive' || s.t === 'ferry');
+        rows += '<li class="' + (moving ? 'is-drive' : '') + (isDark ? ' is-dark' : '') + '">' +
           '<span class="tp-time">' + fmtClock(cur) + '</span>' +
-          '<span class="tp-what">' + (s.t === 'drive' ? '🚗 ' : '') + escapeHtml(s.label) +
+          '<span class="tp-what">' + (s.t === 'drive' ? '🚗 ' : (s.t === 'ferry' ? '⛴️ ' : '')) + escapeHtml(s.label) +
           (s.note ? '<small>' + escapeHtml(s.note) + '</small>' : '') + '</span></li>';
         cur += s.min;
       });
@@ -4422,7 +4461,7 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
           '<div class="trip-titlebox"><span class="trip-zone">' + escapeHtml(t.zone) + '</span><h3>' + escapeHtml(t.title) + '</h3></div>' +
         '</div>' +
         '<div class="trip-body">' +
-          '<div class="trip-stats"><span>🚗 <b>' + fmtDuration(tot.drive) + '</b> Fahrt</span>' +
+          '<div class="trip-stats"><span>' + (t.stops.some(function(x){ return x.t === 'ferry'; }) ? '⛴️' : '🚗') + ' <b>' + fmtDuration(tot.drive) + '</b> unterwegs</span>' +
             '<span>📍 <b>' + fmtDuration(tot.stay) + '</b> vor Ort</span>' +
             '<span>Σ <b>' + fmtDuration(tot.total) + '</b></span></div>' +
           '<p>' + escapeHtml(t.summary) + '</p>' +
