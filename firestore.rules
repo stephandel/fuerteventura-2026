@@ -1,0 +1,35 @@
+// Sicherheitsregeln der gemeinsamen Datenbank (Firebase-Projekt "fuerteventura-planer").
+//
+// Diese Datei ist die Sicherungskopie. Der Stand, der wirklich gilt, steht in der
+// Firebase-Konsole unter Firestore Database -> Regeln. Wer hier etwas aendert,
+// muss es dort einfuegen und auf "Veroeffentlichen" tippen - sonst passiert nichts.
+//
+// Veroeffentlicht am 11.09.2026.
+//
+// Erlaubt sind genau zwei Dinge: die gemeinsame Favoritenliste und die Notizen
+// je Unterkunft. Alle anderen Bereiche der Datenbank bleiben zu.
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Gemeinsame Favoriten und Ausgeblendete
+    match /sync/unterkuenfte {
+      allow read: if true;
+      allow write: if request.resource.data.keys().hasOnly(['favs', 'hidden'])
+                   && request.resource.data.favs is map
+                   && request.resource.data.hidden is map
+                   && request.resource.data.favs.size() <= 60
+                   && request.resource.data.hidden.size() <= 60;
+    }
+
+    // Notizen je Unterkunft
+    match /kommentare/{unterkunft} {
+      allow read: if true;
+      allow write: if request.resource.data.keys().hasOnly(['msgs'])
+                   && request.resource.data.msgs is list
+                   && request.resource.data.msgs.size() <= 300;
+    }
+  }
+}

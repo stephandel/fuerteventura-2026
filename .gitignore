@@ -4,6 +4,7 @@
 !README.md
 !manifest.json
 !sw.js
+!firestore.rules
 !images/
 !images/**
 !vendor/
