@@ -920,8 +920,11 @@ details.todo-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 .teaser-peek b { color: var(--ink); font-weight: 600; }
 .teaser-peek .tp-date { font-family: "JetBrains Mono", monospace; font-weight: 700; color: var(--teal); font-size: 13px; flex: none; }
 
-/* Gezeiten im Wettermodul der Startseite */
-.sun-chip.tide { background: rgba(96,180,214,0.24); border-color: rgba(140,214,238,0.45); }
+/* Gezeiten im Wettermodul der Startseite - immer als Paar nebeneinander */
+.sun-chip.tide { background: rgba(96,180,214,0.24); border-color: rgba(140,214,238,0.45); min-width: 0; }
+#home-tide-slot { display: flex; gap: 10px; }
+#home-tide-slot .sun-chip { flex: 1 1 auto; }
+#home-tide-slot .sc-l { white-space: normal; }
 
 .cal-teaser { margin-top: 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px 22px 18px; box-shadow: var(--shadow); }
 .cal-teaser-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; cursor: pointer; list-style: none; min-height: var(--tap); }
