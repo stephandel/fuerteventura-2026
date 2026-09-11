@@ -6271,7 +6271,9 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     var texts = {
       wait:  'Verbinde mit dem gemeinsamen Stand …',
       live:  'Favoriten, Ausgeblendete und Notizen sind mit ' + whoName(otherPerson()) + ' geteilt.',
-      cache: 'Gerade offline – deine Änderungen gehen raus, sobald du wieder Netz hast.',
+      cache: navigator.onLine
+        ? 'Gespeicherter Stand – die Verbindung wird noch aufgebaut.'
+        : 'Gerade offline – deine Änderungen gehen raus, sobald du wieder Netz hast.',
       error: 'Keine Verbindung zum gemeinsamen Stand – Änderungen bleiben vorerst nur auf diesem Gerät.'
     };
     bar.className = 'sync-bar is-' + syncState;
@@ -6284,6 +6286,8 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     if (btn) btn.addEventListener('click', function(){ askWho(true); });
   }
   function setSyncState(s){ if (syncState === s) return; syncState = s; renderSyncBar(); }
+  window.addEventListener('online',  renderSyncBar);
+  window.addEventListener('offline', renderSyncBar);
 
   // ---- Karten um Hinweise und Notizfeld erweitern ----
   function buildCardExtras(){
