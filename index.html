@@ -915,8 +915,21 @@ details.todo-teaser > summary:focus-visible { outline: 2px solid var(--ochre); o
 .teaser-chevron { width: 12px; height: 12px; border-right: 2px solid var(--ink-dim); border-bottom: 2px solid var(--ink-dim); transform: rotate(45deg); transform-origin: center; transition: transform .18s ease; margin-left: auto; flex: none; }
 details.todo-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 @media (prefers-reduced-motion: reduce) { .teaser-chevron { transition: none; } }
+.teaser-peek { flex: 1 0 100%; order: 9; margin-top: 6px; font-size: 14.5px; color: var(--ink-dim); display: flex; gap: 8px; align-items: baseline; }
+.teaser-peek:empty, details[open] .teaser-peek { display: none; }
+.teaser-peek b { color: var(--ink); font-weight: 600; }
+.teaser-peek .tp-date { font-family: "JetBrains Mono", monospace; font-weight: 700; color: var(--teal); font-size: 13px; flex: none; }
 
-.cal-teaser { margin-top: 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px 22px; box-shadow: var(--shadow); }
+/* Gezeiten im Wettermodul der Startseite */
+.sun-chip.tide { background: rgba(96,180,214,0.24); border-color: rgba(140,214,238,0.45); }
+
+.cal-teaser { margin-top: 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px 22px 18px; box-shadow: var(--shadow); }
+.cal-teaser-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; cursor: pointer; list-style: none; min-height: var(--tap); }
+.cal-teaser-head::-webkit-details-marker { display: none; }
+.cal-teaser-head::before { content: none; }
+.cal-teaser-head h2 { font-size: 1.25rem; margin: 0; }
+details.cal-teaser > summary:focus-visible { outline: 2px solid var(--ochre); outline-offset: 3px; border-radius: 8px; }
+details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 .cal-teaser-list { list-style: none; margin: 12px 0 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
 .cal-teaser-list li { display: flex; gap: 14px; align-items: flex-start; }
 .cal-teaser-date { font-family: "JetBrains Mono", monospace; font-weight: 700; color: var(--teal); font-size: 13px; width: 62px; flex: none; line-height: 1.45; }
@@ -980,23 +993,6 @@ details.todo-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   </div>
   <div class="home-body wrap">
 
-    <details class="todo-teaser" id="home-todo" open>
-      <summary class="todo-teaser-head">
-        <h2>&#9989; Als N&#228;chstes dran</h2>
-        <div class="todo-progress"><span class="todo-bar"><span id="home-todo-bar" style="width:0%"></span></span><span id="home-todo-count">0/0</span></div>
-        <span class="teaser-chevron" aria-hidden="true"></span>
-      </summary>
-      <ul class="todo-list" id="home-todo-list"></ul>
-      <p class="todo-teaser-foot"><a href="#todo">Alle Aufgaben ansehen &#8594;</a></p>
-    </details>
-
-    <div class="cal-teaser" id="home-cal">
-      <div class="sneak-head">
-        <h2>&#128197;&nbsp;Als N&#228;chstes im Kalender</h2>
-        <a class="sneak-more" href="#kalender">Ganzer Kalender &#8594;</a>
-      </div>
-      <ul class="cal-teaser-list" id="home-cal-list"><li class="cal-teaser-empty">Lade Termine&#8230;</li></ul>
-    </div>
 
     <div class="sneak-weather" id="home-weather">
       <div class="sneak-head">
@@ -1007,6 +1003,27 @@ details.todo-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
         <p class="sub" id="home-weather-status">Lade aktuelle Werte&#8230;</p>
       </div>
     </div>
+
+    <details class="todo-teaser" id="home-todo" open>
+      <summary class="todo-teaser-head">
+        <h2>&#9989; Als N&#228;chstes dran</h2>
+        <div class="todo-progress"><span class="todo-bar"><span id="home-todo-bar" style="width:0%"></span></span><span id="home-todo-count">0/0</span></div>
+        <span class="teaser-chevron" aria-hidden="true"></span>
+        <span class="teaser-peek" id="home-todo-peek"></span>
+      </summary>
+      <ul class="todo-list" id="home-todo-list"></ul>
+      <p class="todo-teaser-foot"><a href="#todo">Alle Aufgaben ansehen &#8594;</a></p>
+    </details>
+
+    <details class="cal-teaser" id="home-cal" open>
+      <summary class="cal-teaser-head">
+        <h2>&#128197;&nbsp;Als N&#228;chstes im Kalender</h2>
+        <span class="teaser-chevron" aria-hidden="true"></span>
+        <span class="teaser-peek" id="home-cal-peek"></span>
+      </summary>
+      <ul class="cal-teaser-list" id="home-cal-list"><li class="cal-teaser-empty">Lade Termine&#8230;</li></ul>
+      <p class="todo-teaser-foot"><a href="#kalender">Ganzer Kalender &#8594;</a></p>
+    </details>
 
     <div class="peek-head">
       <h2>Worauf h&#228;ttest du Lust?</h2>
@@ -4066,6 +4083,7 @@ details.todo-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       '<span class="sun-chip golden"><span class="sc-l">Goldene Stunde</span><span class="sc-v">' + fmtCanary(s.goldenStart) + '</span></span>' +
       '<span class="sun-chip"><span class="sc-l">Sonnenuntergang</span><span class="sc-v">' + fmtCanary(s.sunset) + '</span></span>' +
       '<span class="sun-chip"><span class="sc-l">Dunkel ab</span><span class="sc-v">' + fmtCanary(s.duskEnd) + '</span></span>' +
+      '<span id="home-tide-slot"></span>' +
     '</div>';
 
     if (d && d.daily) {
@@ -4080,6 +4098,7 @@ details.todo-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 
     body.innerHTML = html + '<div id="sunset-bar-slot"></div>';
     updateSunsetBar();
+    renderHomeTides();
   }
 
   // --- Band „Sonnenuntergang in …" ---
@@ -5580,6 +5599,16 @@ details.todo-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       if (bar) bar.style.width = pct + '%';
       var cnt = document.getElementById('home-todo-count');
       if (cnt) cnt.textContent = doneCount + '/' + all.length;
+
+      // Zugeklappt bleibt die letzte der angezeigten Aufgaben als Zeile stehen,
+      // damit der Kasten nicht voellig leer wirkt.
+      var peek = document.getElementById('home-todo-peek');
+      if (peek) {
+        var last = teaser.length ? teaser[teaser.length - 1] : null;
+        peek.innerHTML = last
+          ? '<span><b>' + last.text + '</b></span>'
+          : (openItems.length === 0 ? '<span>🎉 Alles abgehakt</span>' : '');
+      }
     }
 
     // --- volle Seite ---
@@ -6407,14 +6436,18 @@ details.todo-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   // ============================================================
   var HOME_TODO_KEY = 'fuerte-home-todo-offen';
 
-  (function initHomeTodoToggle(){
-    var box = document.getElementById('home-todo');
+  var HOME_CAL_KEY = 'fuerte-home-kalender-offen';
+
+  function initTeaserToggle(id, key){
+    var box = document.getElementById(id);
     if (!box || box.tagName !== 'DETAILS') return;
-    box.open = lsGet(HOME_TODO_KEY, '1') !== '0';
+    box.open = lsGet(key, '1') !== '0';
     box.addEventListener('toggle', function(){
-      lsSet(HOME_TODO_KEY, box.open ? '1' : '0');
+      lsSet(key, box.open ? '1' : '0');
     });
-  })();
+  }
+  initTeaserToggle('home-todo', HOME_TODO_KEY);
+  initTeaserToggle('home-cal', HOME_CAL_KEY);
 
   // Die naechsten Kalendertage aus der Kalenderseite ablesen, damit
   // die Termine nur an einer Stelle gepflegt werden muessen.
@@ -6466,6 +6499,15 @@ details.todo-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
         '<span class="cal-teaser-chips">' + chips + '</span>' +
       '</li>';
     }).join('');
+
+    var peek = document.getElementById('home-cal-peek');
+    if (peek) {
+      var e0 = out[0];
+      var dd0 = ('0' + e0.date.getDate()).slice(-2) + '.' + ('0' + (e0.date.getMonth() + 1)).slice(-2) + '.';
+      peek.innerHTML = '<span class="tp-date">' + dd0 + '</span><span>' +
+        escapeHtml((e0.chips[0].textContent || '').trim()) +
+        (e0.chips.length > 1 ? ' <b>+' + (e0.chips.length - 1) + '</b>' : '') + '</span>';
+    }
   }
   renderHomeCal();
 
@@ -6504,6 +6546,7 @@ details.todo-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     var daysBox = document.getElementById('tide-days');
     var status = document.getElementById('tide-status');
     if (!nowBox || !daysBox) return;
+
 
     var upcoming = list.filter(function(t){ return t.when > nowLocal; });
     var next = upcoming.slice(0, 2);
@@ -6547,9 +6590,37 @@ details.todo-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     }
   }
 
+  // Naechstes Hoch- und Niedrigwasser als Chips im Wettermodul der Startseite
+  function renderHomeTides(){
+    var slot = document.getElementById('home-tide-slot');
+    if (!slot) return;
+    if (!TIDES || !TIDES.length) { slot.innerHTML = ''; return; }
+    var nowLocal = canaryNow();
+    var nextHigh = null, nextLow = null;
+    for (var i = 0; i < TIDES.length; i++) {
+      var t = TIDES[i];
+      if (t.when <= nowLocal) continue;
+      if (t.high && !nextHigh) nextHigh = t;
+      if (!t.high && !nextLow) nextLow = t;
+      if (nextHigh && nextLow) break;
+    }
+    var out = '';
+    if (nextHigh) out += '<span class="sun-chip tide"><span class="sc-l">🔼 Hochwasser</span><span class="sc-v">' + tideClock(nextHigh.when) + '</span></span>';
+    if (nextLow)  out += '<span class="sun-chip tide"><span class="sc-l">🔽 Niedrigwasser</span><span class="sc-v">' + tideClock(nextLow.when) + '</span></span>';
+    slot.innerHTML = out;
+  }
+
+  // "Jetzt" in kanarischer Ortszeit - egal, von welcher Zeitzone aus man schaut.
+  function canaryNow(){
+    try {
+      return new Date(new Date().toLocaleString('en-US', { timeZone: 'Atlantic/Canary' }));
+    } catch(e){ return new Date(); }
+  }
+
+  var TIDES = null;
+
   function loadTides(){
     var status = document.getElementById('tide-status');
-    if (!document.getElementById('tide-now')) return;
     var url = 'https://marine-api.open-meteo.com/v1/marine?latitude=28.729694&longitude=-13.86715' +
       '&hourly=sea_level_height_msl&timezone=Atlantic%2FCanary&forecast_days=5';
     fetch(url)
@@ -6558,10 +6629,9 @@ details.todo-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
         if (!d || !d.hourly || !d.hourly.time) throw new Error('leer');
         var list = tideExtremes(d.hourly.time, d.hourly.sea_level_height_msl);
         if (!list.length) throw new Error('keine Extremwerte');
-        // "Jetzt" in kanarischer Ortszeit, damit der Vergleich stimmt,
-        // egal von welcher Zeitzone aus die Seite geoeffnet wird.
-        var nowLocal = new Date(new Date().toLocaleString('en-US', { timeZone: 'Atlantic/Canary' }));
-        renderTides(list, nowLocal);
+        TIDES = list;
+        renderTides(list, canaryNow());
+        renderHomeTides();
       })
       .catch(function(){
         if (status) status.textContent = 'Die Gezeiten sind gerade nicht abrufbar — das Diagramm unten oder die Zweitquelle helfen weiter.';
