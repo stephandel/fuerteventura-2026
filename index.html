@@ -5600,13 +5600,13 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       var cnt = document.getElementById('home-todo-count');
       if (cnt) cnt.textContent = doneCount + '/' + all.length;
 
-      // Zugeklappt bleibt die letzte der angezeigten Aufgaben als Zeile stehen,
+      // Zugeklappt bleibt die dringendste offene Aufgabe als Zeile stehen,
       // damit der Kasten nicht voellig leer wirkt.
       var peek = document.getElementById('home-todo-peek');
       if (peek) {
-        var last = teaser.length ? teaser[teaser.length - 1] : null;
-        peek.innerHTML = last
-          ? '<span><b>' + last.text + '</b></span>'
+        var first = teaser.length ? teaser[0] : null;
+        peek.innerHTML = first
+          ? '<span><b>' + first.text + '</b></span>'
           : (openItems.length === 0 ? '<span>🎉 Alles abgehakt</span>' : '');
       }
     }
