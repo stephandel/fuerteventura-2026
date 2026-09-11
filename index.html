@@ -860,6 +860,52 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
 
 @media (max-width: 640px) { .pro-con { grid-template-columns: 1fr; } }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+/* ---- Geteilte Daten (Stephan & Bilgen) ---- */
+.sync-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 0 0 14px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 14px; background: var(--surface-2); font-size: 15px; }
+.sync-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--ink-dim); flex: none; }
+.sync-bar.is-live .sync-dot { background: var(--good); }
+.sync-bar.is-cache .sync-dot { background: var(--warn); }
+.sync-bar.is-error .sync-dot { background: var(--bad); }
+.sync-text { flex: 1 1 auto; min-width: 180px; color: var(--ink-dim); }
+.sync-me { font-weight: 600; color: var(--ink); }
+.sync-who-btn { min-height: var(--tap); padding: 0 14px; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); color: var(--ink); font: inherit; cursor: pointer; }
+.sync-who-btn:hover { border-color: var(--ochre); }
+
+.share-flags { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 0; }
+.share-flags:empty { display: none; }
+.share-flag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 13px; background: var(--surface-2); border: 1px solid var(--border); color: var(--ink-dim); }
+.share-flag.is-fav { border-color: var(--ochre); color: var(--ochre); }
+.share-flag.is-hidden { border-color: var(--bad); color: var(--bad); }
+
+.notes-box { margin-top: 12px; border: 1px solid var(--border); border-radius: 14px; background: var(--surface-2); overflow: hidden; }
+.notes-box > summary { min-height: var(--tap); display: flex; align-items: center; gap: 8px; padding: 8px 14px; cursor: pointer; font-size: 15px; font-weight: 500; list-style: none; }
+.notes-box > summary::-webkit-details-marker { display: none; }
+.notes-count { font-size: 13px; color: var(--ink-dim); font-weight: 400; }
+.notes-count.has-notes { color: var(--ochre); font-weight: 600; }
+.notes-inner { padding: 0 14px 14px; }
+.notes-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+.notes-empty { font-size: 14px; color: var(--ink-dim); margin: 0; }
+.note { position: relative; padding: 8px 30px 8px 12px; border-radius: 12px; background: var(--surface); border: 1px solid var(--border); font-size: 15px; line-height: 1.45; white-space: pre-wrap; overflow-wrap: anywhere; }
+.note.is-mine { border-color: var(--ochre); }
+.note-head { display: block; font-size: 12px; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 3px; }
+.note-del { position: absolute; top: 4px; right: 4px; width: 26px; height: 26px; border: none; border-radius: 999px; background: transparent; color: var(--ink-dim); font-size: 15px; line-height: 1; cursor: pointer; }
+.note-del:hover { color: var(--bad); }
+.notes-form { display: flex; gap: 8px; flex-wrap: wrap; }
+.notes-input { flex: 1 1 160px; min-height: var(--tap); padding: 0 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); color: var(--ink); font: inherit; font-size: 16px; }
+.notes-input:focus { outline: 2px solid var(--ochre); outline-offset: 1px; }
+.notes-send { min-height: var(--tap); }
+.notes-inner[data-locked="1"] .notes-form { display: none; }
+.notes-error[hidden] { display: none; }
+.notes-error { margin: 8px 0 0; font-size: 14px; color: var(--bad); }
+
+.who-overlay { position: fixed; inset: 0; z-index: 9000; display: flex; align-items: center; justify-content: center; padding: 24px; background: rgba(12,16,18,.62); backdrop-filter: blur(6px); }
+.who-card { width: min(420px, 100%); padding: 24px; border-radius: 20px; background: var(--surface); border: 1px solid var(--border); box-shadow: 0 24px 60px rgba(0,0,0,.32); }
+.who-card h2 { margin: 0 0 6px; font-size: 22px; }
+.who-card p { margin: 0 0 18px; color: var(--ink-dim); font-size: 15px; line-height: 1.5; }
+.who-choices { display: flex; gap: 10px; flex-wrap: wrap; }
+.who-choices button { flex: 1 1 120px; min-height: 52px; border-radius: 14px; border: 1px solid var(--border); background: var(--surface-2); color: var(--ink); font: inherit; font-size: 17px; font-weight: 600; cursor: pointer; }
+.who-choices button:hover { border-color: var(--ochre); color: var(--ochre); }
 </style>
 
 <nav class="topnav">
@@ -1048,6 +1094,7 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
         <h2 id="results-heading">Die 12 Unterkünfte</h2>
         <button type="button" class="btn btn-outline" id="toggle-all-details">Alle Details anzeigen</button>
       </div>
+      <div class="sync-bar" id="sync-bar"><span class="sync-dot"></span><span class="sync-text">Verbinde mit dem gemeinsamen Stand …</span></div>
       <div class="sort-filter-bar">
         <label class="sf-label">Sortieren
           <select id="sort-select">
@@ -6161,5 +6208,318 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
     });
   });
   updatePackBadge();
+
+  // ============================================================
+  //  Geteilte Daten: Favoriten, Ausgeblendete und Notizen
+  //  Stephan und Bilgen sehen dasselbe. Ohne Internet laeuft die
+  //  Seite normal weiter, Aenderungen gehen spaeter raus.
+  // ============================================================
+  var FB_CONFIG = {
+    apiKey: "AIzaSyAyh9UijzMCXATPDF3gHCC5bW69Ozg8Yv8",
+    authDomain: "fuerteventura-planer.firebaseapp.com",
+    projectId: "fuerteventura-planer",
+    storageBucket: "fuerteventura-planer.firebasestorage.app",
+    messagingSenderId: "660924865974",
+    appId: "1:660924865974:web:28c9039f2f19a5769b3517"
+  };
+  var FB_BASE = "https://www.gstatic.com/firebasejs/10.14.1/";
+  var WHO_KEY = "fuerte-wer";
+  var PEOPLE = { stephan: "Stephan", bilgen: "Bilgen" };
+
+  var fbDb = null;
+  var shared = { favs: {}, hidden: {} };
+  var notes = {};              // slug -> [{by, text, at}]
+  var applyingRemote = false;  // verhindert Rueckkopplung Server -> lokal -> Server
+  var mergedOnce = false;
+  var syncState = "wait";
+
+  function whoAmI(){ var v = lsGet(WHO_KEY, ""); return PEOPLE[v] ? v : ""; }
+  function whoName(id){ return PEOPLE[id] || "jemand"; }
+  function otherPerson(){ return whoAmI() === "bilgen" ? "stephan" : "bilgen"; }
+
+  // ---- Wer bist du? (einmalige Abfrage) ----
+  function askWho(force){
+    if (!force && whoAmI()) return;
+    if (document.querySelector('.who-overlay')) return;
+    var ov = document.createElement('div');
+    ov.className = 'who-overlay';
+    ov.innerHTML = '<div class="who-card" role="dialog" aria-modal="true" aria-labelledby="who-title">' +
+      '<h2 id="who-title">Wer bist du?</h2>' +
+      '<p>Damit Favoriten und Notizen den richtigen Namen tragen. Ihr beide seht immer dasselbe &ndash; egal wer etwas &auml;ndert.</p>' +
+      '<div class="who-choices">' +
+        '<button type="button" data-who="stephan">Stephan</button>' +
+        '<button type="button" data-who="bilgen">Bilgen</button>' +
+      '</div></div>';
+    ov.addEventListener('click', function(ev){
+      var btn = ev.target.closest('button[data-who]');
+      if (!btn) return;
+      lsSet(WHO_KEY, btn.getAttribute('data-who'));
+      ov.remove();
+      renderSyncBar();
+      renderAllNotes();
+      renderShareFlags();
+    });
+    document.body.appendChild(ov);
+  }
+
+  // ---- Statusleiste auf der Unterkuenfte-Seite ----
+  function syncBarEl(){ return document.getElementById('sync-bar'); }
+  function renderSyncBar(){
+    var bar = syncBarEl();
+    if (!bar) return;
+    var me = whoAmI();
+    var texts = {
+      wait:  'Verbinde mit dem gemeinsamen Stand …',
+      live:  'Favoriten, Ausgeblendete und Notizen sind mit ' + whoName(otherPerson()) + ' geteilt.',
+      cache: 'Gerade offline – deine Änderungen gehen raus, sobald du wieder Netz hast.',
+      error: 'Keine Verbindung zum gemeinsamen Stand – Änderungen bleiben vorerst nur auf diesem Gerät.'
+    };
+    bar.className = 'sync-bar is-' + syncState;
+    bar.innerHTML = '<span class="sync-dot"></span>' +
+      '<span class="sync-text">' + escapeHtml(texts[syncState] || texts.wait) + '</span>' +
+      '<button type="button" class="sync-who-btn" id="sync-who-btn">' +
+        (me ? 'Du bist <span class="sync-me">' + escapeHtml(whoName(me)) + '</span> – ändern' : 'Wer bist du?') +
+      '</button>';
+    var btn = document.getElementById('sync-who-btn');
+    if (btn) btn.addEventListener('click', function(){ askWho(true); });
+  }
+  function setSyncState(s){ if (syncState === s) return; syncState = s; renderSyncBar(); }
+
+  // ---- Karten um Hinweise und Notizfeld erweitern ----
+  function buildCardExtras(){
+    document.querySelectorAll('#card-grid .card').forEach(function(card){
+      var body = card.querySelector('.card-body');
+      if (!body || body.querySelector('.notes-box')) return;
+      var slug = slugOf(card);
+      var anchor = body.querySelector('.acc-details');
+
+      var flags = document.createElement('div');
+      flags.className = 'share-flags';
+      flags.setAttribute('data-flags', slug);
+
+      var box = document.createElement('details');
+      box.className = 'notes-box';
+      box.setAttribute('data-notes', slug);
+      box.innerHTML = '<summary>💬&nbsp;Notizen <span class="notes-count"></span></summary>' +
+        '<div class="notes-inner">' +
+          '<div class="notes-list"></div>' +
+          '<div class="notes-form">' +
+            '<input type="text" class="notes-input" maxlength="500" placeholder="Notiz für euch beide …">' +
+            '<button type="button" class="btn notes-send">Senden</button>' +
+          '</div>' +
+          '<p class="notes-error" hidden></p>' +
+        '</div>';
+
+      if (anchor) { body.insertBefore(flags, anchor); body.insertBefore(box, anchor); }
+      else { body.appendChild(flags); body.appendChild(box); }
+
+      var input = box.querySelector('.notes-input');
+      var send = box.querySelector('.notes-send');
+      function submit(){
+        var text = (input.value || '').trim();
+        if (!text) return;
+        if (!whoAmI()) { askWho(true); return; }
+        if (addNote(slug, text)) { input.value = ''; }
+      }
+      send.addEventListener('click', submit);
+      input.addEventListener('keydown', function(ev){
+        if (ev.key === 'Enter') { ev.preventDefault(); submit(); }
+      });
+      box.querySelector('.notes-list').addEventListener('click', function(ev){
+        var del = ev.target.closest('.note-del');
+        if (del) removeNote(slug, parseInt(del.getAttribute('data-idx'), 10));
+      });
+    });
+  }
+
+  // ---- Hinweise "Favorit von Bilgen" ----
+  function renderShareFlags(){
+    document.querySelectorAll('.share-flags').forEach(function(el){
+      var slug = el.getAttribute('data-flags');
+      var out = '';
+      var f = shared.favs[slug], h = shared.hidden[slug];
+      if (f) out += '<span class="share-flag is-fav">❤️&nbsp;Favorit von ' + escapeHtml(whoName(f.by)) + '</span>';
+      if (h) out += '<span class="share-flag is-hidden">🙈&nbsp;Ausgeblendet von ' + escapeHtml(whoName(h.by)) + '</span>';
+      el.innerHTML = out;
+    });
+  }
+
+  // ---- Notizen anzeigen ----
+  function fmtNoteTime(ms){
+    try {
+      return new Date(ms).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+    } catch(e){ return ''; }
+  }
+  function renderNotes(box){
+    var slug = box.getAttribute('data-notes');
+    var list = (notes[slug] || []).slice().sort(function(a, b){ return (a.at || 0) - (b.at || 0); });
+    var me = whoAmI();
+    var cnt = box.querySelector('.notes-count');
+    cnt.textContent = list.length ? '(' + list.length + ')' : '';
+    cnt.classList.toggle('has-notes', list.length > 0);
+    var target = box.querySelector('.notes-list');
+    if (!list.length) {
+      target.innerHTML = '<p class="notes-empty">Noch keine Notiz. Schreib die erste – ' + escapeHtml(whoName(otherPerson())) + ' sieht sie auch.</p>';
+    } else {
+      target.innerHTML = list.map(function(n, i){
+        var mine = n.by === me;
+        return '<div class="note' + (mine ? ' is-mine' : '') + '">' +
+          '<span class="note-head">' + escapeHtml(whoName(n.by)) + ' · ' + escapeHtml(fmtNoteTime(n.at)) + '</span>' +
+          escapeHtml(n.text || '') +
+          (mine ? '<button type="button" class="note-del" data-idx="' + i + '" title="Notiz löschen" aria-label="Notiz löschen">×</button>' : '') +
+        '</div>';
+      }).join('');
+    }
+    box.querySelector('.notes-inner').setAttribute('data-locked', fbDb ? '0' : '1');
+    if (!fbDb && !box.querySelector('.notes-offline')) {
+      var p = document.createElement('p');
+      p.className = 'notes-empty notes-offline';
+      p.textContent = 'Notizen brauchen kurz Internet – sie erscheinen, sobald die Verbindung steht.';
+      box.querySelector('.notes-inner').appendChild(p);
+    } else if (fbDb) {
+      var old = box.querySelector('.notes-offline');
+      if (old) old.remove();
+    }
+  }
+  function renderAllNotes(){
+    document.querySelectorAll('.notes-box').forEach(renderNotes);
+  }
+
+  // ---- Schreiben ----
+  function showNoteError(slug, msg){
+    var box = document.querySelector('.notes-box[data-notes="' + slug + '"]');
+    if (!box) return;
+    var el = box.querySelector('.notes-error');
+    if (!el) return;
+    el.textContent = msg || '';
+    el.hidden = !msg;
+  }
+  function addNote(slug, text){
+    if (!fbDb) return false;
+    showNoteError(slug, '');
+    var msg = { by: whoAmI(), text: text, at: Date.now() };
+    fbDb.collection('kommentare').doc(slug)
+      .set({ msgs: firebase.firestore.FieldValue.arrayUnion(msg) }, { merge: true })
+      .catch(function(){
+        setSyncState('error');
+        showNoteError(slug, 'Die Notiz konnte nicht gespeichert werden – bitte später noch einmal versuchen.');
+      });
+    return true;
+  }
+  function removeNote(slug, idx){
+    if (!fbDb) return;
+    var list = notes[slug] || [];
+    var sorted = list.slice().sort(function(a, b){ return (a.at || 0) - (b.at || 0); });
+    var msg = sorted[idx];
+    if (!msg) return;
+    fbDb.collection('kommentare').doc(slug)
+      .set({ msgs: firebase.firestore.FieldValue.arrayRemove(msg) }, { merge: true })
+      .catch(function(){ setSyncState('error'); });
+  }
+
+  function sharedToArray(map){
+    return Object.keys(map)
+      .filter(function(s){ return !!LISTINGS[s]; })
+      .sort(function(a, b){ return (map[a].at || 0) - (map[b].at || 0); });
+  }
+
+  function applyShared(){
+    applyingRemote = true;
+    try {
+      setFavs(sharedToArray(shared.favs));
+      setHiddenAccs(sharedToArray(shared.hidden));
+      applySortFilter();
+      renderShareFlags();
+    } catch(e){
+    } finally { applyingRemote = false; }
+  }
+
+  function pushShared(){
+    if (!fbDb) return;
+    var me = whoAmI() || 'stephan';
+    var now = Date.now();
+    function build(arr, old){
+      var out = {};
+      arr.forEach(function(slug){ out[slug] = old[slug] || { by: me, at: now }; });
+      return out;
+    }
+    shared.favs = build(getFavs(), shared.favs);
+    shared.hidden = build(getHiddenAccs(), shared.hidden);
+    renderShareFlags();
+    fbDb.collection('sync').doc('unterkuenfte')
+      .set({ favs: shared.favs, hidden: shared.hidden })
+      .catch(function(){ setSyncState('error'); });
+  }
+
+  // Beim allerersten Kontakt: was schon lokal markiert war, mit dem
+  // gemeinsamen Stand zusammenfuehren, damit niemand etwas verliert.
+  function mergeLocalIntoShared(){
+    var me = whoAmI() || 'stephan';
+    var now = Date.now();
+    var changed = false;
+    getFavs().forEach(function(s){ if (!shared.favs[s]) { shared.favs[s] = { by: me, at: now }; changed = true; } });
+    getHiddenAccs().forEach(function(s){ if (!shared.hidden[s]) { shared.hidden[s] = { by: me, at: now }; changed = true; } });
+    if (changed && fbDb) {
+      fbDb.collection('sync').doc('unterkuenfte')
+        .set({ favs: shared.favs, hidden: shared.hidden })
+        .catch(function(){});
+    }
+  }
+
+  // ---- Firestore anschliessen ----
+  function loadScript(src, cb, fail){
+    var s = document.createElement('script');
+    s.src = src; s.async = true;
+    s.onload = cb;
+    s.onerror = fail;
+    document.head.appendChild(s);
+  }
+
+  function startSync(){
+    var fail = function(){ setSyncState('error'); renderAllNotes(); };
+    loadScript(FB_BASE + 'firebase-app-compat.js', function(){
+      loadScript(FB_BASE + 'firebase-firestore-compat.js', function(){
+        try {
+          firebase.initializeApp(FB_CONFIG);
+          fbDb = firebase.firestore();
+          fbDb.enablePersistence({ synchronizeTabs: true }).catch(function(){});
+          listenShared();
+          renderAllNotes();
+        } catch(e){ fail(); }
+      }, fail);
+    }, fail);
+  }
+
+  function listenShared(){
+    fbDb.collection('sync').doc('unterkuenfte').onSnapshot(function(snap){
+      var d = (snap.exists && snap.data()) || {};
+      shared.favs = d.favs || {};
+      shared.hidden = d.hidden || {};
+      if (!mergedOnce) { mergedOnce = true; mergeLocalIntoShared(); }
+      applyShared();
+      setSyncState(snap.metadata && snap.metadata.fromCache ? 'cache' : 'live');
+    }, function(){ setSyncState('error'); });
+
+    fbDb.collection('kommentare').onSnapshot(function(qs){
+      notes = {};
+      qs.forEach(function(doc){
+        var m = doc.data() && doc.data().msgs;
+        notes[doc.id] = Array.isArray(m) ? m : [];
+      });
+      renderAllNotes();
+    }, function(){ setSyncState('error'); });
+  }
+
+  // Lokale Setter abfangen: jede Aenderung geht auch an den gemeinsamen Stand.
+  var setFavsLocal = setFavs, setHiddenLocal = setHiddenAccs;
+  setFavs = function(arr){ setFavsLocal(arr); if (!applyingRemote) pushShared(); };
+  setHiddenAccs = function(arr){ setHiddenLocal(arr); if (!applyingRemote) pushShared(); };
+
+  buildCardExtras();
+  renderSyncBar();
+  renderAllNotes();
+  renderShareFlags();
+  askWho(false);
+  startSync();
 })();
 </script>
