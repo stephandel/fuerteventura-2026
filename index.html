@@ -308,6 +308,7 @@ input[type=range]::-moz-range-thumb { width: 26px; height: 26px; border: 2px sol
 #kosten-content { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 .price-table { min-width: 0; }
 .price-table td, .price-table th { word-break: normal; overflow-wrap: anywhere; }
+.price-table td.num { overflow-wrap: normal; word-break: keep-all; white-space: nowrap; }
 
 /* Hinweis, wenn gespeicherte Auswahl nicht mehr existiert */
 .stale-note { background: var(--warn-bg); color: var(--warn); border: 1px solid var(--warn); border-radius: 12px; padding: 12px 14px; margin-top: 14px; font-size: var(--fs-sub); line-height: 1.5; display: flex; gap: 10px; align-items: flex-start; }
@@ -954,6 +955,32 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 .tide-day-list { display: flex; flex-wrap: wrap; gap: 8px; font-size: 14px; }
 .tide-day-list span { background: var(--surface-2); border: 1px solid var(--border); border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
 .tide-status { margin: 12px 0 0; font-size: 14px; color: var(--ink-dim); }
+
+/* Preistabelle auf schmalen Bildschirmen: aus jeder Zeile wird ein Block.
+   Drei Spalten nebeneinander lassen fuer die Betraege so wenig Platz, dass
+   "999,92 €" auf drei Zeilen zerfaellt - lieber untereinander mit Beschriftung. */
+@media (max-width: 620px) {
+  #kosten-content { overflow-x: visible; }
+  table.cost-table, table.cost-table tbody, table.cost-table tfoot,
+  table.cost-table tr, table.cost-table td { display: block; width: 100%; }
+  table.cost-table thead { display: none; }
+  table.cost-table tr { border-top: 1px solid var(--border); padding: 14px 18px; }
+  table.cost-table tbody tr:first-child { border-top: none; }
+  table.cost-table tfoot tr { border-top: 2px solid var(--border); }
+  table.cost-table td { border-top: none; padding: 0; }
+  table.cost-table td.num {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 14px;
+    margin-top: 8px; text-align: right;
+  }
+  table.cost-table td.num::before {
+    content: attr(data-label);
+    font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase;
+    color: var(--ink-dim); white-space: nowrap;
+  }
+  table.cost-table tfoot td { font-size: 1.05rem; padding: 0; }
+  table.cost-table tfoot td:first-child { font-size: 1.1rem; }
+}
 </style>
 
 <nav class="topnav">
@@ -4490,22 +4517,24 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
         approx: a.estimated
       });
     });
-    var html = '<table class="price-table"><thead><tr><th>Posten</th><th style="text-align:right">Gesamt (2 Pers.)</th><th style="text-align:right">p. P.</th></tr></thead><tbody>';
+    var html = '<table class="price-table cost-table"><thead><tr><th>Posten</th><th style="text-align:right">Gesamt (2 Pers.)</th><th style="text-align:right">p. P.</th></tr></thead><tbody>';
     rows.forEach(function(r){
       var linkHtml = r.link ? ' <a class="refresh-link" href="' + r.link + '" target="_blank" rel="noopener">✈️ Meine Buchung ↗</a>' : '';
       var pre = r.approx ? '≈ ' : '';
       html += '<tr><td>' + escapeHtml(r.label) + '<br><span class="dim" style="font-size:12px">' + escapeHtml(r.sub) + '</span>' + linkHtml + '</td>' +
-        '<td class="num">' + pre + fmtEuro(r.total) + ' €</td><td class="num">' + pre + fmtEuro(r.total/2) + ' €</td></tr>';
+        '<td class="num" data-label="beide zusammen">' + pre + fmtEuro(r.total) + ' €</td>' +
+        '<td class="num" data-label="pro Person">' + pre + fmtEuro(r.total/2) + ' €</td></tr>';
     });
     var missing = c.split ? (2 - c.accs.length) : (c.accs.length ? 0 : 1);
     for (var i = 0; i < missing; i++) {
-      html += '<tr><td><a href="#unterkuenfte">+ Unterkunft auswählen</a><br><span class="dim" style="font-size:12px">noch offen</span></td><td class="num dim">–</td><td class="num dim">–</td></tr>';
+      html += '<tr><td><a href="#unterkuenfte">+ Unterkunft auswählen</a><br><span class="dim" style="font-size:12px">noch offen</span></td>' +
+        '<td class="num dim" data-label="beide zusammen">–</td><td class="num dim" data-label="pro Person">–</td></tr>';
     }
     var complete = missing === 0;
     var anyEst = c.accs.some(function(a){ return a.estimated; });
-    html += '</tbody><tfoot><tr><td>' + (complete ? 'Gesamt' : 'Gesamt bisher (ohne Unterkunft)') + '</td><td class="num">' +
-      (complete && anyEst ? '≈ ' : '') + fmtEuro(c.total) + ' €</td><td class="num">' +
-      (complete && anyEst ? '≈ ' : '') + fmtEuro(c.total/2) + ' €</td></tr></tfoot></table>';
+    html += '</tbody><tfoot><tr><td>' + (complete ? 'Gesamt' : 'Gesamt bisher (ohne Unterkunft)') + '</td>' +
+      '<td class="num" data-label="beide zusammen">' + (complete && anyEst ? '≈ ' : '') + fmtEuro(c.total) + ' €</td>' +
+      '<td class="num" data-label="pro Person">' + (complete && anyEst ? '≈ ' : '') + fmtEuro(c.total/2) + ' €</td></tr></tfoot></table>';
     html += '<p class="dim" style="margin-top:14px;font-size:12.5px">Flug ist ein fixer, gebuchter Wert (inkl. Menüwahl). Mietwagen oben und Unterkunft auf der Seite „Unterkünfte“ können wir jederzeit ändern — die Rechnung aktualisiert sich automatisch.' +
       (c.split ? ' Bei geteiltem Aufenthalt sind die Unterkunfts-Zeilen mit „≈“ Schätzungen: der Preis pro Nacht mal Anzahl Nächte. Kurze Aufenthalte kosten auf den Portalen oft etwas mehr pro Nacht.' : '') +
       ' Unterkunftspreise zuletzt geprüft am 10.09.2026.</p>';
