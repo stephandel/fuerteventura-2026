@@ -870,6 +870,7 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
 .sync-bar.is-live .sync-dot { background: var(--good); }
 .sync-bar.is-cache .sync-dot { background: var(--warn); }
 .sync-bar.is-error .sync-dot { background: var(--bad); }
+.sync-bar.is-stale .sync-dot { background: var(--bad); }
 .sync-text { flex: 1 1 auto; min-width: 180px; color: var(--ink-dim); }
 .sync-me { font-weight: 600; color: var(--ink); }
 .sync-who-btn { min-height: var(--tap); padding: 0 14px; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); color: var(--ink); font: inherit; cursor: pointer; }
@@ -901,6 +902,8 @@ footer.site-footer p { margin: 0 0 8px; max-width: 76ch; }
 .notes-inner[data-locked="1"] .notes-form { display: none; }
 .notes-error[hidden] { display: none; }
 .notes-error { margin: 8px 0 0; font-size: 14px; color: var(--bad); }
+.notes-offline { margin: 0 0 10px; padding: 9px 12px; border-radius: 11px; background: var(--bad-bg); color: var(--bad); border: 1px solid var(--bad); font-size: 13.5px; line-height: 1.45; }
+.notes-offline.is-mild { background: var(--warn-bg); color: var(--warn); border-color: var(--warn); }
 
 .who-overlay { position: fixed; inset: 0; z-index: 9000; display: flex; align-items: center; justify-content: center; padding: 24px; background: rgba(12,16,18,.62); backdrop-filter: blur(6px); }
 .who-card { width: min(420px, 100%); padding: 24px; border-radius: 20px; background: var(--surface); border: 1px solid var(--border); box-shadow: 0 24px 60px rgba(0,0,0,.32); }
@@ -6213,7 +6216,10 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       cache: navigator.onLine
         ? 'Gespeicherter Stand – die Verbindung wird noch aufgebaut.'
         : 'Gerade offline – deine Änderungen gehen raus, sobald du wieder Netz hast.',
-      error: 'Keine Verbindung zum gemeinsamen Stand – Änderungen bleiben vorerst nur auf diesem Gerät.'
+      error: 'Keine Verbindung zum gemeinsamen Stand – Änderungen bleiben vorerst nur auf diesem Gerät.',
+      stale: navigator.onLine
+        ? 'Der gemeinsame Stand ist nicht erreichbar. Du siehst nur, was auf diesem Gerät liegt.'
+        : 'Gerade offline – deine Änderungen gehen raus, sobald du wieder Netz hast.'
     };
     bar.className = 'sync-bar is-' + syncState;
     bar.innerHTML = '<span class="sync-dot"></span>' +
@@ -6224,7 +6230,28 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     var btn = document.getElementById('sync-who-btn');
     if (btn) btn.addEventListener('click', function(){ askWho(true); });
   }
-  function setSyncState(s){ if (syncState === s) return; syncState = s; renderSyncBar(); }
+  var syncWatchdog = null;
+  // Ein gesperrtes oder unerreichbares Projekt meldet keinen Fehler - Firestore
+  // liefert einfach weiter den Zwischenspeicher aus. Wer nach 15 Sekunden noch
+  // nicht live ist, ist es auch nicht mehr; das muss die Seite zugeben.
+  function armSyncWatchdog(){
+    if (syncWatchdog) clearTimeout(syncWatchdog);
+    syncWatchdog = setTimeout(function(){
+      syncWatchdog = null;
+      if (syncState !== 'live') setSyncState('stale');
+    }, 15000);
+  }
+  function setSyncState(s){
+    if (syncState === s) return;
+    syncState = s;
+    renderSyncBar();
+    renderAllNotes();
+    if (s === 'live') {
+      if (syncWatchdog) { clearTimeout(syncWatchdog); syncWatchdog = null; }
+    } else if (s === 'cache' || s === 'wait') {
+      armSyncWatchdog();
+    }
+  }
   window.addEventListener('online',  renderSyncBar);
   window.addEventListener('offline', renderSyncBar);
 
@@ -6313,15 +6340,30 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
         '</div>';
       }).join('');
     }
-    box.querySelector('.notes-inner').setAttribute('data-locked', fbDb ? '0' : '1');
-    if (!fbDb && !box.querySelector('.notes-offline')) {
-      var p = document.createElement('p');
-      p.className = 'notes-empty notes-offline';
-      p.textContent = 'Notizen brauchen kurz Internet – sie erscheinen, sobald die Verbindung steht.';
-      box.querySelector('.notes-inner').appendChild(p);
-    } else if (fbDb) {
-      var old = box.querySelector('.notes-offline');
-      if (old) old.remove();
+    // Ohne Verbindung zeigt der Kasten nur, was auf diesem Geraet liegt.
+    // Das muss dranstehen - sonst sieht ein veralteter Stand aus wie der aktuelle.
+    var reachable = fbDb && syncState !== 'error' && syncState !== 'stale';
+    var trulyOffline = !navigator.onLine;
+    var broken = !reachable && !trulyOffline;
+    var inner = box.querySelector('.notes-inner');
+    inner.setAttribute('data-locked', broken ? '1' : '0');
+    var warn = box.querySelector('.notes-offline');
+    var msg = '';
+    if (broken) {
+      msg = 'Keine Verbindung zum gemeinsamen Stand. Du siehst nur, was auf diesem Gerät gespeichert ist — neue Notizen der anderen kommen gerade nicht an, und eigene lassen sich nicht abschicken.';
+    } else if (!reachable && trulyOffline) {
+      msg = 'Gerade offline — du siehst den Stand von diesem Gerät. Was du schreibst, geht raus, sobald du wieder Netz hast.';
+    }
+    if (msg) {
+      if (!warn) {
+        warn = document.createElement('p');
+        warn.className = 'notes-offline';
+        inner.insertBefore(warn, inner.firstChild);
+      }
+      warn.classList.toggle('is-mild', !broken);
+      warn.textContent = msg;
+    } else if (warn) {
+      warn.remove();
     }
   }
   function renderAllNotes(){
@@ -6427,6 +6469,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
           fbDb = firebase.firestore();
           fbDb.enablePersistence({ synchronizeTabs: true }).catch(function(){});
           listenShared();
+          armSyncWatchdog();
           renderAllNotes();
         } catch(e){ fail(); }
       }, fail);
