@@ -4,7 +4,8 @@
 !README.md
 !manifest.json
 !sw.js
-!firestore.rules
+!worker/
+!worker/**
 !images/
 !images/**
 !vendor/
