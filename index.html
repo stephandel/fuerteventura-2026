@@ -1142,6 +1142,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 .kat-grid .naechte-streifen { height: 40px; }
 .kat-grid .teil-wahl { height: 56px; align-items: center; margin-top: 8px; }
 .kat-grid .card-links { min-height: 52px; align-items: center; margin-top: 8px; }
+
+/* Aufteilung: Anzahl waehlen, dann Naechte je Teil */
+.tw-kopf { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.tw-frage { font-weight: 700; font-size: 1.05rem; }
+.tw-knoepfe { display: flex; gap: 6px; }
+.tw-btn { min-width: 52px; min-height: var(--tap); border-radius: 12px; border: 1px solid var(--border); background: var(--surface); color: var(--ink-dim); font: inherit; font-size: 1.05rem; font-weight: 700; cursor: pointer; }
+.tw-btn:hover { border-color: var(--teal); color: var(--teal); }
+.tw-btn.aktiv { background: var(--teal); border-color: var(--teal); color: var(--teal-ink); }
+.split-parts { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin-top: 14px; }
+.split-rest { margin: 6px 0 0; font-size: 14px; color: var(--ink-dim); }
+.split-rest strong { color: var(--ink); }
+#split-regler .split-slider + .split-slider { margin-top: 14px; }
 </style>
 
 <nav class="topnav">
@@ -1302,21 +1314,22 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     </div>
     <div class="selection-summary" id="selection-summary"></div>
     <div class="split-box" id="split-box">
-      <label class="split-toggle"><input type="checkbox" id="split-mode"><span class="split-emoji">&#x1f501;</span><span>Aufenthalt auf zwei Unterk&#252;nfte aufteilen</span></label>
-      <p class="split-hint">Praktisch, wenn eine Wunsch-Unterkunft nicht alle 13 N&#228;chte frei hat &#8211; oder wenn wir bewusst zwei Ecken der Insel wohnen wollen. Der Wechseltag ist frei w&#228;hlbar, die Kostenrechnung z&#228;hlt beide Teile zusammen.</p>
-      <div class="split-body" id="split-body" hidden>
-        <div class="split-slider">
-          <label for="split-nights">Wechseltag: <strong id="split-date-label">&#8211;</strong></label>
-          <input type="range" id="split-nights" min="1" max="12" value="7" step="1">
-          <div class="split-scale"><span>30.09.</span><span>11.10.</span></div>
+      <div class="tw-kopf">
+        <span class="tw-frage">🔁 Wie viele Unterkünfte für die 13 Nächte?</span>
+        <div class="tw-knoepfe" id="teile-wahl">
+          <button type="button" class="tw-btn" data-anzahl="1">1</button>
+          <button type="button" class="tw-btn" data-anzahl="2">2</button>
+          <button type="button" class="tw-btn" data-anzahl="3">3</button>
         </div>
-        <div class="split-parts">
-          <div class="split-part" id="split-part-1"></div>
-          <div class="split-part" id="split-part-2"></div>
-        </div>
-        <div class="split-total" id="split-total"></div>
-        <p class="split-note">Die Teilpreise sind <strong>Sch&#228;tzungen</strong>: Sie rechnen den Preis pro Nacht auf die jeweilige Anzahl N&#228;chte hoch. Portale berechnen k&#252;rzere Aufenthalte oft etwas teurer (Reinigungspauschalen, Mindestaufenthalt), au&#223;erdem f&#228;llt der Wechsel als zus&#228;tzlicher Aufwand an. Vor dem Buchen also beide Zeitr&#228;ume einzeln auf dem Portal pr&#252;fen.</p>
       </div>
+      <p class="split-hint" id="split-hint">Praktisch, wenn eine Wunsch-Unterkunft nicht alle 13 Nächte frei hat &#8211; oder wenn ihr bewusst in zwei Ecken der Insel wohnen wollt.</p>
+      <div class="split-body" id="split-body">
+        <div id="split-regler"></div>
+        <div class="split-parts" id="split-parts"></div>
+        <div class="split-total" id="split-total"></div>
+        <p class="split-note">Die Teilpreise sind <strong>Schätzungen</strong>: Sie rechnen den Preis pro Nacht auf die jeweilige Anzahl Nächte hoch. Portale berechnen kürzere Aufenthalte oft etwas teurer pro Nacht.</p>
+      </div>
+    </div>
     </div>
   </div>
   <div class="wrap">
@@ -4433,45 +4446,52 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 
   // ---- total ----
   // Returns {car, accs:[{listing, slug, nights, from, cost, estimated}], total, split}
+  // Wie viele Unterkuenfte der Aufenthalt hat, waehlt man oben auf der
+  // Unterkuenfte-Seite. Frueher haing das an einem Ja/Nein-Schalter und
+  // kannte nur zwei Teile.
+  var TEILE_KEY = 'fuerte-teile-anzahl';
+  function teileAnzahl(){
+    var n = parseInt(lsGet(TEILE_KEY, '1'), 10);
+    return (n === 2 || n === 3) ? n : 1;
+  }
+  function setzeTeileAnzahl(n){
+    lsSet(TEILE_KEY, String(n));
+    // Auswahl, die es nicht mehr gibt, wieder freigeben
+    if (n < 3) lsSet('fuerte-shortlist-selected-3', '');
+    if (n < 2) lsSet(SEL2_KEY, '');
+  }
+
+  // Naechte je Teil, abhaengig von der gewaehlten Anzahl
+  function naechteVerteilung(){
+    var n = teileAnzahl();
+    if (n === 1) return [TOTAL_NIGHTS];
+    var a = getSplitNights();
+    if (n === 2) return [a, TOTAL_NIGHTS - a];
+    var b = getSplitNights2();
+    return [a, b, TOTAL_NIGHTS - a - b];
+  }
+
   function computeTotal(){
     var car = CARS[getSelectedCar()] || CARS[DEFAULT_CAR];
-    // Bis zu drei Teile. Wie viele es sind, ergibt sich daraus, was
-    // gewaehlt wurde - nicht mehr aus einem Schalter.
     var slugs = [getSelected(), getSelected2(), getSelected3()];
-    var gewaehlt = slugs.filter(function(x){ return x && LISTINGS[x]; });
-    var teile = [];
-
-    if (gewaehlt.length >= 3) {
-      var n1 = getSplitNights(), n2 = getSplitNights2();
-      teile = [{ slug: slugs[0], nights: n1, from: 0 },
-               { slug: slugs[1], nights: n2, from: n1 },
-               { slug: slugs[2], nights: TOTAL_NIGHTS - n1 - n2, from: n1 + n2 }];
-    } else if (gewaehlt.length === 2) {
-      var m1 = getSplitNights();
-      var erste = slugs[0] && LISTINGS[slugs[0]] ? 0 : 1;
-      var zweite = slugs.findIndex(function(x, k){ return k > erste && x && LISTINGS[x]; });
-      teile = [{ slug: slugs[erste], nights: m1, from: 0 },
-               { slug: slugs[zweite], nights: TOTAL_NIGHTS - m1, from: m1 }];
-    } else if (gewaehlt.length === 1) {
-      teile = [{ slug: gewaehlt[0], nights: TOTAL_NIGHTS, from: 0 }];
-    }
-
+    var verteilung = naechteVerteilung();
     var accs = [];
-    teile.forEach(function(t){
-      var a = LISTINGS[t.slug];
-      if (!a || t.nights < 1) return;
-      var genau = a.nights === t.nights;
-      accs.push({ listing: a, slug: t.slug, nights: t.nights, from: t.from,
-                  cost: genau ? a.total : a.ppn * t.nights, estimated: !genau });
-    });
-
-    var accTotal = 0;
-    accs.forEach(function(x){ accTotal += x.cost; });
-    var abgedeckt = 0;
-    accs.forEach(function(x){ abgedeckt += x.nights; });
+    var von = 0;
+    for (var k = 0; k < verteilung.length; k++) {
+      var naechte = verteilung[k];
+      var a = LISTINGS[slugs[k]];
+      if (a && naechte >= 1) {
+        var genau = a.nights === naechte;
+        accs.push({ listing: a, slug: slugs[k], nights: naechte, from: von,
+                    cost: genau ? a.total : a.ppn * naechte, estimated: !genau });
+      }
+      von += naechte;
+    }
+    var accTotal = 0, abgedeckt = 0;
+    accs.forEach(function(x){ accTotal += x.cost; abgedeckt += x.nights; });
     return {car: car, accs: accs, total: FLIGHT.total + car.total + accTotal,
-            accTotal: accTotal, split: accs.length > 1, teile: accs.length,
-            naechteOffen: Math.max(0, TOTAL_NIGHTS - abgedeckt)};
+            accTotal: accTotal, split: teileAnzahl() > 1, teile: teileAnzahl(),
+            verteilung: verteilung, naechteOffen: Math.max(0, TOTAL_NIGHTS - abgedeckt)};
   }
 
   // ---- Gespeicherte Auswahl gegen den aktuellen Bestand prüfen ----
@@ -4630,87 +4650,147 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   }
 
   function renderSplit(){
-    if (!splitBody) return;
-    var split = isSplit();
-    splitBody.hidden = !split;
-    if (splitToggle) splitToggle.checked = split;
-    if (!split) return;
-
-    var n1 = getSplitNights(), n2 = TOTAL_NIGHTS - n1;
-    if (splitRange) splitRange.value = n1;
-    var lab = document.getElementById('split-date-label');
-    if (lab) lab.textContent = fmtDay(n1);
-
+    var box = document.getElementById('split-box');
+    if (!box) return;
+    var anzahl = teileAnzahl();
+    var verteilung = naechteVerteilung();
     var c = computeTotal();
-    var byPart = {1: null, 2: null};
-    c.accs.forEach(function(a){ byPart[a.from === 0 ? 1 : 2] = a; });
 
-    [1, 2].forEach(function(part){
-      var el = document.getElementById('split-part-' + part);
-      if (!el) return;
-      var nights = part === 1 ? n1 : n2;
-      var from = part === 1 ? 0 : n1;
-      var html = '<div class="sp-label">Teil ' + part + '</div>' +
-        '<div class="sp-dates">' + fmtShort(from) + ' – ' + fmtShort(from + nights) +
-        ' · ' + nights + ' ' + (nights === 1 ? 'Nacht' : 'Nächte') + '</div>';
-      var a = byPart[part];
-      if (a) {
-        html += '<div class="sp-name">' + escapeHtml(a.listing.name) + '</div>';
-        html += '<div class="sp-cost">' + (a.estimated ? '≈ ' : '') + fmtEuro0(a.cost) + ' €' +
-                ' <span class="dim" style="font-weight:400">(' + fmtEuro0(a.listing.ppn) + ' €/Nacht)</span></div>';
-        if (a.listing.partial && a.listing.maxNight && nights > a.listing.maxNight) {
-          html += '<div class="sp-warn">⚠️ Diese Unterkunft ist nur bis zum ' + fmtShort(a.listing.maxNight) +
-                  ' buchbar – für ' + nights + ' Nächte reicht das nicht.</div>';
-        }
-        html += '<button type="button" class="sp-clear" data-clear="' + part + '">Auswahl aufheben</button>';
-      } else {
-        html += '<div class="sp-name empty">Noch keine Unterkunft – unten auf einer Karte auf „→ Teil ' + part + '“ klicken</div>';
-      }
-      el.innerHTML = html;
+    // Knoepfe 1 / 2 / 3
+    box.querySelectorAll('.tw-btn').forEach(function(b){
+      b.classList.toggle('aktiv', parseInt(b.getAttribute('data-anzahl'), 10) === anzahl);
     });
+
+    var hint = document.getElementById('split-hint');
+    if (hint) hint.textContent = anzahl === 1
+      ? 'Eine Unterkunft für die ganzen 13 Nächte. Unten auf einer Karte auf „Teil 1“ tippen.'
+      : 'Stell hier ein, wie viele Nächte auf welchen Teil entfallen. Unten auf den Karten wählst du dann, welche Unterkunft welcher Teil wird.';
+
+    // Regler: einer bei zwei Teilen, zwei bei drei Teilen
+    var reglerEl = document.getElementById('split-regler');
+    if (reglerEl) {
+      if (anzahl === 1) {
+        reglerEl.innerHTML = '';
+      } else {
+        var html = '';
+        var maxErster = TOTAL_NIGHTS - (anzahl - 1);
+        html += reglerZeile('n1', 'Nächte in Teil 1', verteilung[0], 1, maxErster);
+        if (anzahl === 3) {
+          var maxZweiter = TOTAL_NIGHTS - verteilung[0] - 1;
+          html += reglerZeile('n2', 'Nächte in Teil 2', verteilung[1], 1, Math.max(1, maxZweiter));
+          html += '<p class="split-rest">Teil 3 bekommt automatisch die restlichen <strong>' +
+                  verteilung[2] + ' ' + (verteilung[2] === 1 ? 'Nacht' : 'Nächte') + '</strong>.</p>';
+        }
+        reglerEl.innerHTML = html;
+      }
+    }
+
+    // Kacheln je Teil
+    var partsEl = document.getElementById('split-parts');
+    if (partsEl) {
+      var slugs = [getSelected(), getSelected2(), getSelected3()];
+      var von = 0, teile = '';
+      for (var k = 0; k < anzahl; k++) {
+        var naechte = verteilung[k];
+        var a = LISTINGS[slugs[k]];
+        var t = '<div class="split-part"><div class="sp-label">Teil ' + (k + 1) + '</div>' +
+          '<div class="sp-dates">' + fmtShort(von) + ' – ' + fmtShort(von + naechte) +
+          ' · ' + naechte + ' ' + (naechte === 1 ? 'Nacht' : 'Nächte') + '</div>';
+        if (a) {
+          var genau = a.nights === naechte;
+          var kosten = genau ? a.total : a.ppn * naechte;
+          t += '<div class="sp-name">' + escapeHtml(a.name) + '</div>' +
+               '<div class="sp-cost">' + (genau ? '' : '≈ ') + fmtEuro0(kosten) + ' €' +
+               ' <span class="dim" style="font-weight:400">(' + fmtEuro0(a.ppn) + ' €/Nacht)</span></div>';
+          if (a.maxNight && naechte > a.maxNight) {
+            t += '<div class="sp-warn">⚠️ Nur bis zum ' + fmtShort(a.maxNight) +
+                 ' buchbar – für ' + naechte + ' Nächte reicht das nicht.</div>';
+          }
+          t += '<button type="button" class="sp-clear" data-clear="' + (k + 1) + '">Auswahl aufheben</button>';
+        } else if (slugs[k]) {
+          t += '<div class="sp-name empty">Gewählt, aber ohne hinterlegten Preis – Kosten bitte beim Anbieter prüfen.</div>';
+        } else {
+          t += '<div class="sp-name empty">Noch keine Unterkunft – unten auf einer Karte auf „Teil ' + (k + 1) + '“ tippen.</div>';
+        }
+        teile += t + '</div>';
+        von += naechte;
+      }
+      partsEl.innerHTML = teile;
+      partsEl.style.setProperty('--teile', anzahl);
+    }
 
     var totEl = document.getElementById('split-total');
     if (totEl) {
-      if (c.accs.length === 2) {
-        var anyEst = c.accs.some(function(a){ return a.estimated; });
-        totEl.innerHTML = 'Beide Unterkünfte zusammen: <strong>' + (anyEst ? '≈ ' : '') + fmtEuro0(c.accTotal) +
-          ' €</strong> für 13 Nächte · <strong>' + fmtEuro0(c.accTotal / TOTAL_NIGHTS) +
-          ' €/Nacht</strong> im Schnitt · mit Flug und Mietwagen <strong>' + (anyEst ? '≈ ' : '') + fmtEuro0(c.total) +
-          ' €</strong> gesamt, <strong>' + (anyEst ? '≈ ' : '') + fmtEuro0(c.total / 2) + ' €</strong> pro Person.';
-      } else if (c.accs.length === 1) {
-        totEl.innerHTML = 'Erst eine von zwei Unterkünften gewählt – die Gesamtsumme wird vollständig, sobald beide Teile belegt sind.';
+      var fehlen = anzahl - c.accs.length;
+      if (fehlen <= 0 && c.accs.length) {
+        var est = c.accs.some(function(a){ return a.estimated; });
+        totEl.innerHTML = (anzahl === 1 ? 'Unterkunft' : 'Alle ' + anzahl + ' Unterkünfte zusammen') +
+          ': <strong>' + (est ? '≈ ' : '') + fmtEuro0(c.accTotal) + ' €</strong> für 13 Nächte · <strong>' +
+          fmtEuro0(c.accTotal / TOTAL_NIGHTS) + ' €/Nacht</strong> im Schnitt · mit Flug und Mietwagen <strong>' +
+          (est ? '≈ ' : '') + fmtEuro0(c.total) + ' €</strong> gesamt, <strong>' +
+          (est ? '≈ ' : '') + fmtEuro0(c.total / 2) + ' €</strong> pro Person.';
+      } else if (c.accs.length) {
+        totEl.innerHTML = 'Erst ' + c.accs.length + ' von ' + anzahl +
+          ' Unterkünften gewählt – die Summe wird vollständig, sobald alle Teile belegt sind.';
       } else {
         totEl.innerHTML = 'Noch keine Unterkunft gewählt.';
       }
     }
   }
 
-  if (splitToggle) {
-    splitToggle.addEventListener('change', function(){
-      setSplit(splitToggle.checked);
-      applySelState();
-      renderSplit();
-      renderKosten();
-      renderSelectionSummary();
-    });
+  function reglerZeile(id, beschriftung, wert, min, max){
+    return '<div class="split-slider">' +
+      '<label for="split-' + id + '">' + beschriftung + ': <strong>' + wert + '</strong></label>' +
+      '<input type="range" id="split-' + id + '" data-regler="' + id + '" min="' + min +
+      '" max="' + max + '" value="' + wert + '" step="1">' +
+      '<div class="split-scale"><span>' + min + '</span><span>' + max + '</span></div>' +
+    '</div>';
   }
-  if (splitRange) {
-    splitRange.addEventListener('input', function(){
-      setSplitNights(parseInt(splitRange.value, 10));
-      applySelState();
-      renderSplit();
-      renderKosten();
-      renderSelectionSummary();
-    });
-  }
-  document.addEventListener('click', function(e){
-    var b = e.target.closest ? e.target.closest('.sp-clear') : null;
-    if (!b) return;
-    if (b.getAttribute('data-clear') === '1') setSelected(''); else setSelected2('');
+
+  // Alles neu zeichnen, was von der Aufteilung abhaengt
+  function aufteilungGeaendert(){
     applySelState();
     renderSplit();
     renderKosten();
     renderSelectionSummary();
+    try { zeichneTeilKnoepfe(); alleStreifen(); } catch(e){}
+  }
+
+  // 1 / 2 / 3 Unterkuenfte
+  document.addEventListener('click', function(e){
+    var b = e.target.closest ? e.target.closest('.tw-btn') : null;
+    if (!b) return;
+    setzeTeileAnzahl(parseInt(b.getAttribute('data-anzahl'), 10));
+    aufteilungGeaendert();
+  });
+
+  // Regler fuer die Naechte je Teil
+  document.addEventListener('input', function(e){
+    var r = e.target.closest ? e.target.closest('[data-regler]') : null;
+    if (!r) return;
+    var wert = parseInt(r.value, 10);
+    if (r.getAttribute('data-regler') === 'n1') {
+      setSplitNights(wert);
+      // Bei drei Teilen darf Teil 2 nicht laenger werden als der Rest
+      if (teileAnzahl() === 3) {
+        var rest = TOTAL_NIGHTS - wert;
+        if (getSplitNights2() > rest - 1) setSplitNights2(Math.max(1, rest - 1));
+      }
+    } else {
+      setSplitNights2(wert);
+    }
+    aufteilungGeaendert();
+  });
+
+  // Auswahl eines Teils aufheben
+  document.addEventListener('click', function(e){
+    var b = e.target.closest ? e.target.closest('.sp-clear') : null;
+    if (!b) return;
+    var teil = b.getAttribute('data-clear');
+    if (teil === '1') setSelected('');
+    else if (teil === '2') setSelected2('');
+    else lsSet('fuerte-shortlist-selected-3', '');
+    aufteilungGeaendert();
   });
 
   // ---- cost calculator (Kosten page) ----
@@ -7436,7 +7516,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     w.className = 'teil-wahl';
     w.innerHTML = '<span class="teil-frage">Nehmen als</span>' +
       [1, 2, 3].map(function(i){
-        return '<button type="button" class="teil-btn" data-teil="' + i + '" data-slug="' + slug + '">Teil ' + i + '</button>';
+        return '<button type="button" class="teil-btn" data-teil="' + i + '" data-slug="' + slug + '">Teil ' + i + '</button>';  // Beschriftung bleibt, ausgeblendet wird ueber hidden
       }).join('') +
       '<button type="button" class="teil-btn teil-weg" data-teil="0" data-slug="' + slug + '">nicht</button>';
     if (alt) { alt.parentNode.insertBefore(w, alt); alt.remove(); }
@@ -7444,15 +7524,21 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   }
 
   function zeichneTeilKnoepfe(){
+    var anzahl = (typeof teileAnzahl === 'function') ? teileAnzahl() : 1;
     // Nach dem Einsortieren stecken die Karten in den Kategorie-Gittern,
     // nicht mehr in #card-grid - deshalb alle Karten nehmen.
     document.querySelectorAll('.card[id^="c-"]').forEach(function(card){
       var slug = slugOf(card);
       var t = teilVon(slug);
-      card.classList.toggle('ist-gewaehlt', t > 0);
+      card.classList.toggle('ist-gewaehlt', t > 0 && t <= anzahl);
       card.querySelectorAll('.teil-btn').forEach(function(b){
-        b.classList.toggle('aktiv', parseInt(b.getAttribute('data-teil'), 10) === t);
+        var nr = parseInt(b.getAttribute('data-teil'), 10);
+        // Nur so viele Teile anbieten, wie oben eingestellt sind
+        b.hidden = nr > anzahl;
+        b.classList.toggle('aktiv', nr === t);
       });
+      var frage = card.querySelector('.teil-frage');
+      if (frage) frage.textContent = anzahl === 1 ? 'Diese nehmen' : 'Nehmen als';
     });
   }
 
