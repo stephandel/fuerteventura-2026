@@ -1088,6 +1088,15 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 .strecken .str { display: flex; align-items: baseline; gap: 6px; }
 .str-sym { flex: none; }
 .strecken b { font-family: "JetBrains Mono", monospace; font-weight: 700; color: var(--ink); }
+
+/* 13-Tage-Streifen je Unterkunft */
+.naechte-streifen { margin: 12px 0 0; }
+.ns-reihe { display: flex; gap: 2px; }
+.ns-zelle { flex: 1; height: 16px; border-radius: 3px; background: var(--good-bg); border: 1px solid var(--good); }
+.ns-zelle.ist-weg { background: var(--muted-bg); border-color: var(--border); opacity: .55; }
+.ns-zelle.ist-unser { background: var(--teal); border-color: var(--teal); }
+.ns-fuss { display: flex; justify-content: space-between; align-items: baseline; margin-top: 4px; font-family: "JetBrains Mono", monospace; font-size: 10.5px; color: var(--ink-dim); }
+.ns-unser { color: var(--teal); font-weight: 700; }
 </style>
 
 <nav class="topnav">
@@ -7319,7 +7328,8 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     TEIL_KEYS.forEach(function(k){ if (lsGet(k, '') === slug) lsSet(k, ''); });
     if (teil >= 1) lsSet(TEIL_KEYS[teil - 1], slug);
     zeichneTeilKnoepfe();
-    try { applySelState(); renderSplit(); renderSelectionSummary(); renderCost(); } catch(e){}
+    try { applySelState(); renderSplit(); renderSelectionSummary(); renderKosten(); } catch(e){}
+    try { alleStreifen(); } catch(e){}
     try { merkeAktivitaet('ausgewählt', slug); } catch(e){}
   }
 
@@ -7432,6 +7442,65 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     if (alt) alt.style.display = 'none';
   }
 
+
+  // ---- 13-Tage-Streifen je Unterkunft ----
+  // Ein eigener Schieberegler pro Karte waere irrefuehrend: die drei Teile
+  // teilen sich eine Zeitachse, ein Regler auf Karte A muesste Karte B
+  // verschieben. Der Streifen zeigt stattdessen auf einen Blick, welche
+  // Naechte dort ueberhaupt frei sind und welche davon ihr belegt habt.
+  // Verschoben wird weiterhin zentral mit den Reglern oben.
+  var REISE_START = new Date('2026-09-29T00:00:00');
+
+  function nachtDatum(i){
+    var d = new Date(REISE_START.getTime() + i * 86400000);
+    return ('0' + d.getDate()).slice(-2) + '.' + ('0' + (d.getMonth() + 1)).slice(-2) + '.';
+  }
+
+  function baueStreifen(card){
+    var body = card.querySelector('.card-body');
+    if (!body) return;
+    var alt = body.querySelector('.naechte-streifen');
+    if (alt) alt.remove();
+
+    var slug = slugOf(card);
+    var info = accInfo(slug);
+    var freiVon = Math.round((new Date(info.frei[0]) - REISE_START) / 86400000);
+    var freiBis = Math.round((new Date(info.frei[1]) - REISE_START) / 86400000);
+
+    // Welche Naechte hat diese Unterkunft in der aktuellen Aufteilung?
+    var c = null;
+    try { c = computeTotal(); } catch(e){}
+    var meine = null;
+    if (c) {
+      c.accs.forEach(function(a){
+        if (a.slug === slug) meine = { von: a.from, bis: a.from + a.nights };
+      });
+    }
+
+    var zellen = '';
+    for (var i = 0; i < TOTAL_NIGHTS; i++) {
+      var frei = i >= freiVon && i < freiBis;
+      var belegt = meine && i >= meine.von && i < meine.bis;
+      var kl = 'ns-zelle' + (frei ? '' : ' ist-weg') + (belegt ? ' ist-unser' : '');
+      zellen += '<span class="' + kl + '" title="' + nachtDatum(i) + (frei ? '' : ' – nicht buchbar') +
+                (belegt ? ' – hier gebucht' : '') + '"></span>';
+    }
+
+    var d = document.createElement('div');
+    d.className = 'naechte-streifen';
+    d.innerHTML = '<div class="ns-reihe">' + zellen + '</div>' +
+      '<div class="ns-fuss"><span>29.09.</span>' +
+      (meine ? '<span class="ns-unser">Teil ' + (teilVon(slug) || '?') + ': ' + (meine.bis - meine.von) + ' Nächte</span>' : '<span class="dim">13 Nächte</span>') +
+      '<span>12.10.</span></div>';
+
+    var vor = body.querySelector('.teil-wahl');
+    if (vor) vor.parentNode.insertBefore(d, vor); else body.appendChild(d);
+  }
+
+  function alleStreifen(){
+    document.querySelectorAll('.card[id^="c-"]').forEach(baueStreifen);
+  }
+
   function karteAufwerten(card){
     baueArtzeile(card);
     baueStrecken(card);
@@ -7439,6 +7508,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     baueSymbole(card);
     bauePreisblock(card);
     baueTeilKnoepfe(card);
+    baueStreifen(card);
   }
 
   function karteneUmbau(){
