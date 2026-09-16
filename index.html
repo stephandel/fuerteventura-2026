@@ -7418,9 +7418,48 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   }
 
   // ---- Kriterien-Symbole ----
+
+  // ---- Kriterien aus der Detailliste uebernehmen ----
+  // Die neun urspruenglichen Karten tragen nur einen Teil der Angaben als
+  // Datenfelder; Kueche, WLAN und Parkplatz stehen bloss in der Liste
+  // "Muss-Kriterien" weiter unten. Ohne das hier zeigten die Symbole
+  // "unklar", obwohl die Angabe da ist.
+  var LABEL_ZU_KRIT = [
+    [/^Küche$/i,                     'kueche'],
+    [/^WLAN$/i,                      'wlan'],
+    [/^Parkplatz$/i,                 'parken'],
+    [/^Klimaanlage$/i,               'ac'],
+    [/^Grill$/i,                     'grill'],
+    [/beheizter Pool/i,              'heizpool'],
+    [/^Ganze Unterkunft$/i,          'wholeplace'],
+    [/^Kostenlos stornierbar$/i,     'freecancel']
+  ];
+
+  function kriterienAusDetails(card){
+    var reihen = card.querySelectorAll('.acc-details .check-row');
+    if (!reihen.length) return;
+    reihen.forEach(function(row){
+      var label = (row.querySelector('.check-label') || {}).textContent || '';
+      label = label.trim();
+      var icon = row.querySelector('.check-icon');
+      if (!icon) return;
+      var zustand = icon.classList.contains('good') ? 'true'
+                  : icon.classList.contains('bad') ? 'false' : null;
+      if (zustand === null) return;           // warn/muted bleibt unklar
+      LABEL_ZU_KRIT.forEach(function(paar){
+        if (!paar[0].test(label)) return;
+        // Vorhandene Datenfelder haben Vorrang - sie wurden bewusst gesetzt
+        if (card.getAttribute('data-' + paar[1]) === null) {
+          card.setAttribute('data-' + paar[1], zustand);
+        }
+      });
+    });
+  }
+
   function baueSymbole(card){
     var body = card.querySelector('.card-body');
     if (!body || body.querySelector('.krit-reihe')) return;
+    kriterienAusDetails(card);
     var reihe = document.createElement('div');
     reihe.className = 'krit-reihe';
     KRITERIEN.forEach(function(k){
