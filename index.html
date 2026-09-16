@@ -4853,7 +4853,12 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 
   function applySortFilter(){
     if (!cardGrid) return;
-    var cards = Array.prototype.slice.call(cardGrid.querySelectorAll('.card'));
+    // Nach dem Einsortieren stecken die Karten in den Kategorie-Gittern.
+    // Dort muessen Favoriten, Ausgeblendete und Sortierung genauso wirken.
+    var gitter = document.querySelectorAll('.kat-grid');
+    var cards = gitter.length
+      ? Array.prototype.slice.call(document.querySelectorAll('.kat-grid .card'))
+      : Array.prototype.slice.call(cardGrid.querySelectorAll('.card'));
     var mode = sortSelect ? sortSelect.value : 'price-desc';
     var favs = getFavs();
     var hidden = getHiddenAccs();
@@ -4887,7 +4892,12 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       if (mode === 'beach-asc') return parseFloat(a.dataset.beach) - parseFloat(b.dataset.beach);
       return 0;
     });
-    cards.forEach(function(c){ cardGrid.appendChild(c); });
+    cards.forEach(function(c){
+      var ziel = c.closest('.kat-grid') ||
+                 (document.querySelector('.kat-block[data-art="' + accInfo(slugOf(c)).art + '"] .kat-grid')) ||
+                 cardGrid;
+      ziel.appendChild(c);
+    });
 
     var activeKeys = Object.keys(activeFilters).filter(function(k){ return activeFilters[k]; });
     var visibleCount = 0;
@@ -6800,8 +6810,11 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   }
 
   function sharedZuListe(map){
+    // Nicht nur Unterkuenfte mit hinterlegtem Preis: auch die Airbnb- und
+    // Hotelkarten, deren Preis noch offen ist, muessen sich markieren und
+    // ausblenden lassen. Massgeblich ist, ob es die Karte auf der Seite gibt.
     return Object.keys(map)
-      .filter(function(s){ return !!LISTINGS[s]; })
+      .filter(function(s){ return !!LISTINGS[s] || !!document.getElementById('c-' + s); })
       .sort(function(a, b){ return (map[a].at || 0) - (map[b].at || 0); });
   }
 
@@ -7203,7 +7216,10 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   ];
 
   function accInfo(slug){
-    return ACC[slug] || { art: 'Stadtwohnung', ort: '', portal: '', frei: ['2026-09-29','2026-10-12'] };
+    // Die Sortierung laeuft frueher als diese Tabelle aufgebaut wird -
+    // deshalb hier abfangen statt abzustuerzen.
+    var t = (typeof ACC !== 'undefined' && ACC) ? ACC[slug] : null;
+    return t || { art: 'Stadtwohnung', ort: '', portal: '', frei: ['2026-09-29','2026-10-12'] };
   }
 
   function dMonat(iso){
