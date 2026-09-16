@@ -1097,11 +1097,56 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 .ns-zelle.ist-unser { background: var(--teal); border-color: var(--teal); }
 .ns-fuss { display: flex; justify-content: space-between; align-items: baseline; margin-top: 4px; font-family: "JetBrains Mono", monospace; font-size: 10.5px; color: var(--ink-dim); }
 .ns-unser { color: var(--teal); font-weight: 700; }
+
+/* Inselumriss als Logo. Als Maske eingebunden, nicht als Bild: dadurch
+   nimmt er die Textfarbe an und passt in hell wie dunkel, ohne dass es
+   zwei Dateien braucht. */
+.brand-insel {
+  width: 1.45em; height: 1.45em; flex: none;
+  background: currentColor;
+  -webkit-mask: url("images/fuerte-silhouette.png") center / contain no-repeat;
+  mask: url("images/fuerte-silhouette.png") center / contain no-repeat;
+}
+
+.mini-karte { width: 100%; height: 100%; background: var(--surface-2); }
+.gal-folie.ist-karte { background: var(--surface-2); }
+.mini-karte.karte-dunkel .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(.92) contrast(.9); }
+.mini-karte .leaflet-container { background: var(--surface-2); }
+
+/* ---- Karten: volle Breite nutzen und alles auf gleicher Hoehe ---- */
+/* Der Textbereich der Seite ist auf 1180 px begrenzt - gut zum Lesen,
+   aber zu schmal fuer die Kartenraster. Die Raster brechen deshalb
+   aus und nutzen den Bildschirm bis 1720 px aus: auf dem MacBook
+   vier bis fuenf Karten nebeneinander statt drei. */
+.kat-huelle {
+  width: min(1720px, calc(100vw - 40px));
+  margin-left: 50%;
+  transform: translateX(-50%);
+}
+@media (max-width: 1240px) { .kat-huelle { width: 100%; margin-left: 0; transform: none; } }
+.kat-grid { grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); }
+
+/* Damit man die Karten nebeneinander vergleichen kann, bekommen die
+   Abschnitte feste Mindesthoehen - dadurch stehen Name, Bewertung,
+   Entfernungen und Preis bei allen Karten auf derselben Linie. */
+.kat-grid .card .card-body { display: flex; flex-direction: column; gap: 0; }
+.kat-grid .krit-reihe { height: 80px; align-content: flex-start; overflow: hidden; margin-bottom: 2px; }
+.kat-grid .art-zeile { height: 34px; display: flex; align-items: flex-end; overflow: hidden; }
+.kat-grid .card-head { height: 58px; align-items: flex-start; overflow: hidden; }
+.kat-grid .card-head h3 { font-size: 1.12rem; line-height: 1.22; }
+.kat-grid .adresse, .kat-grid .adresse-leer { height: 38px; overflow: hidden; margin: 4px 0 0; }
+.kat-grid .rating-line { height: 24px; overflow: hidden; margin: 2px 0 0; }
+.kat-grid .strecken { height: 46px; margin-top: 6px; overflow: hidden; }
+.kat-grid .beschreibung { flex: 1 1 auto; overflow: hidden; }
+.kat-grid .preisblock { margin-top: auto; }
+.kat-grid .naechte-streifen { height: 40px; }
+.kat-grid .teil-wahl { height: 56px; align-items: center; margin-top: 8px; }
+.kat-grid .card-links { min-height: 52px; align-items: center; margin-top: 8px; }
 </style>
 
 <nav class="topnav">
   <div class="navwrap">
-    <a class="brand" href="#home">🧭 Fuerteventura</a>
+    <a class="brand" href="#home"><span class="brand-insel" aria-hidden="true"></span>Fuerteventura</a>
     <div class="nav-search">
       <button type="button" class="nav-search-btn" id="open-search" aria-label="Suchen">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5 21 21"/></svg>
@@ -1385,7 +1430,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   </div>
 </article>
 
-<article class="card" id="c-sun-sea-villa" data-price="1828.0" data-ppn="261.1" data-rating="10.0" data-beach="1670" data-pool="true" data-grill="true" data-ac="true" data-freecancel="false" data-wholeplace="true" data-partial="true" data-maxout="2026-10-11" data-lat="28.711760408564" data-lng="-13.864955667207">
+<article class="card" id="c-sun-sea-villa" data-bilder="images/sun-sea-villa-foto2.webp|images/sun-sea-villa-foto3.webp" data-price="1828.0" data-ppn="261.1" data-rating="10.0" data-beach="1670" data-pool="true" data-grill="true" data-ac="true" data-freecancel="false" data-wholeplace="true" data-partial="true" data-maxout="2026-10-11" data-lat="28.711760408564" data-lng="-13.864955667207">
   <div class="card-media">
     <img src="images/sun-sea-villa-heated-pool.webp" alt="Sun Sea villa - heated pool, Geafond bei Corralejo" loading="lazy">
     <span class="pin-badge">7</span>
@@ -1450,7 +1495,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   </div>
 </article>
 
-<article class="card" id="c-casa-marea" data-price="2175.0" data-rating="9.5" data-beach="1673" data-pool="true" data-grill="true" data-ac="false" data-freecancel="true" data-wholeplace="true" data-ppn="167.3" data-lat="28.711571" data-lng="-13.8659961">
+<article class="card" id="c-casa-marea" data-bilder="images/casa-marea-foto2.webp|images/casa-marea-foto3.webp" data-price="2175.0" data-rating="9.5" data-beach="1673" data-pool="true" data-grill="true" data-ac="false" data-freecancel="true" data-wholeplace="true" data-ppn="167.3" data-lat="28.711571" data-lng="-13.8659961">
   <div class="card-media">
     <img src="images/casa-marea-villa-con-jacuzzi.webp" alt="Casa Marea - Villa Con Jacuzzi" loading="lazy">
     <span class="pin-badge">4</span>
@@ -1507,7 +1552,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   </div>
 </article>
 
-<article class="card" id="c-villa-bonita" data-price="3477.0" data-rating="8.8" data-beach="203" data-pool="true" data-grill="false" data-ac="true" data-freecancel="false" data-wholeplace="true" data-ppn="267.5" data-lat="28.726221393389" data-lng="-13.851431706781">
+<article class="card" id="c-villa-bonita" data-bilder="images/villa-bonita-foto2.webp|images/villa-bonita-foto3.webp" data-price="3477.0" data-rating="8.8" data-beach="203" data-pool="true" data-grill="false" data-ac="true" data-freecancel="false" data-wholeplace="true" data-ppn="267.5" data-lat="28.726221393389" data-lng="-13.851431706781">
   <div class="card-media">
     <img src="images/villa-bonita.webp" alt="Villa Bonita" loading="lazy">
     <span class="pin-badge">1</span>
@@ -1621,7 +1666,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   </div>
 </article>
 
-<article class="card" id="c-villa-paradisus" data-price="2797.0" data-rating="8.1" data-beach="2266" data-pool="true" data-grill="true" data-ac="false" data-freecancel="false" data-wholeplace="true" data-ppn="215.2" data-lat="28.7100354" data-lng="-13.8718363">
+<article class="card" id="c-villa-paradisus" data-bilder="images/villa-paradisus-foto2.webp|images/villa-paradisus-foto3.webp" data-price="2797.0" data-rating="8.1" data-beach="2266" data-pool="true" data-grill="true" data-ac="false" data-freecancel="false" data-wholeplace="true" data-ppn="215.2" data-lat="28.7100354" data-lng="-13.8718363">
   <div class="card-media">
     <img src="images/villa-lujo-tranquila-con-piscina-a-5-min-playa.webp" alt="Villa lujo tranquila con piscina a 5 min playa" loading="lazy">
     <span class="pin-badge">3</span>
@@ -1679,7 +1724,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 </article>
 
 
-<article class="card" id="c-ghea" data-price="2080.0" data-rating="9.5" data-beach="891" data-pool="false" data-grill="false" data-ac="false" data-freecancel="false" data-wholeplace="true" data-ppn="160.0" data-lat="28.7304963" data-lng="-13.8655641">
+<article class="card" id="c-ghea" data-bilder="images/ghea-foto2.webp|images/ghea-foto3.webp" data-price="2080.0" data-rating="9.5" data-beach="891" data-pool="false" data-grill="false" data-ac="false" data-freecancel="false" data-wholeplace="true" data-ppn="160.0" data-lat="28.7304963" data-lng="-13.8655641">
   <div class="card-media">
     <img src="images/ghea.webp" alt="Ghea" loading="lazy">
     <span class="pin-badge">5</span>
@@ -1793,7 +1838,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   </div>
 </article>
 
-<article class="card" id="c-tao-caleta-mar" data-price="1738.0" data-rating="8.6" data-beach="362" data-pool="false" data-grill="false" data-ac="true" data-freecancel="true" data-wholeplace="false" data-ppn="133.7" data-lat="28.72632669541164" data-lng="-13.849805641811372">
+<article class="card" id="c-tao-caleta-mar" data-bilder="images/tao-caleta-mar-foto2.webp|images/tao-caleta-mar-foto3.webp" data-price="1738.0" data-rating="8.6" data-beach="362" data-pool="false" data-grill="false" data-ac="true" data-freecancel="true" data-wholeplace="false" data-ppn="133.7" data-lat="28.72632669541164" data-lng="-13.849805641811372">
   <div class="card-media">
     <img src="images/hotel-boutique-tao-caleta-mar.webp" alt="Hotel Boutique TAO Caleta Mar" loading="lazy">
     <span class="pin-badge">8</span>
@@ -7170,10 +7215,37 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   }
 
   // ---- Bildergalerie: vorhandenes Foto + Kartenausschnitt ----
+  // Der frühere Anbieter für statische Kartenbilder liefert nichts mehr.
+  // Statt Screenshots, die veralten, zeichnen wir eine echte kleine Karte
+  // mit denselben Kacheln wie die große Karte weiter oben.
+  var STRAND = [28.699111, -13.840806];   // Playa Larga, von Stephan gesetzt
+  var miniKarten = [];
+
   function karteBildUrl(lat, lng){
-    // Statischer Kartenausschnitt ohne Schlüssel, über OpenStreetMap.
-    return 'https://staticmap.openstreetmap.de/staticmap.php?center=' + lat + ',' + lng +
-           '&zoom=14&size=600x450&markers=' + lat + ',' + lng + ',lightblue1';
+    // Platzhalter, falls eine Karte doch als Bild gebraucht wird
+    return 'images/fuerte-silhouette.png';
+  }
+
+  function baueMiniKarte(behaelter, lat, lng){
+    if (typeof L === 'undefined' || behaelter.dataset.fertig) return;
+    behaelter.dataset.fertig = '1';
+    var t = lmTiles();
+    var k = L.map(behaelter, {
+      zoomControl: false, attributionControl: false,
+      dragging: false, scrollWheelZoom: false, doubleClickZoom: false,
+      boxZoom: false, keyboard: false, touchZoom: false, tap: false
+    });
+    L.tileLayer(t.url, { maxZoom: 18 }).addTo(k);
+    var hier = L.latLng(lat, lng), strand = L.latLng(STRAND[0], STRAND[1]);
+    L.polyline([hier, strand], { color: '#e0a24f', weight: 3, opacity: .85, dashArray: '6 5' }).addTo(k);
+    L.circleMarker(hier, { radius: 9, color: '#fff', weight: 3, fillColor: '#0f6e76', fillOpacity: 1 })
+      .addTo(k).bindTooltip('Unterkunft', { permanent: false });
+    L.circleMarker(strand, { radius: 7, color: '#fff', weight: 2, fillColor: '#e0a24f', fillOpacity: 1 })
+      .addTo(k).bindTooltip('Grandes Playas', { permanent: false });
+    k.fitBounds(L.latLngBounds([hier, strand]).pad(0.25), { animate: false });
+    if (t.dark) behaelter.classList.add('karte-dunkel');
+    miniKarten.push(k);
+    setTimeout(function(){ k.invalidateSize(); }, 60);
   }
 
   function baueGalerie(card){
@@ -7187,15 +7259,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 
     var folien = [{ src: img.src, alt: img.alt, typ: 'foto' }];
     extra.forEach(function(s){ folien.push({ src: s, alt: img.alt, typ: 'foto' }); });
-    if (lat && lng) folien.push({ src: karteBildUrl(lat, lng), alt: 'Lage auf der Karte', typ: 'karte' });
+    if (lat && lng) folien.push({ alt: 'Lage auf der Karte', typ: 'karte' });
 
     var spur = document.createElement('div');
     spur.className = 'gal-spur';
     folien.forEach(function(f){
       var d = document.createElement('div');
       d.className = 'gal-folie' + (f.typ === 'karte' ? ' ist-karte' : '');
-      d.innerHTML = '<img src="' + f.src + '" alt="' + (f.alt || '') + '" loading="lazy">' +
-        (f.typ === 'karte' ? '<span class="gal-kartenschild">📍 Lage</span>' : '');
+      if (f.typ === 'karte') {
+        d.innerHTML = '<div class="mini-karte"></div><span class="gal-kartenschild">📍 Weg zum Dünenstrand</span>';
+      } else {
+        d.innerHTML = '<img src="' + f.src + '" alt="' + (f.alt || '') + '" loading="lazy">';
+      }
       spur.appendChild(d);
     });
 
@@ -7221,6 +7296,9 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       function zeige(i){
         var max = folien.length - 1;
         var n = Math.max(0, Math.min(max, i));
+        var folie = spur.children[n];
+        var mk = folie && folie.querySelector('.mini-karte');
+        if (mk) baueMiniKarte(mk, parseFloat(lat), parseFloat(lng));
         spur.style.transform = 'translateX(' + (-n * 100) + '%)';
         spur.setAttribute('data-pos', n);
         punkte.querySelectorAll('.gal-punkt').forEach(function(p, k){ p.classList.toggle('aktiv', k === n); });
@@ -7401,28 +7479,31 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   // ---- Tatsaechlich zu fahrende Strecken ----
   // Luftlinie sagt auf Fuerteventura wenig: Majanicho liegt 14 km vom
   // Duenenstrand entfernt, braucht ueber Schotterpisten aber 36 Minuten.
-  // Ermittelt am 16.09.2026 ueber OSRM. [Strand km, Min., Zentrum km, Min.]
+  // Ermittelt am 16.09.2026 ueber OSRM, mit den von Stephan gesetzten
+  // Punkten: Grandes Playas 28.699111/-13.840806 (Playa Larga, am
+  // Parkplatz) und Zentrum Corralejo 28.735611/-13.869056 (Kreisel
+  // an der Av. Ntra. Sra. del Carmen). [Strand km, Min., Zentrum km, Min.]
   var STRECKEN = {
-    'casita-maracuya': [6.6, 13, 0.6, 2],
-    'sun-sea-villa': [6.4, 12, 4.7, 9],
-    'casa-marea': [6.3, 11, 4.6, 9],
-    'villa-bonita': [2.9, 4, 4.5, 9],
-    'bahiazul': [6.3, 11, 4.5, 9],
-    'villa-paradisus': [6.3, 11, 4.3, 8],
-    'ghea': [5.3, 11, 1.9, 5],
-    'fuertenomad': [6.9, 14, 0.8, 2],
-    'tao-caleta-mar': [2.6, 4, 4.6, 9],
-    'villa-marina-sol': [8.2, 16, 1.7, 3],
-    'mc-apartments-rosario': [26.4, 28, 31.1, 31],
-    'myhome-urban': [26.3, 28, 31.0, 31],
-    'bequem-und-zentral': [26.8, 29, 31.5, 31],
-    'casa-azul-lajares': [13.2, 17, 10.5, 13],
-    'casita-majanicho': [14.6, 36, 8.5, 24],
-    'oasis-royal': [4.9, 9, 2.1, 5],
-    'capitan-aleycar': [4.9, 9, 2.7, 6],
-    'island-home-fuerteventura': [6.9, 14, 0.8, 2],
-    'h10-ocean-dreams': [8.2, 16, 1.7, 3],
-    'secrets-bahia-real': [8.2, 16, 1.7, 3]
+    'casita-maracuya': [7.3, 13, 1.4, 4],
+    'sun-sea-villa': [7.2, 12, 3.9, 7],
+    'casa-marea': [7.0, 11, 3.8, 7],
+    'villa-bonita': [3.6, 5, 3.7, 7],
+    'bahiazul': [7.0, 11, 3.7, 7],
+    'villa-paradisus': [7.0, 11, 3.5, 6],
+    'ghea': [6.0, 11, 1.1, 2],
+    'fuertenomad': [7.7, 14, 1.6, 4],
+    'tao-caleta-mar': [3.4, 4, 3.8, 7],
+    'villa-marina-sol': [8.9, 16, 2.9, 6],
+    'mc-apartments-rosario': [24.3, 25, 30.3, 28],
+    'myhome-urban': [24.2, 25, 30.2, 29],
+    'bequem-und-zentral': [24.7, 25, 30.7, 29],
+    'casa-azul-lajares': [13.9, 17, 9.7, 11],
+    'casita-majanicho': [15.3, 36, 9.4, 26],
+    'oasis-royal': [5.6, 10, 1.3, 3],
+    'capitan-aleycar': [5.7, 9, 1.9, 4],
+    'island-home-fuerteventura': [7.6, 14, 1.5, 4],
+    'h10-ocean-dreams': [9.0, 16, 3.0, 6],
+    'secrets-bahia-real': [9.0, 16, 3.0, 6]
   };
 
   function baueStrecken(card){
@@ -7501,6 +7582,58 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     document.querySelectorAll('.card[id^="c-"]').forEach(baueStreifen);
   }
 
+
+  // ---- Karten auf gleiche Struktur bringen ----
+  // Damit man nebeneinander vergleichen kann, muss jede Karte dieselben
+  // Zeilen in derselben Reihenfolge haben - auch wenn eine Angabe fehlt.
+  // Fehlende Bausteine werden als leere Platzhalter ergaenzt.
+  function vereinheitliche(card){
+    var body = card.querySelector('.card-body');
+    if (!body || body.dataset.einheitlich) return;
+    body.dataset.einheitlich = '1';
+
+    var kopf = body.querySelector('.card-head');
+    if (!kopf) return;
+
+    // Adresszeile: bei den neuen Karten gibt es keine - leer anlegen
+    var adresse = body.querySelector('.meta-line:not(.rating-line):not(.beach-line)');
+    if (!adresse) {
+      adresse = document.createElement('p');
+      adresse.className = 'meta-line adresse-leer';
+      adresse.innerHTML = '&nbsp;';
+      kopf.parentNode.insertBefore(adresse, kopf.nextSibling);
+    } else {
+      adresse.classList.add('adresse');
+    }
+
+    // Bewertungszeile sicherstellen
+    if (!body.querySelector('.rating-line')) {
+      var r = document.createElement('p');
+      r.className = 'meta-line rating-line';
+      r.innerHTML = '&nbsp;';
+      adresse.parentNode.insertBefore(r, adresse.nextSibling);
+    }
+
+    // Reihenfolge festzurren: Symbole, Art, Kopf, Adresse, Bewertung,
+    // Strecken, Beschreibung, Preis, Streifen, Auswahl, Links
+    var folge = ['.krit-reihe', '.art-zeile', '.card-head', '.adresse, .adresse-leer',
+                 '.rating-line', '.strecken', '.beschreibung', '.preisblock',
+                 '.naechte-streifen', '.teil-wahl', '.card-links'];
+    folge.forEach(function(sel){
+      var el = body.querySelector(sel);
+      if (el) body.appendChild(el);
+    });
+    // Alles Uebrige (Hinweise, Notizen, Details) ans Ende
+    ['.share-flags', '.notes-box', '.acc-details'].forEach(function(sel){
+      var el = body.querySelector(sel);
+      if (el) body.appendChild(el);
+    });
+
+    // Beschreibungstext als flexibler Fuellblock
+    var hinweis = body.querySelector('.neu-hinweis');
+    if (hinweis) hinweis.classList.add('beschreibung');
+  }
+
   function karteAufwerten(card){
     baueArtzeile(card);
     baueStrecken(card);
@@ -7509,6 +7642,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     bauePreisblock(card);
     baueTeilKnoepfe(card);
     baueStreifen(card);
+    vereinheitliche(card);
   }
 
   function karteneUmbau(){
@@ -7567,7 +7701,8 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       ppn: 78, total: 1019, rating: 10.0, bew: 20,
       lat: 28.6720, lng: -13.9160, approx: true,
       frei: ['2026-09-29','2026-10-12'],
-      link: 'https://www.booking.com/hotel/es/villa-azul-lajares.de.html?checkin=2026-09-29&checkout=2026-10-12&group_adults=2&no_rooms=1',
+      link: 'https://www.booking.com/hotel/es/villa-azul-lajares.de.html?checkin=2026-09-29&checkout=2026-10-12&group_adults=2&no_rooms=1',      bilder: ['images/casa-azul-lajares-foto1.webp', 'images/casa-azul-lajares-foto2.webp'],
+
       krit: { pool: 'ja', heizpool: 'unklar', grill: 'unklar', ac: 'unklar', kueche: 'ja', wlan: 'ja', parken: 'unklar', wholeplace: 'ja', freecancel: 'unklar' },
       hinweis: '<strong>Glatte 10,0 aus 20 Bewertungen</strong> – beste Note der ganzen Auswahl bei belastbarer Basis, und dabei im untersten Preisviertel. Der auffälligste Fund der Neusuche.' },
 
@@ -7575,7 +7710,8 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       ppn: 66, total: 852, rating: 9.1, bew: 19,
       lat: 28.7490, lng: -13.9330, approx: true,
       frei: ['2026-09-29','2026-10-12'],
-      link: 'https://www.booking.com/hotel/es/la-casita-de-majanicho-la-oliva.de.html?checkin=2026-09-29&checkout=2026-10-12&group_adults=2&no_rooms=1',
+      link: 'https://www.booking.com/hotel/es/la-casita-de-majanicho-la-oliva.de.html?checkin=2026-09-29&checkout=2026-10-12&group_adults=2&no_rooms=1',      bilder: ['images/casita-majanicho-foto1.webp', 'images/casita-majanicho-foto2.webp', 'images/casita-majanicho-foto3.webp'],
+
       krit: { pool: 'ja', heizpool: 'unklar', grill: 'unklar', ac: 'unklar', kueche: 'ja', wlan: 'ja', parken: 'unklar', wholeplace: 'ja', freecancel: 'unklar' },
       hinweis: '<strong>Günstigster Treffer der Suche</strong> – 66 € pro Nacht bei 9,1. Majanicho ist ein kleines Fischerdorf an der Nordküste zwischen Corralejo und El Cotillo, sehr ruhig, aber ohne Infrastruktur.' },
 
@@ -7600,7 +7736,8 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       ppn: null, total: null, preisOffen: true, rating: 9.1, bew: 1616,
       lat: 28.7380, lng: -13.8670, approx: true,
       frei: ['2026-09-29','2026-10-12'],
-      link: 'https://www.booking.com/searchresults.de.html?ss=Island+Home+Fuerteventura&checkin=2026-09-29&checkout=2026-10-12&group_adults=2&no_rooms=1',
+      link: 'https://www.booking.com/searchresults.de.html?ss=Island+Home+Fuerteventura&checkin=2026-09-29&checkout=2026-10-12&group_adults=2&no_rooms=1',      bilder: ['images/island-home-fuerteventura-foto1.webp', 'images/island-home-fuerteventura-foto2.webp', 'images/island-home-fuerteventura-foto3.webp'],
+
       krit: { pool: 'unklar', heizpool: 'unklar', grill: 'nein', ac: 'unklar', kueche: 'unklar', wlan: 'ja', parken: 'unklar', wholeplace: 'nein', freecancel: 'unklar' },
       hinweis: '<strong>9,1 aus 1.616 Bewertungen</strong> – die mit Abstand breiteste Bewertungsbasis in Corralejo. Preis für euren Zeitraum stand in der Suchliste nicht, muss einzeln geprüft werden.' },
 
