@@ -540,7 +540,8 @@ body { font-size: var(--fs-body); }
 .sun-chip .sc-l { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.07em; color: rgba(255,255,255,0.7); white-space: nowrap; }
 .sun-chip .sc-v { font-family: "JetBrains Mono", monospace; font-size: 1.05rem; font-weight: 700; }
 .sun-chip.golden { background: rgba(224,162,79,0.26); border-color: rgba(224,162,79,0.45); }
-.sneak-strip { display: flex; gap: 8px; margin-top: 16px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+.sneak-strip { display: flex; gap: 8px; margin-top: 16px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; min-width: 0; max-width: 100%; }
+.sneak-body { min-width: 0; }
 .sneak-strip::-webkit-scrollbar { display: none; }
 .sneak-day { flex: 0 0 auto; background: rgba(255,255,255,0.10); border: 1px solid rgba(255,255,255,0.16); border-radius: 11px; padding: 8px 12px; text-align: center; color: #fff; min-width: 74px; }
 .sneak-day .sd-d { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(255,255,255,0.72); }
@@ -985,6 +986,63 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   table.cost-table tfoot td { font-size: 1.05rem; padding: 0; }
   table.cost-table tfoot td:first-child { font-size: 1.1rem; }
 }
+
+/* ---- Unterkunftskarten: Kategorien, Galerie, Kriterien, Preisblock ---- */
+.kat-block { margin-top: 34px; }
+.kat-kopf { margin-bottom: 14px; }
+.kat-kopf h3 { font-size: 1.35rem; margin: 0; }
+.kat-zahl { font-family: "JetBrains Mono", monospace; font-size: .8rem; font-weight: 700; color: var(--teal); background: var(--surface-2); border: 1px solid var(--border); border-radius: 999px; padding: 2px 9px; margin-left: 6px; vertical-align: middle; }
+.kat-kopf .sub { margin: 4px 0 0; font-size: 14px; }
+/* Karten einer Gruppe gleich hoch, damit die Preise nebeneinander stehen */
+.kat-grid { align-items: stretch; }
+.kat-grid .card { display: flex; flex-direction: column; }
+.kat-grid .card .card-body { display: flex; flex-direction: column; flex: 1; }
+
+.art-zeile { font-size: 12px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--teal); margin-bottom: 4px; }
+
+/* Bildergalerie */
+.card-media.ist-galerie { overflow: hidden; }
+.gal-spur { display: flex; width: 100%; height: 100%; transition: transform .28s ease; }
+@media (prefers-reduced-motion: reduce) { .gal-spur { transition: none; } }
+.gal-folie { flex: 0 0 100%; height: 100%; position: relative; }
+.gal-folie img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.gal-folie.ist-karte img { object-fit: contain; background: var(--surface-2); }
+.gal-kartenschild { position: absolute; left: 10px; bottom: 10px; background: rgba(20,24,26,.78); color: #fff; font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 999px; }
+.gal-nav { position: absolute; inset: 0; display: flex; align-items: center; justify-content: space-between; pointer-events: none; }
+.gal-pfeil { pointer-events: auto; width: 34px; height: 34px; margin: 0 8px; border: none; border-radius: 50%; background: rgba(20,24,26,.6); color: #fff; font-size: 20px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.gal-pfeil:hover { background: rgba(20,24,26,.85); }
+.gal-punkte { position: absolute; bottom: 8px; left: 0; right: 0; display: flex; justify-content: center; gap: 5px; }
+.gal-punkt { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,.5); }
+.gal-punkt.aktiv { background: #fff; width: 16px; border-radius: 3px; }
+
+/* Kriterien-Symbole */
+.krit-reihe { position: relative; display: flex; flex-wrap: wrap; gap: 5px; margin: 0 0 10px; }
+.krit { width: 34px; height: 34px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface-2); font-size: 15px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
+.krit.ist-ja { border-color: var(--good); }
+.krit.ist-nein { opacity: .3; filter: grayscale(1); }
+.krit.ist-unklar { opacity: .55; }
+.krit-blase { position: absolute; top: -34px; left: 0; z-index: 5; background: var(--ink); color: var(--page); font-size: 12.5px; font-weight: 600; padding: 5px 10px; border-radius: 9px; white-space: nowrap; box-shadow: var(--shadow); }
+
+/* Preisblock: Tagespreis zuerst, dann Gesamtpreis, immer auf gleicher Höhe */
+.preisblock { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0 0; padding: 12px 0 0; border-top: 1px solid var(--border); margin-top: auto; }
+.pb-zelle { display: flex; flex-direction: column; }
+.pb-wert { font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif; font-weight: 800; font-size: 1.55rem; letter-spacing: -.03em; line-height: 1.1; color: var(--ink); font-variant-numeric: tabular-nums; }
+.pb-label { font-size: 12px; color: var(--ink-dim); font-weight: 600; letter-spacing: .03em; }
+.pb-frei { grid-column: 1 / -1; font-size: 13px; font-weight: 600; color: var(--good); margin-top: 2px; }
+.pb-frei.ist-teil { color: var(--warn); }
+.price-headline.alt-preis { display: none; }
+.neu-hinweis { font-size: 14px; color: var(--ink-dim); margin: 8px 0 0; line-height: 1.5; }
+.neu-hinweis strong { color: var(--ink); }
+.neu-schild { position: absolute; top: 10px; left: 10px; background: var(--good); color: #fff; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 3px 9px; border-radius: 999px; z-index: 2; }
+
+/* Auswahl als Teil 1/2/3 */
+.teil-wahl { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 12px 0 0; }
+.teil-frage { font-size: 13px; font-weight: 600; color: var(--ink-dim); margin-right: 2px; }
+.teil-btn { min-height: var(--tap); padding: 0 13px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface-2); color: var(--ink-dim); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+.teil-btn:hover { border-color: var(--teal); color: var(--teal); }
+.teil-btn.aktiv { background: var(--teal); border-color: var(--teal); color: var(--teal-ink); }
+.teil-btn.teil-weg { font-weight: 400; }
+.card.ist-gewaehlt { border-color: var(--teal); box-shadow: 0 0 0 2px color-mix(in srgb, var(--teal) 30%, transparent), var(--shadow); }
 </style>
 
 <nav class="topnav">
@@ -6759,5 +6817,482 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       });
   }
   loadTides();
+
+  // ---- Merkt, wer zuletzt was getan hat (fuer die Startseite) ----
+  var AKT_KEY = 'fuerte-aktivitaet';
+  function merkeAktivitaet(was, slug){
+    try {
+      var liste = JSON.parse(lsGet(AKT_KEY, '[]'));
+      liste.unshift({ wer: (typeof whoAmI === 'function' ? whoAmI() : '') || 'stephan',
+                      was: was, slug: slug, at: Date.now() });
+      lsSet(AKT_KEY, JSON.stringify(liste.slice(0, 20)));
+    } catch(e){}
+  }
+
+
+
+  // ============================================================
+  //  Unterkunftskarten: Kategorien, Bildergalerie, Kriterien-Symbole,
+  //  vergleichbare Preisblöcke und Auswahl als Teil 1/2/3.
+  //  Wird zur Laufzeit über die vorhandenen Karten gelegt, damit die
+  //  Angaben nur an einer Stelle gepflegt werden müssen.
+  // ============================================================
+
+  // Art, Herkunft, freier Zeitraum und Ausstattung je Unterkunft.
+  // frei: [von, bis] als Nächte-Grenzen innerhalb 29.09.–12.10.
+  var ACC = {
+    'villa-bonita':           { art: 'Villa',        ort: 'Corralejo (Las Agujas)', portal: 'Booking.com', frei: ['2026-09-29','2026-10-12'] },
+    'bahiazul':               { art: 'Villa',        ort: 'Corralejo (Geafond)',    portal: 'bahiazul.com',frei: ['2026-09-29','2026-10-12'] },
+    'villa-paradisus':        { art: 'Villa',        ort: 'Corralejo',              portal: 'Booking.com', frei: ['2026-09-29','2026-10-12'] },
+    'casa-marea':             { art: 'Villa',        ort: 'Corralejo',              portal: 'Booking.com', frei: ['2026-09-29','2026-10-12'] },
+    'ghea':                   { art: 'Stadtwohnung', ort: 'Corralejo',              portal: 'Booking.com', frei: ['2026-09-29','2026-10-12'] },
+    'fuertenomad':            { art: 'Stadtwohnung', ort: 'Corralejo',              portal: 'Booking.com', frei: ['2026-09-29','2026-10-12'] },
+    'tao-caleta-mar':         { art: 'Hotel',        ort: 'Corralejo',              portal: 'Booking.com', frei: ['2026-09-29','2026-10-12'] },
+    'sun-sea-villa':          { art: 'Villa',        ort: 'Corralejo (Geafond)',    portal: 'Booking.com', frei: ['2026-09-29','2026-10-11'] },
+    'casita-maracuya':        { art: 'Stadtwohnung', ort: 'Corralejo',              portal: 'Airbnb',      frei: ['2026-09-29','2026-10-03'] }
+  };
+
+  var ART_REIHE = ['Villa', 'Stadtwohnung', 'Hotel'];
+  var ART_TITEL = {
+    'Villa':        { t: '🏡 Villen',        sub: 'Ganzes Haus, eigener Außenbereich, meist mit Pool.' },
+    'Stadtwohnung': { t: '🏢 Stadtwohnungen', sub: 'Wohnung in einem Haus oder einer Anlage – meist zentraler und günstiger.' },
+    'Hotel':        { t: '🛎️ Hotels',        sub: 'Mit Service, Rezeption und Frühstücksoption.' }
+  };
+
+  // Muss-Kriterien als Symbole. Reihenfolge ist überall gleich, damit
+  // man beim Vergleichen nicht suchen muss.
+  var KRITERIEN = [
+    { key: 'pool',       an: '🏊', text: 'Eigener Pool' },
+    { key: 'heizpool',   an: '♨️', text: 'Pool beheizt' },
+    { key: 'grill',      an: '🔥', text: 'Grill im Außenbereich' },
+    { key: 'ac',         an: '❄️', text: 'Klimaanlage' },
+    { key: 'kueche',     an: '🍳', text: 'Küche' },
+    { key: 'wlan',       an: '📶', text: 'WLAN' },
+    { key: 'parken',     an: '🅿️', text: 'Parkplatz' },
+    { key: 'wholeplace', an: '🏠', text: 'Ganze Unterkunft' },
+    { key: 'freecancel', an: '✅', text: 'Kostenlos stornierbar' }
+  ];
+
+  function accInfo(slug){
+    return ACC[slug] || { art: 'Stadtwohnung', ort: '', portal: '', frei: ['2026-09-29','2026-10-12'] };
+  }
+
+  function dMonat(iso){
+    var p = iso.split('-');
+    return p[2] + '.' + p[1] + '.';
+  }
+  function naechte(vonIso, bisIso){
+    return Math.round((new Date(bisIso) - new Date(vonIso)) / 86400000);
+  }
+
+  // ---- Bildergalerie: vorhandenes Foto + Kartenausschnitt ----
+  function karteBildUrl(lat, lng){
+    // Statischer Kartenausschnitt ohne Schlüssel, über OpenStreetMap.
+    return 'https://staticmap.openstreetmap.de/staticmap.php?center=' + lat + ',' + lng +
+           '&zoom=14&size=600x450&markers=' + lat + ',' + lng + ',lightblue1';
+  }
+
+  function baueGalerie(card){
+    var media = card.querySelector('.card-media');
+    if (!media || media.classList.contains('ist-galerie')) return;
+    var img = media.querySelector('img');
+    if (!img) return;
+
+    var lat = card.getAttribute('data-lat'), lng = card.getAttribute('data-lng');
+    var extra = (card.getAttribute('data-bilder') || '').split('|').filter(Boolean);
+
+    var folien = [{ src: img.src, alt: img.alt, typ: 'foto' }];
+    extra.forEach(function(s){ folien.push({ src: s, alt: img.alt, typ: 'foto' }); });
+    if (lat && lng) folien.push({ src: karteBildUrl(lat, lng), alt: 'Lage auf der Karte', typ: 'karte' });
+
+    var spur = document.createElement('div');
+    spur.className = 'gal-spur';
+    folien.forEach(function(f){
+      var d = document.createElement('div');
+      d.className = 'gal-folie' + (f.typ === 'karte' ? ' ist-karte' : '');
+      d.innerHTML = '<img src="' + f.src + '" alt="' + (f.alt || '') + '" loading="lazy">' +
+        (f.typ === 'karte' ? '<span class="gal-kartenschild">📍 Lage</span>' : '');
+      spur.appendChild(d);
+    });
+
+    // Vorhandenes Bild ersetzen, Abzeichen und Knöpfe bleiben liegen
+    img.remove();
+    media.insertBefore(spur, media.firstChild);
+    media.classList.add('ist-galerie');
+
+    if (folien.length > 1) {
+      var nav = document.createElement('div');
+      nav.className = 'gal-nav';
+      nav.innerHTML = '<button type="button" class="gal-pfeil gal-zurueck" aria-label="Vorheriges Bild">‹</button>' +
+                      '<button type="button" class="gal-pfeil gal-vor" aria-label="Nächstes Bild">›</button>';
+      media.appendChild(nav);
+
+      var punkte = document.createElement('div');
+      punkte.className = 'gal-punkte';
+      folien.forEach(function(f, i){
+        punkte.innerHTML += '<span class="gal-punkt' + (i === 0 ? ' aktiv' : '') + '"></span>';
+      });
+      media.appendChild(punkte);
+
+      function zeige(i){
+        var max = folien.length - 1;
+        var n = Math.max(0, Math.min(max, i));
+        spur.style.transform = 'translateX(' + (-n * 100) + '%)';
+        spur.setAttribute('data-pos', n);
+        punkte.querySelectorAll('.gal-punkt').forEach(function(p, k){ p.classList.toggle('aktiv', k === n); });
+      }
+      function pos(){ return parseInt(spur.getAttribute('data-pos') || '0', 10); }
+      zeige(0);
+
+      nav.querySelector('.gal-zurueck').addEventListener('click', function(e){ e.stopPropagation(); zeige(pos() - 1); });
+      nav.querySelector('.gal-vor').addEventListener('click', function(e){ e.stopPropagation(); zeige(pos() + 1); });
+
+      // Wischen auf dem Handy
+      var startX = null;
+      media.addEventListener('touchstart', function(e){ startX = e.touches[0].clientX; }, { passive: true });
+      media.addEventListener('touchend', function(e){
+        if (startX === null) return;
+        var dx = e.changedTouches[0].clientX - startX;
+        if (Math.abs(dx) > 40) zeige(pos() + (dx < 0 ? 1 : -1));
+        startX = null;
+      }, { passive: true });
+    }
+  }
+
+  // ---- Kriterien-Symbole ----
+  function baueSymbole(card){
+    var body = card.querySelector('.card-body');
+    if (!body || body.querySelector('.krit-reihe')) return;
+    var reihe = document.createElement('div');
+    reihe.className = 'krit-reihe';
+    KRITERIEN.forEach(function(k){
+      var wert = card.getAttribute('data-' + k.key);
+      var zustand = wert === 'true' ? 'ja' : (wert === 'false' ? 'nein' : 'unklar');
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'krit ist-' + zustand;
+      b.setAttribute('data-erklaerung', k.text + (zustand === 'ja' ? ' – vorhanden' : zustand === 'nein' ? ' – nicht vorhanden' : ' – unklar'));
+      b.setAttribute('aria-label', k.text);
+      b.textContent = k.an;
+      reihe.appendChild(b);
+    });
+    body.insertBefore(reihe, body.firstChild);
+  }
+
+  // Beim Antippen eines Symbols die Bedeutung zeigen
+  document.addEventListener('click', function(ev){
+    var k = ev.target.closest('.krit');
+    document.querySelectorAll('.krit-blase').forEach(function(b){ b.remove(); });
+    if (!k) return;
+    ev.preventDefault();
+    var blase = document.createElement('span');
+    blase.className = 'krit-blase';
+    blase.textContent = k.getAttribute('data-erklaerung');
+    k.parentNode.insertBefore(blase, k.parentNode.firstChild);
+    setTimeout(function(){ if (blase.parentNode) blase.remove(); }, 2600);
+  });
+
+  // ---- Kopfzeile mit Art, Ort und Portal ----
+  function baueArtzeile(card){
+    var body = card.querySelector('.card-body');
+    var kopf = body && body.querySelector('.card-head');
+    if (!kopf || body.querySelector('.art-zeile')) return;
+    var slug = slugOf(card);
+    var info = accInfo(slug);
+    var z = document.createElement('div');
+    z.className = 'art-zeile';
+    z.textContent = info.art + (info.ort ? ', in ' + info.ort : '') + (info.portal ? ' · von ' + info.portal : '');
+    body.insertBefore(z, kopf);
+  }
+
+  // ---- Preisblock: Tagespreis zuerst, dann Gesamtpreis ----
+  function bauePreisblock(card){
+    var body = card.querySelector('.card-body');
+    var alt = body && body.querySelector('.price-headline');
+    if (!alt || body.querySelector('.preisblock')) return;
+    var slug = slugOf(card);
+    var info = accInfo(slug);
+    var ppn = parseFloat(card.getAttribute('data-ppn') || '0');
+    var n = naechte(info.frei[0], info.frei[1]);
+    var gesamt = Math.round(ppn * n);
+
+    var voll = info.frei[0] === '2026-09-29' && info.frei[1] === '2026-10-12';
+    var block = document.createElement('div');
+    block.className = 'preisblock';
+    block.innerHTML =
+      '<div class="pb-zelle"><span class="pb-wert">' + fmtEuro0(ppn) + ' €</span><span class="pb-label">pro Nacht</span></div>' +
+      '<div class="pb-zelle"><span class="pb-wert">' + fmtEuro0(gesamt) + ' €</span><span class="pb-label">' + n + ' Nächte gesamt</span></div>' +
+      '<div class="pb-frei' + (voll ? '' : ' ist-teil') + '">' +
+        (voll ? '✓ frei vom 29.09. bis 12.10.' : '⚠️ frei nur vom ' + dMonat(info.frei[0]) + ' bis ' + dMonat(info.frei[1])) +
+      '</div>';
+    alt.parentNode.insertBefore(block, alt);
+    alt.classList.add('alt-preis');
+  }
+
+  // ---- Auswahl als Teil 1 / 2 / 3 ----
+  var TEIL_KEYS = [SEL_KEY, SEL2_KEY, 'fuerte-shortlist-selected-3'];
+
+  function teilVon(slug){
+    for (var i = 0; i < TEIL_KEYS.length; i++) {
+      if (lsGet(TEIL_KEYS[i], '') === slug) return i + 1;
+    }
+    return 0;
+  }
+  function setzeTeil(slug, teil){
+    // Erst überall entfernen, dann neu setzen - eine Unterkunft kann
+    // nicht gleichzeitig zwei Teile sein.
+    TEIL_KEYS.forEach(function(k){ if (lsGet(k, '') === slug) lsSet(k, ''); });
+    if (teil >= 1) lsSet(TEIL_KEYS[teil - 1], slug);
+    zeichneTeilKnoepfe();
+    try { applySelState(); renderSplit(); renderSelectionSummary(); renderCost(); } catch(e){}
+    try { merkeAktivitaet('ausgewählt', slug); } catch(e){}
+  }
+
+  function baueTeilKnoepfe(card){
+    var body = card.querySelector('.card-body');
+    var alt = body && body.querySelector('.select-btn');
+    if (!body || body.querySelector('.teil-wahl')) return;
+    var slug = slugOf(card);
+    var w = document.createElement('div');
+    w.className = 'teil-wahl';
+    w.innerHTML = '<span class="teil-frage">Nehmen als</span>' +
+      [1, 2, 3].map(function(i){
+        return '<button type="button" class="teil-btn" data-teil="' + i + '" data-slug="' + slug + '">Teil ' + i + '</button>';
+      }).join('') +
+      '<button type="button" class="teil-btn teil-weg" data-teil="0" data-slug="' + slug + '">nicht</button>';
+    if (alt) { alt.parentNode.insertBefore(w, alt); alt.remove(); }
+    else body.appendChild(w);
+  }
+
+  function zeichneTeilKnoepfe(){
+    // Nach dem Einsortieren stecken die Karten in den Kategorie-Gittern,
+    // nicht mehr in #card-grid - deshalb alle Karten nehmen.
+    document.querySelectorAll('.card[id^="c-"]').forEach(function(card){
+      var slug = slugOf(card);
+      var t = teilVon(slug);
+      card.classList.toggle('ist-gewaehlt', t > 0);
+      card.querySelectorAll('.teil-btn').forEach(function(b){
+        b.classList.toggle('aktiv', parseInt(b.getAttribute('data-teil'), 10) === t);
+      });
+    });
+  }
+
+  document.addEventListener('click', function(ev){
+    var b = ev.target.closest('.teil-btn');
+    if (!b) return;
+    setzeTeil(b.getAttribute('data-slug'), parseInt(b.getAttribute('data-teil'), 10));
+  });
+
+  // ---- Karten in Kategorien einsortieren ----
+  function baueKategorien(){
+    var grid = document.getElementById('card-grid');
+    if (!grid || document.querySelector('.kat-block')) return;
+    var karten = Array.prototype.slice.call(grid.querySelectorAll('.card'));
+    if (!karten.length) return;
+
+    var huelle = document.createElement('div');
+    huelle.className = 'kat-huelle';
+    grid.parentNode.insertBefore(huelle, grid);
+
+    ART_REIHE.forEach(function(art){
+      var passend = karten.filter(function(c){ return accInfo(slugOf(c)).art === art; });
+      if (!passend.length) return;
+      var block = document.createElement('section');
+      block.className = 'kat-block';
+      block.setAttribute('data-art', art);
+      var m = ART_TITEL[art];
+      block.innerHTML = '<div class="kat-kopf"><h3>' + m.t + ' <span class="kat-zahl">' + passend.length + '</span></h3>' +
+                        '<p class="sub">' + m.sub + '</p></div>' +
+                        '<div class="grid kat-grid"></div>';
+      huelle.appendChild(block);
+      var ziel = block.querySelector('.kat-grid');
+      passend.forEach(function(c){ ziel.appendChild(c); });
+    });
+    grid.style.display = 'none';
+  }
+
+  // ---- Alles anwenden ----
+  function karteAufwerten(card){
+    baueArtzeile(card);
+    baueGalerie(card);
+    baueSymbole(card);
+    bauePreisblock(card);
+    baueTeilKnoepfe(card);
+  }
+
+  function karteneUmbau(){
+    document.querySelectorAll('#card-grid .card, .kat-grid .card').forEach(karteAufwerten);
+    baueKategorien();
+    zeichneTeilKnoepfe();
+  }
+
+  // ---- Am 16.09.2026 neu dazugekommen ----
+  // Die vier Airbnb-Angebote von Stephan plus die besten Funde der
+  // Neusuche und drei Hotels in Corralejo.
+  var NEU = [
+    // --- Airbnb-Angebote von Stephan ---
+    { slug: 'villa-marina-sol', name: 'Villa Marina Sol', art: 'Villa', ort: 'Corralejo', portal: 'Airbnb',
+      ppn: null, total: null, preisOffen: true, rating: 9.9, ratingTxt: '4,97/5', bew: 30,
+      lat: 28.7365, lng: -13.8620, approx: true,
+      frei: ['2026-09-29','2026-10-12'],
+      link: 'https://www.airbnb.de/rooms/52231063?check_in=2026-09-29&check_out=2026-10-12&adults=2',
+      bilder: ['https://a0.muscache.com/im/pictures/miso/Hosting-52231063/original/6ac3af5f-b55e-4a1b-9622-4c9ebb0e5bc3.jpeg?im_w=720',
+               'https://a0.muscache.com/im/pictures/miso/Hosting-52231063/original/5c9c02ad-c8b0-4d6d-9ed5-c553377dc857.jpeg?im_w=720',
+               'https://a0.muscache.com/im/pictures/miso/Hosting-52231063/original/25eb4ab2-1299-4839-ba1d-61f6d1e7616b.jpeg?im_w=720'],
+      krit: { pool: 'nein', heizpool: 'nein', grill: 'unklar', ac: 'unklar', kueche: 'ja', wlan: 'ja', parken: 'ja', wholeplace: 'ja', freecancel: 'ja' },
+      hinweis: 'Superhost und Gäste-Favorit, 4,97 aus 30 Bewertungen. <strong>Aber: der Pool ist gemeinsam genutzt</strong>, nicht privat – damit fällt euer Muss-Kriterium. 3 Schlafzimmer, Meerblick, Strandzugang, WLAN mit 285 Mbit/s, kostenlose Stornierung. Preis zeigt Airbnb nur nach Anmeldung.' },
+
+    { slug: 'mc-apartments-rosario', name: 'MC Apartments – Hafen von Rosario', art: 'Stadtwohnung', ort: 'Puerto del Rosario', portal: 'Airbnb',
+      ppn: null, total: null, preisOffen: true, rating: null, bew: 158,
+      lat: 28.5004, lng: -13.8627, approx: true,
+      frei: ['2026-09-29','2026-10-12'],
+      link: 'https://www.airbnb.de/rooms/35674743?check_in=2026-09-29&check_out=2026-10-12&adults=2',
+      bilder: ['https://a0.muscache.com/im/pictures/miso/Hosting-35674743/original/9f102d20-012b-4c6f-8f86-b00b56d9b35d.jpeg?im_w=720'],
+      krit: { pool: 'nein', heizpool: 'nein', grill: 'unklar', ac: 'unklar', kueche: 'ja', wlan: 'ja', parken: 'ja', wholeplace: 'ja', freecancel: 'unklar' },
+      hinweis: '158 Bewertungen – die breiteste Datenbasis der vier. 2 Schlafzimmer, Strandzugang, eigener Parkplatz. <strong>Liegt aber in Puerto del Rosario</strong>, rund 38 km südlich von Corralejo.' },
+
+    { slug: 'myhome-urban', name: 'MyHome Urban Apartments', art: 'Stadtwohnung', ort: 'Puerto del Rosario', portal: 'Airbnb',
+      ppn: null, total: null, preisOffen: true, rating: null, bew: null,
+      lat: 28.4990, lng: -13.8590, approx: true,
+      frei: ['2026-09-29','2026-10-12'],
+      link: 'https://www.airbnb.de/rooms/1069551451590743237?check_in=2026-09-29&check_out=2026-10-12&adults=2',
+      bilder: ['https://a0.muscache.com/im/pictures/miso/Hosting-1069566302728813604/original/29090cff-0c5b-4287-8d3f-f511cbfe8b44.jpeg'],
+      krit: { pool: 'nein', heizpool: 'nein', grill: 'nein', ac: 'unklar', kueche: 'ja', wlan: 'ja', parken: 'ja', wholeplace: 'ja', freecancel: 'unklar' },
+      hinweis: 'Direkt am Wasser, Aufzug im Haus, 45 Ausstattungsmerkmale. Parkplatz nur auf der Straße. <strong>Puerto del Rosario</strong>, nicht im Norden.' },
+
+    { slug: 'bequem-und-zentral', name: 'Bequem und zentral', art: 'Stadtwohnung', ort: 'Puerto del Rosario', portal: 'Airbnb',
+      ppn: null, total: null, preisOffen: true, rating: null, bew: null,
+      lat: 28.5020, lng: -13.8650, approx: true,
+      frei: ['2026-09-29','2026-10-12'],
+      link: 'https://www.airbnb.de/rooms/1471081395486045069?check_in=2026-09-29&check_out=2026-10-12&adults=2',
+      bilder: ['https://a0.muscache.com/im/pictures/hosting/Hosting-1471081395486045069/original/9d05b9d2-5885-4e49-9ac7-3aa26a1ed3ed.jpeg?im_w=720',
+               'https://a0.muscache.com/im/pictures/hosting/Hosting-1471081395486045069/original/ba374c46-8c2f-4955-9c3b-c6a11ba34387.jpeg?im_w=720',
+               'https://a0.muscache.com/im/pictures/hosting/Hosting-1471081395486045069/original/bbbf8ba8-a92b-40ea-a318-b736ed895153.jpeg?im_w=720'],
+      krit: { pool: 'nein', heizpool: 'nein', grill: 'nein', ac: 'ja', kueche: 'ja', wlan: 'ja', parken: 'ja', wholeplace: 'ja', freecancel: 'unklar' },
+      hinweis: '<strong>Einzige der vier mit Klimaanlage</strong>, dazu Waschmaschine und eigener Parkplatz. Nur 9 Ausstattungsmerkmale insgesamt, also schlicht. <strong>Puerto del Rosario</strong>.' },
+
+    // --- Beste Funde der Neusuche vom 14.09. ---
+    { slug: 'casa-azul-lajares', name: 'Casa Azul', art: 'Villa', ort: 'Lajares', portal: 'Booking.com',
+      ppn: 78, total: 1019, rating: 10.0, bew: 20,
+      lat: 28.6720, lng: -13.9160, approx: true,
+      frei: ['2026-09-29','2026-10-12'],
+      link: 'https://www.booking.com/hotel/es/villa-azul-lajares.de.html?checkin=2026-09-29&checkout=2026-10-12&group_adults=2&no_rooms=1',
+      krit: { pool: 'ja', heizpool: 'unklar', grill: 'unklar', ac: 'unklar', kueche: 'ja', wlan: 'ja', parken: 'unklar', wholeplace: 'ja', freecancel: 'unklar' },
+      hinweis: '<strong>Glatte 10,0 aus 20 Bewertungen</strong> – beste Note der ganzen Auswahl bei belastbarer Basis, und dabei im untersten Preisviertel. Der auffälligste Fund der Neusuche.' },
+
+    { slug: 'casita-majanicho', name: 'La Casita de Majanicho', art: 'Villa', ort: 'Majanicho', portal: 'Booking.com',
+      ppn: 66, total: 852, rating: 9.1, bew: 19,
+      lat: 28.7490, lng: -13.9330, approx: true,
+      frei: ['2026-09-29','2026-10-12'],
+      link: 'https://www.booking.com/hotel/es/la-casita-de-majanicho-la-oliva.de.html?checkin=2026-09-29&checkout=2026-10-12&group_adults=2&no_rooms=1',
+      krit: { pool: 'ja', heizpool: 'unklar', grill: 'unklar', ac: 'unklar', kueche: 'ja', wlan: 'ja', parken: 'unklar', wholeplace: 'ja', freecancel: 'unklar' },
+      hinweis: '<strong>Günstigster Treffer der Suche</strong> – 66 € pro Nacht bei 9,1. Majanicho ist ein kleines Fischerdorf an der Nordküste zwischen Corralejo und El Cotillo, sehr ruhig, aber ohne Infrastruktur.' },
+
+    { slug: 'oasis-royal', name: 'Oasis Royal – Apartment nahe Zentrum', art: 'Stadtwohnung', ort: 'Corralejo', portal: 'FeWo-direkt',
+      ppn: 102, total: 1327, rating: 9.8, bew: 56,
+      lat: 28.7290, lng: -13.8660, approx: true,
+      frei: ['2026-09-29','2026-10-12'],
+      link: 'https://www.fewo-direkt.de/ferienwohnung-ferienhaus/p6547093?startDate=2026-09-29&endDate=2026-10-12&adults=2',
+      krit: { pool: 'ja', heizpool: 'unklar', grill: 'unklar', ac: 'unklar', kueche: 'ja', wlan: 'ja', parken: 'unklar', wholeplace: 'ja', freecancel: 'unklar' },
+      hinweis: '<strong>9,8 aus 56 Bewertungen</strong> – die belastbarste Spitzenbewertung der ganzen Auswahl. Fußläufig zum Zentrum von Corralejo.' },
+
+    { slug: 'capitan-aleycar', name: 'Villa Capitán Aleycar', art: 'Villa', ort: 'Corralejo', portal: 'FeWo-direkt',
+      ppn: 188, total: 2444, rating: 9.0, bew: 15,
+      lat: 28.7250, lng: -13.8700, approx: true,
+      frei: ['2026-09-29','2026-10-12'],
+      link: 'https://www.fewo-direkt.de/ferienwohnung-ferienhaus/p11215763?startDate=2026-09-29&endDate=2026-10-12&adults=2',
+      krit: { pool: 'ja', heizpool: 'ja', grill: 'unklar', ac: 'unklar', kueche: 'ja', wlan: 'ja', parken: 'unklar', wholeplace: 'ja', freecancel: 'unklar' },
+      hinweis: '<strong>Die einzige im Budget mit beheiztem Pool</strong> – „piscina climatizada" steht im Titel des Angebots. Gesamtpreis aus dem Nachtpreis hochgerechnet, bitte beim Buchen gegenprüfen.' },
+
+    // --- Drei Hotels in Corralejo ---
+    { slug: 'island-home-fuerteventura', name: 'Island Home Fuerteventura', art: 'Hotel', ort: 'Corralejo', portal: 'Booking.com',
+      ppn: null, total: null, preisOffen: true, rating: 9.1, bew: 1616,
+      lat: 28.7380, lng: -13.8670, approx: true,
+      frei: ['2026-09-29','2026-10-12'],
+      link: 'https://www.booking.com/searchresults.de.html?ss=Island+Home+Fuerteventura&checkin=2026-09-29&checkout=2026-10-12&group_adults=2&no_rooms=1',
+      krit: { pool: 'unklar', heizpool: 'unklar', grill: 'nein', ac: 'unklar', kueche: 'unklar', wlan: 'ja', parken: 'unklar', wholeplace: 'nein', freecancel: 'unklar' },
+      hinweis: '<strong>9,1 aus 1.616 Bewertungen</strong> – die mit Abstand breiteste Bewertungsbasis in Corralejo. Preis für euren Zeitraum stand in der Suchliste nicht, muss einzeln geprüft werden.' },
+
+    { slug: 'h10-ocean-dreams', name: 'H10 Ocean Dreams – Adults Only', art: 'Hotel', ort: 'Corralejo', portal: 'Booking.com',
+      ppn: null, total: null, preisOffen: true, rating: 8.8, bew: 615,
+      lat: 28.7420, lng: -13.8580, approx: true,
+      frei: ['2026-09-29','2026-10-12'],
+      link: 'https://www.booking.com/searchresults.de.html?ss=H10+Ocean+Dreams+Corralejo&checkin=2026-09-29&checkout=2026-10-12&group_adults=2&no_rooms=1',
+      krit: { pool: 'ja', heizpool: 'unklar', grill: 'nein', ac: 'ja', kueche: 'nein', wlan: 'ja', parken: 'ja', wholeplace: 'nein', freecancel: 'unklar' },
+      hinweis: 'Nur für Erwachsene, direkt an den Dünen. 8,8 aus 615 Bewertungen. Balkon und Klimaanlage gehören zur Standardausstattung des Hauses.' },
+
+    { slug: 'secrets-bahia-real', name: 'Secrets Bahía Real Resort & Spa – Adults Only', art: 'Hotel', ort: 'Corralejo', portal: 'Booking.com',
+      ppn: null, total: null, preisOffen: true, rating: 8.8, bew: 846,
+      lat: 28.7480, lng: -13.8440, approx: true,
+      frei: ['2026-09-29','2026-10-12'],
+      link: 'https://www.booking.com/searchresults.de.html?ss=Secrets+Bahia+Real+Corralejo&checkin=2026-09-29&checkout=2026-10-12&group_adults=2&no_rooms=1',
+      krit: { pool: 'ja', heizpool: 'ja', grill: 'nein', ac: 'ja', kueche: 'nein', wlan: 'ja', parken: 'ja', wholeplace: 'nein', freecancel: 'unklar' },
+      hinweis: 'Fünf Sterne, nur für Erwachsene, mit Spa und beheiztem Pool. 8,8 aus 846 Bewertungen. <strong>Deutlich über eurem Budget</strong> – als Vergleichsmaßstab drin.' }
+  ];
+
+  function baueNeueKarten(){
+    var grid = document.getElementById('card-grid');
+    if (!grid) return;
+    NEU.forEach(function(u){
+      if (document.getElementById('c-' + u.slug)) return;
+      // In die Preistabelle eintragen, damit die Kostenrechnung sie kennt
+      if (u.total && !LISTINGS[u.slug]) {
+        LISTINGS[u.slug] = { name: u.name, portal: u.portal, total: u.total, nights: 13,
+                             ppn: u.ppn, photo: (u.bilder && u.bilder[0]) || '' };
+      }
+      ACC[u.slug] = { art: u.art, ort: u.ort, portal: u.portal, frei: u.frei };
+
+      var art = document.createElement('article');
+      art.className = 'card ist-neu';
+      art.id = 'c-' + u.slug;
+      art.setAttribute('data-lat', u.lat);
+      art.setAttribute('data-lng', u.lng);
+      if (u.approx) art.setAttribute('data-approx', '1');
+      if (u.ppn) art.setAttribute('data-ppn', u.ppn);
+      if (u.total) art.setAttribute('data-price', u.total);
+      if (u.rating) art.setAttribute('data-rating', u.rating);
+      Object.keys(u.krit || {}).forEach(function(k){
+        var v = u.krit[k];
+        if (v === 'ja') art.setAttribute('data-' + k, 'true');
+        else if (v === 'nein') art.setAttribute('data-' + k, 'false');
+      });
+      if (u.bilder && u.bilder.length > 1) art.setAttribute('data-bilder', u.bilder.slice(1).join('|'));
+
+      var erstesBild = (u.bilder && u.bilder[0]) || karteBildUrl(u.lat, u.lng);
+      var bewTxt = u.bew ? (u.ratingTxt || (u.rating ? String(u.rating).replace('.', ',') + '/10' : '')) +
+                   ' · ' + u.bew + ' Bewertungen' : 'noch keine Bewertungen';
+
+      art.innerHTML =
+        '<div class="card-media">' +
+          '<img src="' + erstesBild + '" alt="' + u.name + '" loading="lazy">' +
+          '<span class="zone-tag">' + u.ort + '</span>' +
+          '<span class="neu-schild">neu</span>' +
+          '<div class="card-fav-actions">' +
+            '<button type="button" class="fav-btn" title="Favorit">🤍</button>' +
+            '<button type="button" class="hide-btn" title="Ausblenden">🙈</button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="card-body">' +
+          '<div class="card-head"><div><h3>' + u.name + '</h3></div></div>' +
+          '<p class="meta-line rating-line">★ ' + bewTxt + '</p>' +
+          '<p class="price-headline">' +
+            (u.preisOffen
+              ? '<span class="dim">Preis für euren Zeitraum noch nicht abgefragt – der Link unten hat eure Daten schon eingetragen.</span>'
+              : '<span class="num">' + fmtEuro0(u.total) + ' €</span> <span class="ppn">' + fmtEuro0(u.ppn) + ' €/Nacht</span>') +
+          '</p>' +
+          '<p class="neu-hinweis">' + u.hinweis + '</p>' +
+          '<div class="card-links">' +
+            '<a class="btn" href="' + u.link + '" target="_blank" rel="noopener">Angebot öffnen ↗</a>' +
+            '<a class="btn btn-outline" href="https://www.google.com/maps/search/?api=1&query=' + u.lat + ',' + u.lng + '" target="_blank" rel="noopener">Google Maps ↗</a>' +
+          '</div>' +
+        '</div>';
+      grid.appendChild(art);
+    });
+  }
+
+  // Erst die Tabellen aufbauen, dann die neuen Karten anhaengen,
+  // dann alle Karten gemeinsam aufwerten - die Reihenfolge ist wichtig.
+  baueNeueKarten();
+  karteneUmbau();
 })();
 </script>
