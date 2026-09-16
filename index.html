@@ -352,12 +352,19 @@ input[type=range]::-moz-range-thumb { width: 26px; height: 26px; border: 2px sol
 .lm-legend span { display: inline-flex; align-items: center; gap: 6px; }
 .lm-legend i { width: 13px; height: 13px; border-radius: 50%; display: inline-block; border: 2px solid #fff; box-shadow: 0 0 0 1px var(--border); }
 
-/* ---- Countdown und Hero: Bild soll durchscheinen ---- */
-:root { --cd-bg: rgba(255,255,255,0.20); --cd-bd: rgba(28,26,23,0.16); }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --cd-bg: rgba(255,255,255,0.10); --cd-bd: rgba(255,255,255,0.18); } }
-:root[data-theme="dark"] { --cd-bg: rgba(255,255,255,0.10); --cd-bd: rgba(255,255,255,0.18); }
+/* ---- Countdown auf dem Strandfoto: immer lesbar, unabhaengig vom Modus ----
+   Das Foto aendert sich nicht mit Hell/Dunkel, darum darf die Kachel es
+   auch nicht: dunkles Glas mit hellem Text kontrastiert zuverlaessig auf
+   jedem Bildausschnitt - vom hellen Himmel bis zum dunklen Fels. */
 .hero-card { background: none; }
-.cd-box { background: var(--cd-bg) !important; border-color: var(--cd-bd) !important; backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
+.hero-card .cd-box {
+  background: rgba(13, 20, 22, 0.58) !important;
+  border-color: rgba(255, 255, 255, 0.28) !important;
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+}
+.hero-card .cd-box .cd-n { color: #fff !important; }
+.hero-card .cd-box .cd-l { color: rgba(255, 255, 255, 0.82) !important; }
 
 /* ---- Entdecken-Karussell auf der Startseite ---- */
 .peek-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 34px; }
@@ -1068,9 +1075,6 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 .hero-card .eyebrow, .hero-card h1, .hero-card .sub { text-shadow: 0 1px 3px rgba(255,255,255,.55), 0 2px 14px rgba(255,255,255,.4); }
 :root[data-theme="dark"] .hero-card .eyebrow, :root[data-theme="dark"] .hero-card h1, :root[data-theme="dark"] .hero-card .sub { text-shadow: 0 1px 3px rgba(0,0,0,.6), 0 2px 16px rgba(0,0,0,.5); }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .hero-card .eyebrow, :root:not([data-theme="light"]) .hero-card h1, :root:not([data-theme="light"]) .hero-card .sub { text-shadow: 0 1px 3px rgba(0,0,0,.6), 0 2px 16px rgba(0,0,0,.5); } }
-.hero-card .cd-box { background: rgba(255,255,255,.72); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
-:root[data-theme="dark"] .hero-card .cd-box { background: rgba(20,24,26,.6); }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .hero-card .cd-box { background: rgba(20,24,26,.6); } }
 
 /* Was zuletzt passiert ist */
 .aktiv-kasten { margin-top: 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px 20px 18px; box-shadow: var(--shadow); }
@@ -3945,7 +3949,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   }
   function segCount(id){
     try {
-    if (id === 'unterkuenfte') return document.querySelectorAll('#card-grid .card').length;
+    if (id === 'unterkuenfte') return document.querySelectorAll('#card-grid .card, .kat-grid .card').length;
     if (id === 'ausfluege')    return document.querySelectorAll('.ex-card').length + document.querySelectorAll('.trip-card').length;
     if (id === 'gastro')       return document.querySelectorAll('.rc-card').length;
     if (id === 'todo') {
@@ -4536,7 +4540,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 
   // ---- card buttons ----
   // Build the two part-buttons for every card once.
-  document.querySelectorAll('#card-grid .card').forEach(function(card){
+  document.querySelectorAll('#card-grid .card, .kat-grid .card').forEach(function(card){
     var btn = card.querySelector('.btn-select');
     if (!btn) return;
     var slug = btn.getAttribute('data-slug');
@@ -4553,7 +4557,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     var sel = getSelected(), sel2 = getSelected2();
     var n1 = getSplitNights(), n2 = TOTAL_NIGHTS - n1;
 
-    document.querySelectorAll('#card-grid .card').forEach(function(card){
+    document.querySelectorAll('#card-grid .card, .kat-grid .card').forEach(function(card){
       var btn = card.querySelector('.btn-select');
       var row = card.querySelector('.split-select-row');
       if (!btn) return;
@@ -4905,7 +4909,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   function getHiddenAccs(){ try { return JSON.parse(localStorage.getItem(HIDE_KEY) || '[]'); } catch(e){ return []; } }
   function setHiddenAccs(arr){ try { localStorage.setItem(HIDE_KEY, JSON.stringify(arr)); } catch(e){} }
   function slugOf(card){ return card.id.replace(/^c-/, ''); }
-  document.querySelectorAll('#card-grid .card').forEach(function(card){
+  document.querySelectorAll('#card-grid .card, .kat-grid .card').forEach(function(card){
     var slug = slugOf(card);
     var favBtn = card.querySelector('.fav-btn');
     var hideBtn = card.querySelector('.hide-btn');
@@ -4972,6 +4976,21 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       if (mode === 'beach-asc') return parseFloat(a.dataset.beach) - parseFloat(b.dataset.beach);
       return 0;
     });
+    // Fortlaufende Nummer je Unterkunft, in derselben Reihenfolge wie
+    // sortiert wurde - Favoriten zuerst, Ausgeblendete zuletzt. So faengt
+    // die Zaehlung immer bei den gelikten Unterkuenften an, egal welche
+    // Sortierung sonst eingestellt ist.
+    cards.forEach(function(c, i){
+      var badge = c.querySelector('.pin-badge');
+      if (!badge) {
+        badge = document.createElement('span');
+        badge.className = 'pin-badge';
+        var media = c.querySelector('.card-media');
+        if (media) media.insertBefore(badge, media.firstChild.nextSibling);
+      }
+      badge.textContent = i + 1;
+    });
+
     cards.forEach(function(c){
       var ziel = c.closest('.kat-grid') ||
                  (document.querySelector('.kat-block[data-art="' + accInfo(slugOf(c)).art + '"] .kat-grid')) ||
@@ -6179,7 +6198,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     var pts = [];
     if (kind === 'acc') {
       var sel = getSelected(), sel2 = getSelected2(), favs = getFavs();
-      document.querySelectorAll('#card-grid .card[data-lat]').forEach(function(c, i){
+      document.querySelectorAll('#card-grid .card[data-lat], .kat-grid .card[data-lat]').forEach(function(c, i){
         var slug = c.id.replace(/^c-/, '');
         var nm = c.querySelector('h3'), ppn = c.querySelector('.price-headline .ppn');
         var badge = c.querySelector('.pin-badge');
@@ -6304,7 +6323,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       if (!title) return;
       idx.push({ g: group, t: title.trim(), s: (sub || '').trim(), p: page, a: anchor || '' });
     }
-    document.querySelectorAll('#card-grid .card').forEach(function(c){
+    document.querySelectorAll('#card-grid .card, .kat-grid .card').forEach(function(c){
       var h = c.querySelector('h3'), m = c.querySelector('.meta-line'), pr = c.querySelector('.price-headline .ppn');
       add('Unterkünfte', h && h.textContent, (pr ? pr.textContent + ' · ' : '') + (m ? m.textContent : ''), 'unterkuenfte', c.id);
     });
@@ -7934,6 +7953,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       art.innerHTML =
         '<div class="card-media">' +
           '<img src="' + erstesBild + '" alt="' + u.name + '" loading="lazy">' +
+          '<span class="pin-badge">&#8211;</span>' +
           '<span class="zone-tag">' + u.ort + '</span>' +
           '<span class="neu-schild">neu</span>' +
           '<div class="card-fav-actions">' +
