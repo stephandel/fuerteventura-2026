@@ -1435,9 +1435,8 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
         <label class="sf-label">Sortieren
           <select id="sort-select">
             <option value="nummer-asc" selected>Nach Nummer sortieren</option>
-            <option value="price-desc">Preis: teuer → günstig</option>
-            <option value="price-asc">Preis: günstig → teuer</option>
-            <option value="ppn-asc">Preis pro Nacht: günstig → teuer</option>
+            <option value="price-desc">Preis pro Nacht: teuer → günstig</option>
+            <option value="price-asc">Preis pro Nacht: günstig → teuer</option>
             <option value="rating-desc">Bewertung: beste zuerst</option>
             <option value="beach-asc">Nähe zum Strand</option>
           </select>
@@ -5051,9 +5050,8 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
         if (isFavA && isFavB) return favB - favA;
       }
       if (mode === 'nummer-asc') return (NUMMER[slugA] || 0) - (NUMMER[slugB] || 0);
-      if (mode === 'price-desc') return parseFloat(b.dataset.price) - parseFloat(a.dataset.price);
-      if (mode === 'price-asc') return parseFloat(a.dataset.price) - parseFloat(b.dataset.price);
-      if (mode === 'ppn-asc') return parseFloat(a.dataset.ppn) - parseFloat(b.dataset.ppn);
+      if (mode === 'price-desc') return parseFloat(b.dataset.ppn) - parseFloat(a.dataset.ppn);
+      if (mode === 'price-asc') return parseFloat(a.dataset.ppn) - parseFloat(b.dataset.ppn);
       if (mode === 'rating-desc') return parseFloat(b.dataset.rating) - parseFloat(a.dataset.rating);
       if (mode === 'beach-asc') return parseFloat(a.dataset.beach) - parseFloat(b.dataset.beach);
       return 0;
