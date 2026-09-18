@@ -8259,6 +8259,14 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   function baueMiniKarte(behaelter, lat, lng){
     if (typeof L === 'undefined' || behaelter.dataset.fertig) return;
     behaelter.dataset.fertig = '1';
+    // Leaflet kann beim Initialisieren den Seiten-Scroll verschieben (u.a.
+    // ueber Fokus-Handling im Container) - deshalb Position davor merken
+    // und danach zur Not zuruecksetzen. Root Cause fuer den gemeldeten
+    // "Seite springt beim Durchblaettern der Fotos nach oben"-Bug.
+    var scrollX0 = window.scrollX, scrollY0 = window.scrollY;
+    function scrollFixieren(){
+      if (window.scrollX !== scrollX0 || window.scrollY !== scrollY0) window.scrollTo(scrollX0, scrollY0);
+    }
     var t = lmTiles();
     var k = L.map(behaelter, {
       zoomControl: false, attributionControl: false,
@@ -8275,7 +8283,8 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     k.fitBounds(L.latLngBounds([hier, strand]).pad(0.25), { animate: false });
     if (t.dark) behaelter.classList.add('karte-dunkel');
     miniKarten.push(k);
-    setTimeout(function(){ k.invalidateSize(); }, 60);
+    scrollFixieren();
+    setTimeout(function(){ k.invalidateSize(); scrollFixieren(); }, 60);
   }
 
   function baueGalerie(card){
