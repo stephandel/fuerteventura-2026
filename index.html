@@ -4986,24 +4986,27 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   function getHiddenAccs(){ try { return JSON.parse(localStorage.getItem(HIDE_KEY) || '[]'); } catch(e){ return []; } }
   function setHiddenAccs(arr){ try { localStorage.setItem(HIDE_KEY, JSON.stringify(arr)); } catch(e){} }
   function slugOf(card){ return card.id.replace(/^c-/, ''); }
-  document.querySelectorAll('#card-grid .card, .kat-grid .card').forEach(function(card){
+  // Ein Zuhoerer fuer alle Karten statt einer pro Knopf: die Haelfte der
+  // Karten entsteht erst am Ende des Skripts (baueNeueKarten), haette also
+  // nie einen eigenen Zuhoerer bekommen.
+  document.addEventListener('click', function(ev){
+    var btn = ev.target.closest ? ev.target.closest('.fav-btn, .hide-btn') : null;
+    if (!btn) return;
+    var card = btn.closest('#card-grid .card[id^="c-"], .kat-grid .card[id^="c-"]');
+    if (!card) return;
     var slug = slugOf(card);
-    var favBtn = card.querySelector('.fav-btn');
-    var hideBtn = card.querySelector('.hide-btn');
-    if (favBtn) favBtn.addEventListener('click', function(){
+    if (btn.classList.contains('fav-btn')) {
       var favs = getFavs();
       var i = favs.indexOf(slug);
       if (i === -1) favs.push(slug); else favs.splice(i, 1);
       setFavs(favs);
-      applySortFilter();
-    });
-    if (hideBtn) hideBtn.addEventListener('click', function(){
+    } else {
       var hidden = getHiddenAccs();
-      var i = hidden.indexOf(slug);
-      if (i === -1) hidden.push(slug); else hidden.splice(i, 1);
+      var j = hidden.indexOf(slug);
+      if (j === -1) hidden.push(slug); else hidden.splice(j, 1);
       setHiddenAccs(hidden);
-      applySortFilter();
-    });
+    }
+    applySortFilter();
   });
 
   // ---- sort & filter ----
