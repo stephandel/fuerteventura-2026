@@ -85,6 +85,8 @@ nav.topnav { position: sticky; top: 0; z-index: 50; background: var(--surface); 
 body { padding-bottom: env(safe-area-inset-bottom, 0px); }
 .navwrap { max-width: 1180px; margin: 0 auto; padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 .brand { font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif; font-weight: 700; letter-spacing: -0.015em; font-size: 1.05rem; color: var(--ink); text-decoration: none; display: flex; gap: 7px; align-items: center; }
+.nav-kosten-pp { font-family: "JetBrains Mono", monospace; font-weight: 700; font-size: 0.85rem; color: var(--teal); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.nav-kosten-pp[hidden] { display: none; }
 .navlinks { display: flex; gap: 2px; flex-wrap: wrap; }
 .nav-link { position: relative; font-size: 13.5px; font-weight: 600; padding: 7px 12px; border-radius: 8px; color: var(--ink-dim); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
 .nav-link:hover { background: var(--surface-2); color: var(--ink); }
@@ -98,6 +100,7 @@ body { padding-bottom: env(safe-area-inset-bottom, 0px); }
   .navwrap { flex-wrap: nowrap; padding: 10px 14px; gap: 10px; }
   .navlinks { flex: 1 1 auto; min-width: 0; flex-wrap: nowrap; overflow-x: auto; max-width: 100%; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
   .brand { flex-shrink: 0; }
+  .nav-kosten-pp { flex: 1 1 auto; min-width: 0; text-align: right; }
   .nav-link { padding: 7px 9px; font-size: 13px; }
   .navlinks::-webkit-scrollbar { display: none; }
 }
@@ -1230,6 +1233,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 <nav class="topnav">
   <div class="navwrap">
     <a class="brand" href="#home"><span class="brand-insel" aria-hidden="true"></span>Fuerteventura</a>
+    <span class="nav-kosten-pp" id="nav-kosten-pp" hidden></span>
     <div class="nav-search">
       <button type="button" class="nav-search-btn" id="open-search" aria-label="Suchen">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5 21 21"/></svg>
@@ -4018,6 +4022,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     if (id === 'unterkuenfte') renderSelectionSummary();
     if (id === 'wetter') renderWeatherEverywhere();
     if (typeof ensureMapFor === 'function') setTimeout(function(){ ensureMapFor(id); }, 60);
+    if (typeof updateNavIndicators === 'function') updateNavIndicators();
   }
 
   // Merkt sich pro Bereich die zuletzt geöffnete Seite
@@ -5210,6 +5215,19 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       var c = computeTotal();
       badge.textContent = fmtEuro(c.total/2) + ' €';
       badge.classList.add('show');
+    }
+    // Kosten pro Person oben in der Leiste, solange man im Bereich „Planen" ist
+    var navPP = document.getElementById('nav-kosten-pp');
+    if (navPP) {
+      var cpp = computeTotal();
+      var planenActive = document.querySelector('.tab-btn[data-tab="planen"]');
+      planenActive = !!(planenActive && planenActive.classList.contains('active'));
+      if (planenActive && cpp.accs.length > 0) {
+        navPP.textContent = 'Kosten: ' + (cpp.accs.some(function(a){return a.estimated;}) ? '≈ ' : '') + fmtEuro(cpp.total/2) + ' € p. P.';
+        navPP.hidden = false;
+      } else {
+        navPP.hidden = true;
+      }
     }
     // offene Aufgaben als Zahl am Bereich „Planen"
     var tb = document.getElementById('tabbadge-planen');
