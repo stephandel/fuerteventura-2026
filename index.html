@@ -8775,10 +8775,10 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     if (hinweis) hinweis.classList.add('beschreibung');
 
     // Reihenfolge festzurren: Symbole, Kriterien-Summe, Kopf, Bewertung,
-    // Preis, Adresse, Strecken, Beschreibung, Streifen, Auswahl, Links
+    // Preis, Adresse, Strecken, Streifen, Auswahl, Links, Beschreibung
     var folge = ['.krit-reihe', '.card-head', '.rating-line',
-                 '.preisblock', '.adresse, .adresse-leer', '.strecken', '.beschreibung',
-                 '.naechte-streifen', '.teil-wahl', '.card-links'];
+                 '.preisblock', '.adresse, .adresse-leer', '.strecken',
+                 '.naechte-streifen', '.teil-wahl', '.card-links', '.beschreibung'];
     folge.forEach(function(sel){
       var el = body.querySelector(sel);
       if (el) body.appendChild(el);
