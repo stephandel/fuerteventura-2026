@@ -1032,7 +1032,6 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 
 /* Kriterien-Symbole */
 .krit-reihe { position: relative; display: flex; flex-wrap: wrap; gap: 5px; margin: 0 0 10px; }
-.krit-summe-reihe { display: flex; gap: 6px; margin: 0 0 10px; }
 .krit-tile { height: 34px; padding: 0 13px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface-2); display: flex; align-items: center; gap: 5px; font-size: 12.5px; font-weight: 700; color: var(--ink); white-space: nowrap; }
 .krit-tile.ist-good { border-color: var(--good); color: var(--good); background: var(--good-bg); }
 .krit-tile.ist-warn { border-color: var(--warn); color: var(--warn); background: var(--warn-bg); }
@@ -1195,10 +1194,8 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
    Abschnitte feste Mindesthoehen - dadurch stehen Name, Bewertung,
    Entfernungen und Preis bei allen Karten auf derselben Linie. */
 .kat-grid .card .card-body { display: flex; flex-direction: column; gap: 0; }
-.kat-grid .krit-reihe { height: 80px; align-content: flex-start; overflow: hidden; margin-bottom: 2px; }
-.kat-grid .krit-reihe.hat-info { overflow: visible; }
+.kat-grid .krit-reihe { min-height: 80px; align-content: flex-start; margin-bottom: 8px; }
 .krit-reihe.hat-info { z-index: 30; }
-.kat-grid .krit-summe-reihe { height: 34px; overflow: hidden; margin-bottom: 8px; }
 .kat-grid .card-head { height: 58px; align-items: flex-start; overflow: hidden; }
 .kat-grid .card-head h3 { font-size: 1.12rem; line-height: 1.22; }
 .kat-grid .adresse, .kat-grid .adresse-leer { height: 38px; overflow: hidden; margin: 4px 0 0; }
@@ -8474,9 +8471,9 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 
   function baueKritSumme(card){
     var body = card.querySelector('.card-body');
-    if (!body || body.querySelector('.krit-summe-reihe')) return;
+    if (!body) return;
     var reihe = body.querySelector('.krit-reihe');
-    if (!reihe) return;
+    if (!reihe || reihe.querySelector('.krit-tile')) return;
 
     var gesamt = KRITERIEN.length;
     var treffer = 0;
@@ -8488,12 +8485,11 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     var info = accInfo(slugOf(card));
     var artSymbol = { Villa: '🏡', Stadtwohnung: '🏢', Hotel: '🛎️' }[info.art] || '🏠';
 
-    var z = document.createElement('div');
-    z.className = 'krit-summe-reihe';
-    z.innerHTML =
-      '<span class="krit-tile ' + klasse + '">' + treffer + '/' + gesamt + ' Muss-Kriterien</span>' +
-      '<span class="krit-tile ist-art">' + artSymbol + ' ' + info.art + '</span>';
-    reihe.parentNode.insertBefore(z, reihe.nextSibling);
+    // Die beiden Kacheln reihen sich direkt an die Symbole an, statt eine
+    // eigene Zeile zu belegen - platzsparender.
+    reihe.insertAdjacentHTML('beforeend',
+      '<span class="krit-tile ' + klasse + '">' + treffer + '/' + gesamt + ' Kriterien</span>' +
+      '<span class="krit-tile ist-art">' + artSymbol + ' ' + info.art + '</span>');
   }
 
   // ---- Anbieter-Badge unten rechts im Foto ----
@@ -8523,15 +8519,11 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     // dem gerundeten Nachtpreis weicht sonst um ein paar Euro ab.
     var gesamt = Math.round(parseFloat(card.getAttribute('data-price') || '0')) || Math.round(ppn * n);
 
-    var voll = info.frei[0] === '2026-09-29' && info.frei[1] === '2026-10-12';
     var block = document.createElement('div');
     block.className = 'preisblock';
     block.innerHTML =
       '<div class="pb-zelle"><span class="pb-wert">' + fmtEuro0(ppn) + ' €</span><span class="pb-label">pro Nacht</span></div>' +
-      '<div class="pb-zelle"><span class="pb-wert">' + fmtEuro0(gesamt) + ' €</span><span class="pb-label">' + n + ' Nächte gesamt</span></div>' +
-      '<div class="pb-frei' + (voll ? '' : ' ist-teil') + '">' +
-        (voll ? '✓ frei vom 29.09. bis 12.10.' : '⚠️ frei nur vom ' + dMonat(info.frei[0]) + ' bis ' + dMonat(info.frei[1])) +
-      '</div>';
+      '<div class="pb-zelle"><span class="pb-wert">' + fmtEuro0(gesamt) + ' €</span><span class="pb-label">' + n + ' Nächte gesamt</span></div>';
     alt.parentNode.insertBefore(block, alt);
     alt.classList.add('alt-preis');
   }
@@ -8784,7 +8776,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 
     // Reihenfolge festzurren: Symbole, Kriterien-Summe, Kopf, Bewertung,
     // Preis, Adresse, Strecken, Beschreibung, Streifen, Auswahl, Links
-    var folge = ['.krit-reihe', '.krit-summe-reihe', '.card-head', '.rating-line',
+    var folge = ['.krit-reihe', '.card-head', '.rating-line',
                  '.preisblock', '.adresse, .adresse-leer', '.strecken', '.beschreibung',
                  '.naechte-streifen', '.teil-wahl', '.card-links'];
     folge.forEach(function(sel){
@@ -8830,7 +8822,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
                'https://media-cdn.prod.witbooking.com/generated/media/accommodation/8ed95fe5-18de-4b68-b442-ad95c9034b52-768.webp',
                'https://media-cdn.prod.witbooking.com/generated/media/accommodation/12e82e6d-4c96-42c0-81fa-2d3cdfd958bb-768.webp'],
       krit: { pool: 'ja', heizpool: 'ja', grill: 'ja', ac: 'unklar', kueche: 'ja', wlan: 'ja', parken: 'ja', wholeplace: 'ja', freecancel: 'ja' },
-      hinweis: '<strong>Nicht f\u00fcr die vollen 13 N\u00e4chte buchbar</strong> \u2013 zwischen 29.09. und 02.10. ist die Villa belegt. Genau f\u00fcr 03.10.\u201312.10. (9 N\u00e4chte) aber frei, mit privatem Whirlpool zus\u00e4tzlich zum Pool, 3 Schlafzimmer/4 B\u00e4der, 204 m\u00b2. Direkt gebucht 191\u00a0\u20ac g\u00fcnstiger als bei Booking.com (dort 9,2/10 aus 652 Bewertungen f\u00fcr eine Standard-Villa ohne Whirlpool, ca. 2.068\u00a0\u20ac f\u00fcr denselben Zeitraum). Kostenlose Stornierung bis 29.09.2026, keine Anzahlung, Mindestaufenthalt 3 N\u00e4chte. <strong>Passt als Teil\u00a02</strong>, wenn Teil\u00a01 die ersten vier N\u00e4chte woanders abdeckt \u2013 zum Beispiel Casita Maracuya (29.09.\u201303.10.).' },
+      hinweis: 'Mit privatem Whirlpool zus\u00e4tzlich zum Pool, 3 Schlafzimmer/4 B\u00e4der, 204 m\u00b2. Direkt gebucht 191\u00a0\u20ac g\u00fcnstiger als bei Booking.com (dort 9,2/10 aus 652 Bewertungen f\u00fcr eine Standard-Villa ohne Whirlpool, ca. 2.068\u00a0\u20ac f\u00fcr denselben Zeitraum). Kostenlose Stornierung bis 29.09.2026, keine Anzahlung, Mindestaufenthalt 3 N\u00e4chte. <strong>Passt als Teil\u00a02</strong>, wenn Teil\u00a01 die ersten vier N\u00e4chte woanders abdeckt \u2013 zum Beispiel Casita Maracuya (29.09.\u201303.10.).' },
 
     // --- Airbnb-Angebote von Stephan ---
     { slug: 'villa-marina-sol', name: 'Villa Marina Sol', art: 'Villa', ort: 'Corralejo', portal: 'Airbnb',
@@ -8923,7 +8915,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       frei: ['2026-09-29','2026-10-06'],
       link: 'https://www.booking.com/hotel/es/unicas.de.html?aid=898224&checkin=2026-09-29&checkout=2026-10-06&group_adults=2&group_children=0&no_rooms=1',
       krit: { pool: 'ja', eigpool: 'ja', heizpool: 'ja', grill: 'ja', ac: 'unklar', balkon: 'ja', kueche: 'ja', wlan: 'ja', parken: 'ja', wholeplace: 'ja', freecancel: 'unklar' },
-      hinweis: '<strong>Nicht f\u00fcr die vollen 13 N\u00e4chte buchbar</strong> \u2013 laut Tabelle frei vom 29.09. bis 06.10. (7 N\u00e4chte, 1.838\u00a0\u20ac). Anlage aus mehreren eigenst\u00e4ndigen Villen in Lajares, <strong>jede mit eigenem Pool</strong> \u2013 laut Betreiber wird nichts geteilt. Grill, voll ausgestattete K\u00fcche, Glasfaser-WLAN und eigener Balkon geh\u00f6ren dazu. <strong>Poolheizung kostet 30\u00a0\u20ac extra</strong>, Klimaanlage ist nicht best\u00e4tigt. Lajares liegt im Inselinneren, rund 10\u00a0km von Corralejo entfernt.' },
+      hinweis: 'Anlage aus mehreren eigenst\u00e4ndigen Villen in Lajares, <strong>jede mit eigenem Pool</strong> \u2013 laut Betreiber wird nichts geteilt. Grill, voll ausgestattete K\u00fcche, Glasfaser-WLAN und eigener Balkon geh\u00f6ren dazu. <strong>Poolheizung kostet 30\u00a0\u20ac extra</strong>, Klimaanlage ist nicht best\u00e4tigt. Lajares liegt im Inselinneren, rund 10\u00a0km von Corralejo entfernt.' },
 
     // --- Am 18.09.2026 von Stephan ergaenzt, zwei Nachbarvillen in Lajares ---
     { slug: 'casa-dicha-lajares', name: 'Casa Dicha mit beheiztem Pool', art: 'Villa', ort: 'Lajares', portal: 'Airbnb',
@@ -8933,7 +8925,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       link: 'https://www.airbnb.com/rooms/39840689?check_in=2026-09-29&check_out=2026-10-06&adults=2',
       bilder: ['images/casa-dicha-lajares-foto1.webp', 'images/casa-dicha-lajares-foto2.webp', 'images/casa-dicha-lajares-foto3.webp'],
       krit: { pool: 'ja', eigpool: 'ja', heizpool: 'ja', grill: 'unklar', ac: 'unklar', balkon: 'ja', kueche: 'ja', wlan: 'ja', parken: 'ja', wholeplace: 'ja', freecancel: 'ja' },
-      hinweis: '<strong>Nicht f\u00fcr die vollen 13 N\u00e4chte buchbar</strong> \u2013 laut Airbnb frei vom 29.09. bis 06.10. (7 N\u00e4chte, 1.877\u00a0\u20ac). <strong>4,9/5 aus 215 Bewertungen</strong> \u2013 mit Abstand die breiteste Bewertungsbasis der Lajares-Villen. Eigener beheizter Pool direkt am Wohnbereich, komplett ausgestattete K\u00fcche, kostenlose Stornierung. Klimaanlage nicht best\u00e4tigt.' },
+      hinweis: '<strong>4,9/5 aus 215 Bewertungen</strong> \u2013 mit Abstand die breiteste Bewertungsbasis der Lajares-Villen. Eigener beheizter Pool direkt am Wohnbereich, komplett ausgestattete K\u00fcche, kostenlose Stornierung. Klimaanlage nicht best\u00e4tigt.' },
 
     { slug: 'der-garten-7-lajares', name: 'Der Garten 7', art: 'Villa', ort: 'Lajares', portal: 'Airbnb',
       ppn: 137.29, total: 961, rating: 10.0, ratingTxt: '10,0/10', bew: 13,
@@ -8942,7 +8934,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       link: 'https://www.airbnb.com/rooms/1600773607980333542?check_in=2026-09-29&check_out=2026-10-06&adults=2',
       bilder: ['images/der-garten-7-lajares-foto1.webp', 'images/der-garten-7-lajares-foto2.webp', 'images/der-garten-7-lajares-foto3.webp'],
       krit: { pool: 'nein', eigpool: 'nein', heizpool: 'nein', grill: 'ja', ac: 'nein', balkon: 'ja', kueche: 'ja', wlan: 'ja', parken: 'ja', wholeplace: 'ja', freecancel: 'ja' },
-      hinweis: '<strong>Nicht f\u00fcr die vollen 13 N\u00e4chte buchbar</strong> \u2013 laut Airbnb frei vom 29.09. bis 06.10. (7 N\u00e4chte, 961\u00a0\u20ac). <strong>Glatte 10,0</strong>, allerdings nur aus 13 Bewertungen \u2013 schmale Basis. <strong>Anders als die Nachbarvilla Casa Dicha kein Pool</strong>, daf\u00fcr Grill und privater Au\u00dfenbereich, kostenlose Stornierung. Zwei Schlafzimmer.' }
+      hinweis: '<strong>Glatte 10,0</strong>, allerdings nur aus 13 Bewertungen \u2013 schmale Basis. <strong>Anders als die Nachbarvilla Casa Dicha kein Pool</strong>, daf\u00fcr Grill und privater Au\u00dfenbereich, kostenlose Stornierung. Zwei Schlafzimmer.' }
   ];
 
   function baueNeueKarten(){
