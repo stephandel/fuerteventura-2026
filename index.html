@@ -638,6 +638,7 @@ body { font-size: var(--fs-body); }
 .price-headline .ppn { display: inline-block; font-family: "JetBrains Mono", monospace; font-size: 12px; font-weight: 700; color: var(--teal); background: var(--muted-bg); border: 1px solid var(--border); padding: 1px 8px; border-radius: 999px; white-space: nowrap; vertical-align: 2px; }
 .partial-flag { position: absolute; left: 0; right: 0; bottom: 0; display: flex; justify-content: flex-end; padding: 10px; pointer-events: none; }
 .partial-flag span { background: var(--ochre); color: #fff; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.04em; }
+.partial-flag.ist-ausgebucht span { background: var(--bad); }
 .avail-box { background: var(--warn-bg); color: var(--warn); border-radius: 10px; padding: 10px 12px; font-size: 13px; line-height: 1.5; }
 .avail-box strong { color: var(--warn); }
 
@@ -1753,6 +1754,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <span class="pin-badge">5</span>
     <span class="zone-tag">Corralejo</span>
     <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
+    <div class="partial-flag ist-ausgebucht"><span>Ausgebucht</span></div>
   </div>
   <div class="card-body">
     <div class="card-head">
