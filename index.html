@@ -1381,7 +1381,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   <div class="page-header wrap">
     <div class="eyebrow">Fuerteventura · 29.09.–12.10.2026 · 13 Nächte · 2 Personen</div>
     <h1>Unterkünfte</h1>
-    <p class="sub">Stand der Preisrecherche: <strong>18.09.2026 – 20:54 Uhr</strong></p>
+    <p class="sub">Stand der Preisrecherche: <strong>20.09.2026 – 05:20 Uhr</strong></p>
     <div class="stat-strip">
       <div class="stat"><span class="n" id="stat-anzahl">–</span><span class="l">Unterkünfte im Vergleich</span></div>
       <div class="stat"><span class="n" id="stat-voll">–</span><span class="l">für alle 13 Nächte frei</span></div>
@@ -6851,8 +6851,22 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     return tage === 1 ? 'gestern' : 'vor ' + tage + ' Tagen';
   }
 
+  // Aenderungen an der Seite selbst - nicht von Stephan oder Bilgen, sondern
+  // an Angebot und Funktion. Stehen gleichberechtigt neben Notizen und Herzen.
+  var SEITEN_NEUIGKEITEN = [
+    { at: '2026-09-20T05:20', text: '<b>Preise und Verf\u00fcgbarkeit aller Unterk\u00fcnfte gepr\u00fcft.</b> Drei sind g\u00fcnstiger geworden \u2013 Casa FuerteNomad (\u2212137\u00a0\u20ac), Villa Marina Sol (\u221279\u00a0\u20ac) und H10 Ocean Dreams (\u2212289\u00a0\u20ac). Zwei sind teurer: Casa Dicha (+76\u00a0\u20ac) und Secrets Bah\u00eda Real (+824\u00a0\u20ac).' },
+    { at: '2026-09-20T05:05', text: '<b>MyHome Urban ist nur noch bis zum 10.10. buchbar</b> \u2013 die letzten beiden N\u00e4chte fehlen. Daf\u00fcr ist es g\u00fcnstiger geworden: 1.088\u00a0\u20ac statt 1.476\u00a0\u20ac.' },
+    { at: '2026-09-20T04:45', text: '<b>Zwei neue Unterk\u00fcnfte dazugekommen.</b> Nr.\u00a021 <b>Maisonette mit Meerblick-Terrasse</b> (1.796\u00a0\u20ac, alle 13\u00a0N\u00e4chte frei) und Nr.\u00a022 <b>Blick auf Lobos \u2013 Sea\u00a0&amp; Sand Dunes</b> (463\u00a0\u20ac, nur 04.\u201308.10., also nur als Mittelteil). Beide mit gro\u00dfer Terrasse und Meerblick, beide ohne Pool und ohne Klimaanlage.' },
+    { at: '2026-09-20T04:20', text: '<b>Ghea ist raus</b> \u2013 f\u00fcr unseren Zeitraum ausgebucht. Die Nummern sind danach neu vergeben, die Liste l\u00e4uft wieder l\u00fcckenlos.' },
+    { at: '2026-09-20T02:30', text: '<b>Das Herz auf den Karten geht wieder.</b> Bei 13 der Unterk\u00fcnfte passierte beim Antippen nichts \u2013 betroffen waren genau die, die zuletzt dazugekommen sind. Eure alten Favoriten sind dabei leider verloren gegangen.' },
+    { at: '2026-09-19T21:30', text: '<b>Die Kosten pro Person stehen jetzt oben in der Leiste</b>, solange ihr im Bereich \u201ePlanen\u201c seid \u2013 auch beim Scrollen.' }
+  ];
+
   function sammleAktivitaeten(){
     var ev = [];
+    SEITEN_NEUIGKEITEN.forEach(function(n){
+      ev.push({ typ: 'seite', at: new Date(n.at).getTime(), text: n.text });
+    });
     Object.keys(notes || {}).forEach(function(slug){
       (notes[slug] || []).forEach(function(n){
         if (n.offen) return;
@@ -6882,16 +6896,21 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     // Die letzten drei Notizen sind gesetzt, dazu die zwei jüngsten
     // anderen Vorgänge - so sieht man Gespräch und Handlung zugleich.
     var notizen = alle.filter(function(e){ return e.typ === 'notiz'; }).slice(0, 3);
-    var andere = alle.filter(function(e){ return e.typ !== 'notiz'; }).slice(0, 2);
-    var zeigen = notizen.concat(andere).sort(function(a, b){ return b.at - a.at; });
+    var andere = alle.filter(function(e){ return e.typ !== 'notiz' && e.typ !== 'seite'; }).slice(0, 2);
+    var seite = alle.filter(function(e){ return e.typ === 'seite'; }).slice(0, 5);
+    var zeigen = notizen.concat(andere, seite).sort(function(a, b){ return b.at - a.at; });
 
     if (!zeigen.length) {
       ziel.innerHTML = '<li class="aktiv-leer">Noch nichts passiert. Sobald einer von euch etwas markiert oder eine Notiz schreibt, steht es hier.</li>';
       return;
     }
-    var SYM = { notiz: '💬', herz: '❤️', aus: '🙈', wahl: '✅' };
+    var SYM = { notiz: '💬', herz: '❤️', aus: '🙈', wahl: '✅', seite: '✨' };
     var me = whoAmI();
     ziel.innerHTML = zeigen.map(function(e){
+      if (e.typ === 'seite') {
+        return '<li><span class="aktiv-icon">✨</span><span class="aktiv-text">' + e.text +
+               '<span class="aktiv-zeit">' + vorZeit(e.at) + '</span></span></li>';
+      }
       var ich = (e.wer === me);
       var wer = ich ? 'Du' : whoName(e.wer);
       var hat = ich ? 'hast' : 'hat';
@@ -7403,7 +7422,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       adresse: 'Calle Punta Prieta 34, 35660 Corralejo',
       fussnote: 'Korrektur vom 17.09.: Der beheizte Pool ist laut FeWo-direkt ein <strong>Gemeinschaftspool</strong>, kein eigener.' },
 
-    'fuertenomad': { ppn: 153.11, gesamt: 1990, frei: ['2026-09-29','2026-10-12'],
+    'fuertenomad': { ppn: 142.54, gesamt: 1853, frei: ['2026-09-29','2026-10-12'],
       krit: { pool:'ja', eigpool:'ja', heizpool:'nein', grill:'ja', ac:'ja', balkon:'ja', kueche:'ja', wlan:'ja', parken:'ja', wholeplace:'ja', freecancel:'ja' },
       adresse: 'La capellanía, C. Drago, 29, Casa 24, 35660 Corralejo, Las Palmas' },
 
@@ -7416,7 +7435,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       krit: { pool:'ja', eigpool:'ja', heizpool:'ja', grill:'ja', ac:'ja', balkon:'ja', kueche:'ja', wlan:'ja', parken:'ja', wholeplace:'ja', freecancel:'nein' },
       adresse: 'Corralejo (Geafond), 35660, Las Palmas' },
 
-    'villa-marina-sol': { ppn: 143, gesamt: 1861, frei: ['2026-09-29','2026-10-12'],
+    'villa-marina-sol': { ppn: 137.08, gesamt: 1782, frei: ['2026-09-29','2026-10-12'],
       krit: { pool:'ja', eigpool:'nein', heizpool:'nein', grill:'ja', ac:'nein', balkon:'ja', kueche:'ja', wlan:'ja', parken:'ja', wholeplace:'ja', freecancel:'ja' },
       adresse: 'Marina Sol Villa, C. Tarabilla, 14, 35660 Corralejo, Las Palmas' },
 
@@ -7424,7 +7443,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       krit: { pool:'nein', eigpool:'nein', heizpool:'nein', grill:'nein', ac:'nein', balkon:'ja', kueche:'ja', wlan:'ja', parken:'ja', wholeplace:'ja', freecancel:'unklar' },
       adresse: 'Calle Guadiana 32, Puerto del Rosario' },
 
-    'myhome-urban': { ppn: 114, gesamt: 1476, frei: ['2026-09-29','2026-10-12'],
+    'myhome-urban': { ppn: 98.91, gesamt: 1088, frei: ['2026-09-29','2026-10-10'],
       krit: { pool:'nein', eigpool:'nein', heizpool:'nein', grill:'nein', ac:'ja', balkon:'ja', kueche:'ja', wlan:'ja', parken:'ja', wholeplace:'ja', freecancel:'unklar' },
       adresse: 'C. Le\u00f3n y Castillo, 16, 35600 Puerto del Rosario, Las Palmas',
       fussnote: '<strong>Aktuell ausgebucht:</strong> Bei Pr\u00fcfung am 18.09.2026 waren f\u00fcr den vollen Zeitraum 29.09.\u201312.10. keine Zimmer verf\u00fcgbar. Preis oben ist der letzte bekannte Stand \u2013 ggf. sp\u00e4ter erneut pr\u00fcfen.' },
@@ -7447,12 +7466,12 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       krit: { pool:'ja', eigpool:'nein', heizpool:'nein', grill:'nein', ac:'ja', balkon:'ja', kueche:'ja', wlan:'ja', parken:'ja', wholeplace:'nein', freecancel:'ja' },
       adresse: 'C. Abubilla, 35660 Corralejo, Las Palmas', website: 'https://islandhomefuerteventura.com/' },
 
-    'h10-ocean-dreams': { ppn: 211.46, gesamt: 2749, frei: ['2026-09-29','2026-10-12'],
+    'h10-ocean-dreams': { ppn: 189.23, gesamt: 2460, frei: ['2026-09-29','2026-10-12'],
       krit: { pool:'ja', eigpool:'nein', heizpool:'ja', grill:'nein', ac:'ja', balkon:'ja', kueche:'nein', wlan:'ja', parken:'ja', wholeplace:'nein', freecancel:'ja' },
       adresse: 'Las Palmeras, 2, 35660 Corralejo',
       website: 'https://www.h10hotels.com/en/fuerteventura-hotels/h10-ocean-dreams' },
 
-    'secrets-bahia-real': { ppn: 288, gesamt: 3738, frei: ['2026-09-29','2026-10-12'],
+    'secrets-bahia-real': { ppn: 350.92, gesamt: 4562, frei: ['2026-09-29','2026-10-12'],
       krit: { pool:'ja', eigpool:'nein', heizpool:'ja', grill:'nein', ac:'ja', balkon:'ja', kueche:'nein', wlan:'ja', parken:'ja', wholeplace:'nein', freecancel:'ja' },
       adresse: 'Avenida Grandes Playas, 35660 Corralejo',
       website: 'https://www.hyatt.com/secrets/en-US/secbr-secrets-bahia-real' },
@@ -7463,7 +7482,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       website: 'https://www.uniquehomeslajares.com/en/',
       fussnote: 'Poolheizung nur gegen Aufpreis (30\u00a0\u20ac). Booking.com-Link am 18.09.2026 korrigiert (alter Kurzlink war abgelaufen).' },
 
-    'casa-dicha-lajares': { ppn: 268.14, gesamt: 1877, frei: ['2026-09-29','2026-10-06'],
+    'casa-dicha-lajares': { ppn: 279.0, gesamt: 1953, frei: ['2026-09-29','2026-10-06'],
       krit: { pool:'ja', eigpool:'ja', heizpool:'ja', grill:'unklar', ac:'unklar', balkon:'ja', kueche:'ja', wlan:'ja', parken:'ja', wholeplace:'ja', freecancel:'ja' },
       adresse: 'C. la Cancela, 3, 35650 Lajares, Las Palmas' },
 
