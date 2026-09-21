@@ -413,7 +413,7 @@ nav.topnav .navlinks { display: none !important; }
 .nav-search-btn svg { display: block; }
 
 /* Tab-Leiste: schwebende Kapsel, Inhalt scrollt darunter durch */
-.tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; padding: 0 12px calc(10px + env(safe-area-inset-bottom, 0px)); pointer-events: none; }
+.tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; padding: 0 12px max(6px, env(safe-area-inset-bottom, 0px)); pointer-events: none; }
 .tabbar-fade { height: 24px; background: linear-gradient(180deg, rgba(233,235,230,0) 0%, var(--page) 100%); margin: 0 -12px; }
 .tabbar-inner { pointer-events: auto; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); background: var(--glass); backdrop-filter: blur(22px) saturate(1.7); -webkit-backdrop-filter: blur(22px) saturate(1.7); border: 1px solid var(--glass-bd); border-radius: 26px; padding: 5px; box-shadow: 0 8px 30px rgba(20,20,15,0.16), 0 1px 2px rgba(20,20,15,0.08); }
 .tab-btn { min-height: 52px; border-radius: 21px; background: transparent; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; position: relative; padding: 4px 2px; font-family: inherit; -webkit-tap-highlight-color: transparent; }
