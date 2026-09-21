@@ -701,6 +701,17 @@ body { font-size: var(--fs-body); }
 
 /* ---- page header (non-home pages) ---- */
 .page-header { padding: 40px 20px 8px; }
+/* Unterkuenfte-Seite: Kopf enger, Kennzahlen als schmale Reihe */
+#page-unterkuenfte .page-header { padding-top: 18px; }
+#page-unterkuenfte .eyebrow { margin-bottom: 6px; }
+#page-unterkuenfte .page-header .sub { margin-top: 4px; font-size: 13.5px; }
+.stat-strip-kompakt { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-top: 12px; }
+.stat-strip-kompakt .stat { min-width: 0; padding: 7px 8px; border-radius: 9px; text-align: center; }
+.stat-strip-kompakt .stat .n { font-size: 1.05rem; line-height: 1.15; }
+.stat-strip-kompakt .stat .l { font-size: 9.5px; letter-spacing: 0.03em; line-height: 1.2; display: block; margin-top: 2px; }
+@media (max-width: 420px) {
+  .stat-strip-kompakt { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 .page-header h1 { font-size: clamp(1.6rem, 3vw, 2.1rem); }
 
 /* ---- kosten ---- */
@@ -1379,10 +1390,10 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 <!-- ============ UNTERKÜNFTE ============ -->
 <section class="page" id="page-unterkuenfte">
   <div class="page-header wrap">
-    <div class="eyebrow">Fuerteventura · 29.09.–12.10.2026 · 13 Nächte · 2 Personen</div>
+    <div class="eyebrow">29.09.–12.10.2026 · 13 Nächte · 2 Personen</div>
     <h1>Unterkünfte</h1>
-    <p class="sub">Stand der Preisrecherche: <strong>20.09.2026 – 05:20 Uhr</strong></p>
-    <div class="stat-strip">
+    <p class="sub">Letzter Stand: <strong>20.09.2026 – 05:20 Uhr</strong></p>
+    <div class="stat-strip stat-strip-kompakt">
       <div class="stat"><span class="n" id="stat-anzahl">–</span><span class="l">Unterkünfte im Vergleich</span></div>
       <div class="stat"><span class="n" id="stat-voll">–</span><span class="l">für alle 13 Nächte frei</span></div>
       <div class="stat"><span class="n" id="stat-pool">–</span><span class="l">mit eigenem Pool</span></div>
