@@ -1132,7 +1132,8 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 
 /* Auswahl als Teil 1/2/3 */
 .teil-wahl { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 12px 0 0; }
-.teil-frage { font-size: 13px; font-weight: 600; color: var(--ink-dim); margin-right: 2px; }
+.teil-frage { font-size: 13px; font-weight: 600; color: var(--ink-dim); flex-basis: 100%; }
+.teil-btn.teil-weg { padding: 0 10px; }
 .teil-btn { min-height: var(--tap); padding: 0 13px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface-2); color: var(--ink-dim); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
 .teil-btn:hover { border-color: var(--teal); color: var(--teal); }
 .teil-btn.aktiv { background: var(--teal); border-color: var(--teal); color: var(--teal-ink); }
@@ -1178,6 +1179,8 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 /* Fahrstrecken statt Luftlinie */
 .strecken { display: flex; flex-direction: column; gap: 3px; margin: 8px 0 0; font-size: 13.5px; }
 .strecken .str { display: flex; align-items: baseline; gap: 6px; }
+.strecken .str b { white-space: nowrap; }
+.strecken .str-rest { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .str-sym { flex: none; }
 .strecken b { font-family: "JetBrains Mono", monospace; font-weight: 700; color: var(--ink); }
 
@@ -1229,7 +1232,9 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 .kat-grid .adresse, .kat-grid .adresse-leer { min-height: 38px; margin: 4px 0 0; }
 
 .kat-grid .excel-fussnote { display: none; }
-.kat-grid .rating-line { height: 24px; overflow: hidden; margin: 2px 0 0; }
+.kat-grid .rating-line { height: 24px; overflow: hidden; margin: 2px 0 0; white-space: nowrap; text-overflow: ellipsis; }
+/* Der Pruef-Sticker neben dem Titel drueckt den Namen zusammen - die Info steht ohnehin in der Bewertungszeile */
+.kat-grid .card-head .badge { display: none; }
 .kat-grid .strecken { height: 46px; margin-top: 6px; overflow: hidden; }
 .kat-grid .beschreibung { flex: 0 0 auto; height: 112px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; margin-top: 8px; }
 
@@ -1364,7 +1369,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       <a class="qn-card" href="#unterkuenfte"><span class="qn-emoji">🏡</span><h3>Unterkünfte</h3><p id="qn-uk-anzahl">Karte &amp; Ausstattungs-Check</p></a>
       <a class="qn-card" href="#kosten"><span class="qn-emoji">🧮</span><h3>Kosten</h3><p>Gesamtrechnung pro Person</p></a>
       <a class="qn-card" href="#wetter"><span class="qn-emoji">🌤️</span><h3>Wetter</h3><p>Live-Webcams, Wassertemperatur, Gezeiten</p></a>
-      <a class="qn-card" href="#packliste"><span class="qn-emoji">🎒</span><h3>Packliste</h3><p>Zum Abhaken, wird gespeichert</p></a>
+      <a class="qn-card" href="#packliste"><span class="qn-emoji">🎒</span><h3>Packliste</h3><p>Zum Abhaken, gemeinsam gepflegt</p></a>
       <a class="qn-card" href="#ausfluege"><span class="qn-emoji">🗺️</span><h3>Ausflüge</h3><p>Top 20 Highlights der Insel</p></a>
       <a class="qn-card" href="#kalender"><span class="qn-emoji">📅</span><h3>Kalender</h3><p>Märkte, Events &amp; Insider-Tipps nach Datum</p></a>
       <a class="qn-card" href="#gastro"><span class="qn-emoji">🍽️</span><h3>Gastro</h3><p>53 Restaurants &amp; Bäckereien, sortiert nach Bewertung</p></a>
@@ -1378,7 +1383,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   <div class="page-header wrap">
     <div class="eyebrow">Bis zum Abflug am 29.09.2026</div>
     <h1>Was noch zu tun ist</h1>
-    <p class="sub">Alles, was vor der Reise erledigt sein muss &#8211; nach Dringlichkeit sortiert. Abgehakte Aufgaben werden in diesem Browser gespeichert, du findest sie also beim n&#228;chsten Mal wieder. Die obersten offenen Punkte stehen auch direkt auf der <a href="#home">Startseite</a>.</p>
+    <p class="sub">Alles, was vor der Reise erledigt sein muss &#8211; nach Dringlichkeit sortiert. Abgehakte Aufgaben werden zwischen euren Ger&#228;ten geteilt &#8211; was einer von euch abhakt, sieht der andere auch. Die obersten offenen Punkte stehen auch direkt auf der <a href="#home">Startseite</a>.</p>
     <div class="stat-strip">
       <div class="stat"><span class="n" id="todo-stat-open">&#8211;</span><span class="l">offen</span></div>
       <div class="stat"><span class="n" id="todo-stat-done">&#8211;</span><span class="l">erledigt</span></div>
@@ -1391,7 +1396,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 
     <div class="links-box" style="margin-top:32px">
       <h2>Eigene Aufgabe hinzuf&#252;gen</h2>
-      <p class="sub">Was hier fehlt, kannst du selbst erg&#228;nzen &#8211; die Eintr&#228;ge bleiben in diesem Browser gespeichert.</p>
+      <p class="sub">Was hier fehlt, kannst du selbst erg&#228;nzen &#8211; eigene Eintr&#228;ge bleiben nur auf diesem Ger&#228;t.</p>
       <form class="todo-own-form" id="todo-own-form">
         <input type="text" id="todo-own-text" placeholder="z.&#160;B. Adapter f&#252;rs Auto besorgen" maxlength="120" autocomplete="off">
         <button class="btn" type="submit">Hinzuf&#252;gen</button>
@@ -1408,7 +1413,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   <div class="page-header wrap">
     <div class="eyebrow">29.09.–12.10.2026 · 13 Nächte · 2 Personen</div>
     <h1>Unterkünfte</h1>
-    <p class="sub">Letzter Stand: <strong>20.09.2026 – 05:20 Uhr</strong></p>
+    <p class="sub">Letzter Stand: <strong>21.09.2026</strong></p>
     <div class="stat-strip stat-strip-kompakt">
       <div class="stat"><span class="n" id="stat-anzahl">–</span><span class="l">Unterkünfte im Vergleich</span></div>
       <div class="stat"><span class="n" id="stat-voll">–</span><span class="l">für alle 13 Nächte frei</span></div>
@@ -1909,7 +1914,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   <div class="page-header wrap">
     <div class="eyebrow">Kostenrechner</div>
     <h1>Was wird es kosten?</h1>
-    <p class="sub">Flug und Mietwagen sind gebucht. Die Unterkunft wählen wir auf der Seite „Unterkünfte“ aus — die Rechnung aktualisiert sich automatisch. Wenn wir den Aufenthalt auf zwei oder drei Unterkünfte aufteilen (Schalter oben auf der Seite „Unterkünfte“), erscheint hier jeder Teil einzeln.</p>
+    <p class="sub">Flug und Mietwagen sind gebucht. Die Unterkunft wählen wir auf der Seite „Unterkünfte“ aus — die Rechnung aktualisiert sich automatisch. Wenn wir den Aufenthalt auf zwei oder drei Unterkünfte aufteilen (Knöpfe 1 / 2 / 3 oben auf der Seite „Unterkünfte“), erscheint hier jeder Teil einzeln.</p>
   </div>
   <div class="wrap">
     <section class="flight-booked">
@@ -2105,7 +2110,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   <div class="page-header wrap">
     <div class="eyebrow">Vorbereitung</div>
     <h1>Packliste</h1>
-    <p class="sub">Zum Abhaken — unser Fortschritt wird lokal in diesem Browser gespeichert. Speziell auf windiges, sonniges Oktoberwetter und Selbstversorger-Villen zugeschnitten.</p>
+    <p class="sub">Zum Abhaken — die Haken werden zwischen euren Geräten geteilt. Speziell auf windiges, sonniges Oktoberwetter und Selbstversorger-Villen zugeschnitten.</p>
   </div>
   <div class="wrap">
     <div class="pack-grid">
@@ -2556,15 +2561,15 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   </div>
   <div class="wrap">
     <div class="cal-strip">
-      <div class="cal-day"><div class="cal-date">29.09.<span class="cal-weekday">Di</span></div><div class="cal-items"><span class="cal-chip cal-chip-trip">✈️ Anreise</span><span class="cal-chip cal-chip-market">🏪 Acua Water Park</span><span class="cal-chip cal-chip-market">🏪 Mercado Tradiciones</span><span class="cal-chip cal-chip-event">🎉 Fiestas del Rosario läuft</span></div></div>
-      <div class="cal-day cal-day-empty"><div class="cal-date">30.09.<span class="cal-weekday">Mi</span></div><div class="cal-items"><span class="cal-chip cal-chip-event">🎉 Fiestas del Rosario läuft</span></div></div>
-      <div class="cal-day cal-day-empty"><div class="cal-date">01.10.<span class="cal-weekday">Do</span></div><div class="cal-items"><span class="cal-chip cal-chip-event">🎉 Fiestas del Rosario läuft</span></div></div>
-      <div class="cal-day"><div class="cal-date">02.10.<span class="cal-weekday">Fr</span></div><div class="cal-items"><span class="cal-chip cal-chip-market">🏪 Acua Water Park</span><span class="cal-chip cal-chip-market">🏪 Mercado Tradiciones</span><span class="cal-chip cal-chip-market">🏪 El Cotillo Sunset Market (abends)</span><span class="cal-chip cal-chip-event">🎉 Fiestas del Rosario läuft</span></div></div>
-      <div class="cal-day"><div class="cal-date">03.10.<span class="cal-weekday">Sa</span></div><div class="cal-items"><span class="cal-chip cal-chip-market">🏪 Lajares Kunsthandwerksmarkt</span><span class="cal-chip cal-chip-event">🎊 A.F. Dunas – 50º Aniversario</span><span class="cal-chip cal-chip-event">🎉 Fiestas del Rosario läuft</span></div></div>
-      <div class="cal-day"><div class="cal-date">04.10.<span class="cal-weekday">So</span></div><div class="cal-items"><span class="cal-chip cal-chip-market">🏪 El Campanario (Kunsthandwerk &amp; Folklore)</span><span class="cal-chip cal-chip-event">🎉 Fiestas del Rosario läuft</span></div></div>
-      <div class="cal-day cal-day-empty"><div class="cal-date">05.10.<span class="cal-weekday">Mo</span></div><div class="cal-items"><span class="cal-chip cal-chip-event">🎉 Fiestas del Rosario läuft</span></div></div>
-      <div class="cal-day"><div class="cal-date">06.10.<span class="cal-weekday">Di</span></div><div class="cal-items"><span class="cal-chip cal-chip-market">🏪 Acua Water Park</span><span class="cal-chip cal-chip-market">🏪 Mercado Tradiciones</span><span class="cal-chip cal-chip-event">🎉 Fiestas del Rosario läuft</span></div></div>
-      <div class="cal-day cal-day-empty"><div class="cal-date">07.10.<span class="cal-weekday">Mi</span></div><div class="cal-items"><span class="cal-chip cal-chip-event">🎉 Fiestas del Rosario endet heute</span></div></div>
+      <div class="cal-day"><div class="cal-date">29.09.<span class="cal-weekday">Di</span></div><div class="cal-items"><span class="cal-chip cal-chip-trip">✈️ Anreise</span><span class="cal-chip cal-chip-market">🏪 Acua Water Park</span><span class="cal-chip cal-chip-market">🏪 Mercado Tradiciones</span><span class="cal-chip cal-chip-event">🎉 Fiestas del Rosario beginnen (bis 07.10.)</span></div></div>
+      <div class="cal-day cal-day-empty"><div class="cal-date">30.09.<span class="cal-weekday">Mi</span></div><div class="cal-items"><span class="cal-chip cal-chip-note">Fiestas del Rosario laufen weiter</span></div></div>
+      <div class="cal-day cal-day-empty"><div class="cal-date">01.10.<span class="cal-weekday">Do</span></div><div class="cal-items"><span class="cal-chip cal-chip-note">Fiestas del Rosario laufen weiter</span></div></div>
+      <div class="cal-day"><div class="cal-date">02.10.<span class="cal-weekday">Fr</span></div><div class="cal-items"><span class="cal-chip cal-chip-market">🏪 Acua Water Park</span><span class="cal-chip cal-chip-market">🏪 Mercado Tradiciones</span><span class="cal-chip cal-chip-market">🏪 El Cotillo Sunset Market (abends)</span></div></div>
+      <div class="cal-day"><div class="cal-date">03.10.<span class="cal-weekday">Sa</span></div><div class="cal-items"><span class="cal-chip cal-chip-market">🏪 Lajares Kunsthandwerksmarkt</span><span class="cal-chip cal-chip-event">🎊 A.F. Dunas – 50º Aniversario</span></div></div>
+      <div class="cal-day"><div class="cal-date">04.10.<span class="cal-weekday">So</span></div><div class="cal-items"><span class="cal-chip cal-chip-market">🏪 El Campanario (Kunsthandwerk &amp; Folklore)</span></div></div>
+      <div class="cal-day cal-day-empty"><div class="cal-date">05.10.<span class="cal-weekday">Mo</span></div><div class="cal-items"><span class="cal-chip cal-chip-note">Fiestas del Rosario laufen weiter</span></div></div>
+      <div class="cal-day"><div class="cal-date">06.10.<span class="cal-weekday">Di</span></div><div class="cal-items"><span class="cal-chip cal-chip-market">🏪 Acua Water Park</span><span class="cal-chip cal-chip-market">🏪 Mercado Tradiciones</span></div></div>
+      <div class="cal-day cal-day-empty"><div class="cal-date">07.10.<span class="cal-weekday">Mi</span></div><div class="cal-items"><span class="cal-chip cal-chip-event">🎉 Fiestas del Rosario – letzter Tag</span></div></div>
       <div class="cal-day cal-day-empty"><div class="cal-date">08.10.<span class="cal-weekday">Do</span></div><div class="cal-items"><span class="cal-chip cal-chip-note">nichts Bekanntes</span></div></div>
       <div class="cal-day"><div class="cal-date">09.10.<span class="cal-weekday">Fr</span></div><div class="cal-items"><span class="cal-chip cal-chip-market">🏪 Acua Water Park</span><span class="cal-chip cal-chip-market">🏪 Mercado Tradiciones</span><span class="cal-chip cal-chip-market">🏪 El Cotillo Sunset Market (abends)</span></div></div>
       <div class="cal-day"><div class="cal-date">10.10.<span class="cal-weekday">Sa</span></div><div class="cal-items"><span class="cal-chip cal-chip-market">🏪 Lajares Kunsthandwerksmarkt</span><span class="cal-chip cal-chip-event">🌌 ELARA – Puerto del Rosario</span></div></div>
@@ -3754,17 +3759,6 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
         <div class="insider-row"><span class="insider-n">6</span><div class="insider-body"><strong>Fuerteventura-Live Forum &amp; r/Fuerteventura</strong><p>Größtes deutsches Forum bzw. sehr aktives Reddit für aktuelle Tipps</p></div></div>
         <div class="insider-row"><span class="insider-n">7</span><div class="insider-body"><strong>Tripadvisor Corralejo Forum</strong><p>&gt;9.000 Themen, top für Restaurants &amp; Live-Musik</p></div></div>
       </div>
-      <div class="link-grid" style="margin-top:14px">
-        <a class="link-card" href="https://culturafuerteventura.es/" target="_blank" rel="noopener"><strong>Cultura Fuerteventura</strong><span>Offizieller Kulturkalender mit Terminen &amp; Preisen</span></a>
-        <a class="link-card" href="https://laoliva.es/noticias/" target="_blank" rel="noopener"><strong>Ayuntamiento La Oliva – Noticias</strong><span>Kurzfristige Fiestas, Sperrungen, Märkte für unsere Gemeinde</span></a>
-        <a class="link-card" href="https://macaronesiafuerteventura.com/" target="_blank" rel="noopener"><strong>Macaronesia Fuerteventura</strong><span>Neue Gastro-Spots, Ausgehen, Festivals</span></a>
-        <a class="link-card" href="https://www.corralejo.info/en/" target="_blank" rel="noopener"><strong>Corralejo.info</strong><span>Lokales Portal: Restaurants, Shops, News für den Norden</span></a>
-        <a class="link-card" href="https://www.fuerteventurazeitung.de/veranstaltungen-auf-fuerteventura/" target="_blank" rel="noopener"><strong>Fuerteventura-Zeitung</strong><span>Deutschsprachige News &amp; Veranstaltungen</span></a>
-        <a class="link-card" href="https://www.ecoentradas.com/?island=3" target="_blank" rel="noopener"><strong>EcoEntradas</strong><span>Buchbare Kulturevents mit Datum &amp; Preis</span></a>
-        <a class="link-card" href="https://fuerteventura-live.de/forum/" target="_blank" rel="noopener"><strong>Fuerteventura-Live Forum</strong><span>Größtes deutschsprachiges Forum, sehr aktiv</span></a>
-        <a class="link-card" href="https://www.reddit.com/r/Fuerteventura/" target="_blank" rel="noopener"><strong>r/Fuerteventura</strong><span>Reddit, sehr aktiv für Essen/Bars/aktuelle Tipps</span></a>
-        <a class="link-card" href="https://www.tripadvisor.com/ShowForum-g580322-i10426-Corralejo_La_Oliva_Fuerteventura_Canary_Islands.html" target="_blank" rel="noopener"><strong>Tripadvisor Corralejo Forum</strong><span>&gt;9.000 Themen, top für Restaurants &amp; Live-Musik</span></a>
-      </div>
       <p class="dim" style="margin-top:10px;font-size:12.5px">⚠️ <strong>Sunny Fuerte</strong> ist super für Orte/Insiderwissen, zeigte bei Prüfung aber veraltete Events auf der Startseite — nicht als Live-Terminquelle nutzen, nur für Hintergrundwissen.</p>
     </div>
 
@@ -4383,7 +4377,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 
 
   // ---- countdown ----
-  var target = new Date('2026-09-29T00:00:00').getTime();
+  var target = new Date('2026-09-29T12:10:00').getTime();  // Abflug DE 1402
   function pad(n){ return String(n).padStart(2,'0'); }
   function tick(){
     var diff = Math.max(0, target - Date.now());
@@ -4937,7 +4931,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       '<td class="num" data-label="pro Person">' + (complete && anyEst ? '≈ ' : '') + fmtEuro(c.total/2) + ' €</td></tr></tfoot></table>';
     html += '<p class="dim" style="margin-top:14px;font-size:12.5px">Flug ist ein fixer, gebuchter Wert (inkl. Menüwahl). Mietwagen oben und Unterkunft auf der Seite „Unterkünfte“ können wir jederzeit ändern — die Rechnung aktualisiert sich automatisch.' +
       (c.split ? ' Bei geteiltem Aufenthalt sind die Unterkunfts-Zeilen mit „≈“ Schätzungen: der Preis pro Nacht mal Anzahl Nächte. Kurze Aufenthalte kosten auf den Portalen oft etwas mehr pro Nacht.' : '') +
-      ' Unterkunftspreise zuletzt geprüft am 10.09.2026.</p>';
+      ' Unterkunftspreise zuletzt geprüft am 20.09.2026.</p>';
     body.innerHTML = html;
   }
 
@@ -4950,18 +4944,17 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     if (c.accs.length < need) {
       el.innerHTML = '<div class="sel-empty">' +
         (c.accs.length === 0 ? 'Noch keine Unterkunft gewählt.' : 'Erst ' + c.accs.length + ' von ' + need + ' Unterkünften gewählt.') +
-        ' Mietwagen aktuell: <strong>' + escapeHtml(c.car.label) + '</strong> (' + fmtEuro(c.car.total) + ' €). ' +
-        'Klickt bei einer Karte unten auf „Für Kostenrechnung wählen“, um hier die Gesamtsumme zu sehen.</div>';
+        ' Unten auf einer Karte auf „Teil 1“ tippen, dann erscheint hier die Gesamtsumme.</div>';
       return;
     }
     var anyEst = c.accs.some(function(a){ return a.estimated; });
     var names = c.accs.map(function(a){ return escapeHtml(a.listing.name); }).join(' + ');
     var thumbs = c.accs.map(function(a){ return '<img src="' + a.listing.photo + '" alt="">'; }).join('');
     el.innerHTML = '<div class="sel-filled">' +
-      '<span class="sel-thumbs">' + thumbs + '<img src="' + c.car.photo + '" alt=""></span>' +
-      '<span class="sel-text">Ausgewählt: <strong>' + names + '</strong> + ' + escapeHtml(c.car.label) + '</span>' +
-      '<span class="sel-total">' + (anyEst ? '≈ ' : '') + fmtEuro(c.total) + ' € gesamt · ' +
-      (anyEst ? '≈ ' : '') + fmtEuro(c.total/2) + ' € p. P.</span>' +
+      '<span class="sel-thumbs">' + thumbs + '</span>' +
+      '<span class="sel-text">Ausgewählt: <strong>' + names + '</strong></span>' +
+      '<span class="sel-total">' + (anyEst ? '≈ ' : '') + fmtEuro0(c.total) + ' € gesamt mit Flug und Mietwagen · ' +
+      (anyEst ? '≈ ' : '') + fmtEuro0(c.total/2) + ' € p. P.</span>' +
       '<a class="btn" href="#kosten">Volle Kostenübersicht →</a>' +
       '</div>';
   }
@@ -5939,10 +5932,10 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     // --- jetzt ---
     {id:'t-unterkunft', g:'jetzt', due:'2026-09-20', star:true,
      text:'Unterkunft buchen',
-     note:'Das ist der größte offene Posten. Preise und Verfügbarkeit ändern sich hier schnell — Preise, Verfügbarkeit und Ausstattung sind am 17.09. mit einer neuen Erhebung abgeglichen worden. <a href="#unterkuenfte">Zu den 22 Optionen →</a>'},
-    {id:'t-mietwagen', g:'jetzt', due:'2026-09-21', star:true,
-     text:'Mietwagen ist gebucht und bestätigt',
-     note:'Bestätigung von Autoreisen.com kam am 21.09.2026: Seat Ibiza 5P A/C (oder vergleichbar), 198 € für 13 Tage, ohne Kaution, Abholung und Rückgabe am Flughafen um 16:00 Uhr. <strong>Zur Übernahme mitbringen: Ausweis, Führerschein, Kreditkarte und die Reservierungsnummer</strong> — sonst gibt es das Auto nicht. Die Nummer steht in der Bestätigungsmail, nicht auf dieser öffentlichen Seite. <a href="#kosten">Zur Kostenübersicht →</a>'},
+     note:'Das ist der größte offene Posten. Preise und Verfügbarkeit ändern sich hier schnell — Preise, Verfügbarkeit und Ausstattung sind am 17.09. mit einer neuen Erhebung abgeglichen worden. <a href="#unterkuenfte">Zu den 23 Optionen →</a>'},
+    {id:'t-mietwagen-unterlagen', g:'kurz', due:'2026-09-28',
+     text:'Mietwagen: Unterlagen für die Übernahme bereitlegen',
+     note:'Der Seat Ibiza ist bei Autoreisen.com gebucht und bestätigt (198 €, ohne Kaution, Abholung am Flughafen um 16:00 Uhr). Zur Übernahme mitbringen: <strong>Ausweis, Führerschein, Kreditkarte auf den Namen des Fahrers und die Reservierungsnummer</strong> aus der Bestätigungsmail. <a href="#kosten">Zur Kostenübersicht →</a>'},
     {id:'t-lobos', g:'jetzt', due:'2026-09-22', star:true,
      text:'Isla de Lobos: Genehmigung und Fähre sichern',
      note:'Auf die Insel dürfen nur 400 Menschen pro Tag, in zwei Schichten à 200. Die Genehmigung beim Cabildo ist kostenlos, aber Pflicht — beliebte Tage sind Wochen vorher weg. <a href="#ausfluege">Details →</a>'},
@@ -5951,15 +5944,9 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
      note:'Muss am 12.10.2026 noch gültig sein. Falls nicht: sofort verlängern, das dauert im Zweifel mehrere Wochen. Für Spanien reicht der Personalausweis.'},
 
     // --- vorher ---
-    {id:'t-versicherung', g:'vorher', due:'2026-09-22',
-     text:'Auslandskrankenversicherung prüfen',
-     note:'Die gesetzliche Karte (EHIC, Rückseite der Krankenkassenkarte) gilt auf den Kanaren, deckt aber keinen Rücktransport. Eine Reisekrankenversicherung kostet für zwei Personen meist unter 20 € im Jahr.'},
-    {id:'t-kreditkarte', g:'vorher', due:'2026-09-22',
-     text:'Kreditkarte für den Mietwagen bereitlegen',
-     note:'Auch kautionsfreie Anbieter wollen bei der Übernahme eine Kreditkarte auf den Namen des Fahrers sehen. Vorher aufs Limit schauen.'},
     {id:'t-parken', g:'vorher', due:'2026-09-22',
-     text:'Anreise nach Frankfurt klären',
-     note:'Parkplatz am Flughafen vorab buchen ist deutlich günstiger als spontan, oder Bahn/Fernbus prüfen. 13 Tage Parken läppert sich.'},
+     text:'Parken bei THE SQUAIRE bestätigen',
+     note:'Anreise steht: eigenes Auto, 150 km. Die Kosten-Seite rechnet mit kostenlosem Parken bei THE SQUAIRE (Terminal 1) – die Konditionen für 13 Tage vorher noch einmal prüfen, sonst rechtzeitig einen Parkplatz vorab buchen.'},
     {id:'t-apotheke', g:'vorher', due:'2026-09-25',
      text:'Reiseapotheke und Sonnenschutz besorgen',
      note:'Der UV-Index liegt im Oktober bei 7–9 — durch den ständigen Wind merkt man den Sonnenbrand erst abends. LSF 50 einpacken, dazu Aloe-Gel für hinterher.'},
@@ -6116,7 +6103,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     var setTxt = function(id, v){ var e = document.getElementById(id); if (e) e.textContent = v; };
     setTxt('todo-stat-open', openItems.length);
     setTxt('todo-stat-done', doneCount);
-    var dLeft = Math.max(0, Math.ceil((TRIP_DEPART - new Date()) / 86400000));
+    var dLeft = Math.max(0, Math.floor((new Date(2026, 8, 29, 12, 10) - new Date()) / 86400000));  // wie der Countdown auf der Startseite
     setTxt('todo-stat-days', dLeft);
     var nextDue = openItems.filter(function(it){ return it.due; })
       .sort(function(a, b){ return daysUntil(a.due) - daysUntil(b.due); })[0];
@@ -6610,9 +6597,23 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       setPackState(packState);
       if (li) li.classList.toggle('done', cb.checked);
       updatePackBadge();
+      // Wie bei den Aufgaben: der Haken geht an den gemeinsamen Stand
+      if (!applyingRemote && typeof pushShared === 'function') pushShared();
     });
   });
   updatePackBadge();
+  // Haken vom Server auf die Kaestchen uebertragen
+  function packAnzeigen(neu){
+    packState = neu;
+    setPackState(packState);
+    packBoxes.forEach(function(cb){
+      var an = !!packState[cb.getAttribute('data-id')];
+      cb.checked = an;
+      var li = cb.closest('.pack-item');
+      if (li) li.classList.toggle('done', an);
+    });
+    updatePackBadge();
+  }
 
   // ============================================================
   //  Geteilte Daten: Favoriten, Ausgeblendete und Notizen
@@ -6627,7 +6628,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   var PEOPLE = { stephan: 'Stephan', bilgen: 'Bilgen' };
   var POLL_MS = 20000;
 
-  var shared = { favs: {}, hidden: {}, todos: {} };
+  var shared = { favs: {}, hidden: {}, todos: {}, pack: {} };
   var notes = {};                  // slug -> [{id, by, text, at, offen?}]
   var applyingRemote = false;      // verhindert Rueckkopplung Server -> lokal -> Server
   var syncState = 'wait';
@@ -6949,7 +6950,6 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   var SEITEN_NEUIGKEITEN = [
     { at: '2026-09-20T19:40', text: '<b>Villa Laura ist neu \u2013 und steht als Nr.\u00a01 ganz oben.</b> Sie erf\u00fcllt als <b>einzige alle zehn Kriterien</b>: privater beheizter Pool, Whirlpool auf der Dachterrasse, Klimaanlage, Grill. 4.316\u00a0\u20ac f\u00fcr alle 13\u00a0N\u00e4chte statt regul\u00e4r 5.580\u00a0\u20ac. Sie liegt im selben Resort wie Bahiazul und Villa lujo tranquila. Aber: neu eingestellt, also <b>noch ohne Bewertungen</b>, und <b>nicht erstattungsf\u00e4hig</b> \u2013 nur 24\u00a0Stunden nach Buchung kostenlos stornierbar. Alle anderen sind eine Nummer nachger\u00fcckt.' },
     { at: '2026-09-21T08:00', text: '<b>Der Mietwagen ist gebucht und best\u00e4tigt.</b> Seat Ibiza 5P mit Klimaanlage bei Autoreisen.com, 198\u00a0\u20ac, ohne Kaution, Abholung und R\u00fcckgabe am Flughafen um 16:00\u00a0Uhr. Zur \u00dcbernahme braucht ihr Ausweis, F\u00fchrerschein, Kreditkarte und die Reservierungsnummer aus der Mail.' },
-    { at: '2026-09-20T09:30', text: '<b>Der Mietwagen ist angefragt</b> \u2013 Seat Ibiza 5P mit Klimaanlage bei Autoreisen.com, 198\u00a0\u20ac, ohne Kaution. Abholung und R\u00fcckgabe am Flughafen um 16:00\u00a0Uhr. <b>Die Zusage per E-Mail steht noch aus</b> (bis zu 24\u00a0Stunden, auch im Spam-Ordner schauen).' },
     { at: '2026-09-20T05:20', text: '<b>Preise und Verf\u00fcgbarkeit aller Unterk\u00fcnfte gepr\u00fcft.</b> Drei sind g\u00fcnstiger geworden \u2013 Casa FuerteNomad (\u2212137\u00a0\u20ac), Villa Marina Sol (\u221279\u00a0\u20ac) und H10 Ocean Dreams (\u2212289\u00a0\u20ac). Zwei sind teurer: Casa Dicha (+76\u00a0\u20ac) und Secrets Bah\u00eda Real (+824\u00a0\u20ac).' },
     { at: '2026-09-20T05:05', text: '<b>MyHome Urban ist nur noch bis zum 10.10. buchbar</b> \u2013 die letzten beiden N\u00e4chte fehlen. Daf\u00fcr ist es g\u00fcnstiger geworden: 1.088\u00a0\u20ac statt 1.476\u00a0\u20ac.' },
     { at: '2026-09-20T04:45', text: '<b>Zwei neue Unterk\u00fcnfte dazugekommen.</b> Nr.\u00a021 <b>Maisonette mit Meerblick-Terrasse</b> (1.796\u00a0\u20ac, alle 13\u00a0N\u00e4chte frei) und Nr.\u00a022 <b>Blick auf Lobos \u2013 Sea\u00a0&amp; Sand Dunes</b> (463\u00a0\u20ac, nur 04.\u201308.10., also nur als Mittelteil). Beide mit gro\u00dfer Terrasse und Meerblick, beide ohne Pool und ohne Klimaanlage.' },
@@ -7095,6 +7095,12 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
         todoSetDone(done);
         try { renderTodo(); updateNavIndicators(); } catch(e){}
       }
+      // Packliste genauso: nur uebernehmen, wenn der Server sie schon kennt
+      if (shared.pack && typeof shared.pack === 'object' && shared.packVomServer) {
+        var eingepackt = {};
+        Object.keys(shared.pack).forEach(function(id){ eingepackt[id] = true; });
+        try { packAnzeigen(eingepackt); } catch(e){}
+      }
       applySortFilter();
       renderShareFlags();
     } catch(e){
@@ -7113,6 +7119,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     var favs = bauen(getFavs(), shared.favs);
     var hidden = bauen(getHiddenAccs(), shared.hidden);
     var todos = bauen(Object.keys(todoGetDone()), shared.todos || {});
+    var pack = bauen(Object.keys(getPackState()).filter(function(id){ return !!getPackState()[id]; }), shared.pack || {});
 
     shared.favs = {};
     favs.forEach(function(e){ shared.favs[e.slug] = { by: e.by, at: e.at }; });
@@ -7120,9 +7127,11 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     hidden.forEach(function(e){ shared.hidden[e.slug] = { by: e.by, at: e.at }; });
     shared.todos = {};
     todos.forEach(function(e){ shared.todos[e.slug] = { by: e.by, at: e.at }; });
+    shared.pack = {};
+    pack.forEach(function(e){ shared.pack[e.slug] = { by: e.by, at: e.at }; });
     renderShareFlags();
 
-    einreihen({ pfad: '/marks', koerper: { by: me, favs: favs, hidden: hidden, todos: todos } });
+    einreihen({ pfad: '/marks', koerper: { by: me, favs: favs, hidden: hidden, todos: todos, pack: pack } });
     abgleichen();
   }
 
@@ -7145,6 +7154,8 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     shared.hidden = d.hidden || {};
     shared.todosVomServer = !!d.todos;
     shared.todos = d.todos || {};
+    shared.packVomServer = !!d.pack;
+    shared.pack = d.pack || {};
     notes = d.notes || {};
     // Noch nicht abgeschickte Notizen wieder dazulegen, sonst
     // verschwinden sie beim naechsten Abgleich vor den Augen.
@@ -7154,7 +7165,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       if (!notes[slug]) notes[slug] = [];
       notes[slug].push({ id: 'offen-' + e.koerper.at, by: e.koerper.by, text: e.koerper.text, at: e.koerper.at, offen: true });
     });
-    try { lsSet(STAND_KEY, JSON.stringify({ favs: shared.favs, hidden: shared.hidden, todos: d.todos, notes: d.notes || {} })); } catch(e){}
+    try { lsSet(STAND_KEY, JSON.stringify({ favs: shared.favs, hidden: shared.hidden, todos: d.todos, pack: d.pack, notes: d.notes || {} })); } catch(e){}
     applyShared();
     renderAllNotes();
     try { renderAktiv(); } catch(e){}
@@ -7169,6 +7180,8 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       shared.hidden = d.hidden || {};
       shared.todosVomServer = !!d.todos;
       shared.todos = d.todos || {};
+      shared.packVomServer = !!d.pack;
+      shared.pack = d.pack || {};
       notes = d.notes || {};
       warteliste().forEach(function(e){
         if (e.pfad !== '/note') return;
@@ -8232,7 +8245,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       }
       var wertTxt = d.wert.toFixed(1).replace('.', ',');
       var anzahlTxt = d.anzahl.toLocaleString('de-DE') + (d.anzahl === 1 ? ' Bewertung' : ' Bewertungen');
-      zeile.textContent = '★ ' + wertTxt + '/10 · ' + anzahlTxt + ' · Quelle: ' + d.quelle;
+      zeile.textContent = '★ ' + wertTxt + '/10 · ' + anzahlTxt + ' (' + d.quelle + ')';
     });
   }
 
@@ -8632,10 +8645,16 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       wert.textContent = (meine.estimated ? '≈ ' : '') + fmtEuro0(meine.cost) + ' €';
       label.textContent = meine.nights + ' ' + (meine.nights === 1 ? 'Nacht' : 'Nächte') + ' als Teil ' + (teilVon(slug) || '?');
       block.classList.add('ist-teil');
+      // Der Nachtpreis links gilt fuer genau diese Naechte - sonst wirkt er
+      // wie ein Widerspruch zum Preis oben auf der Karte.
+      var l1 = block.querySelector('.pb-zelle .pb-label');
+      if (l1) l1.textContent = 'pro Nacht bei ' + meine.nights + ' ' + (meine.nights === 1 ? 'Nacht' : 'Nächten');
     } else {
       wert.textContent = fmtEuro0(parseFloat(block.getAttribute('data-gesamt'))) + ' €';
       label.textContent = block.getAttribute('data-naechte') + ' Nächte gesamt';
       block.classList.remove('ist-teil');
+      var l0 = block.querySelector('.pb-zelle .pb-label');
+      if (l0) l0.textContent = 'pro Nacht';
     }
   }
 
@@ -8780,8 +8799,8 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       return;
     }
     d.innerHTML =
-      '<span class="str"><span class="str-sym">🏖️</span><b>' + w[0] + ' km</b> · ' + w[1] + ' Min. <span class="dim">zu den Grandes Playas</span></span>' +
-      '<span class="str"><span class="str-sym">🏘️</span><b>' + w[2] + ' km</b> · ' + w[3] + ' Min. <span class="dim">nach Corralejo-Zentrum</span></span>';
+      '<span class="str"><span class="str-sym" title="mit dem Auto">🚗</span><b>' + String(w[0]).replace('.', ',') + ' km</b><span class="str-rest">· ' + w[1] + ' Min. <span class="dim">zu den Grandes Playas</span></span></span>' +
+      '<span class="str"><span class="str-sym" title="mit dem Auto">🚗</span><b>' + String(w[2]).replace('.', ',') + ' km</b><span class="str-rest">· ' + w[3] + ' Min. <span class="dim">nach Corralejo-Zentrum</span></span></span>';
     var vor = body.querySelector('.preisblock') || body.querySelector('.card-links');
     if (vor) vor.parentNode.insertBefore(d, vor); else body.appendChild(d);
     // Die alte Luftlinien-Zeile ist damit ueberholt

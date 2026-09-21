@@ -1,10 +1,10 @@
 // Gemeinsamer Stand für den Fuerteventura-Reiseplaner.
-// Hält Favoriten, Ausgeblendete, abgehakte Aufgaben und Notizen von
-// Stephan und Bilgen.
+// Hält Favoriten, Ausgeblendete, abgehakte Aufgaben, Packlisten-Haken
+// und Notizen von Stephan und Bilgen.
 //
 // Drei Wege hinein:
 //   GET  /state         -> alles auf einmal
-//   POST /marks         -> Favoriten, Ausgeblendete, Haken komplett setzen
+//   POST /marks         -> Favoriten, Ausgeblendete, Aufgaben- und Packlisten-Haken setzen
 //                          (je Liste: nur die mitgeschickten Arten werden ersetzt)
 //   POST /note          -> Notiz anhängen
 //   POST /note/delete   -> eigene Notiz löschen
@@ -65,8 +65,9 @@ async function standLesen(env) {
   const favs = {};
   const hidden = {};
   const todos = {};
+  const pack = {};
   for (const z of marken.results) {
-    const ziel = z.kind === 'fav' ? favs : z.kind === 'todo' ? todos : hidden;
+    const ziel = z.kind === 'fav' ? favs : z.kind === 'todo' ? todos : z.kind === 'pack' ? pack : hidden;
     ziel[z.slug] = { by: z.by_who, at: z.at };
   }
 
@@ -76,7 +77,7 @@ async function standLesen(env) {
     notes[z.slug].push({ id: z.id, by: z.by_who, text: z.text, at: z.at });
   }
 
-  return { favs, hidden, todos, notes, stand: Date.now() };
+  return { favs, hidden, todos, pack, notes, stand: Date.now() };
 }
 
 export default {
@@ -113,7 +114,7 @@ export default {
         // eine ältere Fassung der Seite, die die Haken noch nicht kennt,
         // diese nicht versehentlich löschen.
         const befehle = [];
-        for (const [art, liste] of [['fav', daten.favs], ['hidden', daten.hidden], ['todo', daten.todos]]) {
+        for (const [art, liste] of [['fav', daten.favs], ['hidden', daten.hidden], ['todo', daten.todos], ['pack', daten.pack]]) {
           if (!Array.isArray(liste)) continue;
           befehle.push(env.DB.prepare('DELETE FROM marks WHERE kind = ?').bind(art));
           for (const eintrag of liste.slice(0, MAX_MARKEN)) {
