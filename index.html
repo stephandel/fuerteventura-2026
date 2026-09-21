@@ -1239,7 +1239,10 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 .split-parts { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin-top: 14px; }
 .split-rest { margin: 6px 0 0; font-size: 14px; color: var(--ink-dim); }
 .split-rest strong { color: var(--ink); }
-#split-regler .split-slider + .split-slider { margin-top: 14px; }
+#split-regler .split-slider + .split-slider { margin-top: 18px; }
+.split-streifen { margin-top: 2px; }
+.preisblock.ist-teil .pb-zelle:last-child .pb-wert { color: var(--teal); }
+.split-streifen .ns-zelle { height: 18px; }
 </style>
 
 <nav class="topnav">
@@ -4679,14 +4682,15 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       if (anzahl === 1) {
         reglerEl.innerHTML = '';
       } else {
-        var html = '';
-        var maxErster = TOTAL_NIGHTS - (anzahl - 1);
-        html += reglerZeile('n1', 'Nächte in Teil 1', verteilung[0], 1, maxErster);
-        if (anzahl === 3) {
-          var maxZweiter = TOTAL_NIGHTS - verteilung[0] - 1;
-          html += reglerZeile('n2', 'Nächte in Teil 2', verteilung[1], 1, Math.max(1, maxZweiter));
-          html += '<p class="split-rest">Teil 3 bekommt automatisch die restlichen <strong>' +
-                  verteilung[2] + ' ' + (verteilung[2] === 1 ? 'Nacht' : 'Nächte') + '</strong>.</p>';
+        // Jeder Teil bekommt einen eigenen Regler mit dem Naechte-Streifen
+        // darunter. Die Teile teilen sich die 13 Naechte: wer einen Regler
+        // schiebt, nimmt dem Nachbarn Naechte weg oder gibt ihm welche.
+        var html = '', von = 0;
+        for (var t = 0; t < anzahl; t++) {
+          var maxT = TOTAL_NIGHTS - (anzahl - 1);
+          if (anzahl === 3 && t > 0) maxT = TOTAL_NIGHTS - verteilung[0] - 1;
+          html += reglerZeile('t' + (t + 1), 'Nächte in Teil ' + (t + 1), verteilung[t], 1, Math.max(1, maxT), von);
+          von += verteilung[t];
         }
         reglerEl.innerHTML = html;
       }
@@ -4758,12 +4762,27 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     }
   }
 
-  function reglerZeile(id, beschriftung, wert, min, max){
+  // Eigene Datumsrechnung: nachtDatum() weiter unten haengt an REISE_START,
+  // das beim ersten Aufbau der Regler noch nicht belegt ist.
+  function reglerDatum(i){
+    var d = new Date(2026, 8, 29 + i);
+    return ('0' + d.getDate()).slice(-2) + '.' + ('0' + (d.getMonth() + 1)).slice(-2) + '.';
+  }
+  function reglerZeile(id, beschriftung, wert, min, max, von){
+    var zellen = '';
+    for (var i = 0; i < TOTAL_NIGHTS; i++) {
+      var unser = i >= von && i < von + wert;
+      zellen += '<span class="ns-zelle' + (unser ? ' ist-unser' : '') + '" title="' + reglerDatum(i) + '"></span>';
+    }
+    var teilNr = id.replace('t', '');
     return '<div class="split-slider">' +
       '<label for="split-' + id + '">' + beschriftung + ': <strong>' + wert + '</strong></label>' +
       '<input type="range" id="split-' + id + '" data-regler="' + id + '" min="' + min +
       '" max="' + max + '" value="' + wert + '" step="1">' +
-      '<div class="split-scale"><span>' + min + '</span><span>' + max + '</span></div>' +
+      '<div class="naechte-streifen split-streifen"><div class="ns-reihe">' + zellen + '</div>' +
+      '<div class="ns-fuss"><span>' + reglerDatum(von) + '</span>' +
+      '<span class="ns-unser">Teil ' + teilNr + ': ' + wert + ' ' + (wert === 1 ? 'Nacht' : 'Nächte') + '</span>' +
+      '<span>' + reglerDatum(von + wert) + '</span></div></div>' +
     '</div>';
   }
 
@@ -4808,15 +4827,23 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     var r = e.target.closest ? e.target.closest('[data-regler]') : null;
     if (!r) return;
     var wert = parseInt(r.value, 10);
-    if (r.getAttribute('data-regler') === 'n1') {
+    var welcher = r.getAttribute('data-regler');
+    var n = teileAnzahl();
+    if (welcher === 't1') {
       setSplitNights(wert);
       // Bei drei Teilen darf Teil 2 nicht laenger werden als der Rest
-      if (teileAnzahl() === 3) {
+      if (n === 3) {
         var rest = TOTAL_NIGHTS - wert;
         if (getSplitNights2() > rest - 1) setSplitNights2(Math.max(1, rest - 1));
       }
-    } else {
-      setSplitNights2(wert);
+    } else if (welcher === 't2') {
+      // Bei zwei Teilen ist Teil 2 der Rest von Teil 1 - also Teil 1 anpassen
+      if (n === 2) setSplitNights(TOTAL_NIGHTS - wert);
+      else setSplitNights2(wert);
+    } else if (welcher === 't3') {
+      // Teil 3 nimmt sich Naechte von Teil 2, Teil 1 bleibt wie er ist
+      var n2 = TOTAL_NIGHTS - getSplitNights() - wert;
+      setSplitNights2(Math.max(1, n2));
     }
     aufteilungGeaendert();
   });
@@ -8508,11 +8535,36 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 
     var block = document.createElement('div');
     block.className = 'preisblock';
+    block.setAttribute('data-ppn', ppn);
+    block.setAttribute('data-gesamt', gesamt);
+    block.setAttribute('data-naechte', n);
     block.innerHTML =
       '<div class="pb-zelle"><span class="pb-wert">' + fmtEuro0(ppn) + ' €</span><span class="pb-label">pro Nacht</span></div>' +
       '<div class="pb-zelle"><span class="pb-wert">' + fmtEuro0(gesamt) + ' €</span><span class="pb-label">' + n + ' Nächte gesamt</span></div>';
     alt.parentNode.insertBefore(block, alt);
     alt.classList.add('alt-preis');
+  }
+
+  // Ist die Unterkunft als Teil gewaehlt, zeigt der Gesamtpreis die Naechte,
+  // die sie in der Aufteilung tatsaechlich bekommt - nicht das ganze Angebot.
+  function preisblockAktualisieren(card){
+    var block = card.querySelector('.preisblock');
+    if (!block) return;
+    var slug = slugOf(card);
+    var meine = null;
+    try { computeTotal().accs.forEach(function(a){ if (a.slug === slug) meine = a; }); } catch(e){}
+    var zelle = block.querySelectorAll('.pb-zelle')[1];
+    if (!zelle) return;
+    var wert = zelle.querySelector('.pb-wert'), label = zelle.querySelector('.pb-label');
+    if (meine) {
+      wert.textContent = (meine.estimated ? '≈ ' : '') + fmtEuro0(meine.cost) + ' €';
+      label.textContent = meine.nights + ' ' + (meine.nights === 1 ? 'Nacht' : 'Nächte') + ' als Teil ' + (teilVon(slug) || '?');
+      block.classList.add('ist-teil');
+    } else {
+      wert.textContent = fmtEuro0(parseFloat(block.getAttribute('data-gesamt'))) + ' €';
+      label.textContent = block.getAttribute('data-naechte') + ' Nächte gesamt';
+      block.classList.remove('ist-teil');
+    }
   }
 
   // ---- Auswahl als Teil 1 / 2 / 3 ----
@@ -8721,7 +8773,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   }
 
   function alleStreifen(){
-    document.querySelectorAll('.card[id^="c-"]').forEach(baueStreifen);
+    document.querySelectorAll('.card[id^="c-"]').forEach(function(c){ baueStreifen(c); preisblockAktualisieren(c); });
   }
 
 
@@ -8788,6 +8840,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     bauePreisblock(card);
     baueTeilKnoepfe(card);
     baueStreifen(card);
+    preisblockAktualisieren(card);
     vereinheitliche(card);
   }
 
