@@ -6583,7 +6583,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   var PEOPLE = { stephan: 'Stephan', bilgen: 'Bilgen' };
   var POLL_MS = 20000;
 
-  var shared = { favs: {}, hidden: {} };
+  var shared = { favs: {}, hidden: {}, todos: {} };
   var notes = {};                  // slug -> [{id, by, text, at, offen?}]
   var applyingRemote = false;      // verhindert Rueckkopplung Server -> lokal -> Server
   var syncState = 'wait';
@@ -6877,6 +6877,13 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   // Speist sich aus dem gemeinsamen Stand, damit beide dasselbe sehen:
   // Notizen, Herzchen und Ausgeblendetes tragen Name und Zeitpunkt.
   // Die Teil-Auswahl liegt nur lokal und kommt nur beim eigenen Geraet dazu.
+  function todoTitel(id){
+    try {
+      var it = todoAllItems().filter(function(x){ return x.id === id; })[0];
+      if (it) return it.text;
+    } catch(e){}
+    return id;
+  }
   function nameVon(slug){
     if (typeof LISTINGS !== 'undefined' && LISTINGS[slug] && LISTINGS[slug].name) return LISTINGS[slug].name;
     var el = document.getElementById('c-' + slug);
@@ -6926,6 +6933,10 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       var h = shared.hidden[slug];
       ev.push({ typ: 'aus', wer: h.by, at: h.at || 0, slug: slug });
     });
+    Object.keys((shared && shared.todos) || {}).forEach(function(id){
+      var t = shared.todos[id];
+      ev.push({ typ: 'haken', wer: t.by, at: t.at || 0, slug: id });
+    });
     try {
       JSON.parse(lsGet('fuerte-aktivitaet', '[]')).forEach(function(a){
         ev.push({ typ: 'wahl', wer: a.wer, at: a.at || 0, slug: a.slug, nurHier: true });
@@ -6949,7 +6960,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       ziel.innerHTML = '<li class="aktiv-leer">Noch nichts passiert. Sobald einer von euch etwas markiert oder eine Notiz schreibt, steht es hier.</li>';
       return;
     }
-    var SYM = { notiz: '💬', herz: '❤️', aus: '🙈', wahl: '✅', seite: '✨' };
+    var SYM = { notiz: '💬', herz: '❤️', aus: '🙈', wahl: '✅', haken: '☑️', seite: '✨' };
     var me = whoAmI();
     ziel.innerHTML = zeigen.map(function(e){
       if (e.typ === 'seite') {
@@ -6963,6 +6974,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       if (e.typ === 'notiz') was = wer + (ich ? ' hast' : ' hat') + ' zu <b>' + escapeHtml(nameVon(e.slug)) + '</b> geschrieben: „' + escapeHtml((e.text || '').slice(0, 90)) + '“';
       else if (e.typ === 'herz') was = wer + ' ' + (ich ? 'magst' : 'mag') + ' <b>' + escapeHtml(nameVon(e.slug)) + '</b>';
       else if (e.typ === 'aus') was = wer + ' ' + hat + ' <b>' + escapeHtml(nameVon(e.slug)) + '</b> ausgeblendet';
+      else if (e.typ === 'haken') was = wer + ' ' + hat + ' „<b>' + escapeHtml(todoTitel(e.slug)) + '</b>“ abgehakt';
       else was = wer + ' ' + hat + ' <b>' + escapeHtml(nameVon(e.slug)) + '</b> als Unterkunft gewählt';
       return '<li><span class="aktiv-icon">' + SYM[e.typ] + '</span>' +
              '<span class="aktiv-text">' + was + '<span class="aktiv-zeit">' + vorZeit(e.at) + '</span></span></li>';
@@ -7031,6 +7043,14 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     try {
       setFavs(sharedZuListe(shared.favs));
       setHiddenAccs(sharedZuListe(shared.hidden));
+      // Haken: erst wenn der Server sie mitliefert - eine aeltere Server-
+      // Fassung ohne 'todos' soll die lokalen Haken nicht wegwischen.
+      if (shared.todos && typeof shared.todos === 'object' && shared.todosVomServer) {
+        var done = {};
+        Object.keys(shared.todos).forEach(function(id){ done[id] = true; });
+        todoSetDone(done);
+        try { renderTodo(); updateNavIndicators(); } catch(e){}
+      }
       applySortFilter();
       renderShareFlags();
     } catch(e){
@@ -7048,14 +7068,17 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     }
     var favs = bauen(getFavs(), shared.favs);
     var hidden = bauen(getHiddenAccs(), shared.hidden);
+    var todos = bauen(Object.keys(todoGetDone()), shared.todos || {});
 
     shared.favs = {};
     favs.forEach(function(e){ shared.favs[e.slug] = { by: e.by, at: e.at }; });
     shared.hidden = {};
     hidden.forEach(function(e){ shared.hidden[e.slug] = { by: e.by, at: e.at }; });
+    shared.todos = {};
+    todos.forEach(function(e){ shared.todos[e.slug] = { by: e.by, at: e.at }; });
     renderShareFlags();
 
-    einreihen({ pfad: '/marks', koerper: { by: me, favs: favs, hidden: hidden } });
+    einreihen({ pfad: '/marks', koerper: { by: me, favs: favs, hidden: hidden, todos: todos } });
     abgleichen();
   }
 
@@ -7076,6 +7099,8 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     if (!d || typeof d !== 'object' || d.fehler) throw new Error('unbrauchbare Antwort');
     shared.favs = d.favs || {};
     shared.hidden = d.hidden || {};
+    shared.todosVomServer = !!d.todos;
+    shared.todos = d.todos || {};
     notes = d.notes || {};
     // Noch nicht abgeschickte Notizen wieder dazulegen, sonst
     // verschwinden sie beim naechsten Abgleich vor den Augen.
@@ -7085,7 +7110,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       if (!notes[slug]) notes[slug] = [];
       notes[slug].push({ id: 'offen-' + e.koerper.at, by: e.koerper.by, text: e.koerper.text, at: e.koerper.at, offen: true });
     });
-    try { lsSet(STAND_KEY, JSON.stringify({ favs: shared.favs, hidden: shared.hidden, notes: d.notes || {} })); } catch(e){}
+    try { lsSet(STAND_KEY, JSON.stringify({ favs: shared.favs, hidden: shared.hidden, todos: d.todos, notes: d.notes || {} })); } catch(e){}
     applyShared();
     renderAllNotes();
     try { renderAktiv(); } catch(e){}
@@ -7098,6 +7123,8 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       if (!d) return;
       shared.favs = d.favs || {};
       shared.hidden = d.hidden || {};
+      shared.todosVomServer = !!d.todos;
+      shared.todos = d.todos || {};
       notes = d.notes || {};
       warteliste().forEach(function(e){
         if (e.pfad !== '/note') return;
@@ -7147,9 +7174,10 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   });
 
   // Lokale Setter abfangen: jede Aenderung geht auch an den gemeinsamen Stand.
-  var setFavsLocal = setFavs, setHiddenLocal = setHiddenAccs;
+  var setFavsLocal = setFavs, setHiddenLocal = setHiddenAccs, setTodoLocal = todoSetDone;
   setFavs = function(arr){ setFavsLocal(arr); if (!applyingRemote) pushShared(); };
   setHiddenAccs = function(arr){ setHiddenLocal(arr); if (!applyingRemote) pushShared(); };
+  todoSetDone = function(o){ setTodoLocal(o); if (!applyingRemote) pushShared(); };
 
   buildCardExtras();
   standAusSpeicher();

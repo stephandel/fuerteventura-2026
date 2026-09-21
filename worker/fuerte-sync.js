@@ -1,9 +1,11 @@
 // Gemeinsamer Stand für den Fuerteventura-Reiseplaner.
-// Hält Favoriten, Ausgeblendete und Notizen von Stephan und Bilgen.
+// Hält Favoriten, Ausgeblendete, abgehakte Aufgaben und Notizen von
+// Stephan und Bilgen.
 //
 // Drei Wege hinein:
 //   GET  /state         -> alles auf einmal
-//   POST /marks         -> Favoriten und Ausgeblendete komplett setzen
+//   POST /marks         -> Favoriten, Ausgeblendete, Haken komplett setzen
+//                          (je Liste: nur die mitgeschickten Arten werden ersetzt)
 //   POST /note          -> Notiz anhängen
 //   POST /note/delete   -> eigene Notiz löschen
 //
@@ -62,8 +64,9 @@ async function standLesen(env) {
 
   const favs = {};
   const hidden = {};
+  const todos = {};
   for (const z of marken.results) {
-    const ziel = z.kind === 'fav' ? favs : hidden;
+    const ziel = z.kind === 'fav' ? favs : z.kind === 'todo' ? todos : hidden;
     ziel[z.slug] = { by: z.by_who, at: z.at };
   }
 
@@ -73,7 +76,7 @@ async function standLesen(env) {
     notes[z.slug].push({ id: z.id, by: z.by_who, text: z.text, at: z.at });
   }
 
-  return { favs, hidden, notes, stand: Date.now() };
+  return { favs, hidden, todos, notes, stand: Date.now() };
 }
 
 export default {
@@ -106,9 +109,13 @@ export default {
         const ich = person(daten.by, 'stephan');
         const jetzt = Date.now();
 
-        const befehle = [env.DB.prepare('DELETE FROM marks')];
-        for (const [art, liste] of [['fav', daten.favs], ['hidden', daten.hidden]]) {
+        // Jede Art wird nur ersetzt, wenn sie mitgeschickt wurde. So kann
+        // eine ältere Fassung der Seite, die die Haken noch nicht kennt,
+        // diese nicht versehentlich löschen.
+        const befehle = [];
+        for (const [art, liste] of [['fav', daten.favs], ['hidden', daten.hidden], ['todo', daten.todos]]) {
           if (!Array.isArray(liste)) continue;
+          befehle.push(env.DB.prepare('DELETE FROM marks WHERE kind = ?').bind(art));
           for (const eintrag of liste.slice(0, MAX_MARKEN)) {
             const slug = text(eintrag && eintrag.slug != null ? eintrag.slug : eintrag, MAX_SLUG).trim();
             if (!slug) continue;
@@ -121,7 +128,7 @@ export default {
             );
           }
         }
-        await env.DB.batch(befehle);
+        if (befehle.length) await env.DB.batch(befehle);
         return antwort(await standLesen(env), herkunft);
       }
 
