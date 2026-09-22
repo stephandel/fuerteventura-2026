@@ -472,7 +472,7 @@ nav.topnav .navlinks { display: none !important; }
 .chip, .btn, .btn-outline, .btn-select, .btn-split, .sp-clear { min-height: var(--tap); }
 .btn, .btn-outline { display: inline-flex; align-items: center; justify-content: center; }
 .btn:active, .btn-outline:active, .chip:active, .btn-select:active, .btn-split:active, .seg-btn:active { transform: scale(0.97); }
-.rc-phone, .rc-website, .rest-map { min-height: var(--tap); display: inline-flex; align-items: center; }
+.rc-phone, .rest-map { min-height: var(--tap); display: inline-flex; align-items: center; }
 select, input[type=time], input[type=text] { min-height: var(--tap); font-size: var(--fs-sub); }
 .sf-label select, .lead-row select, .trip-field select, .trip-field input { min-height: var(--tap); }
 .pin { min-width: var(--tap); min-height: 38px; }
@@ -768,7 +768,11 @@ table.price-table tfoot td.num { color: var(--teal); }
 .rc-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; box-shadow: var(--shadow); display: flex; flex-direction: column; }
 .rc-card-closed { opacity: 0.72; }
 .rc-media { position: relative; aspect-ratio: 4/3; background: var(--surface-2); }
-.rc-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.rc-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.rc-ort { position: absolute; left: 10px; bottom: 10px; z-index: 1; background: rgba(16,20,22,0.82); color: #fff; font-size: 11.5px; font-weight: 600; padding: 4px 10px; border-radius: 999px; max-width: calc(100% - 96px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rc-dist { margin: 2px 0 0; font-size: 12px; color: var(--ink-dim); }
+.rc-media:has(.rc-closed-badge) .rc-ort { bottom: 42px; }
+.rc-dist b { font-family: "JetBrains Mono", monospace; color: var(--ink); }
 .rc-noimg { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 2.4rem; }
 .rc-rating { position: absolute; top: 10px; left: 10px; background: rgba(16,20,22,0.88); color: #fff; font-family: "JetBrains Mono", monospace; font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 999px; }
 .rc-price { position: absolute; top: 10px; right: 10px; background: rgba(16,20,22,0.88); color: #fff; font-family: "JetBrains Mono", monospace; font-size: 11.5px; font-weight: 700; padding: 3px 9px; border-radius: 999px; }
@@ -777,8 +781,10 @@ table.price-table tfoot td.num { color: var(--teal); }
 .rc-card h4 { font-size: 0.98rem; margin: 0; }
 .rc-category { margin: 0; font-size: 11.5px; color: var(--teal); text-transform: uppercase; letter-spacing: 0.03em; font-weight: 600; }
 .rc-address { margin: 2px 0 0; font-size: 12px; color: var(--ink-dim); }
-.rc-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
-.rc-phone, .rc-website { font-size: 12px; font-weight: 600; text-decoration: none; color: var(--teal); }
+.rc-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+/* Google Maps und Website nebeneinander, Telefon darunter */
+.rc-actions .btn { flex: 1 1 0; justify-content: center; padding-left: 8px; padding-right: 8px; font-size: 12.5px; white-space: nowrap; }
+.rc-phone { font-size: 12px; font-weight: 600; text-decoration: none; color: var(--teal); flex-basis: 100%; }
 .rc-details { margin-top: 10px; }
 .rc-details summary { cursor: pointer; font-size: 12.5px; font-weight: 600; color: var(--teal); list-style: none; }
 .rc-details summary::-webkit-details-marker { display: none; }
@@ -2694,13 +2700,15 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
           <select id="rc-sort-select">
             <option value="rating-desc">Bewertung: beste zuerst</option>
             <option value="reviews-desc">Meiste Bewertungen zuerst</option>
+            <option value="dist-asc">Nähe zu Corralejo</option>
             <option value="az">A–Z</option>
           </select>
         </label>
       </div>
       <div class="rest-items" id="rest-items">
-<article class="rc-card" data-id="h2o-juice-bar" data-rating="4.6" data-reviews="670" data-title="H2O Juice Bar &amp; Vegan Caf&#232;" data-lat="28.7391761" data-lng="-13.8685833">
+<article class="rc-card" data-km="0.8" data-id="h2o-juice-bar" data-rating="4.6" data-reviews="670" data-title="H2O Juice Bar &amp; Vegan Caf&#232;" data-lat="28.7391761" data-lng="-13.8685833">
   <div class="rc-media">
+    <span class="rc-ort">📍 Corralejo</span>
     <img src="images/h2o-juice-bar.webp" alt="H2O Juice Bar &amp; Vegan Caf&#232;" loading="lazy">
     <div class="rc-rating">&#11088; 4.6 (670)</div>
     <div class="rc-price">10&#8211;20 &#8364;</div>
@@ -2710,14 +2718,17 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>H2O Juice Bar &amp; Vegan Caf&#232;</h4>
     <p class="rc-category">Veganes Caf&#233; / Saftbar</p>
     <p class="rc-address">&#128205; C. la Milagrosa, 29, 35660 Corralejo, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚶 0,8 km vom Corralejo-Zentrum · ca. 10 Min. zu Fuß</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps/search/?api=1&amp;query=28.7391761,-13.8685833" target="_blank" rel="noopener">Google Maps &#8599;</a>
+      <a class="btn btn-outline rc-website" href="https://www.facebook.com/H2oBarCafe/" target="_blank" rel="noopener" title="facebook.com/H2oBarCafe">📘 Facebook ↗</a>
     </div>
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">&#128336; &#214;ffnungszeiten</span><span class="rc-attr-value">Wochenzeiten auf Google Maps pr&#252;fen</span></div><div class="rc-attr-row"><span class="rc-attr-label">&#127788;&#65039; Au&#223;enbereich</span><span class="rc-attr-value">Ja, begr&#252;nte Terrasse</span></div><div class="rc-attr-row"><span class="rc-attr-label">&#129388; Zum Mitnehmen</span><span class="rc-attr-value">Ja, auch Lieferdienst</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von G&#228;sten empfohlen</span><div class="rc-chips"><span class="rc-chip">Frisch gepresste S&#228;fte</span><span class="rc-chip">Vegane Burger</span><span class="rc-chip">Sandwiches</span><span class="rc-chip">Kuchen</span></div></div><p class="rc-fact">&#128161; Komplett vegan &#8211; mit Casita Maracuya und dem Imperfecto eine der wenigen zuverl&#228;ssigen Adressen daf&#252;r in Corralejo. Startpunkt unseres <a href="#tagestrips">Vegan-Tagestrips</a>.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="coco-banana" data-rating="4.4" data-reviews="545" data-title="Coco Banana" data-lat="28.7348799" data-lng="-13.8692232">
+<article class="rc-card" data-km="0.1" data-id="coco-banana" data-rating="4.4" data-reviews="545" data-title="Coco Banana" data-lat="28.7348799" data-lng="-13.8692232">
   <div class="rc-media">
+    <span class="rc-ort">📍 Corralejo</span>
     <img src="images/coco-banana.webp" alt="Coco Banana Eisdiele" loading="lazy">
     <div class="rc-rating">&#11088; 4.4 (545)</div>
     <div class="rc-price">1&#8211;10 &#8364;</div>
@@ -2727,14 +2738,17 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>Coco Banana</h4>
     <p class="rc-category">Eisdiele</p>
     <p class="rc-address">&#128205; Av. Ntra. Sra. del Carmen, 35660 Corralejo, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚶 0,1 km vom Corralejo-Zentrum · ca. 2 Min. zu Fuß</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps/search/?api=1&amp;query=28.7348799,-13.8692232" target="_blank" rel="noopener">Google Maps &#8599;</a>
+      <a class="btn btn-outline rc-website" href="https://www.facebook.com/cocobananacorralejo/" target="_blank" rel="noopener" title="facebook.com/cocobananacorralejo">📘 Facebook ↗</a>
     </div>
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">&#128336; &#214;ffnungszeiten</span><span class="rc-attr-value">Bis in den Abend ge&#246;ffnet &#8211; Wochenzeiten auf Google Maps pr&#252;fen</span></div><div class="rc-dishes"><span class="rc-dishes-label">Vegane Sorten</span><div class="rc-chips"><span class="rc-chip">Erdbeer-Sorbet</span><span class="rc-chip">Zitronen-Sorbet</span><span class="rc-chip">Mango-Sorbet</span><span class="rc-chip">Zartbitterschokolade</span></div></div><p class="rc-fact">&#128161; Laut mehreren Vegan-F&#252;hrern das beste vegane Eis in Corralejo &#8211; es sind allerdings nur zwei bis vier Sorten, vor Ort nach der aktuellen Auswahl fragen.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="vrebac-gelato" data-rating="4.3" data-reviews="51" data-title="Vrebac Gelato" data-lat="28.4963367" data-lng="-13.8636816">
+<article class="rc-card" data-km="31.5" data-id="vrebac-gelato" data-rating="4.3" data-reviews="51" data-title="Vrebac Gelato" data-lat="28.4963367" data-lng="-13.8636816">
   <div class="rc-media">
+    <span class="rc-ort">📍 Puerto del Rosario</span>
     <img src="images/vrebac-gelato.webp" alt="Vrebac Gelato" loading="lazy">
     <div class="rc-rating">&#11088; 4.3 (51)</div>
     <div class="rc-price">1&#8211;10 &#8364;</div>
@@ -2744,14 +2758,17 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>Vrebac Gelato</h4>
     <p class="rc-category">Italienisches Speiseeis</p>
     <p class="rc-address">&#128205; C. Francisco Pi y Arsuaga, 35600 Puerto del Rosario, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚗 31,5 km · 30 Min. vom Corralejo-Zentrum</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps/search/?api=1&amp;query=Vrebac+Gelato+Puerto+del+Rosario" target="_blank" rel="noopener">Google Maps &#8599;</a>
+      <a class="btn btn-outline rc-website" href="https://vrebacgelato.com/" target="_blank" rel="noopener" title="vrebacgelato.com">🌐 Website ↗</a>
     </div>
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">&#128336; &#214;ffnungszeiten</span><span class="rc-attr-value">Wochenzeiten auf Google Maps pr&#252;fen</span></div><div class="rc-attr-row"><span class="rc-attr-label">&#129388; Zum Mitnehmen</span><span class="rc-attr-value">Ja, auch Online-Bestellung</span></div><p class="rc-fact">&#128161; Handwerkliches Gelato in der Inselhauptstadt. Sorbets kommen ohne Milch aus &#8211; welche Sorten gerade vegan sind, wechselt, also kurz nachfragen. Nachmittagsstopp im <a href="#tagestrips">Vegan-Tagestrip</a>.</p></div></details>
   </div>
 </article>
-        <article class="rc-card" data-id="lumos" data-rating="5.0" data-reviews="1104" data-title="Lumos" data-lat="28.7376273" data-lng="-13.867564">
+        <article class="rc-card" data-km="1.1" data-id="lumos" data-rating="5.0" data-reviews="1104" data-title="Lumos" data-lat="28.7376273" data-lng="-13.867564">
   <div class="rc-media">
+    <span class="rc-ort">📍 Corralejo</span>
     <img src="images/lumos.webp" alt="Lumos" loading="lazy">
     <div class="rc-rating">⭐ 5.0 (1.104)</div>
     <div class="rc-price">10–20 €</div>
@@ -2762,15 +2779,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>Lumos</h4>
     <p class="rc-category">Italienisches Streetfood (apulische Küche)</p>
     <p class="rc-address">📍 Calle Hernán Cortés, 6, 35660 Corralejo, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚶 1,1 km vom Corralejo-Zentrum · ca. 14 Min. zu Fuß</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=4546371425105115036" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://instagram.com/lumos_fuerteventura" target="_blank" rel="noopener" title="instagram.com/lumos_fuerteventura">📸 Instagram ↗</a>
       <a class="rc-phone" href="tel:+34722179759">📞 +34 722 17 97 59</a>
     </div>
-    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geöffnet · schließt 15:00, öffnet wieder 19:00</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, auch an der Straße</span></div><a class="rc-website" href="https://instagram.com/lumos_fuerteventura" target="_blank" rel="noopener">🌐 instagram.com/lumos_fuerteventura ↗</a><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Puccia</span><span class="rc-chip">Panzerotto</span><span class="rc-chip">Pizza fritta</span><span class="rc-chip">Gnocco fritto</span></div></div><div class="rc-quotes"><blockquote>„Super lecker, eine Empfehlung wert. Die Inhaber sind sehr freundlich und lieben was sie da machen.“</blockquote></div><p class="rc-fact">💡 Apulisches Streetfood-Konzept (Puccia, Panzerotto) – ungewöhnlich für die Insel.</p></div></details>
+    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geöffnet · schließt 15:00, öffnet wieder 19:00</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, auch an der Straße</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Puccia</span><span class="rc-chip">Panzerotto</span><span class="rc-chip">Pizza fritta</span><span class="rc-chip">Gnocco fritto</span></div></div><div class="rc-quotes"><blockquote>„Super lecker, eine Empfehlung wert. Die Inhaber sind sehr freundlich und lieben was sie da machen.“</blockquote></div><p class="rc-fact">💡 Apulisches Streetfood-Konzept (Puccia, Panzerotto) – ungewöhnlich für die Insel.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="imperfecto-gastrobar" data-rating="5.0" data-reviews="578" data-title="Imperfecto Gastrobar" data-lat="28.74001" data-lng="-13.8686">
+<article class="rc-card" data-km="0.8" data-id="imperfecto-gastrobar" data-rating="5.0" data-reviews="578" data-title="Imperfecto Gastrobar" data-lat="28.74001" data-lng="-13.8686">
   <div class="rc-media">
+    <span class="rc-ort">📍 Corralejo</span>
     <img src="images/imperfecto-gastrobar.webp" alt="Imperfecto Gastrobar" loading="lazy">
     <div class="rc-rating">⭐ 5.0 (578)</div>
     <div class="rc-price">10–20 €</div>
@@ -2781,15 +2801,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>Imperfecto Gastrobar</h4>
     <p class="rc-category">Restaurant (Asian Fusion / Gastrobar)</p>
     <p class="rc-address">📍 C. la Milagrosa, 45, 35660 Corralejo, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚶 0,8 km vom Corralejo-Zentrum · ca. 10 Min. zu Fuß</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=819178185231520931" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://www.instagram.com/imperfectogastrobao_ftv/" target="_blank" rel="noopener" title="instagram.com/imperfectogastrobao_ftv">📸 Instagram ↗</a>
       <a class="rc-phone" href="tel:+34642510102">📞 +34 642 51 01 02</a>
     </div>
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 12:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Bao (vegan/vegetarisch)</span><span class="rc-chip">Gyozas</span></div></div><div class="rc-quotes"><blockquote>„Wir hatten die Baos in vegan und vegetarisch und die veggie Gyozas. Sooo lecker!“</blockquote><blockquote>„Mein absoluter Tipp an alle die was Pfiffiges suchen. Liegt am Spielplatz in der Innenstadt, super auch für Veganer!“</blockquote></div><p class="rc-fact">💡 Liegt am Spielplatz in der Corralejo-Innenstadt.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="restaurante-el-lugar" data-rating="5.0" data-reviews="128" data-title="Restaurante &quot;El Lugar&quot;" data-lat="28.7134532" data-lng="-13.8693571">
+<article class="rc-card" data-km="3.2" data-id="restaurante-el-lugar" data-rating="5.0" data-reviews="128" data-title="Restaurante &quot;El Lugar&quot;" data-lat="28.7134532" data-lng="-13.8693571">
   <div class="rc-media">
+    <span class="rc-ort">📍 Corralejo</span>
     <img src="images/restaurante-el-lugar.webp" alt="Restaurante &quot;El Lugar&quot;" loading="lazy">
     <div class="rc-rating">⭐ 5.0 (128)</div>
     <div class="rc-price">10–20 €</div>
@@ -2800,6 +2823,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>Restaurante &quot;El Lugar&quot;</h4>
     <p class="rc-category">Restaurant / Taverne</p>
     <p class="rc-address">📍 Calle Guirre, residencial Topkapi, local 6, 35660 Corralejo, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚗 3,2 km · 6 Min. vom Corralejo-Zentrum</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=4260330349912158583" target="_blank" rel="noopener">Google Maps ↗</a>
       <a class="rc-phone" href="tel:+34678451098">📞 +34 678 45 10 98</a>
@@ -2807,8 +2831,9 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 13:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Aioli mit warmem Baguette</span><span class="rc-chip">Fisch des Tages (Oktopus, Dorade)</span><span class="rc-chip">Warmer Apfelkuchen</span></div></div><div class="rc-quotes"><blockquote>„Sehr gutes Restaurant mit tollem Essen. Aioli mit warmem Baguette und den Fisch des Tages. Zum Abschluss warmer Apfelkuchen mit Vanilleeis.“</blockquote><blockquote>„Der Besitzer ist super nett und zuvorkommend, spricht mehrere Sprachen. Das Essen ist super lecker und frisch.“</blockquote></div><p class="rc-fact">💡 Mehrsprachiger, sehr zuvorkommender Inhaber.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="nuestro-estilo-empanadas-lajares" data-rating="5.0" data-reviews="110" data-title="Nuestro Estilo Empanadas - Lajares" data-lat="28.6839348" data-lng="-13.9313476">
+<article class="rc-card" data-km="11.8" data-id="nuestro-estilo-empanadas-lajares" data-rating="5.0" data-reviews="110" data-title="Nuestro Estilo Empanadas - Lajares" data-lat="28.6839348" data-lng="-13.9313476">
   <div class="rc-media">
+    <span class="rc-ort">📍 Lajares</span>
     <img src="images/nuestro-estilo-empanadas-lajares.webp" alt="Nuestro Estilo Empanadas - Lajares" loading="lazy">
     <div class="rc-rating">⭐ 5.0 (110)</div>
     <div class="rc-price">1–10 €</div>
@@ -2819,15 +2844,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>Nuestro Estilo Empanadas - Lajares</h4>
     <p class="rc-category">Empanada-Imbiss</p>
     <p class="rc-address">📍 Cl. Majanicho, 22, 35650 Lajares, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚗 11,8 km · 13 Min. vom Corralejo-Zentrum</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=15247902980833547694" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://nuestroestiloempanadas.com" target="_blank" rel="noopener" title="nuestroestiloempanadas.com">🌐 Website ↗</a>
       <a class="rc-phone" href="tel:+34641795279">📞 +34 641 79 52 79</a>
     </div>
-    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geöffnet, schließt um 15:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, auch an der Straße, viele frei</span></div><a class="rc-website" href="https://nuestroestiloempanadas.com" target="_blank" rel="noopener">🌐 nuestroestiloempanadas.com ↗</a><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Empanadas (herzhaft &amp; süß)</span><span class="rc-chip">Cheeseburger-Empanada</span><span class="rc-chip">Prawns-Empanada</span><span class="rc-chip">Alfajor</span></div></div><div class="rc-quotes"><blockquote>„Versteckter kleiner Imbiss, modern, super netter Mitarbeiter und köstliche Empanadas zu angemessenen Preisen!“</blockquote><blockquote>„Schöner Laden mit sehr leckeren süßen und salzigen Snacks und freundlichem Personal.“</blockquote></div><p class="rc-fact">💡 Von Frauen geführt; LGBTQ+-freundlich, als sicherer Ort für Transgender gelistet.</p></div></details>
+    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geöffnet, schließt um 15:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, auch an der Straße, viele frei</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Empanadas (herzhaft &amp; süß)</span><span class="rc-chip">Cheeseburger-Empanada</span><span class="rc-chip">Prawns-Empanada</span><span class="rc-chip">Alfajor</span></div></div><div class="rc-quotes"><blockquote>„Versteckter kleiner Imbiss, modern, super netter Mitarbeiter und köstliche Empanadas zu angemessenen Preisen!“</blockquote><blockquote>„Schöner Laden mit sehr leckeren süßen und salzigen Snacks und freundlichem Personal.“</blockquote></div><p class="rc-fact">💡 Von Frauen geführt; LGBTQ+-freundlich, als sicherer Ort für Transgender gelistet.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="la-herencia-del-gallego" data-rating="5.0" data-reviews="101" data-title="La Herencia del gallego" data-lat="28.0503519" data-lng="-14.3528609">
+<article class="rc-card" data-km="115.6" data-id="la-herencia-del-gallego" data-rating="5.0" data-reviews="101" data-title="La Herencia del gallego" data-lat="28.0503519" data-lng="-14.3528609">
   <div class="rc-media">
+    <span class="rc-ort">📍 Morro Jable</span>
     <img src="images/la-herencia-del-gallego.webp" alt="La Herencia del gallego" loading="lazy">
     <div class="rc-rating">⭐ 5.0 (101)</div>
     <div class="rc-price">10–20 €</div>
@@ -2838,6 +2866,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>La Herencia del gallego</h4>
     <p class="rc-category">Familienrestaurant / Tapas-Bar</p>
     <p class="rc-address">📍 C. Diputado Manuel Velázquez Cabrera, 5, 35625 Morro Jable, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚗 115,6 km · 105 Min. vom Corralejo-Zentrum</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=975798708329782411" target="_blank" rel="noopener">Google Maps ↗</a>
       <a class="rc-phone" href="tel:+34828728048">📞 +34 828 72 80 48</a>
@@ -2845,8 +2874,9 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 13:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">empfohlen (nur drei Tische)</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Parkplätze vorhanden (teils kostenlos, teils gebührenpflichtig an der Straße)</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Oktopus nach galicischer Art</span><span class="rc-chip">Geschmortes Rindfleisch</span><span class="rc-chip">Eier mit gebratenem Schweinebauch</span><span class="rc-chip">Polvito (uruguayisch)</span></div></div><div class="rc-quotes"><blockquote>„Super sympathische kleine Tapas-Bar mit ganz lieben Menschen. Die Tapas sind sensationell und mit viel Können zubereitet.“</blockquote><blockquote>„Eine winzige, aber wirklich charmante Tapas-Bar mit nur drei Tischen draußen in der Fußgängerzone unter einem Baum.“</blockquote></div><p class="rc-fact">💡 Nur drei Tische, alle draußen unter einem Baum in der Fußgängerzone von Morro Jable.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="o-m" data-rating="4.9" data-reviews="1996" data-title="OÚM" data-lat="28.6886524" data-lng="-13.9318541">
+<article class="rc-card" data-km="12.3" data-id="o-m" data-rating="4.9" data-reviews="1996" data-title="OÚM" data-lat="28.6886524" data-lng="-13.9318541">
   <div class="rc-media">
+    <span class="rc-ort">📍 Lajares</span>
     <img src="images/o-m.webp" alt="OÚM" loading="lazy">
     <div class="rc-rating">⭐ 4.9 (1.996)</div>
     <div class="rc-price">20–30 €</div>
@@ -2857,15 +2887,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>OÚM</h4>
     <p class="rc-category">Libanesisches Restaurant</p>
     <p class="rc-address">📍 Cl. Majanicho, 35, 35650 La Oliva, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚗 12,3 km · 14 Min. vom Corralejo-Zentrum</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=6259688891740065736" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://www.instagram.com/oum.lajares/" target="_blank" rel="noopener" title="instagram.com/oum.lajares">📸 Instagram ↗</a>
       <a class="rc-phone" href="tel:+34696232376">📞 +34 696 23 23 76</a>
     </div>
-    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geöffnet, schließt um 23:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">erforderlich</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Parkplätze vorhanden, teils gebührenpflichtig, teils kostenlos/an der Straße</span></div><a class="rc-website" href="https://instagram.com" target="_blank" rel="noopener">🌐 instagram.com ↗</a><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Spieße</span><span class="rc-chip">Auberginensalat</span><span class="rc-chip">libanesische Tapas</span></div></div><div class="rc-quotes"><blockquote>„Dieses wunderschöne Restaurant ist für uns eine ganz klare 5-Sterne-Empfehlung. Von der Reservierung bis zum herzlichen Abschied haben wir jede Minute genossen.“</blockquote><blockquote>„Gut eingerichtet, angenehmes Ambiente, freundliche Menschen, mega Koch, super leckeres Essen.“</blockquote></div><p class="rc-fact">💡 LGBTQ+-freundlich; sehr beliebt, Reservierung meist zwingend nötig.</p></div></details>
+    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geöffnet, schließt um 23:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">erforderlich</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Parkplätze vorhanden, teils gebührenpflichtig, teils kostenlos/an der Straße</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Spieße</span><span class="rc-chip">Auberginensalat</span><span class="rc-chip">libanesische Tapas</span></div></div><div class="rc-quotes"><blockquote>„Dieses wunderschöne Restaurant ist für uns eine ganz klare 5-Sterne-Empfehlung. Von der Reservierung bis zum herzlichen Abschied haben wir jede Minute genossen.“</blockquote><blockquote>„Gut eingerichtet, angenehmes Ambiente, freundliche Menschen, mega Koch, super leckeres Essen.“</blockquote></div><p class="rc-fact">💡 LGBTQ+-freundlich; sehr beliebt, Reservierung meist zwingend nötig.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="santa-ana-del-cotillo" data-rating="4.9" data-reviews="1582" data-title="Santa Ana DEL Cotillo" data-lat="28.682986" data-lng="-14.0103726">
+<article class="rc-card" data-km="19.8" data-id="santa-ana-del-cotillo" data-rating="4.9" data-reviews="1582" data-title="Santa Ana DEL Cotillo" data-lat="28.682986" data-lng="-14.0103726">
   <div class="rc-media">
+    <span class="rc-ort">📍 El Cotillo</span>
     <img src="images/santa-ana-del-cotillo.webp" alt="Santa Ana DEL Cotillo" loading="lazy">
     <div class="rc-rating">⭐ 4.9 (1.582)</div>
     <div class="rc-price">20–30 €</div>
@@ -2876,6 +2909,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>Santa Ana DEL Cotillo</h4>
     <p class="rc-category">Kanarisches Restaurant</p>
     <p class="rc-address">📍 C. Reyes Catolicos, 10, 35650 El Cotillo, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚗 19,8 km · 22 Min. vom Corralejo-Zentrum</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=10114832968130569787" target="_blank" rel="noopener">Google Maps ↗</a>
       <a class="rc-phone" href="tel:+34682684121">📞 +34 682 68 41 21</a>
@@ -2883,8 +2917,9 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 19:00 (genaue Wochenzeiten prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">erforderlich</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Nein, nur Bar</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, auch an der Straße, viele frei</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Ziegenfleisch</span><span class="rc-chip">Thunfisch</span><span class="rc-chip">Gazpacho</span><span class="rc-chip">Sardinen</span><span class="rc-chip">Riesengarnelen</span><span class="rc-chip">Ziegeneintopf</span><span class="rc-chip">Mojo</span><span class="rc-chip">Gofio</span></div></div><div class="rc-quotes"><blockquote>„Ein wunderschönes, kleines Restaurant! Die Inhaber strahlen eine Freude und Herzlichkeit aus, die sofort ansteckt.“</blockquote><blockquote>„Man fühlt sich sofort willkommen wie unter Freunden. Ana und ihr Mann sind die perfekten Gastgeber!“</blockquote></div><p class="rc-fact">💡 Sehr kleines, familiär geführtes Lokal – Ana und ihr Mann führen es persönlich. NUR BARZAHLUNG, Reservierung zwingend.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="kuma-lajares" data-rating="4.9" data-reviews="1051" data-title="Kuma Lajares" data-lat="28.6787124" data-lng="-13.9394611">
+<article class="rc-card" data-km="12.0" data-id="kuma-lajares" data-rating="4.9" data-reviews="1051" data-title="Kuma Lajares" data-lat="28.6787124" data-lng="-13.9394611">
   <div class="rc-media">
+    <span class="rc-ort">📍 Lajares</span>
     <img src="images/kuma-lajares.webp" alt="Kuma Lajares" loading="lazy">
     <div class="rc-rating">⭐ 4.9 (1.051)</div>
     <div class="rc-price">10–20 €</div>
@@ -2895,15 +2930,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>Kuma Lajares</h4>
     <p class="rc-category">Burgerrestaurant</p>
     <p class="rc-address">📍 C. Coronel Latherta González Hierro, 15, 35650 Lajares, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚗 12,0 km · 14 Min. vom Corralejo-Zentrum</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=10723409926796854344" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://kumaburguer.es" target="_blank" rel="noopener" title="kumaburguer.es">🌐 Website ↗</a>
       <a class="rc-phone" href="tel:+34928337365">📞 +34 928 33 73 65</a>
     </div>
-    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 19:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">möglich</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, auch an der Straße, viele frei</span></div><a class="rc-website" href="https://kumaburguer.es" target="_blank" rel="noopener">🌐 kumaburguer.es ↗</a><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Smash Burger</span><span class="rc-chip">Süßkartoffel-Fries</span><span class="rc-chip">Pulled Pork</span><span class="rc-chip">Captain-America-Burger</span><span class="rc-chip">Uruguayer-Burger</span><span class="rc-chip">Ziegenkäse-Burger</span></div></div><div class="rc-quotes"><blockquote>„Mit Abstand die besten Burger, die wir je gegessen haben! Selbstgemachte Buns, Smash-Patties und eine unglaublich gute selbstgemachte Soße.“</blockquote><blockquote>„Sehr guter Smash Burger, gute Variationen und die besten Pommes, die ich seit langem gegessen habe.“</blockquote></div><p class="rc-fact">💡 Große Auswahl an Biersorten, reines Smash-Burger-Konzept.</p></div></details>
+    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 19:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">möglich</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, auch an der Straße, viele frei</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Smash Burger</span><span class="rc-chip">Süßkartoffel-Fries</span><span class="rc-chip">Pulled Pork</span><span class="rc-chip">Captain-America-Burger</span><span class="rc-chip">Uruguayer-Burger</span><span class="rc-chip">Ziegenkäse-Burger</span></div></div><div class="rc-quotes"><blockquote>„Mit Abstand die besten Burger, die wir je gegessen haben! Selbstgemachte Buns, Smash-Patties und eine unglaublich gute selbstgemachte Soße.“</blockquote><blockquote>„Sehr guter Smash Burger, gute Variationen und die besten Pommes, die ich seit langem gegessen habe.“</blockquote></div><p class="rc-fact">💡 Große Auswahl an Biersorten, reines Smash-Burger-Konzept.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="restaurante-5-sentidos-arroces-y-tapas" data-rating="4.9" data-reviews="889" data-title="Restaurante 5 Sentidos Arroces y Tapas" data-lat="28.506079" data-lng="-13.879766">
+<article class="rc-card" data-km="32.0" data-id="restaurante-5-sentidos-arroces-y-tapas" data-rating="4.9" data-reviews="889" data-title="Restaurante 5 Sentidos Arroces y Tapas" data-lat="28.506079" data-lng="-13.879766">
   <div class="rc-media">
+    <span class="rc-ort">📍 Puerto del Rosario</span>
     <img src="images/restaurante-5-sentidos-arroces-y-tapas.webp" alt="Restaurante 5 Sentidos Arroces y Tapas" loading="lazy">
     <div class="rc-rating">⭐ 4.9 (889)</div>
     <div class="rc-price">20–30 €</div>
@@ -2914,15 +2952,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>Restaurante 5 Sentidos Arroces y Tapas</h4>
     <p class="rc-category">Reis &amp; Tapas</p>
     <p class="rc-address">📍 Calle Tenesor 48, esquina C. Beethoven, 1, 35600 Puerto del Rosario, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚗 32,0 km · 30 Min. vom Corralejo-Zentrum</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=15243710990418402613" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://arrocesytapas.es" target="_blank" rel="noopener" title="arrocesytapas.es">🌐 Website ↗</a>
       <a class="rc-phone" href="tel:+34928730631">📞 +34 928 73 06 31</a>
     </div>
-    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 13:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><a class="rc-website" href="https://arrocesytapas.es" target="_blank" rel="noopener">🌐 arrocesytapas.es ↗</a><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Arroces (Reisgerichte)</span></div></div><div class="rc-quotes"><blockquote>„Nettes Ambiente, freundliches und herzliches Personal – man fühlt sich einfach wohl.“</blockquote><blockquote>„Sehr feines Restaurant, super Personal, Essen für alle Sinne.“</blockquote></div><p class="rc-fact">💡 Karte ist auf Spanisch, wird aber per digitaler Speisekarte am Tisch übersetzt.</p></div></details>
+    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 13:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Arroces (Reisgerichte)</span></div></div><div class="rc-quotes"><blockquote>„Nettes Ambiente, freundliches und herzliches Personal – man fühlt sich einfach wohl.“</blockquote><blockquote>„Sehr feines Restaurant, super Personal, Essen für alle Sinne.“</blockquote></div><p class="rc-fact">💡 Karte ist auf Spanisch, wird aber per digitaler Speisekarte am Tisch übersetzt.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="el-invernadero-restaurante" data-rating="4.9" data-reviews="868" data-title="El Invernadero Restaurante" data-lat="28.4910916" data-lng="-13.9181522">
+<article class="rc-card" data-km="36.4" data-id="el-invernadero-restaurante" data-rating="4.9" data-reviews="868" data-title="El Invernadero Restaurante" data-lat="28.4910916" data-lng="-13.9181522">
   <div class="rc-media">
+    <span class="rc-ort">📍 Puerto del Rosario</span>
     <img src="images/el-invernadero-restaurante.webp" alt="El Invernadero Restaurante" loading="lazy">
     <div class="rc-rating">⭐ 4.9 (868)</div>
     <div class="rc-price">30–40 €</div>
@@ -2933,15 +2974,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>El Invernadero Restaurante</h4>
     <p class="rc-category">Veganes Restaurant</p>
     <p class="rc-address">📍 Travesia Llanos Pelados, 4, C, 35600 Puerto del Rosario, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚗 36,4 km · 33 Min. vom Corralejo-Zentrum</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=14124607963019188790" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://elinvernaderorestaurante.makro.rest" target="_blank" rel="noopener" title="elinvernaderorestaurante.makro.rest">🌐 Website ↗</a>
       <a class="rc-phone" href="tel:+34639546289">📞 +34 639 54 62 89</a>
     </div>
-    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 13:30 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">möglich (Tisch reservieren)</span></div><a class="rc-website" href="https://elinvernaderorestaurante.makro.rest" target="_blank" rel="noopener">🌐 elinvernaderorestaurante.makro.rest ↗</a><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">5-Gänge-Menü (34 €)</span><span class="rc-chip">Gemüse aus eigenem Garten</span></div></div><div class="rc-quotes"><blockquote>„Ein wirklich ganz besonderes kulinarisches Erlebnis. Das Fünf-Gänge-Menü war unglaublich beeindruckend – mit viel Kreativität und außergewöhnlichen Texturen.“</blockquote><blockquote>„Das Essen ist super und kommt direkt aus dem Gemüsegarten. 5-Gänge-Menü für 34 Euro, absolut ok.“</blockquote></div><p class="rc-fact">💡 Geführt von Alexis Morales und seiner Tochter Rosa, Gemüse stammt aus dem eigenen Garten.</p></div></details>
+    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 13:30 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">möglich (Tisch reservieren)</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">5-Gänge-Menü (34 €)</span><span class="rc-chip">Gemüse aus eigenem Garten</span></div></div><div class="rc-quotes"><blockquote>„Ein wirklich ganz besonderes kulinarisches Erlebnis. Das Fünf-Gänge-Menü war unglaublich beeindruckend – mit viel Kreativität und außergewöhnlichen Texturen.“</blockquote><blockquote>„Das Essen ist super und kommt direkt aus dem Gemüsegarten. 5-Gänge-Menü für 34 Euro, absolut ok.“</blockquote></div><p class="rc-fact">💡 Geführt von Alexis Morales und seiner Tochter Rosa, Gemüse stammt aus dem eigenen Garten.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="camello-bandido" data-rating="4.9" data-reviews="761" data-title="Camello Bandido" data-lat="28.6862667" data-lng="-13.9317692">
+<article class="rc-card" data-km="12.1" data-id="camello-bandido" data-rating="4.9" data-reviews="761" data-title="Camello Bandido" data-lat="28.6862667" data-lng="-13.9317692">
   <div class="rc-media">
+    <span class="rc-ort">📍 Lajares</span>
     <img src="images/camello-bandido.webp" alt="Camello Bandido" loading="lazy">
     <div class="rc-rating">⭐ 4.9 (761)</div>
     <div class="rc-price">10–20 €</div>
@@ -2952,15 +2996,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>Camello Bandido</h4>
     <p class="rc-category">Burgerrestaurant</p>
     <p class="rc-address">📍 Cl. Majanicho, 35650 Lajares, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚗 12,1 km · 14 Min. vom Corralejo-Zentrum</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=3364381677192654661" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://www.facebook.com/p/Camello-Bandido-100089693087943/" target="_blank" rel="noopener" title="facebook.com/p/Camello-Bandido-100089693087943">📘 Facebook ↗</a>
       <a class="rc-phone" href="tel:+34604222440">📞 +34 604 22 24 40</a>
     </div>
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Öffnet um 18:00 (Abendrestaurant, genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">für Abendessen empfohlen</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, auch an der Straße, meist viele frei</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">100%-Rind-Burger</span><span class="rc-chip">Süßkartoffeln mit Knoblauch-Koriander-Sauce</span><span class="rc-chip">Cheesecake</span></div></div><div class="rc-quotes"><blockquote>„Cooles kleines Restaurant mit tollem Außenbereich. Man sitzt entspannt auf der Terrasse mit Blick über Lajares. Und die Burger waren mega lecker.“</blockquote><blockquote>„Einfach der beste Burger, den wir je gegessen haben. 100% Rind, selbstgemachte Soßen, viel Liebe und ein tolles Team.“</blockquote></div><p class="rc-fact">💡 Terrasse mit Blick über Lajares; LGBTQ+-freundlich und als sicherer Ort für Transgender gelistet.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="chirate-restaurante" data-rating="4.9" data-reviews="380" data-title="Chirate Restaurante" data-lat="28.2034287" data-lng="-14.0768381">
+<article class="rc-card" data-km="82.1" data-id="chirate-restaurante" data-rating="4.9" data-reviews="380" data-title="Chirate Restaurante" data-lat="28.2034287" data-lng="-14.0768381">
   <div class="rc-media">
+    <span class="rc-ort">📍 Giniginamar</span>
     <img src="images/chirate-restaurante.webp" alt="Chirate Restaurante" loading="lazy">
     <div class="rc-rating">⭐ 4.9 (380)</div>
     <div class="rc-price">20–30 €</div>
@@ -2971,15 +3018,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>Chirate Restaurante</h4>
     <p class="rc-category">Restaurant, abgelegen/gehoben</p>
     <p class="rc-address">📍 Av. las Palmeras, 2, 35629 Giniginamar, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚗 82,1 km · 74 Min. vom Corralejo-Zentrum</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=7814281970951929297" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://chiraterestaurante.com" target="_blank" rel="noopener" title="chiraterestaurante.com">🌐 Website ↗</a>
       <a class="rc-phone" href="tel:+34611860208">📞 +34 611 86 02 08</a>
     </div>
-    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 13:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">empfohlen</span></div><a class="rc-website" href="https://chiraterestaurante.com" target="_blank" rel="noopener">🌐 chiraterestaurante.com ↗</a><div class="rc-quotes"><blockquote>„Ich muss sagen, dass ich mich selbst als kleinen Gourmet bezeichne – die Bewertungen sprechen für sich.“</blockquote><blockquote>„Abseits über eine kleine Schotterpiste – ein Restaurant, das man auf jeden Fall besuchen sollte.“</blockquote></div><p class="rc-fact">💡 Liegt abgelegen in Giniginamar, Anfahrt über Schotterpiste — vorher auf Google Maps die Route ansehen.</p></div></details>
+    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 13:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">empfohlen</span></div><div class="rc-quotes"><blockquote>„Ich muss sagen, dass ich mich selbst als kleinen Gourmet bezeichne – die Bewertungen sprechen für sich.“</blockquote><blockquote>„Abseits über eine kleine Schotterpiste – ein Restaurant, das man auf jeden Fall besuchen sollte.“</blockquote></div><p class="rc-fact">💡 Liegt abgelegen in Giniginamar, Anfahrt über Schotterpiste — vorher auf Google Maps die Route ansehen.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="nature-by-kuba" data-rating="4.9" data-reviews="345" data-title="Nature by Kuba" data-lat="28.4001296" data-lng="-13.8575619">
+<article class="rc-card" data-km="43.7" data-id="nature-by-kuba" data-rating="4.9" data-reviews="345" data-title="Nature by Kuba" data-lat="28.4001296" data-lng="-13.8575619">
   <div class="rc-media">
+    <span class="rc-ort">📍 Caleta de Fuste</span>
     <img src="images/nature-by-kuba.webp" alt="Nature by Kuba" loading="lazy">
     <div class="rc-rating">⭐ 4.9 (345)</div>
     <div class="rc-price">10–20 €</div>
@@ -2990,15 +3040,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>Nature by Kuba</h4>
     <p class="rc-category">Naturkostrestaurant / Frühstück &amp; Brunch</p>
     <p class="rc-address">📍 Velazquez Puerta del Sol Complex, C. Marcial Sánchez Velazque, 35610 Castillo Caleta de Fuste, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚗 43,7 km · 43 Min. vom Corralejo-Zentrum</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=8035888830294167675" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://www.facebook.com/naturebykuba/" target="_blank" rel="noopener" title="facebook.com/naturebykuba">📘 Facebook ↗</a>
       <a class="rc-phone" href="tel:+34624642802">📞 +34 624 64 28 02</a>
     </div>
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geöffnet, schließt um 15:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">möglich</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, auch an der Straße, meist viele frei</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Smashed Avocado</span><span class="rc-chip">Smoked Salmon</span></div></div><div class="rc-quotes"><blockquote>„Stunningly fresh and beautifully presented food. An absolute must for Breakfast, Brunch and Lunch.“ (übersetzt)</blockquote><blockquote>„Wir waren hier mehrmals frühstücken. Sehr leckere, hausgemachte Gerichte zu fairen Preisen, sehr freundlicher und aufmerksamer Service.“</blockquote></div><p class="rc-fact">💡 Liegt im Velazquez Puerta del Sol Complex in Caleta de Fuste, bekannt für große Teeauswahl und guten Kaffee.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="3-calici" data-rating="4.9" data-reviews="279" data-title="3 Calici" data-lat="28.7294315" data-lng="-13.8645694">
+<article class="rc-card" data-km="1.6" data-id="3-calici" data-rating="4.9" data-reviews="279" data-title="3 Calici" data-lat="28.7294315" data-lng="-13.8645694">
   <div class="rc-media">
+    <span class="rc-ort">📍 Corralejo</span>
     <img src="images/3-calici.webp" alt="3 Calici" loading="lazy">
     <div class="rc-rating">⭐ 4.9 (279)</div>
     <div class="rc-price">30–70 €</div>
@@ -3009,15 +3062,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>3 Calici</h4>
     <p class="rc-category">Italienisches Restaurant</p>
     <p class="rc-address">📍 Cc el campanario, C. Gran Canaria, 13, local 24, 35660 Corralejo, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚶 1,6 km vom Corralejo-Zentrum · ca. 21 Min. zu Fuß</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=850236161904646025" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://www.facebook.com/I3calici/" target="_blank" rel="noopener" title="facebook.com/I3calici">📘 Facebook ↗</a>
       <a class="rc-phone" href="tel:+34651386701">📞 +34 651 38 67 01</a>
     </div>
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet Fr um 18:30 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">empfohlen (Tisch bekommen ist Glückssache)</span></div><div class="rc-quotes"><blockquote>„Unheimlich herzliche Gastgeber, die jeden Gast auf Händen tragen. Dazu wirklich köstliches Essen.“</blockquote><blockquote>„Unglaublich toll! Wenn ihr einen Tisch bekommt, könnt ihr euch glücklich schätzen – wie in einer italienischen Familie!“</blockquote></div><p class="rc-fact">💡 Im Einkaufszentrum El Campanario, sehr familiär geführt.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="vala-food-open-club" data-rating="4.9" data-reviews="195" data-title="Vala · Food Open Club" data-lat="28.681599" data-lng="-13.931917">
+<article class="rc-card" data-km="11.6" data-id="vala-food-open-club" data-rating="4.9" data-reviews="195" data-title="Vala · Food Open Club" data-lat="28.681599" data-lng="-13.931917">
   <div class="rc-media">
+    <span class="rc-ort">📍 Lajares</span>
     <img src="images/vala-food-open-club.webp" alt="Vala · Food Open Club" loading="lazy">
     <div class="rc-rating">⭐ 4.9 (195)</div>
     <div class="rc-price">10–20 €</div>
@@ -3028,15 +3084,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>Vala · Food Open Club</h4>
     <p class="rc-category">Restaurant / Café</p>
     <p class="rc-address">📍 Cl. Majanicho, 35650 Lajares, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚗 11,6 km · 13 Min. vom Corralejo-Zentrum</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=18237870864992184443" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://www.instagram.com/valafoodopen.club/" target="_blank" rel="noopener" title="instagram.com/valafoodopen.club">📸 Instagram ↗</a>
       <a class="rc-phone" href="tel:+34660647919">📞 +34 660 64 79 19</a>
     </div>
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet Fr um 08:30 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-quotes"><blockquote>„Schönes Café mit einer guten Auswahl an kleineren Gerichten. Man kann herrlich entspannt im &#x27;Garten&#x27; bei angenehmer Musik sitzen.“</blockquote><blockquote>„Nettes neues Frühstückslokal. Leckere Smoothies und gute Speisen.“</blockquote></div><p class="rc-fact">💡 LGBTQ+-freundlich; Sitzbereich im &#x27;Garten&#x27; hinter dem Café.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="nuestro-estilo-empanadas" data-rating="4.9" data-reviews="183" data-title="Nuestro Estilo Empanadas" data-lat="28.7367202" data-lng="-13.8721356">
+<article class="rc-card" data-km="0.6" data-id="nuestro-estilo-empanadas" data-rating="4.9" data-reviews="183" data-title="Nuestro Estilo Empanadas" data-lat="28.7367202" data-lng="-13.8721356">
   <div class="rc-media">
+    <span class="rc-ort">📍 Corralejo</span>
     <img src="images/nuestro-estilo-empanadas.webp" alt="Nuestro Estilo Empanadas" loading="lazy">
     <div class="rc-rating">⭐ 4.9 (183)</div>
     <div class="rc-price">1–10 €</div>
@@ -3047,15 +3106,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>Nuestro Estilo Empanadas</h4>
     <p class="rc-category">Empanada-Imbiss</p>
     <p class="rc-address">📍 Av. Juan Carlos I, 65, Loc 4, 35660 Corralejo, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚶 0,6 km vom Corralejo-Zentrum · ca. 8 Min. zu Fuß</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=11402706370679737504" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://nuestroestiloempanadas.com" target="_blank" rel="noopener" title="nuestroestiloempanadas.com">🌐 Website ↗</a>
       <a class="rc-phone" href="tel:+34680351751">📞 +34 680 35 17 51</a>
     </div>
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geöffnet · schließt 15:00, öffnet wieder 19:00 (Mittagspause, genaue Wochenzeiten prüfen)</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Empanadas</span><span class="rc-chip">Pizza (laut Review neu im Angebot)</span></div></div><div class="rc-quotes"><blockquote>„Die leckersten Empanadas ever!!! Von Einheimischen rege besucht, noch ein Geheimtipp für Touristen.“</blockquote><blockquote>„Alle Empanadas die ich ausgesucht habe waren mehr als köstlich. Mein neuer Favorit für Empanadas in Corralejo!“</blockquote></div><p class="rc-fact">💡 Zweiter, eigenständiger Standort in Corralejo (nicht identisch mit &#x27;Nuestro Estilo Empanadas - Lajares&#x27;).</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="dulcis-in-fundo" data-rating="4.9" data-reviews="65" data-title="Dulcis in fundo" data-lat="28.7413815" data-lng="-13.8691594">
+<article class="rc-card" data-km="0.8" data-id="dulcis-in-fundo" data-rating="4.9" data-reviews="65" data-title="Dulcis in fundo" data-lat="28.7413815" data-lng="-13.8691594">
   <div class="rc-media">
+    <span class="rc-ort">📍 Corralejo</span>
     <img src="images/dulcis-in-fundo.webp" alt="Dulcis in fundo" loading="lazy">
     <div class="rc-rating">⭐ 4.9 (65)</div>
     <div class="rc-price">1–10 €</div>
@@ -3066,15 +3128,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>Dulcis in fundo</h4>
     <p class="rc-category">Tortenbäckerei</p>
     <p class="rc-address">📍 C. Pizarro, 42, local 4, 35660 Corralejo, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚶 0,8 km vom Corralejo-Zentrum · ca. 10 Min. zu Fuß</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=9248737637091775508" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://www.facebook.com/people/Dulcis-in-fundo/100061003874621/" target="_blank" rel="noopener" title="facebook.com/people/Dulcis-in-fundo/100061003874621">📘 Facebook ↗</a>
       <a class="rc-phone" href="tel:+34641259889">📞 +34 641 25 98 89</a>
     </div>
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 08:30 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">🥡 Zum Mitnehmen</span><span class="rc-attr-value">Ja</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Cornetti</span><span class="rc-chip">Gebäck/Törtchen</span><span class="rc-chip">Brioche</span></div></div><div class="rc-quotes"><blockquote>„Super freundliches Personal. Super gute Patisserie-Auswahl. Habe auch schon eine Torte machen lassen – mit ganz viel Liebe gemacht.“</blockquote><blockquote>„Ein wahres italienisches Juwel im Herzen von Corralejo – endlich die authentischen Aromen Italiens gefunden.“ (übersetzt, gekürzt)</blockquote></div><p class="rc-fact">💡 Italienische Patisserie/Bäckerei, macht auch Torten auf Bestellung.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="caf-del-mar-ajuy" data-rating="4.8" data-reviews="2124" data-title="Café del Mar ajuy" data-lat="28.3997351" data-lng="-14.1552004">
+<article class="rc-card" data-km="80.2" data-id="caf-del-mar-ajuy" data-rating="4.8" data-reviews="2124" data-title="Café del Mar ajuy" data-lat="28.3997351" data-lng="-14.1552004">
   <div class="rc-media">
+    <span class="rc-ort">📍 Ajuy</span>
     <img src="images/caf-del-mar-ajuy.webp" alt="Café del Mar ajuy" loading="lazy">
     <div class="rc-rating">⭐ 4.8 (2.124)</div>
     <div class="rc-price">20–30 €</div>
@@ -3085,15 +3150,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>Café del Mar ajuy</h4>
     <p class="rc-category">Fisch &amp; Meeresfrüchte</p>
     <p class="rc-address">📍 C. Puerto Azul, 4, 35628 Ajuy, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚗 80,2 km · 71 Min. vom Corralejo-Zentrum</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=5450399515429711215" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://www.facebook.com/cafedelmarajuy/" target="_blank" rel="noopener" title="facebook.com/cafedelmarajuy">📘 Facebook ↗</a>
       
     </div>
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Öffnet um 12:30 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, auch an der Straße, meist viele frei</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Parrillada de Mariscos</span><span class="rc-chip">Parrillada de Pescado</span></div></div><div class="rc-quotes"><blockquote>„Una comida para repetir, simpatía de María, buen servicio y excelente comida. Muy recomendable.“ (übersetzt: „Ein Essen, das man wiederholen möchte, sympathische María, guter Service und exzellentes Essen. Sehr empfehlenswert.“)</blockquote><blockquote>„Die Fischplatte war eine der besten, die wir je gegessen haben.“</blockquote></div><p class="rc-fact">💡 Bezeichnet sich bei Google als von Frauen geführt („von Frauen geführt“-Label).</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="restaurante-casa-marcos" data-rating="4.8" data-reviews="1719" data-title="Restaurante Casa Marcos" data-lat="28.6295006" data-lng="-13.9024704">
+<article class="rc-card" data-km="13.2" data-id="restaurante-casa-marcos" data-rating="4.8" data-reviews="1719" data-title="Restaurante Casa Marcos" data-lat="28.6295006" data-lng="-13.9024704">
   <div class="rc-media">
+    <span class="rc-ort">📍 Villaverde</span>
     <img src="images/restaurante-casa-marcos.webp" alt="Restaurante Casa Marcos" loading="lazy">
     <div class="rc-rating">⭐ 4.8 (1.719)</div>
     <div class="rc-price">20–30 €</div>
@@ -3104,15 +3172,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>Restaurante Casa Marcos</h4>
     <p class="rc-category">Restaurant, kanarisch/mediterran</p>
     <p class="rc-address">📍 C. de los Geranios, 10, 35640 Villaverde, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚗 13,2 km · 16 Min. vom Corralejo-Zentrum</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=6962575585047987635" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://casamarcos-villaverde.com/" target="_blank" rel="noopener" title="casamarcos-villaverde.com">🌐 Website ↗</a>
       <a class="rc-phone" href="tel:+34613657137">📞 +34 613 65 71 37</a>
     </div>
-    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Öffnet um 12:30 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">für Brunch, Mittag- und Abendessen empfohlen</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, auch an der Straße</span></div><a class="rc-website" href="https://instagram.com" target="_blank" rel="noopener">🌐 instagram.com (kein eigener Domain-Auftritt, Speisekarte/Updates über Instagram) ↗</a><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Tarta de Queso Horneada (gebackener Käsekuchen)</span><span class="rc-chip">Tiramisu</span></div></div><div class="rc-quotes"><blockquote>„Posiblemente el mejor restaurante de la isla.“ (übersetzt: „Möglicherweise das beste Restaurant der Insel.“)</blockquote><blockquote>„Alles 5 Sterne, nur mit Reservierung.“</blockquote></div><p class="rc-fact">💡 Keine feste Speisekarte — wird laut Gästen täglich neu geschrieben, je nach verfügbaren Zutaten.</p></div></details>
+    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Öffnet um 12:30 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">für Brunch, Mittag- und Abendessen empfohlen</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, auch an der Straße</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Tarta de Queso Horneada (gebackener Käsekuchen)</span><span class="rc-chip">Tiramisu</span></div></div><div class="rc-quotes"><blockquote>„Posiblemente el mejor restaurante de la isla.“ (übersetzt: „Möglicherweise das beste Restaurant der Insel.“)</blockquote><blockquote>„Alles 5 Sterne, nur mit Reservierung.“</blockquote></div><p class="rc-fact">💡 Keine feste Speisekarte — wird laut Gästen täglich neu geschrieben, je nach verfügbaren Zutaten.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="casa-manolo" data-rating="4.8" data-reviews="1502" data-title="Casa Manolo" data-lat="28.7367725" data-lng="-13.8696232">
+<article class="rc-card" data-km="0.5" data-id="casa-manolo" data-rating="4.8" data-reviews="1502" data-title="Casa Manolo" data-lat="28.7367725" data-lng="-13.8696232">
   <div class="rc-media">
+    <span class="rc-ort">📍 Corralejo</span>
     <img src="images/casa-manolo.webp" alt="Casa Manolo" loading="lazy">
     <div class="rc-rating">⭐ 4.8 (1.502)</div>
     <div class="rc-price">20–30 €</div>
@@ -3123,15 +3194,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>Casa Manolo</h4>
     <p class="rc-category">Kanarisches Restaurant</p>
     <p class="rc-address">📍 C. María González Carballo, 13, 35660 Corralejo, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚶 0,5 km vom Corralejo-Zentrum · ca. 6 Min. zu Fuß</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=107090732105165547" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://www.instagram.com/restaurante_casa_manolo/" target="_blank" rel="noopener" title="instagram.com/restaurante_casa_manolo">📸 Instagram ↗</a>
       <a class="rc-phone" href="tel:+34641127488">📞 +34 641 12 74 88</a>
     </div>
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Öffnet um 18:30 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">für Abendessen dringend empfohlen (ohne Reservierung abends oft nichts frei)</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, aber laut Bewertungen nicht immer leicht zu finden</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Paella de Pescado</span><span class="rc-chip">Pulpo A la Gallega</span></div></div><div class="rc-quotes"><blockquote>„Tolles kleines Restaurant, wo ohne Reservierung am Abend schon mal gar nichts geht. Super freundliches Personal vom Empfang bis zur Küche.“</blockquote></div><p class="rc-fact">💡 Auch glutenfrei/für Zöliakie gut geeignet laut Gästebewertung.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="caprichos-del-mar" data-rating="4.8" data-reviews="1051" data-title="Caprichos Del Mar" data-lat="28.7374774" data-lng="-13.867529">
+<article class="rc-card" data-km="1.1" data-id="caprichos-del-mar" data-rating="4.8" data-reviews="1051" data-title="Caprichos Del Mar" data-lat="28.7374774" data-lng="-13.867529">
   <div class="rc-media">
+    <span class="rc-ort">📍 Corralejo</span>
     <img src="images/caprichos-del-mar.webp" alt="Caprichos Del Mar" loading="lazy">
     <div class="rc-rating">⭐ 4.8 (1.051)</div>
     <div class="rc-price">20–30 €</div>
@@ -3142,15 +3216,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>Caprichos Del Mar</h4>
     <p class="rc-category">Fisch &amp; Meeresfrüchte</p>
     <p class="rc-address">📍 Calle Hernán Cortés, 6, 35660 Corralejo, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚶 1,1 km vom Corralejo-Zentrum · ca. 14 Min. zu Fuß</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=6666702178235168359" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://caprichosdelmar.net" target="_blank" rel="noopener" title="caprichosdelmar.net">🌐 Website ↗</a>
       <a class="rc-phone" href="tel:+34655692657">📞 +34 655 69 26 57</a>
     </div>
-    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Öffnet Fr um 18:30 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">möglich</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, auch an der Straße</span></div><a class="rc-website" href="https://caprichosdelmar.net" target="_blank" rel="noopener">🌐 caprichosdelmar.net ↗</a><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Frische Austern mit Zitrone</span><span class="rc-chip">Fritto Misto</span></div></div><div class="rc-quotes"><blockquote>„Un posto dove si mangia bene e ti senti a casa. Mi raccomando provate le ostriche, sono buonissime e fresche!“ (übersetzt)</blockquote><blockquote>„Risotto Meeresfrüchte und die kanarische Ziege waren spitze.“</blockquote></div><p class="rc-fact">💡 Dachterrasse mit Kamin und hervorragender Weinkarte.</p></div></details>
+    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Öffnet Fr um 18:30 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">möglich</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, auch an der Straße</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Frische Austern mit Zitrone</span><span class="rc-chip">Fritto Misto</span></div></div><div class="rc-quotes"><blockquote>„Un posto dove si mangia bene e ti senti a casa. Mi raccomando provate le ostriche, sono buonissime e fresche!“ (übersetzt)</blockquote><blockquote>„Risotto Meeresfrüchte und die kanarische Ziege waren spitze.“</blockquote></div><p class="rc-fact">💡 Dachterrasse mit Kamin und hervorragender Weinkarte.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="pez-gordo-fuerteventura" data-rating="4.8" data-reviews="1028" data-title="Pez Gordo Fuerteventura" data-lat="28.6841958" data-lng="-14.0113953">
+<article class="rc-card" data-km="20.0" data-id="pez-gordo-fuerteventura" data-rating="4.8" data-reviews="1028" data-title="Pez Gordo Fuerteventura" data-lat="28.6841958" data-lng="-14.0113953">
   <div class="rc-media">
+    <span class="rc-ort">📍 El Cotillo</span>
     <img src="images/pez-gordo-fuerteventura.webp" alt="Pez Gordo Fuerteventura" loading="lazy">
     <div class="rc-rating">⭐ 4.8 (1.028)</div>
     <div class="rc-price">20–30 €</div>
@@ -3161,15 +3238,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>Pez Gordo Fuerteventura</h4>
     <p class="rc-category">Restaurant, mediterran, Dachterrasse</p>
     <p class="rc-address">📍 Calle Requena, 5, 35650 El Cotillo, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚗 20,0 km · 22 Min. vom Corralejo-Zentrum</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=12815342580159058823" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://www.instagram.com/pez_gordo_fue/" target="_blank" rel="noopener" title="instagram.com/pez_gordo_fue">📸 Instagram ↗</a>
       <a class="rc-phone" href="tel:+34928334308">📞 +34 928 33 43 08</a>
     </div>
-    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 13:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">für Mittag- und Abendessen empfohlen</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, auch an der Straße</span></div><a class="rc-website" href="https://instagram.com" target="_blank" rel="noopener">🌐 instagram.com ↗</a><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Oktopus</span><span class="rc-chip">Thunfisch</span><span class="rc-chip">Gofio-Butter-Brot</span><span class="rc-chip">Pappardelle</span><span class="rc-chip">Kabeljau-Burger</span></div></div><div class="rc-quotes"><blockquote>„Der Ausblick auf der Dachterrasse ist wunderschön und wir haben uns mit dem Service rundum wohl gefühlt!“</blockquote><blockquote>„Hausgemachtes Brot mit Gofio-Butter sehr zu empfehlen. Frische Zutaten und kreative Umsetzung.“</blockquote></div><p class="rc-fact">💡 Dachterrasse mit Sonnenuntergangsblick in El Cotillo.</p></div></details>
+    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 13:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">für Mittag- und Abendessen empfohlen</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, auch an der Straße</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Oktopus</span><span class="rc-chip">Thunfisch</span><span class="rc-chip">Gofio-Butter-Brot</span><span class="rc-chip">Pappardelle</span><span class="rc-chip">Kabeljau-Burger</span></div></div><div class="rc-quotes"><blockquote>„Der Ausblick auf der Dachterrasse ist wunderschön und wir haben uns mit dem Service rundum wohl gefühlt!“</blockquote><blockquote>„Hausgemachtes Brot mit Gofio-Butter sehr zu empfehlen. Frische Zutaten und kreative Umsetzung.“</blockquote></div><p class="rc-fact">💡 Dachterrasse mit Sonnenuntergangsblick in El Cotillo.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="casa-de-comidas-valtarajal" data-rating="4.8" data-reviews="876" data-title="Casa de comidas Valtarajal" data-lat="28.4240031" data-lng="-14.0563596">
+<article class="rc-card" data-km="60.0" data-id="casa-de-comidas-valtarajal" data-rating="4.8" data-reviews="876" data-title="Casa de comidas Valtarajal" data-lat="28.4240031" data-lng="-14.0563596">
   <div class="rc-media">
+    <span class="rc-ort">📍 Betancuria</span>
     <img src="images/casa-de-comidas-valtarajal.webp" alt="Casa de comidas Valtarajal" loading="lazy">
     <div class="rc-rating">⭐ 4.8 (876)</div>
     <div class="rc-price">10–20 €</div>
@@ -3180,6 +3260,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>Casa de comidas Valtarajal</h4>
     <p class="rc-category">Kanarisches Restaurant</p>
     <p class="rc-address">📍 C. Roberto Roldán, 23, 35637 Betancuria, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚗 60,0 km · 55 Min. vom Corralejo-Zentrum</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=10580389479793359913" target="_blank" rel="noopener">Google Maps ↗</a>
       
@@ -3187,8 +3268,9 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen, öffnet Mi um 13:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">möglich</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, meist viele frei</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Ropa Vieja de Cabra</span><span class="rc-chip">Estofado de Cabra</span></div></div><div class="rc-quotes"><blockquote>„Amazing food and great staff. I loved their pepper stuffed with rice and meat with goat cheese on top, baked in the oven. Lovely place to eat in Betancuria.“ (übersetzt)</blockquote></div><p class="rc-fact">💡 Bestellung und Selbstservice an der Bar (kein klassischer Tischservice) — dafür sehr gutes Preis-Leistungs-Verhältnis für lokale Küche.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="restaurante-la-bah-a-de-puerto-lajas" data-rating="4.8" data-reviews="710" data-title="Restaurante La Bahía de Puerto Lajas" data-lat="28.5383233" data-lng="-13.8392289">
+<article class="rc-card" data-km="27.0" data-id="restaurante-la-bah-a-de-puerto-lajas" data-rating="4.8" data-reviews="710" data-title="Restaurante La Bahía de Puerto Lajas" data-lat="28.5383233" data-lng="-13.8392289">
   <div class="rc-media">
+    <span class="rc-ort">📍 Puerto Lajas</span>
     <img src="images/restaurante-la-bah-a-de-puerto-lajas.webp" alt="Restaurante La Bahía de Puerto Lajas" loading="lazy">
     <div class="rc-rating">⭐ 4.8 (710)</div>
     <div class="rc-price">20–30 €</div>
@@ -3199,15 +3281,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>Restaurante La Bahía de Puerto Lajas</h4>
     <p class="rc-category">Restaurant (Fisch/Steak), Terrasse am Meer</p>
     <p class="rc-address">📍 Puerto Lajas Sur, 86, 102, 35612 Puerto Lajas, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚗 27,0 km · 24 Min. vom Corralejo-Zentrum</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=6217674995249842627" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://www.instagram.com/labahiadepuertolajas/" target="_blank" rel="noopener" title="instagram.com/labahiadepuertolajas">📸 Instagram ↗</a>
       <a class="rc-phone" href="tel:+34629317747">📞 +34 629 31 77 47</a>
     </div>
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 12:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Thunfisch</span><span class="rc-chip">Steaks</span><span class="rc-chip">Apfelkuchen</span><span class="rc-chip">Brownie</span></div></div><div class="rc-quotes"><blockquote>„Ein echter Geheimtipp – super gelegen, herzlich geführt und perfekt mit Baby!“</blockquote><blockquote>„Sehr lecker gegessen mit Blick auf Surfer und Kiter. Thunfisch ist sehr lecker, Apfelkuchen und Brownie himmlisch.“</blockquote></div><p class="rc-fact">💡 Terrasse mit Blick auf Surfer und Kiter in Puerto Lajas.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="domenoteca-wine-bar-and-food" data-rating="4.8" data-reviews="448" data-title="Domenoteca - Wine Bar And Food" data-lat="28.7405358" data-lng="-13.8668355">
+<article class="rc-card" data-km="0.9" data-id="domenoteca-wine-bar-and-food" data-rating="4.8" data-reviews="448" data-title="Domenoteca - Wine Bar And Food" data-lat="28.7405358" data-lng="-13.8668355">
   <div class="rc-media">
+    <span class="rc-ort">📍 Corralejo</span>
     <img src="images/domenoteca-wine-bar-and-food.webp" alt="Domenoteca - Wine Bar And Food" loading="lazy">
     <div class="rc-rating">⭐ 4.8 (448)</div>
     <div class="rc-price">20–30 €</div>
@@ -3218,15 +3303,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>Domenoteca - Wine Bar And Food</h4>
     <p class="rc-category">Meeresfrüchte-Restaurant / Weinbar</p>
     <p class="rc-address">📍 C. la Ballena, 5, 35660 Corralejo, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚶 0,9 km vom Corralejo-Zentrum · ca. 12 Min. zu Fuß</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=13527737354386088782" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://www.instagram.com/domenoteca/" target="_blank" rel="noopener" title="instagram.com/domenoteca">📸 Instagram ↗</a>
       <a class="rc-phone" href="tel:+34639633913">📞 +34 639 63 39 13</a>
     </div>
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet Fr um 19:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Oktopus</span><span class="rc-chip">Frischer Tagesfisch</span></div></div><div class="rc-quotes"><blockquote>„Wir wurden als Fleischesser und Veganerin beide vollkommen glücklich! Domenoteca beriet uns toll zu Wein und Gerichten.“</blockquote><blockquote>„Der Oktopus ist wunderbar zum Start, danach nach dem frischen Tagesfisch fragen – perfekt gekocht!“</blockquote></div><p class="rc-fact">💡 Gute Weinberatung/Weinkarte, empfohlen für Fleischesser wie Veganer gleichermaßen.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="restaurante-des-rtico" data-rating="4.8" data-reviews="444" data-title="Restaurante Desértico" data-lat="28.0497112" data-lng="-14.3521401">
+<article class="rc-card" data-km="114.8" data-id="restaurante-des-rtico" data-rating="4.8" data-reviews="444" data-title="Restaurante Desértico" data-lat="28.0497112" data-lng="-14.3521401">
   <div class="rc-media">
+    <span class="rc-ort">📍 Morro Jable</span>
     <img src="images/restaurante-des-rtico.webp" alt="Restaurante Desértico" loading="lazy">
     <div class="rc-rating">⭐ 4.8 (444)</div>
     <div class="rc-price">20–30 €</div>
@@ -3237,15 +3325,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>Restaurante Desértico</h4>
     <p class="rc-category">Restaurant (spanisch/international, gehoben)</p>
     <p class="rc-address">📍 C. San Juan, 35625 Morro Jable, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚗 114,8 km · 103 Min. vom Corralejo-Zentrum</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=17024232182940217536" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://instagram.com/restaurantedesertico" target="_blank" rel="noopener" title="instagram.com/restaurantedesertico">📸 Instagram ↗</a>
       <a class="rc-phone" href="tel:+34828063772">📞 +34 828 06 37 72</a>
     </div>
-    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 18:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">empfohlen</span></div><a class="rc-website" href="https://instagram.com/restaurantedesertico" target="_blank" rel="noopener">🌐 instagram.com/restaurantedesertico ↗</a><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Bao Brot</span><span class="rc-chip">Chicken Fingers</span><span class="rc-chip">Getrüffelte Pasta</span></div></div><div class="rc-quotes"><blockquote>„Wir hatten wirklich einen richtig schönen Abend im Desértico. Der Service war unglaublich herzlich und aufmerksam.“</blockquote><blockquote>„Tolles spanisches Restaurant mit interessanter Karte. Bao Brot und Chicken Fingers als Vorspeise, danach getrüffelte Pasta.“</blockquote></div></div></details>
+    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 18:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">empfohlen</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Bao Brot</span><span class="rc-chip">Chicken Fingers</span><span class="rc-chip">Getrüffelte Pasta</span></div></div><div class="rc-quotes"><blockquote>„Wir hatten wirklich einen richtig schönen Abend im Desértico. Der Service war unglaublich herzlich und aufmerksam.“</blockquote><blockquote>„Tolles spanisches Restaurant mit interessanter Karte. Bao Brot und Chicken Fingers als Vorspeise, danach getrüffelte Pasta.“</blockquote></div></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="gioli-gourmet-club" data-rating="4.8" data-reviews="438" data-title="Gioli Gourmet Club" data-lat="28.1846853" data-lng="-14.1522902">
+<article class="rc-card" data-km="85.4" data-id="gioli-gourmet-club" data-rating="4.8" data-reviews="438" data-title="Gioli Gourmet Club" data-lat="28.1846853" data-lng="-14.1522902">
   <div class="rc-media">
+    <span class="rc-ort">📍 La Lajita</span>
     <img src="images/gioli-gourmet-club.webp" alt="Gioli Gourmet Club" loading="lazy">
     <div class="rc-rating">⭐ 4.8 (438)</div>
     <div class="rc-price">10–20 €</div>
@@ -3256,15 +3347,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>Gioli Gourmet Club</h4>
     <p class="rc-category">Pizza</p>
     <p class="rc-address">📍 C. Guatatiboa, 11, 35627 La Lajita, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚗 85,4 km · 75 Min. vom Corralejo-Zentrum</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=14968190049821429405" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://www.instagram.com/gioli.gourmetclub/" target="_blank" rel="noopener" title="instagram.com/gioli.gourmetclub">📸 Instagram ↗</a>
       <a class="rc-phone" href="tel:+34828786157">📞 +34 828 78 61 57</a>
     </div>
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 15:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Pizza (ausgefallene Rezepte)</span><span class="rc-chip">Hummus des Tages</span></div></div><div class="rc-quotes"><blockquote>„Hier sollte man unbedingt mal Pizza essen! Der Teig ist unglaublich knusprig und fluffig zugleich.“</blockquote><blockquote>„Eines meiner Lieblingsrestaurants! Sehr schönes Ambiente und ausgezeichnete Pizza.“</blockquote></div><p class="rc-fact">💡 Kleines Restaurant, von zwei Frauen geführt, in La Lajita.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="the-ugly-duckling" data-rating="4.8" data-reviews="436" data-title="The Ugly Duckling" data-lat="28.7138849" data-lng="-13.8689641">
+<article class="rc-card" data-km="3.2" data-id="the-ugly-duckling" data-rating="4.8" data-reviews="436" data-title="The Ugly Duckling" data-lat="28.7138849" data-lng="-13.8689641">
   <div class="rc-media">
+    <span class="rc-ort">📍 Corralejo</span>
     <img src="images/the-ugly-duckling.webp" alt="The Ugly Duckling" loading="lazy">
     <div class="rc-rating">⭐ 4.8 (436)</div>
     <div class="rc-price">20–60 €</div>
@@ -3275,15 +3369,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>The Ugly Duckling</h4>
     <p class="rc-category">Restaurant (gehoben)</p>
     <p class="rc-address">📍 C. Abubilla, 1, 35660 Corralejo, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚗 3,2 km · 6 Min. vom Corralejo-Zentrum</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=1492523943936041343" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://theuglyduckling.es/" target="_blank" rel="noopener" title="theuglyduckling.es">🌐 Website ↗</a>
       <a class="rc-phone" href="tel:+34618044896">📞 +34 618 04 48 96</a>
     </div>
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet Fr um 17:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">über Kontaktformular der Webseite empfohlen</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Digestif-Menü</span></div></div><div class="rc-quotes"><blockquote>„WOW. Von der Tischreservierung über das Kontaktformular bis zum Digestif professionell, reibungslos, freundlich.“</blockquote><blockquote>„Es ist verrückt, für ein Abendessen über die ganze Insel zu fahren, aber wir fanden es wert. Henrik ist ein Unterhaltungskünstler.“</blockquote></div><p class="rc-fact">💡 Küchenchef Henrik sorgt laut Gästen für ein unterhaltsames Erlebnis am Tisch.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="restaurante-mamacita" data-rating="4.8" data-reviews="424" data-title="Restaurante Mamacita" data-lat="28.7385604" data-lng="-13.8692105">
+<article class="rc-card" data-km="0.9" data-id="restaurante-mamacita" data-rating="4.8" data-reviews="424" data-title="Restaurante Mamacita" data-lat="28.7385604" data-lng="-13.8692105">
   <div class="rc-media">
+    <span class="rc-ort">📍 Corralejo</span>
     <img src="images/restaurante-mamacita.webp" alt="Restaurante Mamacita" loading="lazy">
     <div class="rc-rating">⭐ 4.8 (424)</div>
     <div class="rc-price">10–20 €</div>
@@ -3294,15 +3391,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>Restaurante Mamacita</h4>
     <p class="rc-category">Italienisches Restaurant</p>
     <p class="rc-address">📍 C. Lepanto, 12, 35660 Corralejo, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚶 0,9 km vom Corralejo-Zentrum · ca. 12 Min. zu Fuß</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=10145394564516245045" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://www.facebook.com/MamacitaFuerteventura/" target="_blank" rel="noopener" title="facebook.com/MamacitaFuerteventura">📘 Facebook ↗</a>
       <a class="rc-phone" href="tel:+34642274208">📞 +34 642 27 42 08</a>
     </div>
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 18:30 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">dringend empfohlen</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Carbonara</span></div></div><div class="rc-quotes"><blockquote>„Tisch reservieren! Der Gastgeber und die Köchin sind unglaublich nett. Das Essen schmeckt wie in den besten Lokalen Italiens.“</blockquote><blockquote>„So ein tolles Restaurant mit wahnsinnig herzlichen Inhabern. Die beste Carbonara, die ich jemals gegessen habe.“</blockquote></div></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="sucr" data-rating="4.8" data-reviews="377" data-title="Sucré" data-lat="28.7358041" data-lng="-13.8697864">
+<article class="rc-card" data-km="0.1" data-id="sucr" data-rating="4.8" data-reviews="377" data-title="Sucré" data-lat="28.7358041" data-lng="-13.8697864">
   <div class="rc-media">
+    <span class="rc-ort">📍 Corralejo</span>
     <img src="images/sucr.webp" alt="Sucré" loading="lazy">
     <div class="rc-rating">⭐ 4.8 (377)</div>
     <div class="rc-price">1–10 €</div>
@@ -3313,6 +3413,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>Sucré</h4>
     <p class="rc-category">Tortenbäckerei</p>
     <p class="rc-address">📍 C. Anzuelo, 5, 35660 Corralejo, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚶 0,1 km vom Corralejo-Zentrum · ca. 2 Min. zu Fuß</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=4547394512880642991" target="_blank" rel="noopener">Google Maps ↗</a>
       <a class="rc-phone" href="tel:+34642078692">📞 +34 642 07 86 92</a>
@@ -3320,8 +3421,9 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet Fr um 08:00</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze an der Straße</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Pistazien-Törtchen</span><span class="rc-chip">Zitronen-Tarte</span><span class="rc-chip">Croissants</span></div></div><div class="rc-quotes"><blockquote>„Tolle Auswahl an kleinen Torten von Frucht bis Schokolade oder Pistazie. Kaffee gut, Service sehr freundlich.“</blockquote></div></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="buddha-restaurant-lounge" data-rating="4.8" data-reviews="261" data-title="Buddha restaurant &amp; Lounge" data-lat="28.707702" data-lng="-13.875864">
+<article class="rc-card" data-km="3.6" data-id="buddha-restaurant-lounge" data-rating="4.8" data-reviews="261" data-title="Buddha restaurant &amp; Lounge" data-lat="28.707702" data-lng="-13.875864">
   <div class="rc-media">
+    <span class="rc-ort">📍 Corralejo</span>
     <img src="images/buddha-restaurant-lounge.webp" alt="Buddha restaurant &amp; Lounge" loading="lazy">
     <div class="rc-rating">⭐ 4.8 (261)</div>
     <div class="rc-price">30–50 €</div>
@@ -3332,15 +3434,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>Buddha restaurant &amp; Lounge</h4>
     <p class="rc-category">Restaurant (gehoben, Fine Dining)</p>
     <p class="rc-address">📍 C. Tarabilla, 1, 35660 Corralejo, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚗 3,6 km · 7 Min. vom Corralejo-Zentrum</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=13718258845301611435" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://buddha-ftv.onepage.me/" target="_blank" rel="noopener" title="buddha-ftv.onepage.me">🌐 Website ↗</a>
       <a class="rc-phone" href="tel:+34657155548">📞 +34 657 15 55 48</a>
     </div>
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 16:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">empfohlen (Menü dauert bewusst mehrere Stunden)</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">3-Gänge-Menü</span></div></div><div class="rc-quotes"><blockquote>„Wer den schnellen Imbiss sucht, ist hier total verkehrt. Drei Stunden für 3 Gänge inkl. einer Flasche Wein.“</blockquote><blockquote>„Ein sehr schönes und stilvolles Restaurant mit besonderer Atmosphäre. Der Chef war sehr zuvorkommend.“</blockquote></div><p class="rc-fact">💡 Bewusst entschleunigtes Fine-Dining-Erlebnis, kein schneller Imbiss.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="saladar-bistrot-restaurant" data-rating="4.8" data-reviews="192" data-title="Saladar Bistrot Restaurant" data-lat="28.0524532" data-lng="-14.3292803">
+<article class="rc-card" data-km="112.6" data-id="saladar-bistrot-restaurant" data-rating="4.8" data-reviews="192" data-title="Saladar Bistrot Restaurant" data-lat="28.0524532" data-lng="-14.3292803">
   <div class="rc-media">
+    <span class="rc-ort">📍 Jandía (Solana Matorral)</span>
     <img src="images/saladar-bistrot-restaurant.webp" alt="Saladar Bistrot Restaurant" loading="lazy">
     <div class="rc-rating">⭐ 4.8 (192)</div>
     <div class="rc-price">30–60 €</div>
@@ -3351,15 +3456,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>Saladar Bistrot Restaurant</h4>
     <p class="rc-category">Restaurant</p>
     <p class="rc-address">📍 C. Flamenco, 35625 Solana Matorral, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚗 112,6 km · 99 Min. vom Corralejo-Zentrum</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=6373561825339494077" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://www.instagram.com/saladarrestaurant/" target="_blank" rel="noopener" title="instagram.com/saladarrestaurant">📸 Instagram ↗</a>
       <a class="rc-phone" href="tel:+34629278860">📞 +34 629 27 88 60</a>
     </div>
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 18:00</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">möglich</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, viele frei, auch Kundenstellplätze</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Steak</span></div></div><div class="rc-quotes"><blockquote>„Hidden champion in einer Seitenstraße. Kreative Küche außerhalb vom Mainstream. Freundlicher Service, gute Weinkarte von den Kanaren, Rioja und Ribera del Duero.“</blockquote></div></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="restaurante-la-jaira" data-rating="4.7" data-reviews="2642" data-title="Restaurante La Jaira" data-lat="28.50005" data-lng="-13.86087">
+<article class="rc-card" data-km="30.9" data-id="restaurante-la-jaira" data-rating="4.7" data-reviews="2642" data-title="Restaurante La Jaira" data-lat="28.50005" data-lng="-13.86087">
   <div class="rc-media">
+    <span class="rc-ort">📍 Puerto del Rosario</span>
     <img src="images/restaurante-la-jaira.webp" alt="Restaurante La Jaira" loading="lazy">
     <div class="rc-rating">⭐ 4.7 (2.642)</div>
     <div class="rc-price">20–30 €</div>
@@ -3370,15 +3478,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>Restaurante La Jaira</h4>
     <p class="rc-category">Restaurant, kanarisch/mediterran mit Tapas</p>
     <p class="rc-address">📍 C. la Cruz, 26, 35600 Puerto del Rosario, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚗 30,9 km · 30 Min. vom Corralejo-Zentrum</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=3833564441047143663" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://lajairadedemian.es" target="_blank" rel="noopener" title="lajairadedemian.es">🌐 Website ↗</a>
       <a class="rc-phone" href="tel:+34928533784">📞 +34 928 53 37 84</a>
     </div>
-    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 13:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">für Brunch/Mittag/Abendessen empfohlen, Tisch online reservierbar</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, auch an der Straße, viele frei</span></div><a class="rc-website" href="https://lajairadedemian.es" target="_blank" rel="noopener">🌐 lajairadedemian.es ↗</a><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Thunfisch</span><span class="rc-chip">Tempura</span><span class="rc-chip">Ziegenfleisch</span></div></div><div class="rc-quotes"><blockquote>„Demian kreiiert die Gerichte selbst und bedient seine Gäste wirklich sehr zuvorkommend.“</blockquote><blockquote>„Sehr leckere Tapas aus regionalen Produkten, Service sehr aufmerksam, hebt sich aus der Gastronomie hier deutlich heraus!“</blockquote></div><p class="rc-fact">💡 Firmiert auf Google auch als „La Jaira de Demian“ — dieselbe Adresse/derselbe Ort.</p></div></details>
+    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 13:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">für Brunch/Mittag/Abendessen empfohlen, Tisch online reservierbar</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, auch an der Straße, viele frei</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Thunfisch</span><span class="rc-chip">Tempura</span><span class="rc-chip">Ziegenfleisch</span></div></div><div class="rc-quotes"><blockquote>„Demian kreiiert die Gerichte selbst und bedient seine Gäste wirklich sehr zuvorkommend.“</blockquote><blockquote>„Sehr leckere Tapas aus regionalen Produkten, Service sehr aufmerksam, hebt sich aus der Gastronomie hier deutlich heraus!“</blockquote></div><p class="rc-fact">💡 Firmiert auf Google auch als „La Jaira de Demian“ — dieselbe Adresse/derselbe Ort.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="restaurante-marab" data-rating="4.7" data-reviews="1610" data-title="Restaurante Marabú" data-lat="28.0780903" data-lng="-14.300412">
+<article class="rc-card" data-km="108.9" data-id="restaurante-marab" data-rating="4.7" data-reviews="1610" data-title="Restaurante Marabú" data-lat="28.0780903" data-lng="-14.300412">
   <div class="rc-media">
+    <span class="rc-ort">📍 Esquinzo</span>
     <img src="images/restaurante-marab.webp" alt="Restaurante Marabú" loading="lazy">
     <div class="rc-rating">⭐ 4.7 (1.610)</div>
     <div class="rc-price">20–40 €</div>
@@ -3389,15 +3500,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>Restaurante Marabú</h4>
     <p class="rc-category">Restaurant, internationale Küche</p>
     <p class="rc-address">📍 C. Fuente de Hija, 2, 35626 Esquinzo, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚗 108,9 km · 95 Min. vom Corralejo-Zentrum</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=7445251086241597411" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://e-marabu.com" target="_blank" rel="noopener" title="e-marabu.com">🌐 Website ↗</a>
       <a class="rc-phone" href="tel:+34928544098">📞 +34 928 54 40 98</a>
     </div>
-    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 13:00</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">erforderlich</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, viele frei</span></div><a class="rc-website" href="https://e-marabu.com" target="_blank" rel="noopener">🌐 e-marabu.com ↗</a><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Cannelloni</span><span class="rc-chip">Weißer Thun</span><span class="rc-chip">Ziegenkäse</span><span class="rc-chip">Gazpacho</span></div></div><div class="rc-quotes"><blockquote>„Ein Abend, der sechs Jahre Warten mehr als wettgemacht hat – nach sechs Jahren des Versuchens haben wir endlich einen Tisch bekommen.“</blockquote></div><p class="rc-fact">💡 Internationale Küche und edle Weine in schickem Restaurant mit Holzbalkendecke und schattiger Terrasse. Sehr schwer zu reservieren.</p></div></details>
+    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 13:00</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">erforderlich</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, viele frei</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Cannelloni</span><span class="rc-chip">Weißer Thun</span><span class="rc-chip">Ziegenkäse</span><span class="rc-chip">Gazpacho</span></div></div><div class="rc-quotes"><blockquote>„Ein Abend, der sechs Jahre Warten mehr als wettgemacht hat – nach sechs Jahren des Versuchens haben wir endlich einen Tisch bekommen.“</blockquote></div><p class="rc-fact">💡 Internationale Küche und edle Weine in schickem Restaurant mit Holzbalkendecke und schattiger Terrasse. Sehr schwer zu reservieren.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="arepas-llaneras-venezolanas" data-rating="4.7" data-reviews="1230" data-title="Arepas Llaneras Venezolanas" data-lat="28.4999016" data-lng="-13.860582">
+<article class="rc-card" data-km="30.9" data-id="arepas-llaneras-venezolanas" data-rating="4.7" data-reviews="1230" data-title="Arepas Llaneras Venezolanas" data-lat="28.4999016" data-lng="-13.860582">
   <div class="rc-media">
+    <span class="rc-ort">📍 Puerto del Rosario</span>
     <img src="images/arepas-llaneras-venezolanas.webp" alt="Arepas Llaneras Venezolanas" loading="lazy">
     <div class="rc-rating">⭐ 4.7 (1.230)</div>
     <div class="rc-price">1–10 €</div>
@@ -3408,15 +3522,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>Arepas Llaneras Venezolanas</h4>
     <p class="rc-category">Venezolanisches Restaurant</p>
     <p class="rc-address">📍 C. la Cruz, 20, 35600 Puerto del Rosario, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚗 30,9 km · 30 Min. vom Corralejo-Zentrum</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=18159965682008394396" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://arepasllaneras.com" target="_blank" rel="noopener" title="arepasllaneras.com">🌐 Website ↗</a>
       <a class="rc-phone" href="tel:+34673351090">📞 +34 673 35 10 90</a>
     </div>
-    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Öffnet um 12:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">möglich</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, auch an der Straße, meist viele frei</span></div><a class="rc-website" href="https://arepasllaneras.com" target="_blank" rel="noopener">🌐 arepasllaneras.com ↗</a><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Llanera Especial</span><span class="rc-chip">Llaneros Nachos</span></div></div><div class="rc-quotes"><blockquote>„Die Arepas sind köstlich. Alles super frisch zubereitet. Sehr nette Leute dort. Eine absolute Empfehlung für Puerto del Rosario.“</blockquote></div><p class="rc-fact">💡 Laut einer aktuelleren Bewertung vor Kurzem umgezogen (nur wenige Meter vom alten Standort) — Google-Adresse vor der Reise gegenchecken.</p></div></details>
+    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Öffnet um 12:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">möglich</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, auch an der Straße, meist viele frei</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Llanera Especial</span><span class="rc-chip">Llaneros Nachos</span></div></div><div class="rc-quotes"><blockquote>„Die Arepas sind köstlich. Alles super frisch zubereitet. Sehr nette Leute dort. Eine absolute Empfehlung für Puerto del Rosario.“</blockquote></div><p class="rc-fact">💡 Laut einer aktuelleren Bewertung vor Kurzem umgezogen (nur wenige Meter vom alten Standort) — Google-Adresse vor der Reise gegenchecken.</p></div></details>
   </div>
 </article>
 <article class="rc-card rc-card-closed" data-id="divino-bounty" data-rating="4.7" data-reviews="1214" data-title="DiVino Bounty">
   <div class="rc-media">
+    <span class="rc-ort">📍 Puerto del Rosario</span>
     <img src="images/divino-bounty.webp" alt="DiVino Bounty" loading="lazy">
     <div class="rc-rating">⭐ 4.7 (1.214)</div>
     <div class="rc-price">20–30 €</div>
@@ -3434,8 +3551,9 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Fritura de Pescado</span><span class="rc-chip">Paella Su Prenotazione</span></div></div><div class="rc-quotes"><blockquote>„Einfach fantastisches Essen und super freundliches Personal. Die Fischplatte war ein Genuss.“</blockquote></div><p class="rc-fact">💡 Kleines, familiengeführtes Restaurant mit rustikalem Flair, laut eigener Google-Beschreibung. Firmiert auch unter dem Namen „Restaurante El Bounty del Muelle“.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="d-vales-bay" data-rating="4.7" data-reviews="1083" data-title="D&#x27;Vales Bay" data-lat="28.7394012" data-lng="-13.8670089">
+<article class="rc-card" data-km="1.0" data-id="d-vales-bay" data-rating="4.7" data-reviews="1083" data-title="D&#x27;Vales Bay" data-lat="28.7394012" data-lng="-13.8670089">
   <div class="rc-media">
+    <span class="rc-ort">📍 Corralejo</span>
     <img src="images/d-vales-bay.webp" alt="D&#x27;Vales Bay" loading="lazy">
     <div class="rc-rating">⭐ 4.7 (1.083)</div>
     <div class="rc-price">30–70 €</div>
@@ -3446,15 +3564,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>D&#x27;Vales Bay</h4>
     <p class="rc-category">Gehobenes Restaurant, Steak &amp; Meeresfrüchte</p>
     <p class="rc-address">📍 Av. Marítima, 3, 35660 Corralejo, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚶 1,0 km vom Corralejo-Zentrum · ca. 13 Min. zu Fuß</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=9973789965632464726" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://dvalesbay.com" target="_blank" rel="noopener" title="dvalesbay.com">🌐 Website ↗</a>
       <a class="rc-phone" href="tel:+34928916619">📞 +34 928 91 66 19</a>
     </div>
-    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Öffnet um 13:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">erforderlich</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, aber laut Bewertungen schwer zu finden</span></div><a class="rc-website" href="https://dvalesbay.com" target="_blank" rel="noopener">🌐 dvalesbay.com ↗</a><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Sea Bass Tiradito</span><span class="rc-chip">Iberian Ham Croquettes</span></div></div><div class="rc-quotes"><blockquote>„Fantastic steak and service.“ (übersetzt: „Fantastisches Steak und Service.“)</blockquote><blockquote>„Das Essen war ein Genuss. Das Fleisch war eine Fantasie. Der Cheesecake war auch sehr lecker.“</blockquote></div><p class="rc-fact">💡 Dachterrasse mit Livemusik, gehobenes Ambiente, Online-Reservierung über covermanager.com verfügbar.</p></div></details>
+    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Öffnet um 13:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">erforderlich</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, aber laut Bewertungen schwer zu finden</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Sea Bass Tiradito</span><span class="rc-chip">Iberian Ham Croquettes</span></div></div><div class="rc-quotes"><blockquote>„Fantastic steak and service.“ (übersetzt: „Fantastisches Steak und Service.“)</blockquote><blockquote>„Das Essen war ein Genuss. Das Fleisch war eine Fantasie. Der Cheesecake war auch sehr lecker.“</blockquote></div><p class="rc-fact">💡 Dachterrasse mit Livemusik, gehobenes Ambiente, Online-Reservierung über covermanager.com verfügbar.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="la-casa-de-las-paellas" data-rating="4.7" data-reviews="920" data-title="La Casa de las Paellas" data-lat="28.6818721" data-lng="-14.0110505">
+<article class="rc-card" data-km="19.8" data-id="la-casa-de-las-paellas" data-rating="4.7" data-reviews="920" data-title="La Casa de las Paellas" data-lat="28.6818721" data-lng="-14.0110505">
   <div class="rc-media">
+    <span class="rc-ort">📍 El Cotillo</span>
     <img src="images/la-casa-de-las-paellas.webp" alt="La Casa de las Paellas" loading="lazy">
     <div class="rc-rating">⭐ 4.7 (920)</div>
     <div class="rc-price">20–30 €</div>
@@ -3465,15 +3586,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>La Casa de las Paellas</h4>
     <p class="rc-category">Reisrestaurant (Paella)</p>
     <p class="rc-address">📍 Calle Fuerteventura &amp; C. de la Constitución, 35650 El Cotillo, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚗 19,8 km · 22 Min. vom Corralejo-Zentrum</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=10160702702751174421" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://casarusticafuerteventura.es/restaurant/" target="_blank" rel="noopener" title="casarusticafuerteventura.es/restaurant">🌐 Website ↗</a>
       
     </div>
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 13:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">erforderlich</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Nein, nur Bar</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, auch an der Straße, viele frei</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Paella (vegetaria/montaña/marina)</span><span class="rc-chip">Oktopus</span><span class="rc-chip">Nachos</span><span class="rc-chip">Crema Catalana</span><span class="rc-chip">Guacamole</span><span class="rc-chip">Sangria</span></div></div><div class="rc-quotes"><blockquote>„Ausgezeichnetes Essen in einem kleinen Restaurant in zweiter Reihe zur Küste. Sehr nette Besitzer.“</blockquote><blockquote>„Wir sitzen noch draußen auf der Terrasse und sind so begeistert, dass wir sofort bewerten wollten.“</blockquote></div><p class="rc-fact">💡 Unscheinbares kleines Restaurant – NUR BARZAHLUNG, Reservierung dringend empfohlen.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="restaurante-salvaje" data-rating="4.7" data-reviews="650" data-title="Restaurante Salvaje" data-lat="28.0487819" data-lng="-14.344775">
+<article class="rc-card" data-km="115.0" data-id="restaurante-salvaje" data-rating="4.7" data-reviews="650" data-title="Restaurante Salvaje" data-lat="28.0487819" data-lng="-14.344775">
   <div class="rc-media">
+    <span class="rc-ort">📍 Morro Jable</span>
     <img src="images/restaurante-salvaje.webp" alt="Restaurante Salvaje" loading="lazy">
     <div class="rc-rating">⭐ 4.7 (650)</div>
     <div class="rc-price">20–40 €</div>
@@ -3484,15 +3608,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>Restaurante Salvaje</h4>
     <p class="rc-category">Tapas</p>
     <p class="rc-address">📍 Av. del Saladar, s/n, Morro Jable, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚗 115,0 km · 103 Min. vom Corralejo-Zentrum</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=9928418102941389393" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://salvajefuerteventura.com/" target="_blank" rel="noopener" title="salvajefuerteventura.com">🌐 Website ↗</a>
       
     </div>
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><p class="rc-fact">💡 Bereits aus früherer Recherche bekannt (Original-Tapas), diesmal nicht erneut vom Fork gefunden — Basisdaten aus vorheriger Prüfung übernommen.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="el-pellizco-by-rigoberto-almeida" data-rating="4.7" data-reviews="634" data-title="El Pellizco by Rigoberto Almeida" data-lat="28.1586173" data-lng="-14.2275986">
+<article class="rc-card" data-km="95.7" data-id="el-pellizco-by-rigoberto-almeida" data-rating="4.7" data-reviews="634" data-title="El Pellizco by Rigoberto Almeida" data-lat="28.1586173" data-lng="-14.2275986">
   <div class="rc-media">
+    <span class="rc-ort">📍 Costa Calma</span>
     <img src="images/el-pellizco-by-rigoberto-almeida.webp" alt="El Pellizco by Rigoberto Almeida" loading="lazy">
     <div class="rc-rating">⭐ 4.7 (634)</div>
     <div class="rc-price">40–90 €</div>
@@ -3503,15 +3630,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>El Pellizco by Rigoberto Almeida</h4>
     <p class="rc-category">Gehobenes Restaurant, kreative Küche</p>
     <p class="rc-address">📍 C. Montaña Azufra, 1, 35627 Costa Calma, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚗 95,7 km · 85 Min. vom Corralejo-Zentrum</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=355895612333688950" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://elpellizco.es" target="_blank" rel="noopener" title="elpellizco.es">🌐 Website ↗</a>
       <a class="rc-phone" href="tel:+34607081083">📞 +34 607 08 10 83</a>
     </div>
-    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 14:00</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">für Mittag- und Abendessen empfohlen</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, auch an der Straße</span></div><a class="rc-website" href="https://elpellizco.es" target="_blank" rel="noopener">🌐 elpellizco.es ↗</a><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Thunfisch-Tatar</span><span class="rc-chip">Degustationsmenü</span><span class="rc-chip">Gofio</span></div></div><div class="rc-quotes"><blockquote>„Eines vorweg: Wer nur isst um satt zu werden, braucht hier nicht weiterzulesen – das ist ein besonderes Erlebnis.“</blockquote></div><p class="rc-fact">💡 In Rezensionen mehrfach im Zusammenhang mit „Michelin“ erwähnt; gilt als eines der besten Restaurants der Insel, Dachterrasse mit hervorragender Weinkarte.</p></div></details>
+    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 14:00</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">für Mittag- und Abendessen empfohlen</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, auch an der Straße</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Thunfisch-Tatar</span><span class="rc-chip">Degustationsmenü</span><span class="rc-chip">Gofio</span></div></div><div class="rc-quotes"><blockquote>„Eines vorweg: Wer nur isst um satt zu werden, braucht hier nicht weiterzulesen – das ist ein besonderes Erlebnis.“</blockquote></div><p class="rc-fact">💡 In Rezensionen mehrfach im Zusammenhang mit „Michelin“ erwähnt; gilt als eines der besten Restaurants der Insel, Dachterrasse mit hervorragender Weinkarte.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="restaurante-casa-isaitas" data-rating="4.7" data-reviews="494" data-title="Restaurante Casa Isaitas" data-lat="28.3508064" data-lng="-14.1085072">
+<article class="rc-card" data-km="70.9" data-id="restaurante-casa-isaitas" data-rating="4.7" data-reviews="494" data-title="Restaurante Casa Isaitas" data-lat="28.3508064" data-lng="-14.1085072">
   <div class="rc-media">
+    <span class="rc-ort">📍 Pájara</span>
     <img src="images/restaurante-casa-isaitas.webp" alt="Restaurante Casa Isaitas" loading="lazy">
     <div class="rc-rating">⭐ 4.7 (494)</div>
     <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
@@ -3522,15 +3652,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>Restaurante Casa Isaitas</h4>
     <p class="rc-category">Landhaus / Restaurant (kombiniert mit Rural-Unterkunft)</p>
     <p class="rc-address">📍 C. Guise, 7, 35628 Pájara, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚗 70,9 km · 63 Min. vom Corralejo-Zentrum</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=924497267188635557" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://casaisaitasmm.com" target="_blank" rel="noopener" title="casaisaitasmm.com">🌐 Website ↗</a>
       <a class="rc-phone" href="tel:+34928296027">📞 +34 928 29 60 27</a>
     </div>
-    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 12:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><a class="rc-website" href="https://casaisaitasmm.com" target="_blank" rel="noopener">🌐 casaisaitasmm.com ↗</a><p class="rc-fact">💡 Google führt den Ort primär als &#x27;Landhaus&#x27; (vermietet auch Rural-Unterkünfte), separate belastbare Restaurant-Rezensionen waren nicht sauber auffindbar.</p></div></details>
+    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 12:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><p class="rc-fact">💡 Google führt den Ort primär als &#x27;Landhaus&#x27; (vermietet auch Rural-Unterkünfte), separate belastbare Restaurant-Rezensionen waren nicht sauber auffindbar.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="la-catrina-mexican-food" data-rating="4.7" data-reviews="158" data-title="La Catrina Mexican Food" data-lat="28.5017889" data-lng="-13.8507941">
+<article class="rc-card" data-km="30.0" data-id="la-catrina-mexican-food" data-rating="4.7" data-reviews="158" data-title="La Catrina Mexican Food" data-lat="28.5017889" data-lng="-13.8507941">
   <div class="rc-media">
+    <span class="rc-ort">📍 Puerto del Rosario</span>
     <img src="images/la-catrina-mexican-food.webp" alt="La Catrina Mexican Food" loading="lazy">
     <div class="rc-rating">⭐ 4.7 (158)</div>
     <div class="rc-price">10–20 €</div>
@@ -3541,15 +3674,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>La Catrina Mexican Food</h4>
     <p class="rc-category">Mexikanisches Restaurant</p>
     <p class="rc-address">📍 C. Comandante Díaz Trayter, 81, 35600 Puerto del Rosario, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚗 30,0 km · 28 Min. vom Corralejo-Zentrum</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=1731722061290347200" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://www.instagram.com/la_catrinaftv/" target="_blank" rel="noopener" title="instagram.com/la_catrinaftv">📸 Instagram ↗</a>
       <a class="rc-phone" href="tel:+34828199993">📞 +34 828 19 99 93</a>
     </div>
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 12:30 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-quotes"><blockquote>„Ein tolles Ort für mexikanische Küche. Die Chefin sehr freundlich und zuvorkommend, hilft bei der Auswahl.“</blockquote><blockquote>„Echte Empfehlung für authentische Mexican-Food-Liebhaber – Service und Essen waren perfekt.“</blockquote></div><p class="rc-fact">💡 Sehr persönlich von der Inhaberin geführt.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="avenida-restaurant" data-rating="4.6" data-reviews="3756" data-title="Avenida Restaurant" data-lat="28.7424736" data-lng="-13.8690698">
+<article class="rc-card" data-km="0.9" data-id="avenida-restaurant" data-rating="4.6" data-reviews="3756" data-title="Avenida Restaurant" data-lat="28.7424736" data-lng="-13.8690698">
   <div class="rc-media">
+    <span class="rc-ort">📍 Corralejo</span>
     <img src="images/avenida-restaurant.webp" alt="Avenida Restaurant" loading="lazy">
     <div class="rc-rating">⭐ 4.6 (3.756)</div>
     <div class="rc-price">20–30 €</div>
@@ -3560,15 +3696,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>Avenida Restaurant</h4>
     <p class="rc-category">Kanarisches Restaurant, bodenständig</p>
     <p class="rc-address">📍 C. Gral. Prim, 11, 35660 Corralejo, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚶 0,9 km vom Corralejo-Zentrum · ca. 12 Min. zu Fuß</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=7000550340024995293" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://avenidarestaurante2.wixsite.com" target="_blank" rel="noopener" title="avenidarestaurante2.wixsite.com">🌐 Website ↗</a>
       
     </div>
-    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 13:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">möglich (oft Warteschlange ohne Reservierung)</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, auch an der Straße</span></div><a class="rc-website" href="https://avenidarestaurante2.wixsite.com" target="_blank" rel="noopener">🌐 avenidarestaurante2.wixsite.com ↗</a><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Paella</span><span class="rc-chip">BBQ/Grillplatte</span><span class="rc-chip">Mojo</span><span class="rc-chip">Papas Arrugadas</span><span class="rc-chip">Sangria</span><span class="rc-chip">Dorade</span></div></div><div class="rc-quotes"><blockquote>„XXL-Portionen zu lecker-günstigen Preisen. Die Portionen sind 50% größer als anderswo.“</blockquote><blockquote>„Top-Adresse für bodenständige Küche. Seit Jahren eine der besten Adressen in der Stadt.“</blockquote></div></div></details>
+    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 13:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">möglich (oft Warteschlange ohne Reservierung)</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, auch an der Straße</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Paella</span><span class="rc-chip">BBQ/Grillplatte</span><span class="rc-chip">Mojo</span><span class="rc-chip">Papas Arrugadas</span><span class="rc-chip">Sangria</span><span class="rc-chip">Dorade</span></div></div><div class="rc-quotes"><blockquote>„XXL-Portionen zu lecker-günstigen Preisen. Die Portionen sind 50% größer als anderswo.“</blockquote><blockquote>„Top-Adresse für bodenständige Küche. Seit Jahren eine der besten Adressen in der Stadt.“</blockquote></div></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="la-pulperia-tapas-bar" data-rating="4.6" data-reviews="3156" data-title="La Pulperia - Tapas Bar" data-lat="28.7384913" data-lng="-13.8684735">
+<article class="rc-card" data-km="0.9" data-id="la-pulperia-tapas-bar" data-rating="4.6" data-reviews="3156" data-title="La Pulperia - Tapas Bar" data-lat="28.7384913" data-lng="-13.8684735">
   <div class="rc-media">
+    <span class="rc-ort">📍 Corralejo</span>
     <img src="images/la-pulperia-tapas-bar.webp" alt="La Pulperia - Tapas Bar" loading="lazy">
     <div class="rc-rating">⭐ 4.6 (3.156)</div>
     <div class="rc-price">20–30 €</div>
@@ -3579,15 +3718,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>La Pulperia - Tapas Bar</h4>
     <p class="rc-category">Tapasbar</p>
     <p class="rc-address">📍 C. Lepanto, 2, 35660 Corralejo, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚶 0,9 km vom Corralejo-Zentrum · ca. 12 Min. zu Fuß</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=3426355395803169825" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://pulperiaftv.es" target="_blank" rel="noopener" title="pulperiaftv.es">🌐 Website ↗</a>
       
     </div>
-    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geöffnet, schließt um 01:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">möglich</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, aber laut Bewertungen nicht leicht zu finden</span></div><a class="rc-website" href="https://pulperiaftv.es" target="_blank" rel="noopener">🌐 pulperiaftv.es ↗</a><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Pulpo (Krake)</span><span class="rc-chip">Pulpo mit Jack Daniel&#x27;s</span><span class="rc-chip">Octopus Teriyaki</span></div></div><div class="rc-quotes"><blockquote>„Das Essen war insgesamt ultra lecker – unser Favorit war der Pulpo mit Jack Daniels und Süßkartoffelpüree.“</blockquote><blockquote>„Ein MUSS für Pulpo-Liebhaber! Sehr frisch, sehr freundlicher und aufmerksamer Service.“</blockquote></div><p class="rc-fact">💡 LGBTQ+-freundlich, als sicherer Ort für Transgender gelistet.</p></div></details>
+    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geöffnet, schließt um 01:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">möglich</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, aber laut Bewertungen nicht leicht zu finden</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Pulpo (Krake)</span><span class="rc-chip">Pulpo mit Jack Daniel&#x27;s</span><span class="rc-chip">Octopus Teriyaki</span></div></div><div class="rc-quotes"><blockquote>„Das Essen war insgesamt ultra lecker – unser Favorit war der Pulpo mit Jack Daniels und Süßkartoffelpüree.“</blockquote><blockquote>„Ein MUSS für Pulpo-Liebhaber! Sehr frisch, sehr freundlicher und aufmerksamer Service.“</blockquote></div><p class="rc-fact">💡 LGBTQ+-freundlich, als sicherer Ort für Transgender gelistet.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="azzurro-chill-out-restaurant" data-rating="4.6" data-reviews="2582" data-title="Azzurro Chill Out Restaurant" data-lat="28.6944313" data-lng="-14.0134325">
+<article class="rc-card" data-km="21.5" data-id="azzurro-chill-out-restaurant" data-rating="4.6" data-reviews="2582" data-title="Azzurro Chill Out Restaurant" data-lat="28.6944313" data-lng="-14.0134325">
   <div class="rc-media">
+    <span class="rc-ort">📍 El Cotillo</span>
     <img src="images/azzurro-chill-out-restaurant.webp" alt="Azzurro Chill Out Restaurant" loading="lazy">
     <div class="rc-rating">⭐ 4.6 (2.582)</div>
     <div class="rc-price">20–30 €</div>
@@ -3598,15 +3740,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>Azzurro Chill Out Restaurant</h4>
     <p class="rc-category">Italienisches Restaurant</p>
     <p class="rc-address">📍 Av. los Lagos, 1, 35650 El Cotillo, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚗 21,5 km · 25 Min. vom Corralejo-Zentrum</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=17771984786988177643" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://azzurro.es" target="_blank" rel="noopener" title="azzurro.es">🌐 Website ↗</a>
       <a class="rc-phone" href="tel:+34928175360">📞 +34 928 17 53 60</a>
     </div>
-    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 13:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">für Mittag- und Abendessen empfohlen</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Parkmöglichkeiten vorhanden, Details auf Google Maps prüfen</span></div><a class="rc-website" href="https://azzurro.es" target="_blank" rel="noopener">🌐 azzurro.es ↗</a><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Paella</span><span class="rc-chip">Thunfisch-Tatar</span><span class="rc-chip">Cremiger Reis</span><span class="rc-chip">Meeresfrüchteplatte</span></div></div><div class="rc-quotes"><blockquote>„Mein absolutes bestes Sunset-Restaurant in Fuerte. Der Fisch war der Hammer! Super frisch und wunderschön beim Sonnenuntergang.“</blockquote><blockquote>„Essen wirklich lecker, Service sehr gut, Ambiente sehr schön, mit Ausblick auf das Meer.“</blockquote></div><p class="rc-fact">💡 Dachterrasse mit Meerblick, sehr beliebt zum Sonnenuntergang direkt am Strand von El Cotillo.</p></div></details>
+    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 13:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">für Mittag- und Abendessen empfohlen</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Parkmöglichkeiten vorhanden, Details auf Google Maps prüfen</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Paella</span><span class="rc-chip">Thunfisch-Tatar</span><span class="rc-chip">Cremiger Reis</span><span class="rc-chip">Meeresfrüchteplatte</span></div></div><div class="rc-quotes"><blockquote>„Mein absolutes bestes Sunset-Restaurant in Fuerte. Der Fisch war der Hammer! Super frisch und wunderschön beim Sonnenuntergang.“</blockquote><blockquote>„Essen wirklich lecker, Service sehr gut, Ambiente sehr schön, mit Ausblick auf das Meer.“</blockquote></div><p class="rc-fact">💡 Dachterrasse mit Meerblick, sehr beliebt zum Sonnenuntergang direkt am Strand von El Cotillo.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="casa-naturaleza" data-rating="4.6" data-reviews="1616" data-title="Casa Naturaleza" data-lat="28.3940902" data-lng="-14.0866814">
+<article class="rc-card" data-km="66.2" data-id="casa-naturaleza" data-rating="4.6" data-reviews="1616" data-title="Casa Naturaleza" data-lat="28.3940902" data-lng="-14.0866814">
   <div class="rc-media">
+    <span class="rc-ort">📍 Vega de Río Palmas</span>
     <img src="images/casa-naturaleza.webp" alt="Casa Naturaleza" loading="lazy">
     <div class="rc-rating">⭐ 4.6 (1.616)</div>
     <div class="rc-price">20–30 €</div>
@@ -3617,15 +3762,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>Casa Naturaleza</h4>
     <p class="rc-category">Taverne / Restaurant im Tal</p>
     <p class="rc-address">📍 Cam. San Juan Torcaz, s/n, 35637 Vega de Río Palmas, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚗 66,2 km · 61 Min. vom Corralejo-Zentrum</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=7307666820522264789" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://casanaturaleza.net" target="_blank" rel="noopener" title="casanaturaleza.net">🌐 Website ↗</a>
       <a class="rc-phone" href="tel:+34629268228">📞 +34 629 26 82 28</a>
     </div>
-    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geöffnet · schließt um 17:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">empfohlen</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><a class="rc-website" href="https://casanaturaleza.net" target="_blank" rel="noopener">🌐 casanaturaleza.net ↗</a><div class="rc-quotes"><blockquote>„Echt urige Taverne. Super Ambiente mit Liebe zum Detail. Viele kleine Nischen im Schatten, toller Ausblick ins Tal.“</blockquote><blockquote>„Umwerfend war das Ambiente, jede Ecke liebevoll gestaltet. Wir bekamen einen Tisch auch ohne Reservierung.“</blockquote></div><p class="rc-fact">💡 Liegt im grünen Tal von Vega de Río Palmas nahe Betancuria, viele schattige Sitznischen.</p></div></details>
+    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geöffnet · schließt um 17:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">empfohlen</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-quotes"><blockquote>„Echt urige Taverne. Super Ambiente mit Liebe zum Detail. Viele kleine Nischen im Schatten, toller Ausblick ins Tal.“</blockquote><blockquote>„Umwerfend war das Ambiente, jede Ecke liebevoll gestaltet. Wir bekamen einen Tisch auch ohne Reservierung.“</blockquote></div><p class="rc-fact">💡 Liegt im grünen Tal von Vega de Río Palmas nahe Betancuria, viele schattige Sitznischen.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="sabor-a-espa-a" data-rating="4.6" data-reviews="20" data-title="Sabor a España" data-lat="28.7351506" data-lng="-13.869052">
+<article class="rc-card" data-km="0.1" data-id="sabor-a-espa-a" data-rating="4.6" data-reviews="20" data-title="Sabor a España" data-lat="28.7351506" data-lng="-13.869052">
   <div class="rc-media">
+    <span class="rc-ort">📍 Corralejo</span>
     <img src="images/sabor-a-espa-a.webp" alt="Sabor a España" loading="lazy">
     <div class="rc-rating">⭐ 4.6 (20)</div>
     <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
@@ -3636,15 +3784,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>Sabor a España</h4>
     <p class="rc-category">Delikatessengeschäft</p>
     <p class="rc-address">📍 CC Los Timones, Av. Ntra. Sra. del Carmen, 27, Loc 4, 35660 Corralejo, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚶 0,1 km vom Corralejo-Zentrum · ca. 2 Min. zu Fuß</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=7891562725039973905" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://sabor-espana.com/tiendas/av-nuestra-senora-del-carmen-27-corralejo" target="_blank" rel="noopener" title="sabor-espana.com/tiendas/av-nuestra-senora-del-carmen-27-corralejo">🌐 Website ↗</a>
       <a class="rc-phone" href="tel:+34634773113">📞 +34 634 77 31 13</a>
     </div>
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geöffnet · schließt um 22:30</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Marzipan</span><span class="rc-chip">Obst &amp; Gemüse</span></div></div><div class="rc-quotes"><blockquote>„Wir haben dort Marzipan gekauft, da hat man nur auf dem Zucker gekaut.“</blockquote><blockquote>„Hervorragendes Obst und Gemüse, schneller Einkauf möglich.“</blockquote></div><p class="rc-fact">💡 Kein Restaurant, sondern ein Feinkost-/Delikatessenladen (zwei Standorte auf Fuerteventura, dies der Corralejo-Standort).</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="caretta-beach-la-pared" data-rating="4.5" data-reviews="1410" data-title="Caretta Beach La Pared" data-lat="28.2182827" data-lng="-14.2192999">
+<article class="rc-card" data-km="91.7" data-id="caretta-beach-la-pared" data-rating="4.5" data-reviews="1410" data-title="Caretta Beach La Pared" data-lat="28.2182827" data-lng="-14.2192999">
   <div class="rc-media">
+    <span class="rc-ort">📍 La Pared</span>
     <img src="images/caretta-beach-la-pared.webp" alt="Caretta Beach La Pared" loading="lazy">
     <div class="rc-rating">⭐ 4.5 (1.410)</div>
     <div class="rc-price">20–30 €</div>
@@ -3655,15 +3806,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>Caretta Beach La Pared</h4>
     <p class="rc-category">Strandrestaurant/Café</p>
     <p class="rc-address">📍 C. Muro de Terequey, 35627 La Pared, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚗 91,7 km · 83 Min. vom Corralejo-Zentrum</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=10936016074579677601" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://www.facebook.com/carettabeachlapared/" target="_blank" rel="noopener" title="facebook.com/carettabeachlapared">📘 Facebook ↗</a>
       <a class="rc-phone" href="tel:+34671360741">📞 +34 671 36 07 41</a>
     </div>
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geschlossen · öffnet um 14:00 (genaue Wochenzeiten auf Google Maps prüfen)</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-quotes"><blockquote>„Ein Hotspot auf Fuerteventura – hier kann man tolle Wellen und den Sonnenuntergang beobachten.“</blockquote><blockquote>„Wir wollten nur etwas trinken, aber der Ausblick war zu schön – also haben wir noch etwas gegessen.“</blockquote></div><p class="rc-fact">💡 Direkt am Surfspot La Pared mit Sonnenuntergangsblick, moderate Preise.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="the-roof-chill-out" data-rating="4.5" data-reviews="399" data-title="The Roof Chill out" data-lat="28.7418327" data-lng="-13.8705921">
+<article class="rc-card" data-km="0.9" data-id="the-roof-chill-out" data-rating="4.5" data-reviews="399" data-title="The Roof Chill out" data-lat="28.7418327" data-lng="-13.8705921">
   <div class="rc-media">
+    <span class="rc-ort">📍 Corralejo</span>
     <img src="images/the-roof-chill-out.webp" alt="The Roof Chill out" loading="lazy">
     <div class="rc-rating">⭐ 4.5 (399)</div>
     <div class="rc-price">10–20 €</div>
@@ -3674,15 +3828,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>The Roof Chill out</h4>
     <p class="rc-category">Bar &amp; Grillrestaurant</p>
     <p class="rc-address">📍 Av. Juan Carlos I, 3, 35660 Corralejo, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚶 0,9 km vom Corralejo-Zentrum · ca. 12 Min. zu Fuß</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=5459714770705325082" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://theroofchillout.com/" target="_blank" rel="noopener" title="theroofchillout.com">🌐 Website ↗</a>
       <a class="rc-phone" href="tel:+34828680138">📞 +34 828 68 01 38</a>
     </div>
     <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Frühstücksbuffet</span><span class="rc-chip">Kaffee zur Selbstbedienung</span><span class="rc-chip">Cocktails</span></div></div><div class="rc-quotes"><blockquote>„Ein toller Ort zum Verweilen und zum leckeren Frühstücken. Eine tolle Auswahl und eine Kaffeemaschine zur Selbstbedienung.“</blockquote><blockquote>„Rooftop Bar mit Cocktails, Food und Frühstücksangebot. Zudem gibt es regelmäßig Livemusik. Toller Blick auf den Sonnenuntergang.“</blockquote></div><p class="rc-fact">💡 Dachterrasse mit regelmäßiger Livemusik (auch Nebensaison) und Sonnenuntergangsblick; Speisekarte per QR-Code.</p></div></details>
   </div>
 </article>
-<article class="rc-card" data-id="caf-la-ola" data-rating="4.4" data-reviews="601" data-title="Café La Ola" data-lat="28.7428502" data-lng="-13.8646395">
+<article class="rc-card" data-km="1.5" data-id="caf-la-ola" data-rating="4.4" data-reviews="601" data-title="Café La Ola" data-lat="28.7428502" data-lng="-13.8646395">
   <div class="rc-media">
+    <span class="rc-ort">📍 Corralejo</span>
     <img src="images/caf-la-ola.webp" alt="Café La Ola" loading="lazy">
     <div class="rc-rating">⭐ 4.4 (601)</div>
     <div class="rc-price">1–10 €</div>
@@ -3693,11 +3850,13 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h4>Café La Ola</h4>
     <p class="rc-category">Frühstückslokal / deutsche Bäckerei</p>
     <p class="rc-address">📍 P.º Marítimo Bristol, s/n, 35660 Corralejo, Las Palmas, Spanien</p>
+    <p class="rc-dist">🚶 1,5 km vom Corralejo-Zentrum · ca. 20 Min. zu Fuß</p>
     <div class="rc-actions">
       <a class="btn btn-outline" href="https://www.google.com/maps?cid=5334537034996285290" target="_blank" rel="noopener">Google Maps ↗</a>
+      <a class="btn btn-outline rc-website" href="https://instagram.com/la_ola_corralejo" target="_blank" rel="noopener" title="instagram.com/la_ola_corralejo">📸 Instagram ↗</a>
       <a class="rc-phone" href="tel:+34928866096">📞 +34 928 86 60 96</a>
     </div>
-    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geöffnet · schließt um 15:00</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">möglich</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, aber nicht immer leicht zu finden</span></div><a class="rc-website" href="https://instagram.com/la_ola_corralejo" target="_blank" rel="noopener">🌐 instagram.com/la_ola_corralejo ↗</a><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Sauerteigbrot</span><span class="rc-chip">Dinkelbrot</span><span class="rc-chip">Zimtschnecken</span><span class="rc-chip">Belegte Brötchen</span></div></div><div class="rc-quotes"><blockquote>„Beste Auswahl an verschiedenen Broten wie man es aus Deutschland kennt – von Sauerteig über Dinkelbrot. Leckerer Kaffee und schöner Blick rüber nach Lobos.“</blockquote><blockquote>„Preis-Leistung eher teuer bei belegten Brötchen und Kuchen.“</blockquote></div><p class="rc-fact">💡 Deutsche Bäckerei/Café direkt am Meer mit Blick auf Isla de Lobos.</p></div></details>
+    <details class="rc-details"><summary>Details anzeigen</summary><div class="rc-details-body"><div class="rc-attr-row"><span class="rc-attr-label">🕒 Öffnungszeiten</span><span class="rc-attr-value">Geöffnet · schließt um 15:00</span></div><div class="rc-attr-row"><span class="rc-attr-label">📅 Reservierung</span><span class="rc-attr-value">möglich</span></div><div class="rc-attr-row"><span class="rc-attr-label">🌤️ Außenbereich</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">💳 Kartenzahlung</span><span class="rc-attr-value">Ja</span></div><div class="rc-attr-row"><span class="rc-attr-label">🅿️ Parken</span><span class="rc-attr-value">Kostenlose Parkplätze, aber nicht immer leicht zu finden</span></div><div class="rc-dishes"><span class="rc-dishes-label">Von Gästen empfohlen</span><div class="rc-chips"><span class="rc-chip">Sauerteigbrot</span><span class="rc-chip">Dinkelbrot</span><span class="rc-chip">Zimtschnecken</span><span class="rc-chip">Belegte Brötchen</span></div></div><div class="rc-quotes"><blockquote>„Beste Auswahl an verschiedenen Broten wie man es aus Deutschland kennt – von Sauerteig über Dinkelbrot. Leckerer Kaffee und schöner Blick rüber nach Lobos.“</blockquote><blockquote>„Preis-Leistung eher teuer bei belegten Brötchen und Kuchen.“</blockquote></div><p class="rc-fact">💡 Deutsche Bäckerei/Café direkt am Meer mit Blick auf Isla de Lobos.</p></div></details>
   </div>
 </article>
       </div>
@@ -5205,6 +5364,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     comparators: {
       'rating-desc': function(a,b){ return (parseFloat(b.dataset.rating)-parseFloat(a.dataset.rating)) || (parseInt(b.dataset.reviews,10)-parseInt(a.dataset.reviews,10)); },
       'reviews-desc': function(a,b){ return parseInt(b.dataset.reviews,10) - parseInt(a.dataset.reviews,10); },
+      'dist-asc': function(a,b){ return (parseFloat(a.dataset.km)||999) - (parseFloat(b.dataset.km)||999); },
       az: function(a,b){ return textCmp(a,b,'data-title'); }
     }
   });
