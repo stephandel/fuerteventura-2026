@@ -625,6 +625,16 @@ body { font-size: var(--fs-body); }
   .mg-tab { flex: 1; text-align: center; }
 }
 
+/* ---- App-Symbol wählen ---- */
+.icon-wahl { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 12px; margin-top: 14px; }
+.icon-wahl button { display: flex; flex-direction: column; align-items: center; gap: 7px; padding: 10px 6px; border-radius: 14px; border: 2px solid var(--border); background: var(--surface); cursor: pointer; font: 600 12.5px/1.2 "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif; color: var(--ink-dim); -webkit-tap-highlight-color: transparent; }
+.icon-wahl button img { width: 64px; height: 64px; border-radius: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.25); }
+.icon-wahl button.is-on { border-color: var(--teal); color: var(--ink); background: var(--surface-2); }
+.icon-wahl button.is-on::after { content: "✓ gewählt"; font-size: 11px; color: var(--teal); }
+.icon-anleitung { margin-top: 14px; font-size: var(--fs-sub); color: var(--ink-dim); line-height: 1.55; }
+.icon-anleitung ol { margin: 8px 0 0; padding-left: 20px; }
+.icon-anleitung strong { color: var(--ink); }
+
 /* ---- Sonnen-Tabelle auf der Wetterseite ---- */
 .sun-table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 13.5px; }
 .sun-table th, .sun-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: left; }
@@ -4068,6 +4078,13 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       </div>
     </div>
 
+        <div class="links-box" id="app-icon-box">
+      <h2>📱 App-Symbol f&#252;r den Home-Bildschirm</h2>
+      <p class="sub">Welches Symbol soll die Seite tragen, wenn sie auf dem Handy wie eine App liegt? Antippen w&#228;hlt aus &#8211; jedes Ger&#228;t kann ein anderes haben.</p>
+      <div class="icon-wahl" id="icon-wahl"></div>
+      <div class="icon-anleitung" id="icon-anleitung"></div>
+    </div>
+
     <div class="links-box">
       <h2>🚨 Notfall &amp; Praktisches</h2>
       <div class="link-grid">
@@ -6422,6 +6439,9 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     {id:'t-packliste', g:'kurz', due:'2026-09-27',
      text:'Packliste durchgehen',
      note:'<a href="#packliste">Zur Packliste →</a>'},
+    {id:'t-smartway', g:'kurz', due:'2026-09-26', star:true,
+     text:'FRA SmartWay: Zeitfenster für die Sicherheitskontrolle reservieren',
+     note:'Der Flughafen Frankfurt vergibt kostenlos feste Zeitfenster für eigene Kontrollstellen – kein Anstehen in der normalen Schlange. <strong>Buchbar frühestens 72 Stunden vor Abflug</strong>, also ab <strong>Samstag, 26.09. um 12:10 Uhr</strong>; die Plätze sind begrenzt und schnell weg, deshalb gleich dann buchen. Keine Registrierung nötig: Name (genau wie auf dem Ticket), E-Mail, Flugnummer <strong>DE 1402</strong>, Abflug 29.09. 12:10 Uhr, 2 Personen. Wir fliegen mit Condor aus <strong>Terminal 1, Check-in Halle C</strong> – bei der Buchung eine Kontrollstelle in Terminal 1 (Bereich A oder B, beide Schengen) nehmen. Am Reisetag: zur gebuchten Zeit mit der normalen Bordkarte an die zugewiesene Kontrollstelle. <a href="https://fra-smartway.seamless.aero" target="_blank" rel="noopener">Zur Reservierung ↗</a> · <a href="https://www.frankfurt-airport.com/de/reisevorbereitung/check-in-gepaeck-und-kontrollen/fra-smartway.html" target="_blank" rel="noopener">Infoseite des Flughafens ↗</a>'},
     {id:'t-checkin', g:'kurz', due:'2026-09-28',
      text:'Online-Check-in bei Condor',
      note:'Ab 24 Stunden vor Abflug möglich. Bordkarten aufs Handy und zusätzlich als Screenshot — im Zweifel ist genau dann das Netz weg.'},
@@ -6444,7 +6464,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
      note:'Flug, Mietwagen, Unterkunft, Lobos-Genehmigung — als PDF aufs Handy, nicht nur im Mail-Postfach.'},
     {id:'t-handgepaeck', g:'abreise',
      text:'Handgepäck checken',
-     note:'Flüssigkeiten max. 100 ml, Wasserflasche leer durch die Kontrolle und hinter der Sicherheitskontrolle auffüllen.'},
+     note:'Flüssigkeiten max. 100 ml, Wasserflasche leer durch die Kontrolle und hinter der Sicherheitskontrolle auffüllen. Falls das <strong>FRA-SmartWay-Zeitfenster</strong> gebucht ist: Bestätigungsmail griffbereit und pünktlich zur gebuchten Zeit an der zugewiesenen Kontrollstelle sein.'},
     {id:'t-ladekabel', g:'abreise',
      text:'Ladekabel, Powerbank und Adapter einstecken',
      note:'Spanien hat die gleichen Steckdosen wie Deutschland, ein Adapter ist also nicht nötig. Powerbank gehört ins Handgepäck, nicht in den Koffer.'}
@@ -7910,6 +7930,48 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       });
   }
   loadTides();
+
+  // ---- App-Symbol für den Home-Bildschirm ----
+  // iPhone und Android lesen das Symbol in dem Moment, in dem man "Zum
+  // Home-Bildschirm" antippt: iOS aus <link rel="apple-touch-icon">, Android
+  // aus der Manifest-Datei. Beides tauscht die Seite je nach Wahl aus - die
+  // Wahl selbst liegt nur auf diesem Gerät.
+  var APP_ICONS = [
+    { id: 'klassik', name: 'Klassik' }, { id: 'nacht', name: 'Nacht' }, { id: 'sonnenuntergang', name: 'Sonnenuntergang' },
+    { id: 'lagune', name: 'Lagune' }, { id: 'sand', name: 'Sand' }, { id: 'foto', name: 'Strandfoto' }
+  ];
+  function appIconAnwenden(id){
+    var ok = APP_ICONS.some(function(a){ return a.id === id; });
+    if (!ok) id = 'klassik';
+    document.querySelectorAll('link[rel="apple-touch-icon"]').forEach(function(l){ l.href = 'images/icon-' + id + '-180.png'; });
+    var man = document.querySelector('link[rel="manifest"]');
+    if (man) man.href = id === 'klassik' ? 'manifest.json' : 'manifest-' + id + '.json';
+    return id;
+  }
+  function appIconWahlZeichnen(){
+    var box = document.getElementById('icon-wahl'), anl = document.getElementById('icon-anleitung');
+    if (!box) return;
+    var aktiv = appIconAnwenden(lsGet('fuerte-app-icon', 'klassik'));
+    box.innerHTML = APP_ICONS.map(function(a){
+      return '<button type="button" data-id="' + a.id + '" class="' + (a.id === aktiv ? 'is-on' : '') + '"><img src="images/icon-' + a.id + '-192.png" alt="" loading="lazy">' + a.name + '</button>';
+    }).join('');
+    var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    var steht = isStandalone();
+    anl.innerHTML = (steht
+      ? '<strong>Die Seite liegt schon auf dem Home-Bildschirm.</strong> Ein neues Symbol erscheint erst, wenn du sie dort löschst und noch einmal hinzufügst – das Handy merkt sich das Symbol vom Moment des Hinzufügens.'
+      : '<strong>So kommt das Symbol aufs Handy:</strong>') +
+      '<ol>' + (isIOS
+        ? '<li>Safari: unten das <strong>Teilen-Symbol</strong> antippen</li><li><strong>„Zum Home-Bildschirm“</strong> wählen</li><li>Hinzufügen – fertig, das gewählte Symbol liegt auf dem Home-Bildschirm.</li>'
+        : '<li>Chrome: oben rechts <strong>⋮</strong> antippen</li><li><strong>„Zum Startbildschirm hinzufügen“</strong> bzw. „App installieren“ wählen</li><li>Bestätigen – das gewählte Symbol liegt auf dem Startbildschirm.</li>') +
+      '</ol>';
+    box.addEventListener('click', function(ev){
+      var b = ev.target.closest('button[data-id]'); if (!b) return;
+      lsSet('fuerte-app-icon', b.getAttribute('data-id'));
+      appIconWahlZeichnen();
+    }, { once: true });
+  }
+  appIconAnwenden(lsGet('fuerte-app-icon', 'klassik'));
+  appIconWahlZeichnen();
 
   // ---- Merkt, wer zuletzt was getan hat (fuer die Startseite) ----
   var AKT_KEY = 'fuerte-aktivitaet';

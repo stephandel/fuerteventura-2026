@@ -21,3 +21,17 @@ CREATE TABLE IF NOT EXISTS notes (
 );
 
 CREATE INDEX IF NOT EXISTS notes_slug_at ON notes (slug, at);
+
+-- Stündliche Webcam-Bilder je Ort (vom Cron-Auslöser gefüllt). Pro Ort und
+-- voller Stunde ein Bild; alte Bilder räumt der Worker nach ein paar Tagen weg.
+CREATE TABLE IF NOT EXISTS webcam_shots (
+  id       INTEGER PRIMARY KEY AUTOINCREMENT,
+  ort      TEXT    NOT NULL,
+  t        TEXT    NOT NULL,   -- volle Stunde in Ortszeit, z. B. 2026-09-22T09:00
+  taken_at INTEGER NOT NULL,   -- Zeitstempel der Aufnahme (ms)
+  mime     TEXT,
+  bytes    BLOB,
+  quelle   TEXT,
+  link     TEXT,
+  UNIQUE (ort, t)
+);
