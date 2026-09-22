@@ -8,6 +8,7 @@
 <meta name="apple-mobile-web-app-title" content="Fuerteventura">
 <link rel="stylesheet" href="vendor/leaflet.css">
 <script defer src="vendor/leaflet.js"></script>
+<script defer src="meteogramm.js"></script>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
 <link rel="apple-touch-icon" sizes="167x167" href="images/apple-touch-icon-167.png">
@@ -33,6 +34,7 @@
   --teal: #0f6e76;
   --teal-ink: #ffffff;
   --ochre: #b5741f;
+  --gold: #b8861f; --gold-hi: #dcb24e; --gold-lo: #8f6512;
   --good: #3f8f5c;
   --good-bg: #e3f1e6;
   --warn: #9c7a1f;
@@ -47,7 +49,7 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --ink: #ede9e0; --ink-dim: #b4ac9c; --page: #14181a; --surface: #1b2124; --surface-2: #202729;
-    --border: #303836; --teal: #4bc4cb; --teal-ink: #0a2224; --ochre: #e0a24f;
+    --border: #303836; --teal: #4bc4cb; --teal-ink: #0a2224; --ochre: #e0a24f; --gold: #d4a53a; --gold-hi: #f1d27a; --gold-lo: #a97f22;
     --good: #6fc98c; --good-bg: #1c3226; --warn: #d8bc63; --warn-bg: #362d16;
     --bad: #e08876; --bad-bg: #3a231e; --muted-bg: #242b2c;
     --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
@@ -57,7 +59,7 @@
 }
 :root[data-theme="dark"] {
   --ink: #ede9e0; --ink-dim: #b4ac9c; --page: #14181a; --surface: #1b2124; --surface-2: #202729;
-  --border: #303836; --teal: #4bc4cb; --teal-ink: #0a2224; --ochre: #e0a24f;
+  --border: #303836; --teal: #4bc4cb; --teal-ink: #0a2224; --ochre: #e0a24f; --gold: #d4a53a; --gold-hi: #f1d27a; --gold-lo: #a97f22;
   --good: #6fc98c; --good-bg: #1c3226; --warn: #d8bc63; --warn-bg: #362d16;
   --bad: #e08876; --bad-bg: #3a231e; --muted-bg: #242b2c;
   --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px -12px rgba(0,0,0,0.5);
@@ -84,7 +86,9 @@ button { font-family: inherit; }
 nav.topnav { position: sticky; top: 0; z-index: 50; background: var(--surface); border-bottom: 1px solid var(--border); padding-top: env(safe-area-inset-top, 0px); }
 body { padding-bottom: env(safe-area-inset-bottom, 0px); }
 .navwrap { max-width: 1180px; margin: 0 auto; padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
-.brand { font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif; font-weight: 700; letter-spacing: -0.015em; font-size: 1.05rem; color: var(--ink); text-decoration: none; display: flex; gap: 7px; align-items: center; }
+.brand { font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif; font-weight: 700; letter-spacing: -0.015em; font-size: 1.05rem; color: var(--gold, #c9962b); text-decoration: none; display: flex; gap: 7px; align-items: center; }
+/* Schriftzug in Gold: Insel-Silhouette bleibt einfarbig gold, der Text bekommt einen leichten Metall-Verlauf */
+.brand-text { background: linear-gradient(180deg, var(--gold-hi, #e8c56a) 0%, var(--gold, #c9962b) 55%, var(--gold-lo, #a5741c) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .nav-kosten-pp { font-family: "JetBrains Mono", monospace; font-weight: 700; font-size: 0.85rem; color: var(--teal); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 .nav-kosten-pp[hidden] { display: none; }
 .navlinks { display: flex; gap: 2px; flex-wrap: wrap; }
@@ -255,20 +259,6 @@ details[open] summary::before { content: "− "; }
 
 .wx-card { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 14px 0 12px; margin-bottom: 14px; box-shadow: var(--shadow); overflow: hidden; }
 .wx-card > h3 { font-size: var(--fs-micro); text-transform: uppercase; letter-spacing: 0.09em; color: var(--ink-dim); font-weight: 700; padding: 0 16px 10px; display: flex; align-items: center; gap: 7px; border-bottom: 1px solid var(--border); margin-bottom: 10px; }
-
-/* Stundenverlauf */
-.wx-hours { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; padding: 0 12px 4px; -webkit-overflow-scrolling: touch; }
-.wx-hours::-webkit-scrollbar { display: none; }
-.wx-hour { flex: 0 0 auto; min-width: 60px; display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 6px 4px; border-radius: 12px; }
-.wx-hour.is-now { background: var(--surface-2); }
-.wx-hour .wh-t { font-family: "JetBrains Mono", monospace; font-size: var(--fs-cap); color: var(--ink-dim); }
-.wx-hour.is-now .wh-t { color: var(--teal); font-weight: 700; }
-.wx-hour .wh-i { font-size: 1.35rem; line-height: 1.1; }
-.wx-hour .wh-v { font-family: "JetBrains Mono", monospace; font-size: var(--fs-sub); font-weight: 700; }
-.wx-hour .wh-r { font-family: "JetBrains Mono", monospace; font-size: 10.5px; color: var(--teal); min-height: 13px; }
-.wx-hour.is-sun { min-width: 68px; }
-.wx-hour.is-sun .wh-v { font-size: var(--fs-cap); font-weight: 600; color: var(--ochre); }
-.wx-hour.is-sun .wh-i { font-size: 1.2rem; }
 
 /* Tagesliste mit Temperaturbalken */
 .wx-days { padding: 0 16px; }
@@ -567,6 +557,73 @@ body { font-size: var(--fs-body); }
 .sunset-bar { position: relative; z-index: 1; margin: 16px -22px -20px; padding: 11px 22px; background: linear-gradient(90deg, rgba(224,162,79,0.95), rgba(199,110,58,0.95)); color: #23160a; font-size: 13.5px; font-weight: 600; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .sunset-bar b { font-family: "JetBrains Mono", monospace; }
 .sunset-bar .sb-cta { margin-left: auto; background: rgba(35,22,10,0.16); border: 1px solid rgba(35,22,10,0.25); color: #23160a; border-radius: 999px; padding: 3px 11px; font-size: 12px; font-weight: 700; text-decoration: none; white-space: nowrap; }
+
+/* ================= Meteogramm (gestapelte Diagramme, gemeinsame Zeitachse) ================= */
+.mg-card { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; margin-bottom: 14px; box-shadow: var(--shadow); overflow: hidden; }
+.mg-top { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; padding: 12px 14px 0; }
+.mg-tabs { display: inline-flex; gap: 2px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 3px; }
+.mg-tab { min-height: 36px; padding: 0 12px; border: 0; border-radius: 9px; background: transparent; color: var(--ink-dim); font: 600 13.5px/1 "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif; cursor: pointer; white-space: nowrap; -webkit-tap-highlight-color: transparent; }
+.mg-tab.is-on { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,0.18); }
+.mg-tabs-modell .mg-tab { font-family: "JetBrains Mono", monospace; font-size: 12px; padding: 0 10px; }
+.mg-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; padding: 12px 14px 10px; }
+.mg-readout { min-width: 0; flex: 1; }
+.mg-zeit { font-family: "JetBrains Mono", monospace; font-size: 1.05rem; font-weight: 700; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; min-height: 24px; }
+.mg-rel { font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif; font-size: var(--fs-cap); font-weight: 600; color: var(--ink-dim); }
+.mg-werte { display: flex; flex-wrap: wrap; gap: 5px 8px; margin-top: 6px; }
+.mg-chip { display: inline-flex; align-items: center; gap: 5px; font-family: "JetBrains Mono", monospace; font-size: 12.5px; color: var(--ink); background: var(--surface-2); border: 1px solid var(--border); border-radius: 999px; padding: 3px 9px 3px 7px; white-space: nowrap; }
+.mg-chip i { width: 8px; height: 8px; border-radius: 50%; background: var(--c, var(--border)); flex: none; }
+.mg-chip i:empty:not([style]) { display: none; }
+.mg-knoepfe { display: flex; gap: 6px; flex: none; }
+.mg-btn { min-height: 40px; min-width: 40px; padding: 0 12px; border-radius: 11px; border: 1px solid var(--border); background: var(--surface-2); color: var(--ink); font: 600 13.5px/1 "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.mg-btn:active { transform: scale(0.97); }
+.mg-btn-jetzt { border-color: var(--teal); color: var(--teal); }
+.mg-cam { position: relative; margin: 0 14px 10px; border-radius: 12px; overflow: hidden; background: var(--surface-2); border: 1px solid var(--border); height: clamp(120px, 40vw, 240px); }
+.mg-cam img { width: 100%; height: 100%; object-fit: cover; display: block; transition: filter .3s; }
+.mg-cam.is-leer img { opacity: 0.25; filter: grayscale(1); }
+.mg-cam-text { position: absolute; left: 0; right: 0; bottom: 0; padding: 6px 10px; font-size: var(--fs-cap); color: #fff; background: linear-gradient(0deg, rgba(0,0,0,0.72), rgba(0,0,0,0)); }
+.mg-cam.is-leer .mg-cam-text { background: none; color: var(--ink-dim); top: 0; display: flex; align-items: center; justify-content: center; text-align: center; }
+.mg-demo { display: inline-block; background: var(--ochre); color: #1c1a17; border-radius: 6px; padding: 1px 6px; font-weight: 700; font-size: 11px; margin-left: 4px; }
+.mg-wrap { position: relative; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.mg-scroll { overflow-x: auto; overflow-y: hidden; scrollbar-width: none; -webkit-overflow-scrolling: touch; cursor: grab; overscroll-behavior-x: contain; }
+.mg-scroll::-webkit-scrollbar { display: none; }
+.mg-svgwrap { position: relative; }
+.mg-svg { display: block; }
+.mg-achse { position: absolute; left: 0; top: 0; width: 46px; pointer-events: none; background: var(--surface); border-right: 1px solid var(--border); }
+.mg-ax-titel { position: absolute; left: 0; padding: 0 10px 0 8px; background: var(--surface-2); border-radius: 0 6px 6px 0; display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-dim); white-space: nowrap; }
+.mg-ax-titel small { font-weight: 600; text-transform: none; letter-spacing: 0; }
+.mg-ax-punkt { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.mg-ax-tick { position: absolute; right: 8px; font-family: "JetBrains Mono", monospace; font-size: 11px; color: var(--ink-dim); line-height: 14px; }
+.mg-ax-datum { position: absolute; left: 0; padding: 0 10px 0 8px; display: flex; align-items: center; background: var(--surface); font-size: 12px; font-weight: 700; color: var(--ink); white-space: nowrap; border-radius: 0 6px 6px 0; }
+.mg-svg .mg-sonne { fill: var(--ochre); font-weight: 700; font-size: 10.5px; }
+.mg-cursor { position: absolute; top: 0; bottom: 0; left: 50%; width: 0; border-left: 2px solid var(--ink); opacity: 0.85; pointer-events: none; }
+.mg-cursor::before { content: ""; position: absolute; top: 0; left: -6px; border: 5px solid transparent; border-top: 7px solid var(--ink); }
+.mg-foot { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding: 8px 14px 10px; font-size: 11.5px; color: var(--ink-dim); }
+/* Diagramm-Innereien */
+.mg-svg text { font-family: "JetBrains Mono", monospace; font-size: 11px; fill: var(--ink-dim); }
+.mg-svg .mg-datum { font-family: "Plus Jakarta Sans", ui-sans-serif, system-i, sans-serif; font-weight: 700; fill: var(--ink); font-size: 12px; }
+.mg-svg .mg-titelband { fill: var(--surface-2); }
+.mg-svg .mg-nacht { fill: rgba(20,30,50,0.10); }
+:root[data-theme="dark"] .mg-svg .mg-nacht { fill: rgba(0,0,0,0.28); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .mg-svg .mg-nacht { fill: rgba(0,0,0,0.28); } }
+.mg-svg .mg-grid { stroke: var(--border); stroke-width: 1; }
+.mg-svg .mg-tag { stroke: var(--ink-dim); stroke-width: 1; opacity: 0.6; }
+.mg-svg .mg-balken { opacity: 0.9; }
+.mg-svg .mg-balken2 { opacity: 0.32; }
+.mg-svg .mg-linie { fill: none; stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+.mg-svg .mg-flaeche { opacity: 0.16; }
+.mg-svg .mg-mark { fill: var(--ink); font-size: 10.5px; font-weight: 700; paint-order: stroke; stroke: var(--surface); stroke-width: 3px; stroke-linejoin: round; }
+.mg-svg .mg-jetzt { stroke: var(--teal); stroke-width: 1.5; stroke-dasharray: 4 3; }
+.mg-svg .mg-jetzt-t { fill: var(--teal); font-weight: 700; }
+.mg-svg .mg-cam-mark { fill: var(--ochre); opacity: 0.85; }
+.mg-svg .mg-cam-t { font-size: 11px; }
+@media (max-width: 560px) {
+  .mg-head { flex-direction: column; }
+  .mg-knoepfe { width: 100%; }
+  .mg-btn-jetzt { flex: 1; }
+  .mg-top { flex-direction: column; }
+  .mg-tabs { width: 100%; }
+  .mg-tab { flex: 1; text-align: center; }
+}
 
 /* ---- Sonnen-Tabelle auf der Wetterseite ---- */
 .sun-table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 13.5px; }
@@ -1305,7 +1362,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 
 <nav class="topnav">
   <div class="navwrap">
-    <a class="brand" href="#home"><span class="brand-insel" aria-hidden="true"></span>Fuerteventura</a>
+    <a class="brand" href="#home"><span class="brand-insel" aria-hidden="true"></span><span class="brand-text">Fuerteventura</span></a>
     <span class="nav-kosten-pp" id="nav-kosten-pp" hidden></span>
     <div class="nav-search">
       <button type="button" class="nav-search-btn" id="open-search" aria-label="Suchen">
@@ -1531,7 +1588,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       </div>
       <div class="grid" style="margin-top:16px" id="card-grid">
         
-<article class="card" id="c-casita-maracuya" data-price="340.0" data-ppn="85.0" data-rating="9.9" data-beach="200" data-pool="true" data-grill="false" data-ac="true" data-freecancel="true" data-wholeplace="true" data-partial="true" data-maxout="2026-10-03" data-lat="28.7395" data-lng="-13.8705">
+<article class="card" id="c-casita-maracuya" data-price="340.0" data-ppn="85.0" data-rating="9.9" data-beach="200" data-pool="true" data-grill="false" data-ac="true" data-freecancel="false" data-wholeplace="true" data-partial="true" data-maxout="2026-10-03" data-lat="28.7395" data-lng="-13.8705">
   <div class="card-media">
     <img src="images/casita-maracuya.webp" alt="Casita Maracuya, Corralejo Playa" loading="lazy">
     <span class="pin-badge">9</span>
@@ -1583,7 +1640,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
           <div><h4>Contra</h4><ul class="con"><li>Nur vier N&#228;chte am Anfang buchbar &#8211; danach durchgehend belegt</li><li>Studio ohne separates Schlafzimmer, ausgelegt f&#252;r genau 2 G&#228;ste</li><li>Der Pool ist gemeinschaftlich, nicht privat</li><li>Widerspr&#252;chliche Angaben zum Parken: Ausstattungsliste nennt einen Platz auf dem Grundst&#252;ck, die Beschreibung sagt &#8222;auf der Stra&#223;e&#8220;</li><li>Kein Kohlenmonoxidmelder (von Airbnb ausdr&#252;cklich vermerkt)</li></ul></div>
         </div>
         <h4>Stornierung</h4>
-        <p class="dist-line">Kostenlose Stornierung &#183; Preis aktuell von 416 &#8364; auf 340 &#8364; reduziert.</p>
+        <p class="dist-line">&#9888;&#65039; Seit 22.09. <strong>nicht mehr kostenlos stornierbar</strong> (nur 24 Std. nach Buchung) &#183; Preis aktuell von 416 &#8364; auf 340 &#8364; reduziert.</p>
       </div>
     </details>
   </div>
@@ -2053,9 +2110,8 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       </div>
     </div>
 
-    <div class="wx-card" id="wx-hours-card">
-      <h3>&#128336; Die n&#228;chsten 24 Stunden</h3>
-      <div class="wx-hours" id="wx-hours"></div>
+    <div class="mg-card" id="meteogramm">
+      <p class="sub" style="padding:14px">Lade Wetterverlauf&#8230;</p>
     </div>
 
     <div class="wx-card" id="wx-days-card">
@@ -4358,7 +4414,6 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 
     // --- Wetterseite: Kopf, Stunden, Tage, Kacheln ---
     renderWxHero(d);
-    renderWxHours(d);
     renderWxDays(d);
     renderWxTiles(d);
 
@@ -4370,11 +4425,6 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     51:'Leichter Nieselregen',53:'Nieselregen',55:'Starker Nieselregen',61:'Leichter Regen',63:'Regen',65:'Starker Regen',
     71:'Leichter Schneefall',73:'Schneefall',75:'Starker Schneefall',80:'Leichte Schauer',81:'Schauer',82:'Kräftige Schauer',
     95:'Gewitter',96:'Gewitter mit Hagel',99:'Schweres Gewitter'};
-
-  function wxHourLabel(iso){
-    var h = iso.slice(11, 13);
-    return h + ' Uhr';
-  }
 
   function renderWxHero(d){
     var el = document.getElementById('wx-temp');
@@ -4398,51 +4448,6 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       hero.style.setProperty('--wx-sky', sky);
       hero.style.background = sky;
     }
-  }
-
-  function renderWxHours(d){
-    var box = document.getElementById('wx-hours');
-    if (!box || !d || !d.hourly) return;
-    var H = d.hourly;
-    var nowIso = d.current.time.slice(0, 13);
-    var startIdx = H.time.findIndex(function(t){ return t.slice(0, 13) >= nowIso; });
-    if (startIdx < 0) startIdx = 0;
-
-    // Sonnenauf- und -untergänge in die Reihe einsortieren
-    var events = [];
-    if (d.daily && d.daily.sunrise) {
-      for (var k = 0; k < d.daily.sunrise.length; k++) {
-        events.push({ iso: d.daily.sunrise[k], label: 'Aufgang', icon: '🌅' });
-        events.push({ iso: d.daily.sunset[k],  label: 'Untergang', icon: '🌇' });
-      }
-    }
-    var items = [];
-    for (var i = startIdx; i < Math.min(startIdx + 25, H.time.length); i++) {
-      items.push({ type: 'h', iso: H.time[i], idx: i });
-    }
-    // Grenzen vorher festhalten - sonst verschiebt jedes eingefügte Ereignis das Ende
-    if (items.length) {
-      var firstIso = items[0].iso, lastIso = items[items.length - 1].iso;
-      events.forEach(function(e){
-        if (e.iso >= firstIso && e.iso <= lastIso) items.push({ type: 's', iso: e.iso, label: e.label, icon: e.icon });
-      });
-    }
-    items.sort(function(a, b){ return a.iso < b.iso ? -1 : (a.iso > b.iso ? 1 : 0); });
-
-    box.innerHTML = items.map(function(it, n){
-      if (it.type === 's') {
-        return '<div class="wx-hour is-sun"><span class="wh-t">' + it.iso.slice(11, 16) + '</span>' +
-          '<span class="wh-i">' + it.icon + '</span><span class="wh-v">' + it.label + '</span><span class="wh-r"></span></div>';
-      }
-      var i = it.idx;
-      var isNow = it.iso.slice(0, 13) === nowIso;
-      var rain = H.precipitation_probability ? H.precipitation_probability[i] : 0;
-      return '<div class="wx-hour' + (isNow ? ' is-now' : '') + '">' +
-        '<span class="wh-t">' + (isNow ? 'Jetzt' : wxHourLabel(it.iso)) + '</span>' +
-        '<span class="wh-i">' + (WMO_ICON[H.weather_code[i]] || '🌤️') + '</span>' +
-        '<span class="wh-v">' + Math.round(H.temperature_2m[i]) + '°</span>' +
-        '<span class="wh-r">' + (rain >= 15 ? '💧' + rain + '%' : '') + '</span></div>';
-    }).join('');
   }
 
   function renderWxDays(d){
@@ -7989,7 +7994,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       adresse: 'C. la Atalaya, 7, 35660 Corralejo, Las Palmas' },
 
     'casita-maracuya': { ppn: 85, gesamt: 340, frei: ['2026-09-29','2026-10-03'],
-      krit: { pool:'ja', eigpool:'nein', heizpool:'ja', grill:'nein', ac:'ja', balkon:'ja', kueche:'ja', wlan:'ja', parken:'ja', wholeplace:'ja', freecancel:'ja' },
+      krit: { pool:'ja', eigpool:'nein', heizpool:'ja', grill:'nein', ac:'ja', balkon:'ja', kueche:'ja', wlan:'ja', parken:'ja', wholeplace:'ja', freecancel:'nein' },
       adresse: 'C. Carabela, 14, 35660 Corralejo, Las Palmas', website: 'https://kazabuenavista.weebly.com/' },
 
     'villa-paradisus': { ppn: 215.15, gesamt: 2797, frei: ['2026-09-29','2026-10-12'],
@@ -9557,7 +9562,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
                'https://a0.muscache.com/im/pictures/hosting/Hosting-1753577964850039747/original/ad666988-bf02-40d6-bf63-dff0442c620e.jpeg?im_w=720',
                'https://a0.muscache.com/im/pictures/hosting/Hosting-1753577964850039747/original/15d6b9d3-74be-461b-a288-55ed13bb64d9.jpeg?im_w=720'],
       krit: { pool: 'ja', eigpool: 'ja', heizpool: 'ja', grill: 'ja', ac: 'ja', balkon: 'ja', kueche: 'ja', wlan: 'ja', parken: 'ja', wholeplace: 'ja', freecancel: 'nein' },
-      hinweis: '<strong>Erf\u00fcllt als einzige alle zehn Kriterien.</strong> Privater beheizter Salzwasser-Pool, Whirlpool auf der Dachterrasse, Klimaanlage, Grill und Au\u00dfenk\u00fcche, 3\u00a0Schlafzimmer und 3,5\u00a0B\u00e4der f\u00fcr bis zu 6\u00a0G\u00e4ste. Liegt in derselben Anlage wie Bahiazul Villa Premier Garden und Villa lujo tranquila (Resort Bah\u00eda Azul, C.\u00a0Pardelas\u00a07) \u2013 mit Spa, Fitnessraum, Restaurant und Wachdienst. <strong>Neu bei Airbnb, daher noch ohne Bewertungen</strong>, und die Gastgeberin ist seit einem Monat dabei. Mit 4.316\u00a0\u20ac die teuerste Villa der Liste \u2013 aber gegen\u00fcber dem regul\u00e4ren Preis von 5.580\u00a0\u20ac gerade deutlich herabgesetzt. <strong>Nicht erstattungsf\u00e4hig</strong> \u2013 nur innerhalb von 24\u00a0Stunden nach der Buchung kostenlos stornierbar, danach ist der volle Betrag weg. Weder Rauch- noch Kohlenmonoxidmelder.' }
+      hinweis: '<strong>Erf\u00fcllt als einzige alle zehn Kriterien.</strong> <strong>Aber: Die Poolheizung kostet 30\u00a0\u20ac pro Tag extra</strong> (bar beim Check-in, f\u00fcr 13 N\u00e4chte 390\u00a0\u20ac) \u2013 steht nur im Kleingedruckten des Inserats. Privater Salzwasser-Pool, Whirlpool auf der Dachterrasse, Klimaanlage, Grill und Au\u00dfenk\u00fcche, 3\u00a0Schlafzimmer und 3,5\u00a0B\u00e4der f\u00fcr bis zu 6\u00a0G\u00e4ste. Liegt in derselben Anlage wie Bahiazul Villa Premier Garden und Villa lujo tranquila (Resort Bah\u00eda Azul, C.\u00a0Pardelas\u00a07) \u2013 mit Spa, Fitnessraum, Restaurant und Wachdienst. <strong>Neu bei Airbnb, daher noch ohne Bewertungen</strong>, und die Gastgeberin ist seit einem Monat dabei. Mit 4.316\u00a0\u20ac die teuerste Villa der Liste \u2013 aber gegen\u00fcber dem regul\u00e4ren Preis von 5.580\u00a0\u20ac gerade deutlich herabgesetzt. <strong>Nicht erstattungsf\u00e4hig</strong> \u2013 nur innerhalb von 24\u00a0Stunden nach der Buchung kostenlos stornierbar, danach ist der volle Betrag weg. Weder Rauch- noch Kohlenmonoxidmelder.' }
   ];
 
   function baueNeueKarten(){
