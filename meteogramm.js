@@ -58,7 +58,10 @@
     { id:'tide',  titel:'Tide',         einheit:'m',          art:'linie',  farbe:'var(--teal)', feld:'tide', glatt:true, extrema:'tide', icon:'🌊', fmt:function(v){ return (v > 0 ? '+' : '') + dez(v, 1) + ' m'; } }
   ];
 
-  var BAND_OBEN = 26, BAND_CAM = 18, TITEL_H = 22, ZEILE_H = 72, BAND_UNTEN = 24, ACHSE_B = 46;
+  var BAND_OBEN = 26, BAND_CAM = 18, TITEL_H = 22, BAND_UNTEN = 24;
+  var ZEILE_H_SCHMAL = 72;    // Zeilenhöhe auf dem Handy
+  var ZEILE_H_BREIT  = 92;    // ... und auf dem Laptop, wo mehr Platz ist
+  var PXH_BREIT = 24;         // Pixel je Stunde auf dem Laptop (fest, sonst wird es flach)
   var TAGE_VORHER = 1, TAGE_VORAUS = 8;
   var WOCHENTAG = ['So','Mo','Di','Mi','Do','Fr','Sa'];
   // Adresse des Bildspeichers - erst beim Abruf lesen, damit sie sich zum Testen
@@ -179,7 +182,12 @@
     if (!daten || !el.scroll) return;
     var W = el.scroll.clientWidth;
     if (W < 40) return;                       // Seite gerade nicht sichtbar
-    pxH = Math.max(18, Math.min(40, Math.floor(W / 26)));
+    // Auf dem Handy bleibt alles kompakt. Auf dem Laptop wären 40 Pixel je Stunde
+    // zu viel - die Kurven zögen sich flach in die Breite. Dort lieber engere
+    // Stunden und dafür höhere Zeilen.
+    var schmal = W < 560;
+    pxH = schmal ? Math.max(18, Math.min(40, Math.floor(W / 26))) : PXH_BREIT;
+    var zeileH = schmal ? ZEILE_H_SCHMAL : ZEILE_H_BREIT;
     var n = daten.zeit.length;
     var padL = Math.ceil(W / 2), padR = Math.ceil(W / 2);
     var breite = padL + (n - 1) * pxH + padR;
@@ -189,10 +197,10 @@
     var y = BAND_OBEN + BAND_CAM, zeilen = [];
     ZEILEN.forEach(function(z){
       var s = skala(z);
-      var g = { z: z, s: s, y0: y + TITEL_H, h: ZEILE_H, yt: y };
+      var g = { z: z, s: s, y0: y + TITEL_H, h: zeileH, yt: y };
       g.yv = function(v){ return g.y0 + g.h - (v - s.lo) / (s.hi - s.lo) * g.h; };
       zeilen.push(g);
-      y += TITEL_H + ZEILE_H;
+      y += TITEL_H + zeileH;
     });
     var hoehe = y + BAND_UNTEN;
     geo = { zeilen: zeilen, padL: padL, hoehe: hoehe, breite: breite, x: x, n: n };
