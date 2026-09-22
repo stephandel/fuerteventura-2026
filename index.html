@@ -762,6 +762,40 @@ table.price-table tfoot td.num { color: var(--teal); }
 .ex-card p { margin: 0; font-size: 13.5px; color: var(--ink-dim); }
 .ex-meta { font-size: 12.5px; color: var(--ochre); font-weight: 600; margin-top: auto; padding-top: 6px; }
 .ex-link { margin-top: auto; align-self: flex-start; }
+.ex-region { position: absolute; left: 10px; bottom: 10px; background: rgba(20,24,26,0.72); color: #fff; font-size: 11.5px; font-weight: 600; padding: 4px 10px; border-radius: 999px; }
+.ex-closed-badge { position: absolute; bottom: 10px; left: 10px; right: 10px; background: rgba(209,59,46,0.92); color: #fff; font-size: 11.5px; font-weight: 700; padding: 4px 9px; border-radius: 8px; text-align: center; }
+.ex-media:has(.ex-closed-badge) .ex-region { bottom: 42px; }
+.ex-praktisch { margin-top: 6px; }
+.ex-praktisch summary { cursor: pointer; font-size: 12.5px; font-weight: 600; color: var(--teal); list-style: none; min-height: var(--tap); display: flex; align-items: center; }
+.ex-praktisch summary::-webkit-details-marker { display: none; }
+.ex-praktisch summary::before { content: "+ "; margin-right: 2px; }
+.ex-praktisch[open] summary::before { content: "\2212 "; }
+.ex-praktisch-body { display: flex; flex-direction: column; gap: 0; margin-top: 4px; }
+.ex-prow { display: grid; grid-template-columns: 22px 1fr; gap: 6px; font-size: 12.5px; line-height: 1.45; padding: 6px 0; border-top: 1px solid var(--border); color: var(--ink); }
+.ex-prow:first-child { border-top: none; }
+.ex-prow .pl { font-size: 14px; line-height: 1.3; }
+.ex-prow b { font-weight: 700; }
+.ex-prow a { color: var(--teal); font-weight: 600; text-decoration: none; }
+.ex-prow a:hover { text-decoration: underline; }
+.ex-prow.warn { background: var(--bad-bg); color: var(--bad); border-radius: 8px; padding: 6px 8px; margin-top: 4px; border-top: none; }
+.ex-web-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.ex-web-row .btn { flex: 1 1 calc(50% - 4px); min-width: 0; text-align: center; padding-left: 6px; padding-right: 6px; font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ex-filter { display: flex; flex-wrap: wrap; gap: 6px; }
+.ex-fbtn { min-height: var(--tap); padding: 0 12px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface-2); color: var(--ink-dim); font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.ex-fbtn:hover { border-color: var(--teal); color: var(--teal); }
+.ex-fbtn.active { background: var(--teal); border-color: var(--teal); color: var(--teal-ink); }
+.ex-card.ex-off { display: none; }
+.ex-card.ex-closed .ex-media img { filter: grayscale(0.5); opacity: 0.85; }
+.ex-filter-hint { margin: 10px 0 0; font-size: 13px; color: var(--ink-dim); }
+.ex-vorab { background: var(--surface); border: 1px solid var(--ochre); border-radius: 16px; padding: 20px 22px; box-shadow: var(--shadow); margin-top: 32px; }
+.ex-vorab h2 { margin: 0; }
+.ex-vorab > .sub { margin-top: 6px; }
+.ex-vorab-list { list-style: none; margin: 14px 0 0; padding: 0; display: flex; flex-direction: column; gap: 0; }
+.ex-vorab-list li { display: grid; grid-template-columns: 120px 1fr; gap: 12px; padding: 10px 0; border-top: 1px solid var(--border); font-size: 13.5px; line-height: 1.5; }
+.ex-vorab-list li:first-child { border-top: none; padding-top: 0; }
+.ex-vorab-list .ev-wann { font-family: "JetBrains Mono", monospace; font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--ochre); padding-top: 2px; }
+.ex-vorab-list a { color: var(--teal); font-weight: 600; }
+@media (max-width: 640px) { .ex-vorab-list li { grid-template-columns: 1fr; gap: 2px; } .ex-vorab { padding: 16px; } }
 .ex-meta { margin-top: 8px !important; padding-top: 0 !important; }
 
 .rest-items { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; }
@@ -2179,7 +2213,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   <div class="page-header wrap">
     <div class="eyebrow">Vor Ort</div>
     <h1>Ausflüge &amp; Highlights</h1>
-    <p class="sub">Zwanzig einzelne Ziele quer über die Insel, jeweils mit Fahrzeit ab Corralejo, realistischem Zeitaufwand, Kosten und einem Tipp aus der Recherche. Dazu zehn eigene <a href="#tagestrips">fertige Tagestrips</a>, zwei davon mit der Fähre auf die Nachbarinseln, bei denen du die Abfahrtszeit einstellst und die Seite den ganzen Tag durchrechnet. Märkte, Events &amp; Insider-Tipps stehen auf der <a href="#kalender">Kalender-Seite</a>.</p>
+    <p class="sub">Zwanzig einzelne Ziele quer über die Insel, jeweils mit Fahrzeit ab Corralejo, realistischem Zeitaufwand, Kosten und einem Tipp aus der Recherche – und auf jeder Karte unter „Praktisch“ Eintritt, Anmeldung, Öffnungszeiten, Ausrüstung und Parken. Mit den Knöpfen unter der Karte filterst du nach Region (Norden / Mitte / Süden) und Art. Dazu zehn eigene <a href="#tagestrips">fertige Tagestrips</a>, zwei davon mit der Fähre auf die Nachbarinseln, bei denen du die Abfahrtszeit einstellst und die Seite den ganzen Tag durchrechnet. Märkte, Events &amp; Insider-Tipps stehen auf der <a href="#kalender">Kalender-Seite</a>.</p>
   </div>
   <div class="wrap">
     <section class="livemap-box">
@@ -2192,7 +2226,34 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       <p class="livemap-hint">Die Punkte zeigen die zwanzig Einzelziele und die Stationen der Tagestrips. Antippen &#246;ffnet Name und Eckdaten, von dort springst du zur Karte in der Liste. Vieles liegt im S&#252;den &#8211; f&#252;r den Norden reicht der Knopf oben.</p>
     </section>
 
+    <section class="ex-vorab" id="ex-vorab">
+      <h2>&#128203; Was vorher organisiert werden muss</h2>
+      <p class="sub">Die meisten Ziele brauchen nichts als Auto und Sonnencreme. Diese hier nicht &#8211; Stand der Recherche: 22.09.2026.</p>
+      <ul class="ex-vorab-list">
+        <li><span class="ev-wann">Sobald es geht</span><div><strong>Isla de Lobos: Genehmigung + F&#228;hre</strong> &#8211; die kostenlose Genehmigung gibt es nur auf <a href="https://www.lobospass.com/" target="_blank" rel="noopener">lobospass.com</a>, sie wird erst wenige Tage vorher freigeschaltet (oft nur 3 Tage) und ist schnell weg. Zwei Schichten: 10&#8211;14 oder 14&#8211;18 Uhr. Dazu die F&#228;hre bei <a href="https://navieranortour.com/en/" target="_blank" rel="noopener">Nortour</a> oder Lobos Express (ca. 17 &#8364; p.P. hin und zur&#252;ck). Personalausweis mitnehmen.</div></li>
+        <li><span class="ev-wann">Vor der Reise</span><div><strong>Whale-Watching ab Morro Jable</strong> &#8211; online buchen, ca. 50 &#8364; p.P. f&#252;r 2 Std., z.&#8239;B. <a href="https://magicandsailing.com/en/ships/dolphing-search/" target="_blank" rel="noopener">Magic Dolphin</a> (Getr&#228;nke + Badestopp inkl.) oder <a href="https://clubcanary.com/fuerteventura-dolphin-boat-trip-morro-jable/" target="_blank" rel="noopener">Club Canary</a> (kleines Schnellboot, Delfin-Garantie). Beide holen in Costa Calma ab.</div></li>
+        <li><span class="ev-wann">1&#8211;2 Tage vorher</span><div><strong>Surfkurs in El Cotillo/Lajares</strong> &#8211; Schnupperkurs ab ca. 45&#8211;60 &#8364; p.P. inkl. Board und Neopren, z.&#8239;B. <a href="https://www.freshsurf.de/" target="_blank" rel="noopener">FreshSurf</a> (El Cotillo) oder <a href="https://www.homegrown.es/" target="_blank" rel="noopener">Homegrown</a> (Lajares). Uhrzeit richtet sich nach den Gezeiten.</div></li>
+        <li><span class="ev-wann">Am Vortag</span><div><strong>Gezeiten pr&#252;fen</strong> f&#252;r die <a href="#ex-playas-de-sotavento-risco-del-paso">Lagune von Sotavento</a> (nur bei Ebbe) und die <a href="#ex-ajuy-schwarzer-strand-h-hlen">H&#246;hlen von Ajuy</a> (bei hohen Wellen gesperrt) &#8211; steht auf unserer <a href="#wetter">Wetterseite</a>.</div></li>
+        <li><span class="ev-wann">Entscheiden</span><div><strong>Cofete &amp; Punta de Jand&#237;a</strong> &#8211; beide nur &#252;ber ca. 20 km Schotterpiste ab Morro Jable. Autoreisen erlaubt das mit dem Seat Ibiza nicht (Sch&#228;den auf unbefestigten Wegen sind nicht versichert). Entweder eine gef&#252;hrte Jeep-Tour buchen oder die beiden weglassen.</div></li>
+        <li><span class="ev-wann">Merken</span><div><strong>Markttage:</strong> Lajares Sa 10&#8211;14 (03.10. und 10.10.) &#183; La Oliva Mercado de las Tradiciones Di + Fr 10&#8211;14 &#183; Corralejo Acua Water Park Di + Fr 9&#8211;14 &#183; El Campanario Do + So. <strong>Geschlossen:</strong> Casa de los Coroneles (Sanierung), Ausstellungen am Faro de Jand&#237;a und im Mirador Morro Velosa (laut Cabildo vor&#252;bergehend).</div></li>
+      </ul>
+    </section>
+
     <div class="sort-filter-bar">
+      <div class="ex-filter" id="ex-region-filter" role="group" aria-label="Region">
+        <button type="button" class="ex-fbtn active" data-region="">Alle Ziele</button>
+        <button type="button" class="ex-fbtn" data-region="nord">&#127968; Norden &#183; bis 30 Min.</button>
+        <button type="button" class="ex-fbtn" data-region="mitte">&#128663; Mitte &#183; 35&#8211;70 Min.</button>
+        <button type="button" class="ex-fbtn" data-region="sued">&#127774; S&#252;den &#183; ganzer Tag</button>
+      </div>
+      <div class="ex-filter" id="ex-cat-filter" role="group" aria-label="Art">
+        <button type="button" class="ex-fbtn" data-cat="strand">&#127958;&#65039; Strand</button>
+        <button type="button" class="ex-fbtn" data-cat="natur">&#127755; Natur</button>
+        <button type="button" class="ex-fbtn" data-cat="aussicht">&#128247; Aussicht</button>
+        <button type="button" class="ex-fbtn" data-cat="kultur">&#127963;&#65039; Kultur</button>
+        <button type="button" class="ex-fbtn" data-cat="dorf">&#127968; Dorf &amp; Markt</button>
+        <button type="button" class="ex-fbtn" data-cat="aktiv">&#127940; Aktiv</button>
+      </div>
       <label class="sf-label">Sortieren
         <select id="ex-sort-select">
           <option value="rank">Empfehlung (Standard)</option>
@@ -2204,6 +2265,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
         </select>
       </label>
     </div>
+    <p class="ex-filter-hint" id="ex-filter-hint" hidden></p>
     <div class="excursion-grid" id="excursion-grid">
       <article class="ex-card" data-id="isla-de-lobos" data-rank="1" data-title="Isla de Lobos" data-drive="20" data-stay="240" data-cost="17" data-cat="natur strand aktiv" data-lat="28.7469" data-lng="-13.8237">
   <div class="ex-media">
@@ -2328,19 +2390,20 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.5658,-13.9376" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
-<article class="ex-card" data-id="la-oliva-casa-de-los-coroneles" data-rank="9" data-title="La Oliva – Casa de los Coroneles" data-drive="12" data-stay="75" data-cost="3" data-cat="kultur" data-lat="28.6108" data-lng="-13.927">
+<article class="ex-card" data-id="la-oliva-casa-de-los-coroneles" data-rank="9" data-title="La Oliva – Casa de los Coroneles" data-drive="12" data-stay="75" data-cost="0" data-cat="kultur" data-lat="28.6108" data-lng="-13.927">
   <div class="ex-media">
     <img src="images/la-oliva-casa-de-los-coroneles.webp" alt="La Oliva – Casa de los Coroneles" loading="lazy">
     <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     <div class="ex-rank">#9</div>
+    <div class="ex-closed-badge">Herrenhaus geschlossen – Sanierung</div>
   </div>
   <div class="ex-body">
     <h3>La Oliva – Casa de los Coroneles</h3>
     
-    <div class="ex-chips"><span class="ex-chip">&#128663; 12 Min.</span><span class="ex-chip">&#9201;&#65039; ca. 1 Std.</span><span class="ex-chip">&#128181; ca. 3 €</span></div>
-    <p>Historisches Herrenhaus mit angeschlossenem Kunstzentrum (Centro de Arte Canario) – guter Zwischenstopp auf dem Weg ins Inselinnere.</p>
-    <p class="ex-tip"><strong>Tipp:</strong> Das herrschaftliche Haus der Militärgouverneure aus dem 18. Jahrhundert, heute Museum und Ausstellungsraum. Öffnungszeiten sind unzuverlässig und wechseln saisonal — vorher kurz auf Google Maps nachsehen, ob offen ist. Direkt nebenan liegt die Kirche La Candelaria; zusammen ergibt das einen kompakten Kulturstopp auf dem Weg nach El Cotillo.</p>
-    <p class="ex-meta">&#128197; &#214;ffnungszeiten wechseln saisonal &#8211; vorher auf Google Maps pr&#252;fen</p>
+    <div class="ex-chips"><span class="ex-chip">&#128663; 12 Min.</span><span class="ex-chip">&#9201;&#65039; ca. 1 Std.</span><span class="ex-chip">&#128181; Dorf kostenlos</span></div>
+    <p>Historisches Herrenhaus der Militärgouverneure (18. Jh.) – <strong>seit 2022 wegen Sanierung bis auf Weiteres geschlossen</strong>. La Oliva lohnt trotzdem als kurzer Stopp: Kirche La Candelaria, Casa Mané (Kunstzentrum) und dienstags/freitags der Mercado de las Tradiciones.</p>
+    <p class="ex-tip"><strong>Tipp:</strong> Das Haus selbst kann man nur von außen ansehen – die Fassade mit den geschnitzten Holzbalkonen ist trotzdem ein Foto wert. Wer schon hier ist: Der Mercado de las Tradiciones (Di + Fr, 10–14 Uhr) ist der ehrlichste Markt im Norden, mit Käse, Ziegenprodukten und Kunsthandwerk aus der Gemeinde. Nebenan das Centro de Arte Canario Casa Mané mit kanarischer Malerei und Skulpturengarten.</p>
+    <p class="ex-meta">&#9888;&#65039; Herrenhaus geschlossen (Stand 22.09.2026) &#8211; Markt Di + Fr 10&#8211;14 Uhr</p>
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.6108,-13.927" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
@@ -2429,9 +2492,9 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h3>Antigua – Windmühlenmuseum</h3>
     
     <div class="ex-chips"><span class="ex-chip">&#128663; 50 Min.</span><span class="ex-chip">&#9201;&#65039; 1–2 Std.</span><span class="ex-chip">&#128181; ca. 3 €</span></div>
-    <p>Centro de Interpretación de los Molinos: historische Windmühlen und Gofio-Handwerk im grünen Inselinneren.</p>
+    <p>Molino de Antigua: restaurierte Gofio-Windmühle mit Museum, Kaktusgarten und Kunsthandwerksladen im grünen Inselinneren. Zehn Minuten weiter in Tiscamanita das Centro de Interpretación de los Molinos.</p>
     <p class="ex-tip"><strong>Tipp:</strong> Das Molino de Antigua ist eine restaurierte Gofio-Mühle mit Museum, Kaktusgarten und Kunsthandwerksladen — kompakt, gepflegt und in einer guten Stunde durch. Gofio, das geröstete Getreidemehl, ist bis heute Grundnahrungsmittel auf den Kanaren; hier versteht man, wie es hergestellt wurde. Montags meist geschlossen.</p>
-    <p class="ex-meta">&#128197; Montags meist geschlossen</p>
+    <p class="ex-meta">&#128197; Di&#8211;Sa 10&#8211;18 Uhr &#183; So + Mo geschlossen</p>
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.4322,-13.993" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
@@ -4174,6 +4237,19 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       });
       return;
     }
+    if (hash.indexOf('ex-') === 0) {
+      // Sprung zu einer Ausflugskarte (z. B. aus der Vorab-Box)
+      LAST_IN_TAB['entdecken'] = 'ausfluege';
+      showPage('ausfluege', {noScrollTop:true});
+      requestAnimationFrame(function(){
+        var el = document.getElementById(hash);
+        if (el) {
+          el.scrollIntoView({behavior:'smooth', block:'center'});
+          var d = el.querySelector('.ex-praktisch'); if (d) d.open = true;
+        }
+      });
+      return;
+    }
     if (hash.indexOf('c-') === 0) {
       LAST_IN_TAB['planen'] = 'unterkuenfte';
       showPage('unterkuenfte', {noScrollTop:true});
@@ -5335,6 +5411,223 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   function textCmp(a, b, attr){
     return (a.getAttribute(attr) || '').localeCompare(b.getAttribute(attr) || '', 'de');
   }
+
+  // ============================================================
+  //  Ausfluege: praktische Infos je Ziel (recherchiert 22.09.2026)
+  //  region: nord (bis 30 Min.) / mitte (35-70 Min.) / sued (ganzer Tag)
+  //  web: [Adresse, Beschriftung]  eintritt / buchen / zeiten / ausruestung / anfahrt / warn
+  // ============================================================
+  var MUSEEN = 'https://museosfuerteventura.com/en/museos/';
+  var EX_INFO = {
+    'isla-de-lobos': { region: 'nord',
+      web: [['https://www.lobospass.com/', 'Genehmigung'], ['https://navieranortour.com/en/', 'Fähre Nortour']],
+      eintritt: 'Insel kostenlos · Fähre ca. 17 € p.P. hin und zurück',
+      buchen: '<b>Pflicht:</b> kostenlose Genehmigung auf lobospass.com – wird nur wenige Tage vorher freigeschaltet (oft 3 Tage) und ist schnell weg. Schicht 10–14 oder 14–18 Uhr, 200 Plätze je Schicht. Fähre separat buchen.',
+      zeiten: 'Fähren ab Hafen Corralejo etwa 10–16 Uhr, letzte Rückfahrt gegen 16–17 Uhr',
+      ausruestung: 'Wasser (kein Laden auf der Insel), Sonnenschutz, Hut, feste Sandalen oder Turnschuhe (zum Leuchtturm ca. 4 km je Richtung), Badesachen, Bargeld fürs Restaurant, <b>Personalausweis</b>',
+      anfahrt: 'Parkhaus am Hafen Corralejo' },
+    'grandes-playas-d-nen-von-corralejo': { region: 'nord',
+      eintritt: 'kostenlos (Naturpark)',
+      zeiten: 'immer zugänglich · Sonnenuntergang in unserem Zeitraum ca. 19:45–19:55 Uhr',
+      ausruestung: 'Windschutz oder Strandmuschel (Sonnenschirm hält nicht), Wasser, Sonnencreme, Tuch gegen Flugsand',
+      anfahrt: 'Parkbuchten entlang der FV-1a zwischen Corralejo und den Riu-Hotels, kostenlos' },
+    'lajares-kunsthandwerkermarkt': { region: 'nord',
+      eintritt: 'kostenlos',
+      zeiten: 'nur samstags 10–14 Uhr · bei uns: Sa 03.10. und Sa 10.10.',
+      ausruestung: 'Bargeld – die meisten Stände nehmen keine Karte',
+      anfahrt: 'Parken an der Straße am Ortsrand, der Platz selbst ist gesperrt' },
+    'markt-am-aqua-water-park-corralejo': { region: 'nord',
+      eintritt: 'kostenlos',
+      zeiten: 'Di + Fr 9–14 Uhr · bei uns: 29.09., 02.10., 06.10., 09.10.',
+      ausruestung: 'Bargeld',
+      anfahrt: 'Parkplatz am Acua Water Park, Av. Ntra. Sra. del Carmen' },
+    'el-cotillo-lagunen-sonnenuntergang': { region: 'nord',
+      eintritt: 'Lagunen kostenlos · Castillo del Tostón ca. 1,50 € (Öffnungszeiten unzuverlässig)',
+      zeiten: 'Sonnenuntergang ca. 19:45–19:55 Uhr · Lagunen am schönsten bei mittlerem bis hohem Wasserstand',
+      ausruestung: 'Badesachen, Wasserschuhe (Felsen und Steine), Schnorchel, Pulli oder Windjacke für den Abend am Leuchtturm',
+      anfahrt: 'Schotterparkplatz an den Lagunen nördlich des Orts · Parkplatz am Faro de El Tostón' },
+    'betancuria': { region: 'mitte',
+      web: [[MUSEEN, 'Museen des Cabildo']],
+      eintritt: 'Museo Arqueológico kostenlos · Kirche Santa María 1,50 € (sonntags frei) · Mirador Morro Velosa kostenlos',
+      zeiten: 'Museum Di–So 10–17:30 · Kirche ca. 10–13 und 16–18 Uhr · Mirador Di–Sa 10–16',
+      ausruestung: 'Leichte Jacke (700 m Höhe, oft Wolken und Wind), Bargeld für die Kirche',
+      anfahrt: 'Über die kurvige FV-30, Parkplatz am Ortseingang',
+      warn: 'Das Gebäude am Mirador Morro Velosa ist laut Cabildo vorübergehend geschlossen – die Aussicht vom Parkplatz gibt es trotzdem.' },
+    'ajuy-schwarzer-strand-h-hlen': { region: 'mitte',
+      eintritt: 'kostenlos (Naturdenkmal)',
+      zeiten: 'Nur bei ruhiger See – bei hohen Wellen sperrt die Polizei den Weg zu den Höhlen',
+      ausruestung: 'Feste Schuhe (Stufen und Fels), Wasser, Sonnenschutz – <b>nicht baden</b>, gefährliche Strömung',
+      anfahrt: 'Parkplatz am Dorfeingang, dann ca. 20–30 Min. zu Fuß je Richtung',
+      warn: 'Vorher den Wellengang auf der Wetterseite prüfen – bei Sperrung bleibt nur der Strand.' },
+    'tindaya': { region: 'nord',
+      eintritt: 'kostenlos',
+      zeiten: 'immer · am schönsten im Abendlicht',
+      ausruestung: 'Wanderschuhe, Wasser, Hut – kein Schatten',
+      anfahrt: 'Parken im Dorf Tindaya, Feldwege rund um den Berg',
+      warn: '<b>Aufstieg verboten</b> (Kulturgut, seit 2019) – Bußgelder ab 3.000 €. Nur umrunden und von unten anschauen.' },
+    'la-oliva-casa-de-los-coroneles': { region: 'nord',
+      web: [['https://lacasadeloscoroneles.org/', 'Casa de los Coroneles']],
+      eintritt: 'Herrenhaus geschlossen (regulär 3 €) · Kirche kostenlos · Casa Mané ca. 5 €',
+      zeiten: 'Mercado de las Tradiciones Di + Fr 10–14 Uhr',
+      ausruestung: 'Bargeld für den Markt',
+      anfahrt: 'Parken am Kirchplatz',
+      warn: 'Casa de los Coroneles seit 2022 wegen Sanierung „bis auf Weiteres“ geschlossen (Stand 22.09.2026).' },
+    'surfen-kitesurfen-in-lajares-el-cotillo': { region: 'nord',
+      web: [['https://www.freshsurf.de/', 'FreshSurf'], ['https://www.homegrown.es/', 'Homegrown']],
+      eintritt: 'Schnupperkurs ca. 45–60 € p.P. (2–3 Std., Board + Neopren inklusive)',
+      buchen: '1–2 Tage vorher reservieren, Oktober ist Saison. Uhrzeit hängt von den Gezeiten ab.',
+      zeiten: 'Kurse meist vormittags',
+      ausruestung: 'Badesachen, Handtuch, wasserfeste Sonnencreme, Wasser – Board und Neopren stellt die Schule',
+      anfahrt: 'Treffpunkt in der Schule, die Schulen fahren zum passenden Strand' },
+    'faro-de-jand-a-playas-de-sotavento': { region: 'sued',
+      web: [[MUSEEN, 'Museen des Cabildo']],
+      eintritt: 'kostenlos',
+      zeiten: 'Leuchtturm-Ausstellung Di–Sa 10–18 Uhr (derzeit geschlossen) · Kap immer zugänglich',
+      ausruestung: 'Wasser, Proviant, Windjacke, Bargeld fürs Fischrestaurant in Puerto de la Cruz',
+      anfahrt: 'Ab Morro Jable 19–21 km Schotterpiste, ca. 45 Min. je Richtung – <b>mit unserem Mietwagen nicht erlaubt</b>',
+      warn: 'Centro de Interpretación im Leuchtturm laut Cabildo wegen Arbeiten geschlossen. Piste: siehe Cofete – gleiche Mietwagen-Regel.' },
+    'cofete-villa-winter': { region: 'sued',
+      eintritt: 'Strand kostenlos · Villa Winter gegen Trinkgeld/kleinen Beitrag (ca. 5 €)',
+      zeiten: 'Villa ohne feste Zeiten, meist Di–So ca. 10–14 und 15–17 Uhr',
+      ausruestung: 'Wasser und Proviant (nur ein Restaurant), Windjacke, Sonnenschutz – <b>nicht baden</b>, starke Strömung',
+      anfahrt: 'Piste FV-56 ab Morro Jable, ca. 20 km und 45–60 Min. je Richtung; Zustand wechselt',
+      warn: 'Autoreisen erlaubt keine Schotterpisten – Schäden dort sind nicht versichert. Sicher nur per Jeep-Tour (ca. 60–80 € p.P.).' },
+    'la-pared': { region: 'sued',
+      eintritt: 'kostenlos',
+      zeiten: 'Sonnenuntergang ca. 19:45 Uhr – der beste Moment',
+      ausruestung: 'Feste Schuhe für den Klippenweg, Windjacke – <b>nicht baden</b>, Brandung und Strömung',
+      anfahrt: 'Parkplatz oberhalb des Strands, kostenlos' },
+    'caleta-de-fuste-hafenpromenade': { region: 'mitte',
+      eintritt: 'kostenlos',
+      zeiten: 'immer · Restaurants am Hafen durchgehend',
+      ausruestung: 'Badesachen – die künstliche Bucht ist fast wellenfrei',
+      anfahrt: 'Parkplätze am Hafen und an der Promenade' },
+    'antigua-windm-hlenmuseum': { region: 'mitte',
+      web: [[MUSEEN, 'Museen des Cabildo']],
+      eintritt: 'Molino de Antigua: geringer Eintritt (ca. 2–3 €) · Centro de los Molinos Tiscamanita 4 €',
+      zeiten: 'Beide Di–Sa 10–18 Uhr, So + Mo geschlossen',
+      ausruestung: 'Bargeld',
+      anfahrt: 'An der FV-20 bei km 19, Parkplatz direkt am Molino' },
+    'p-jara-kirche-dorfplatz': { region: 'mitte',
+      eintritt: 'kostenlos',
+      zeiten: 'Kirche meist vormittags offen (ca. 10–13 Uhr)',
+      anfahrt: 'Parken am Dorfplatz' },
+    'puerto-del-rosario-skulpturenroute-hafen': { region: 'mitte',
+      eintritt: 'kostenlos · Casa-Museo Unamuno kostenlos (Mo–Fr)',
+      zeiten: 'Skulpturen immer · Fiestas del Rosario 25.09.–07.10. mit Umzügen und Konzerten',
+      ausruestung: 'Bequeme Schuhe – die Route ist gut 3 km',
+      anfahrt: 'Parkhaus am Hafen oder Straßenparken (blaue Zone gebührenpflichtig)' },
+    'playas-de-sotavento-risco-del-paso': { region: 'sued',
+      web: [['https://www.rene-egli.com/', 'René Egli (Kite-Center)']],
+      eintritt: 'kostenlos',
+      zeiten: '<b>Nur bei Niedrigwasser</b> – Ankunft 1–2 Std. vor Ebbe, Gezeiten auf der Wetterseite',
+      ausruestung: 'Badesachen, Windschutz, Wasser, Sonnenschutz, Schuhe für den heißen Sand',
+      anfahrt: 'Kurze Schotterzufahrt ab FV-2 zum Parkplatz Risco del Paso (kostenlos, normal befahrbar), Chiringuito am Parkplatz' },
+    'costa-calma-whale-watching': { region: 'sued',
+      web: [['https://magicandsailing.com/en/ships/dolphing-search/', 'Magic Dolphin'], ['https://clubcanary.com/fuerteventura-dolphin-boat-trip-morro-jable/', 'Club Canary']],
+      eintritt: 'ca. 50 € p.P. für 2 Std. (Getränke und Badestopp inklusive)',
+      buchen: 'Online vorab buchen; Abfahrt im Hafen Morro Jable, Abholung in Costa Calma möglich. Bei Wind sagt der Anbieter am Vortag ab.',
+      zeiten: 'Abfahrten ca. 9:30, 11:15 und 13:45 Uhr',
+      ausruestung: 'Sonnenschutz, Windjacke, Badesachen, ggf. Reisetabletten',
+      anfahrt: 'Hafen Morro Jable, Parkplatz am Hafen' },
+    'faro-de-la-entallada': { region: 'mitte',
+      web: [['https://museosfuerteventura.com/en/museos/faro-de-la-entallada/', 'Faro de la Entallada']],
+      eintritt: 'kostenlos',
+      zeiten: 'Di–Sa 10–16 Uhr – an anderen Tagen ist die Schranke zu',
+      ausruestung: 'Windjacke – oben pfeift es',
+      anfahrt: 'Ab Las Playitas 7 km schmale Serpentinenstraße ohne Leitplanke (asphaltiert), Parkplatz oben' }
+  };
+  var REGION_NAME = { nord: 'Norden', mitte: 'Mitte', sued: 'Süden' };
+
+  function baueExPraktisch(){
+    document.querySelectorAll('#excursion-grid .ex-card').forEach(function(card){
+      var id = card.getAttribute('data-id'), info = EX_INFO[id];
+      if (!info || card.querySelector('.ex-praktisch')) return;
+      card.setAttribute('data-region', info.region);
+      card.id = 'ex-' + id;
+      if (info.warn && /geschlossen/i.test(info.warn) && id === 'la-oliva-casa-de-los-coroneles') card.classList.add('ex-closed');
+      var media = card.querySelector('.ex-media');
+      if (media && !media.querySelector('.ex-region')) {
+        var r = document.createElement('span');
+        r.className = 'ex-region';
+        r.textContent = '🧭 ' + REGION_NAME[info.region];
+        media.appendChild(r);
+      }
+      var rows = [];
+      function row(sym, txt){ if (txt) rows.push('<div class="ex-prow"><span class="pl">' + sym + '</span><span>' + txt + '</span></div>'); }
+      row('💶', info.eintritt);
+      row('📝', info.buchen);
+      row('🕒', info.zeiten);
+      row('🎒', info.ausruestung);
+      row('🅿️', info.anfahrt);
+      if (info.warn) rows.push('<div class="ex-prow warn"><span class="pl">⚠️</span><span>' + info.warn + '</span></div>');
+      var d = document.createElement('details');
+      d.className = 'ex-praktisch';
+      d.innerHTML = '<summary>Praktisch: Eintritt, Anmeldung, Ausrüstung</summary><div class="ex-praktisch-body">' + rows.join('') + '</div>';
+      var link = card.querySelector('.ex-link');
+      var body = card.querySelector('.ex-body');
+      if (link) body.insertBefore(d, link); else body.appendChild(d);
+      // Google Maps und Website(s) nebeneinander
+      if (link) {
+        var wrap = document.createElement('div');
+        wrap.className = 'ex-web-row';
+        link.parentNode.insertBefore(wrap, link);
+        wrap.appendChild(link);
+        link.classList.remove('ex-link');
+        (info.web || []).forEach(function(w){
+          var a = document.createElement('a');
+          a.className = 'btn btn-outline';
+          a.href = w[0]; a.target = '_blank'; a.rel = 'noopener';
+          a.textContent = '🌐 ' + w[1] + ' ↗';
+          wrap.appendChild(a);
+        });
+        wrap.style.marginTop = 'auto';
+      }
+    });
+  }
+  baueExPraktisch();
+
+  // Filter nach Region und Art – laeuft unabhaengig von Sortierung und Favoriten
+  (function initExFilter(){
+    var grid = document.getElementById('excursion-grid');
+    if (!grid) return;
+    var region = '', cats = [];
+    var hint = document.getElementById('ex-filter-hint');
+    function apply(){
+      var n = 0;
+      grid.querySelectorAll('.ex-card').forEach(function(card){
+        var okR = !region || card.getAttribute('data-region') === region;
+        var cc = (card.getAttribute('data-cat') || '').split(/\s+/);
+        var okC = !cats.length || cats.some(function(c){ return cc.indexOf(c) !== -1; });
+        var on = okR && okC;
+        card.classList.toggle('ex-off', !on);
+        if (on) n++;
+      });
+      if (hint) {
+        var txt = [];
+        if (region) txt.push(REGION_NAME[region]);
+        if (cats.length) txt.push(cats.join(', '));
+        hint.hidden = !txt.length;
+        hint.textContent = n + ' von 20 Zielen · Filter: ' + txt.join(' · ') + (n === 0 ? ' – nichts passt, Filter lockern' : '');
+      }
+    }
+    document.querySelectorAll('#ex-region-filter .ex-fbtn').forEach(function(b){
+      b.addEventListener('click', function(){
+        region = b.getAttribute('data-region');
+        document.querySelectorAll('#ex-region-filter .ex-fbtn').forEach(function(x){ x.classList.toggle('active', x === b); });
+        apply();
+      });
+    });
+    document.querySelectorAll('#ex-cat-filter .ex-fbtn').forEach(function(b){
+      b.addEventListener('click', function(){
+        var c = b.getAttribute('data-cat');
+        var i = cats.indexOf(c);
+        if (i === -1) cats.push(c); else cats.splice(i, 1);
+        b.classList.toggle('active', i === -1);
+        apply();
+      });
+    });
+  })();
 
   initCollection({
     gridId: 'excursion-grid', itemSelector: '.ex-card', key: 'excursions',
