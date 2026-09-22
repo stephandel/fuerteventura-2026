@@ -577,12 +577,15 @@ body { font-size: var(--fs-body); }
 .mg-btn { min-height: 40px; min-width: 40px; padding: 0 12px; border-radius: 11px; border: 1px solid var(--border); background: var(--surface-2); color: var(--ink); font: 600 13.5px/1 "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .mg-btn:active { transform: scale(0.97); }
 .mg-btn-jetzt { border-color: var(--teal); color: var(--teal); }
-.mg-cam { position: relative; margin: 0 14px 10px; border-radius: 12px; overflow: hidden; background: var(--surface-2); border: 1px solid var(--border); height: clamp(120px, 40vw, 240px); }
+.mg-cam { position: relative; margin: 0 auto 10px; border-radius: 12px; overflow: hidden; background: var(--surface-2); border: 1px solid var(--border); height: clamp(120px, 40vw, 240px); width: calc(100% - 28px); }
 .mg-cam img { width: 100%; height: 100%; object-fit: cover; display: block; transition: filter .3s; }
 .mg-cam.is-leer img { opacity: 0.25; filter: grayscale(1); }
 .mg-cam-text { position: absolute; left: 0; right: 0; bottom: 0; padding: 6px 10px; font-size: var(--fs-cap); color: #fff; background: linear-gradient(0deg, rgba(0,0,0,0.72), rgba(0,0,0,0)); }
 .mg-cam.is-leer .mg-cam-text { background: none; color: var(--ink-dim); top: 0; display: flex; align-items: center; justify-content: center; text-align: center; }
 .mg-demo { display: inline-block; background: var(--ochre); color: #1c1a17; border-radius: 6px; padding: 1px 6px; font-weight: 700; font-size: 11px; margin-left: 4px; }
+.mg-live { display: inline-block; background: #c0392b; color: #fff; border-radius: 6px; padding: 1px 6px; font-weight: 700; font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase; }
+.mg-camhint { opacity: 0.85; font-size: 11.5px; }
+.mg-svg .mg-cam-mark.is-live { fill: #e05a45; }
 .mg-wrap { position: relative; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
 .mg-scroll { overflow-x: auto; overflow-y: hidden; scrollbar-width: none; -webkit-overflow-scrolling: touch; cursor: grab; overscroll-behavior-x: contain; }
 .mg-scroll::-webkit-scrollbar { display: none; }

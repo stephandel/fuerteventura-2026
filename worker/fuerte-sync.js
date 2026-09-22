@@ -13,9 +13,8 @@
 //   GET  /webcam/jetzt  -> von Hand ein Bild je Ort holen (zum Testen)
 //
 // Dazu ein Cron-Auslöser (im Dashboard: Settings -> Triggers -> Cron, z. B. "5 * * * *"),
-// der jede Stunde von Windy das aktuelle Webcam-Bild holt und in D1 ablegt.
-// Braucht das Geheimnis WINDY_KEY (Settings -> Variables and Secrets), Schlüssel
-// gibt es kostenlos unter https://api.windy.com/keys (Webcams API).
+// der jede Stunde das aktuelle Webcam-Bild holt und in D1 ablegt. Es wird kein
+// Zugangsschlüssel gebraucht - die Kameras geben ihr Standbild frei heraus.
 //
 // Antwort ist immer der vollständige neue Stand, damit die Seite nach
 // jeder Änderung sofort das Richtige anzeigen kann.
@@ -27,15 +26,32 @@ const ERLAUBTE_HERKUNFT = [
 
 const LEUTE = ['stephan', 'bilgen'];
 
-// Webcams je Ort. windy = feste Kamera-Nummer bei windy.com; fehlt sie,
-// nimmt der Worker die nächstgelegene Kamera im Umkreis von 12 km.
+// Webcams je Ort. Beide Quellen liefern ihr Standbild frei, ohne Schlüssel:
+//   skyline = SkylineWebcams, feste Bildadresse, alle paar Sekunden neu
+//   youtube = Vorschaubild eines laufenden Livestreams (nur gültig, solange er läuft)
+// Geprüft am 23.09.2026. Fällt eine Kamera aus, bleibt die Stunde einfach leer.
 const WEBCAMS = {
-  corralejo: { windy: '1394743738', name: 'Corralejo Bay', lat: 28.7297, lon: -13.8672 },
-  cotillo:   { windy: null,         name: 'El Cotillo',    lat: 28.6855, lon: -14.0110 },
-  sotavento: { windy: null,         name: 'Sotavento',     lat: 28.1560, lon: -14.2275 }
+  corralejo: {
+    name: 'Grandes Playas, Corralejo', art: 'skyline',
+    url: 'https://cdn.skylinewebcams.com/live6086.jpg',
+    quelle: 'SkylineWebcams',
+    link: 'https://www.skylinewebcams.com/en/webcam/espana/canarias/corralejo/grandes-playas-corralejo.html'
+  },
+  sotavento: {
+    name: 'Sotavento, Playa Barca', art: 'youtube', video: '8CxYZ4tPTmo',
+    quelle: 'René Egli · YouTube',
+    link: 'https://www.youtube.com/watch?v=8CxYZ4tPTmo'
+  },
+  // Für El Cotillo gibt es keine frei zugängliche Kamera - ersatzweise Corralejo.
+  cotillo: {
+    name: 'Grandes Playas, Corralejo', art: 'skyline',
+    url: 'https://cdn.skylinewebcams.com/live6086.jpg',
+    quelle: 'SkylineWebcams',
+    link: 'https://www.skylinewebcams.com/en/webcam/espana/canarias/corralejo/grandes-playas-corralejo.html'
+  }
 };
 const WEBCAM_TAGE = 4;          // so lange bleiben Bilder liegen
-const WEBCAM_MAX_BYTES = 400000; // Sicherheitsgrenze je Bild
+const WEBCAM_MAX_BYTES = 600000; // Sicherheitsgrenze je Bild
 
 // Obergrenzen, damit ein Versehen oder ein Fremder die Datenbank
 // nicht vollschreiben kann.
@@ -107,38 +123,52 @@ function ortsStunde(d) {
   return `${t.year}-${t.month}-${t.day}T${t.hour === '24' ? '00' : t.hour}:00`;
 }
 
-async function windy(pfad, env) {
-  const r = await fetch('https://api.windy.com/webcams/api/v3/' + pfad, { headers: { 'x-windy-api-key': env.WINDY_KEY } });
-  if (!r.ok) throw new Error('Windy ' + r.status);
-  return r.json();
-}
-
-// Kamera-Nummer für einen Ort: fest hinterlegt oder die nächste im Umkreis
-async function kameraFuer(ortId, env) {
-  const cfg = WEBCAMS[ortId];
-  if (!cfg) return null;
-  if (cfg.windy) return cfg.windy;
-  const liste = await windy(`webcams?nearby=${cfg.lat},${cfg.lon},12&limit=1&sortKey=distance`, env);
-  const erste = liste && liste.webcams && liste.webcams[0];
-  return erste ? String(erste.webcamId) : null;
+// Ein Livestream-Vorschaubild ist nur brauchbar, solange der Stream läuft -
+// sonst liefert YouTube ein altes Standbild, das aussieht wie ein echtes Foto.
+async function laeuftStream(videoId) {
+  try {
+    const r = await fetch('https://www.youtube.com/watch?v=' + videoId, {
+      headers: { 'User-Agent': 'Mozilla/5.0', 'Accept-Language': 'de' }
+    });
+    if (!r.ok) return false;
+    const t = await r.text();
+    return t.includes('"isLiveNow":true') || t.includes('"isLive":true');
+  } catch (e) { return false; }
 }
 
 // Holt für einen Ort das aktuelle Bild und legt es zur vollen Stunde ab
 async function bildHolen(ortId, env) {
-  const id = await kameraFuer(ortId, env);
-  if (!id) return { ort: ortId, fehler: 'keine Kamera' };
-  const cam = await windy(`webcams/${id}?include=images`, env);
-  const url = cam && cam.images && cam.images.current && (cam.images.current.preview || cam.images.current.thumbnail);
-  if (!url) return { ort: ortId, fehler: 'kein Bild' };
-  const r = await fetch(url);
+  const cfg = WEBCAMS[ortId];
+  if (!cfg) return { ort: ortId, fehler: 'unbekannter Ort' };
+
+  let url = cfg.url;
+  if (cfg.art === 'youtube') {
+    if (!(await laeuftStream(cfg.video))) return { ort: ortId, fehler: 'Stream läuft gerade nicht' };
+    url = 'https://i.ytimg.com/vi/' + cfg.video + '/maxresdefault_live.jpg';
+  }
+  if (!url) return { ort: ortId, fehler: 'keine Bildadresse' };
+
+  const r = await fetch(url + (url.includes('?') ? '&' : '?') + 'fv=' + Date.now(), {
+    headers: { 'User-Agent': 'Mozilla/5.0' }
+  });
   if (!r.ok) return { ort: ortId, fehler: 'Bild ' + r.status };
+
+  // Bei SkylineWebcams verrät die Kopfzeile, wie alt das Bild ist. Älter als
+  // eine halbe Stunde heißt: Kamera steht - dann lieber gar kein Bild.
+  const lm = r.headers.get('Last-Modified');
+  if (lm) {
+    const alter = Date.now() - new Date(lm).getTime();
+    if (alter > 45 * 60000) return { ort: ortId, fehler: 'Bild veraltet' };
+  }
+
   const bytes = await r.arrayBuffer();
+  if (bytes.byteLength < 2000) return { ort: ortId, fehler: 'Bild zu klein' };
   if (bytes.byteLength > WEBCAM_MAX_BYTES) return { ort: ortId, fehler: 'Bild zu groß' };
+
   const t = ortsStunde(new Date());
-  const quelle = 'Windy · ' + (cam.title || WEBCAMS[ortId].name);
   await env.DB.prepare(
     'INSERT OR REPLACE INTO webcam_shots (ort, t, taken_at, mime, bytes, quelle, link) VALUES (?, ?, ?, ?, ?, ?, ?)'
-  ).bind(ortId, t, Date.now(), r.headers.get('Content-Type') || 'image/jpeg', bytes, quelle, 'https://www.windy.com/webcams/' + id).run();
+  ).bind(ortId, t, Date.now(), r.headers.get('Content-Type') || 'image/jpeg', bytes, cfg.quelle, cfg.link).run();
   return { ort: ortId, t, bytes: bytes.byteLength };
 }
 
@@ -168,7 +198,7 @@ async function bilderListe(ortId, env) {
 export default {
   // Stündlicher Auslöser (Cron)
   async scheduled(event, env, ctx) {
-    if (!env.DB || !env.WINDY_KEY) return;
+    if (!env.DB) return;
     ctx.waitUntil(alleBilderHolen(env));
   },
 
@@ -266,7 +296,6 @@ export default {
       }
 
       if (request.method === 'GET' && pfad === '/webcam/jetzt') {
-        if (!env.WINDY_KEY) return antwort({ fehler: 'WINDY_KEY fehlt' }, herkunft, 500);
         return antwort({ ergebnis: await alleBilderHolen(env) }, herkunft);
       }
 

@@ -8,10 +8,39 @@
   'use strict';
 
   var ORTE = [
-    { id:'corralejo', name:'Corralejo',  lat:28.7297, lon:-13.8672, meer:{ lat:28.7297, lon:-13.8672 }, webcam:'Corralejo Bay' },
-    { id:'cotillo',   name:'El Cotillo', lat:28.6855, lon:-14.0110, meer:{ lat:28.69,   lon:-14.03   }, webcam:'El Cotillo' },
-    { id:'sotavento', name:'Sotavento',  lat:28.1560, lon:-14.2275, meer:{ lat:28.145,  lon:-14.21   }, webcam:'Sotavento' }
+    { id:'corralejo', name:'Corralejo',  lat:28.7297, lon:-13.8672, meer:{ lat:28.7297, lon:-13.8672 } },
+    { id:'cotillo',   name:'El Cotillo', lat:28.6855, lon:-14.0110, meer:{ lat:28.69,   lon:-14.03   } },
+    { id:'sotavento', name:'Sotavento',  lat:28.1560, lon:-14.2275, meer:{ lat:28.145,  lon:-14.21   } }
   ];
+
+  // Webcams je Ort. Das aktuelle Bild holt die Seite direkt beim Betreiber -
+  // dafür braucht es nichts weiter. Die vergangenen Stunden kommen aus dem
+  // eigenen Bildspeicher (Worker), sobald der eingerichtet ist.
+  // Geprüft am 23.09.2026: beide Kameras liefern echte Live-Bilder.
+  var KAMERAS = {
+    corralejo: {
+      name: 'Grandes Playas, Corralejo',
+      live: 'https://cdn.skylinewebcams.com/live6086.jpg',
+      quelle: 'SkylineWebcams',
+      seite: 'https://www.skylinewebcams.com/en/webcam/espana/canarias/corralejo/grandes-playas-corralejo.html'
+    },
+    sotavento: {
+      name: 'Sotavento, Playa Barca',
+      live: 'https://i.ytimg.com/vi/8CxYZ4tPTmo/maxresdefault_live.jpg',
+      quelle: 'René Egli · YouTube',
+      seite: 'https://www.youtube.com/watch?v=8CxYZ4tPTmo'
+    },
+    // Für El Cotillo gibt es keine Kamera, die ihr Bild frei herausgibt -
+    // die dortigen Kameras stecken hinter Bezahlschranken. Ersatzweise die
+    // nächstgelegene Kamera, deutlich als solche beschriftet.
+    cotillo: {
+      name: 'Grandes Playas, Corralejo',
+      hinweis: 'nächstgelegene freie Kamera – für El Cotillo selbst gibt es keine',
+      live: 'https://cdn.skylinewebcams.com/live6086.jpg',
+      quelle: 'SkylineWebcams',
+      seite: 'https://www.skylinewebcams.com/en/webcam/espana/canarias/corralejo/grandes-playas-corralejo.html'
+    }
+  };
   var MODELLE = [
     { id:'best_match',    name:'Mix',   lang:'Beste Mischung', hinweis:'Open-Meteo nimmt je Region das passendste Modell' },
     { id:'ecmwf_ifs025',  name:'ECMWF', lang:'ECMWF (Europa)', hinweis:'Europäisches Wetterzentrum – meist das treffsicherste Modell für die Kanaren' },
@@ -32,7 +61,9 @@
   var BAND_OBEN = 26, BAND_CAM = 18, TITEL_H = 22, ZEILE_H = 72, BAND_UNTEN = 24, ACHSE_B = 46;
   var TAGE_VORHER = 1, TAGE_VORAUS = 8;
   var WOCHENTAG = ['So','Mo','Di','Mi','Do','Fr','Sa'];
-  var WEBCAM_BASIS = window.FUERTE_WEBCAM_URL || 'https://fuerte-sync.stephanhandel.workers.dev';
+  // Adresse des Bildspeichers - erst beim Abruf lesen, damit sie sich zum Testen
+  // auch nachtraeglich setzen laesst.
+  function webcamBasis(){ return window.FUERTE_WEBCAM_URL || 'https://fuerte-sync.stephanhandel.workers.dev'; }
 
   var el = {};                // Elemente der Oberfläche
   var daten = null;           // aufbereitete Stundenwerte
@@ -256,7 +287,11 @@
     // Jetzt-Linie
     if (idxJetzt >= 0 && idxJetzt < n) {
       s.push('<line class="mg-jetzt" x1="' + x(idxJetzt) + '" y1="' + BAND_OBEN + '" x2="' + x(idxJetzt) + '" y2="' + (hoehe - BAND_UNTEN) + '"/>');
-      s.push('<text class="mg-jetzt-t" x="' + (x(idxJetzt) + 4) + '" y="17">Jetzt</text>');
+      // Die Datumsangaben stehen ebenfalls oben - bei Mitternacht wuerde sich
+      // beides ueberlagern, dann reicht die Linie allein.
+      if (Math.min(idxJetzt % 24, 24 - (idxJetzt % 24)) > 2.5) {
+        s.push('<text class="mg-jetzt-t" x="' + (x(idxJetzt) + 4) + '" y="17">Jetzt</text>');
+      }
     }
     s.push('</svg>');
     el.svgWrap.innerHTML = s.join('');
@@ -392,42 +427,33 @@
   function status(t){ if (el.zeit) { el.zeit.innerHTML = '<span class="mg-rel">' + t + '</span>'; el.werte.innerHTML = ''; } }
 
   // ---------- Webcam-Bilder ----------
-  // Echte Aufnahmen kommen vom eigenen Worker (stündlich gespeichert). Ist der
-  // Speicher noch nicht eingerichtet, zeigt die Seite eine Demo mit eigenen
-  // Fotos - klar als Demo beschriftet.
+  // Zwei Quellen: das Bild der laufenden Stunde holt die Seite direkt beim
+  // Kamerabetreiber (geht immer, ohne Einrichtung). Die vergangenen Stunden
+  // liegen im eigenen Bildspeicher und kommen über den Worker - solange der
+  // nicht eingerichtet ist, bleibt die Vergangenheit eben leer.
   function webcamLaden(){
     var o = ortObj();
-    webcam = { shots: [], demo: false, ort: o.id };
-    fetch(WEBCAM_BASIS + '/webcam?ort=' + o.id)
+    webcam = { shots: [], ort: o.id, speicher: false };
+    fetch(webcamBasis() + '/webcam?ort=' + o.id)
       .then(function(r){ if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(function(j){
-        if (!j || !Array.isArray(j.shots) || !j.shots.length) throw new Error('leer');
-        webcam.shots = j.shots.map(function(sh){ return { i: idxFuerIso(sh.t), t: sh.t, url: sh.url.indexOf('http') === 0 ? sh.url : WEBCAM_BASIS + sh.url, quelle: sh.quelle || '' }; });
-        webcam.quelle = j.quelle || '';
-        webcam.link = j.link || '';
+        if (!j || !Array.isArray(j.shots)) throw new Error('leer');
+        if (webcam.ort !== o.id) return;                 // inzwischen umgeschaltet
+        webcam.speicher = true;
+        webcam.shots = j.shots.map(function(sh){
+          return { i: idxFuerIso(sh.t), t: sh.t, url: sh.url.indexOf('http') === 0 ? sh.url : webcamBasis() + sh.url };
+        });
         webcamMarken(); readout();
       })
-      .catch(function(){
-        webcam.demo = true;
-        webcam.shots = demoShots();
-        webcamMarken(); readout();
-      });
+      .catch(function(){ webcamMarken(); readout(); });
+    webcamMarken();
   }
 
-  function demoShots(){
-    var tagBilder = ['images/grandes-playas-amp-d-nen-von-corralejo.webp', 'images/strand-tuerkis.webp', 'images/lobos-vom-strand.webp', 'images/duenen-corralejo-weit.webp'];
-    if (ort === 'cotillo') tagBilder = ['images/el-cotillo-lagunen-amp-sonnenuntergang.webp', 'images/surfen-amp-kitesurfen-in-lajares-el-cotillo.webp', 'images/santa-ana-del-cotillo.webp'];
-    if (ort === 'sotavento') tagBilder = ['images/playas-de-sotavento-risco-del-paso.webp', 'images/faro-de-jand-a-amp-playas-de-sotavento.webp'];
-    var out = [];
-    for (var h = Math.floor(idxJetzt) - 36; h <= Math.floor(idxJetzt); h++) {
-      if (h < 0 || h >= daten.zeit.length) continue;
-      var std = parseInt(daten.zeit[h].slice(11, 13), 10), bild, dunkel = 0;
-      if (!daten.tag[h]) { bild = tagBilder[0]; dunkel = 1; }
-      else if (std >= 18) { bild = 'images/sonnenuntergang-fuerteventura.webp'; }
-      else bild = tagBilder[h % tagBilder.length];
-      out.push({ i: h, t: daten.zeit[h], url: bild, dunkel: dunkel, quelle: 'Demo' });
-    }
-    return out;
+  // Adresse des Live-Bildes, alle 5 Minuten neu - sonst zeigt der Browser
+  // ewig das zuerst geladene Bild.
+  function liveUrl(cam){
+    var t = Math.floor(Date.now() / 300000);
+    return cam.live + (cam.live.indexOf('?') < 0 ? '?' : '&') + 'fv=' + t;
   }
 
   function webcamMarken(){
@@ -438,30 +464,52 @@
       if (sh.i < 0 || sh.i >= geo.n) return;
       s.push('<rect class="mg-cam-mark" x="' + (geo.x(sh.i) - 3) + '" y="' + (BAND_OBEN + 4) + '" width="6" height="' + (BAND_CAM - 8) + '" rx="1.5"/>');
     });
-    if (s.length) s.unshift('<text class="mg-cam-t" x="' + (geo.x(webcam.shots[0].i) - 8) + '" y="' + (BAND_OBEN + BAND_CAM - 5) + '" text-anchor="end">📷</text>');
+    // Das Live-Bild der laufenden Stunde als eigene Marke
+    if (KAMERAS[ort] && idxJetzt >= 0 && idxJetzt < geo.n) {
+      s.push('<rect class="mg-cam-mark is-live" x="' + (geo.x(idxJetzt) - 3) + '" y="' + (BAND_OBEN + 4) + '" width="6" height="' + (BAND_CAM - 8) + '" rx="1.5"/>');
+    }
     g.innerHTML = s.join('');
   }
 
   var camAktuell = null;
   function webcamZeigen(f){
     if (!el.cam) return;
-    if (!webcam.shots.length) { el.cam.hidden = true; return; }
+    var cam = KAMERAS[ort];
+    if (!cam) { el.cam.hidden = true; return; }
     el.cam.hidden = false;
+
+    var zukunft = f > idxJetzt + 0.5;
+    var jetztStunde = Math.abs(f - idxJetzt) <= 0.5;
+
+    // Gespeichertes Bild für die gewählte Stunde suchen
     var best = null, bestD = 1e9;
     webcam.shots.forEach(function(sh){ var d = Math.abs(sh.i - f); if (d < bestD) { bestD = d; best = sh; } });
-    var o = ortObj();
-    if (!best || bestD > 0.75) {
+    var treffer = best && bestD <= 0.75 ? best : null;
+
+    var url = null, stempel = null, live = false;
+    if (jetztStunde) { url = liveUrl(cam); live = true; }
+    else if (treffer) { url = treffer.url; stempel = new Date(daten.t0.getTime() + treffer.i * 3600000); }
+
+    if (!url) {
       el.cam.classList.add('is-leer');
-      el.camText.textContent = f > idxJetzt + 0.5 ? 'Für die Zukunft gibt es natürlich noch kein Bild – das kommt, sobald die Stunde da ist.' : 'Für diese Stunde liegt keine Aufnahme vor.';
+      el.camText.innerHTML = zukunft
+        ? 'Für die Zukunft gibt es noch kein Bild – das entsteht erst, wenn die Stunde da ist.'
+        : (webcam.speicher
+            ? 'Für diese Stunde liegt kein Bild vor.'
+            : 'Vergangene Stunden erscheinen hier, sobald der Bildspeicher eingerichtet ist. Das Bild der laufenden Stunde siehst du über „Jetzt zentrieren“.');
       return;
     }
     el.cam.classList.remove('is-leer');
-    if (camAktuell !== best.url) { camAktuell = best.url; el.camImg.src = best.url; }
-    el.camImg.style.filter = best.dunkel ? 'brightness(0.35) saturate(0.6)' : '';
-    var dt = new Date(daten.t0.getTime() + best.i * 3600000);
-    el.camText.innerHTML = '<b>📷 ' + o.webcam + '</b> · ' + pad2(dt.getDate()) + '.' + pad2(dt.getMonth() + 1) + '. ' + pad2(dt.getHours()) + ':' + pad2(dt.getMinutes()) +
-      (webcam.demo ? ' <span class="mg-demo">Demo – noch keine echten Aufnahmen</span>'
-        : (webcam.quelle ? ' · ' + (webcam.link ? '<a href="' + webcam.link + '" target="_blank" rel="noopener" style="color:inherit">' + webcam.quelle + ' ↗</a>' : webcam.quelle) : ''));
+    if (camAktuell !== url) { camAktuell = url; el.camImg.src = url; }
+
+    var quelle = cam.seite
+      ? '<a href="' + cam.seite + '" target="_blank" rel="noopener" style="color:inherit">' + cam.quelle + ' ↗</a>'
+      : cam.quelle;
+    el.camText.innerHTML = '<b>📷 ' + cam.name + '</b>' +
+      (cam.hinweis ? ' <span class="mg-camhint">' + cam.hinweis + '</span>' : '') +
+      (live ? ' <span class="mg-live">live</span>'
+            : ' · ' + pad2(stempel.getDate()) + '.' + pad2(stempel.getMonth() + 1) + '. ' + pad2(stempel.getHours()) + ':' + pad2(stempel.getMinutes())) +
+      ' · ' + quelle;
   }
 
   // ---------- Oberfläche ----------
@@ -479,7 +527,7 @@
           '<button type="button" class="mg-btn" id="mg-vor" aria-label="Einen Tag vor">›</button>' +
         '</div>' +
       '</div>' +
-      '<div class="mg-cam" id="mg-cam" hidden><img id="mg-cam-img" alt="Webcam-Bild" loading="lazy"><div class="mg-cam-text" id="mg-cam-text"></div></div>' +
+      '<div class="mg-cam" id="mg-cam" hidden><img id="mg-cam-img" alt="Webcam-Bild" decoding="async" referrerpolicy="no-referrer"><div class="mg-cam-text" id="mg-cam-text"></div></div>' +
       '<div class="mg-wrap" id="mg-wrap">' +
         '<div class="mg-scroll" id="mg-scroll"><div class="mg-svgwrap" id="mg-svgwrap"></div></div>' +
         '<div class="mg-achse" id="mg-achse"></div>' +
@@ -495,6 +543,16 @@
     el.cam = document.getElementById('mg-cam');
     el.camImg = document.getElementById('mg-cam-img');
     el.camText = document.getElementById('mg-cam-text');
+    el.camImg.addEventListener('load', function(){
+      // Ein 344 Pixel breites Kamerabild sieht auf einem breiten Bildschirm
+      // matschig aus - deshalb nur so weit aufziehen, wie es vertraegt.
+      var w = el.camImg.naturalWidth || 0;
+      el.cam.style.maxWidth = w ? Math.max(360, Math.round(w * 1.6)) + 'px' : '';
+    });
+    el.camImg.addEventListener('error', function(){
+      el.cam.classList.add('is-leer');
+      el.camText.textContent = 'Das Kamerabild ist gerade nicht erreichbar.';
+    });
     el.quelle = document.getElementById('mg-quelle');
 
     tabs('mg-orte', ORTE, function(o){ return o.id; }, function(o){ return o.name; }, function(){ return ort; }, function(id){ ort = id; lsSet('fuerte-mg-ort', id); laden(); });
@@ -555,7 +613,7 @@
     quelleText();
     laden();
     // Jede Viertelstunde die Jetzt-Linie nachziehen, jede Stunde neue Daten
-    setInterval(function(){ if (daten) { idxJetzt = idxFuer(jetztKanarisch()); readout(); } }, 15 * 60000);
+    setInterval(function(){ if (daten) { idxJetzt = idxFuer(jetztKanarisch()); camAktuell = null; readout(); } }, 5 * 60000);
     setInterval(function(){ cache = {}; laden(); }, 60 * 60000);
   }
 
