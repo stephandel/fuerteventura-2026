@@ -4805,6 +4805,51 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     return [a, b, TOTAL_NIGHTS - a - b];
   }
 
+  // ---- Echte Angebotspreise fuer einzelne Zeitfenster ----
+  // Die Portale rechnen nicht linear: laengere Aufenthalte bekommen Rabatt,
+  // spaete Anreisen kosten mehr pro Nacht. Wer Nachtpreis x Naechte hochrechnet,
+  // liegt schnell 100 bis 150 Euro daneben - bei Villa Laura waren es 1.421
+  // statt der echten 1.562 Euro. Steht ein Zeitfenster hier drin, nimmt die
+  // Kostenrechnung diesen Preis statt der Hochrechnung.
+  // Neue Zeile = genau so, wie das Portal den Zeitraum ausweist (Anreise/Abreise).
+  var TEILPREISE = {
+    'villa-laura': [
+      { von: '2026-10-02', bis: '2026-10-12', preis: 2842 },
+      { von: '2026-10-03', bis: '2026-10-12', preis: 2543 },
+      { von: '2026-10-07', bis: '2026-10-12', preis: 1562 },
+      { von: '2026-10-08', bis: '2026-10-12', preis: 1260 }
+    ],
+    'atalaya-maisonette': [
+      { von: '2026-09-29', bis: '2026-10-12', preis: 1795.95 },
+      { von: '2026-10-03', bis: '2026-10-07', preis: 571 },
+      { von: '2026-10-03', bis: '2026-10-08', preis: 686 }
+    ],
+    'bahiazul': [
+      { von: '2026-09-29', bis: '2026-10-12', preis: 3145 },
+      { von: '2026-10-03', bis: '2026-10-12', preis: 2220 }
+    ],
+    'casita-maracuya':       [ { von: '2026-09-29', bis: '2026-10-03', preis: 340 } ],
+    'villa-87':              [ { von: '2026-09-29', bis: '2026-10-03', preis: 658 } ],
+    'veaco-bahiazul':        [ { von: '2026-10-03', bis: '2026-10-09', preis: 1144.54 } ],
+    'mc-apartments-rosario': [ { von: '2026-09-29', bis: '2026-10-06', preis: 612 },
+                               { von: '2026-10-10', bis: '2026-10-12', preis: 200 } ]
+  };
+
+  // Nacht Nr. i als ISO-Datum - Nacht 0 ist der 29.09.2026.
+  function isoTag(i){
+    var d = new Date(2026, 8, 29 + i);
+    return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+  }
+  function echterTeilpreis(slug, abNacht, anzahl){
+    var liste = TEILPREISE[slug];
+    if (!liste) return null;
+    var von = isoTag(abNacht), bis = isoTag(abNacht + anzahl);
+    for (var i = 0; i < liste.length; i++) {
+      if (liste[i].von === von && liste[i].bis === bis) return liste[i].preis;
+    }
+    return null;
+  }
+
   function computeTotal(){
     var car = CARS[getSelectedCar()] || CARS[DEFAULT_CAR];
     var slugs = [getSelected(), getSelected2(), getSelected3()];
@@ -4816,8 +4861,10 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       var a = LISTINGS[slugs[k]];
       if (a && naechte >= 1) {
         var genau = a.nights === naechte;
+        var echt = echterTeilpreis(slugs[k], von, naechte);
         accs.push({ listing: a, slug: slugs[k], nights: naechte, from: von,
-                    cost: genau ? a.total : a.ppn * naechte, estimated: !genau });
+                    cost: echt !== null ? echt : (genau ? a.total : a.ppn * naechte),
+                    estimated: echt === null && !genau });
       }
       von += naechte;
     }
@@ -9401,15 +9448,21 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       label.textContent = meine.nights + ' ' + (meine.nights === 1 ? 'Nacht' : 'Nächte') + ' als Teil ' + (teilVon(slug) || '?');
       block.classList.add('ist-teil');
       // Der Nachtpreis links gilt fuer genau diese Naechte - sonst wirkt er
-      // wie ein Widerspruch zum Preis oben auf der Karte.
+      // wie ein Widerspruch zum Preis oben auf der Karte. Er wird aus dem
+      // echten Teilpreis zurueckgerechnet, nicht aus dem Nachtpreis der
+      // vollen Buchung: 1.562 Euro auf 5 Naechte sind 312, nicht 284.
       var l1 = block.querySelector('.pb-zelle .pb-label');
       if (l1) l1.textContent = 'pro Nacht bei ' + meine.nights + ' ' + (meine.nights === 1 ? 'Nacht' : 'Nächten');
+      var w1 = block.querySelector('.pb-zelle .pb-wert');
+      if (w1 && meine.nights > 0) w1.textContent = (meine.estimated ? '≈ ' : '') + fmtEuro0(meine.cost / meine.nights) + ' €';
     } else {
       wert.textContent = fmtEuro0(parseFloat(block.getAttribute('data-gesamt'))) + ' €';
       label.textContent = block.getAttribute('data-naechte') + ' Nächte gesamt';
       block.classList.remove('ist-teil');
       var l0 = block.querySelector('.pb-zelle .pb-label');
       if (l0) l0.textContent = 'pro Nacht';
+      var w0 = block.querySelector('.pb-zelle .pb-wert');
+      if (w0) w0.textContent = fmtEuro0(parseFloat(block.getAttribute('data-ppn'))) + ' €';
     }
   }
 
