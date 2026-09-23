@@ -45,6 +45,12 @@
 .mg-btn { min-height: 40px; min-width: 40px; padding: 0 12px; border-radius: 11px; border: 1px solid var(--mg-rand); background: var(--mg-flaeche2); color: var(--mg-text); font: 600 13.5px/1 var(--mg-serif); cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .mg-btn:active { transform: scale(0.97); }
 .mg-btn-jetzt { border-color: var(--mg-akzent); color: var(--mg-akzent); }
+.mg-btn-frisch { font-size: 17px; line-height: 1; }
+.mg-btn-frisch.is-laedt { color: var(--mg-akzent); }
+.mg-btn-frisch.is-laedt::before { content: ""; }
+@keyframes mg-dreht { to { transform: rotate(360deg); } }
+.mg-btn-frisch.is-laedt { animation: mg-dreht 0.9s linear infinite; }
+@media (prefers-reduced-motion: reduce) { .mg-btn-frisch.is-laedt { animation: none; opacity: 0.5; } }
 
 /* ---- Zeilenauswahl ---- */
 .mg-zeilenwahl { position: relative; }
@@ -55,6 +61,14 @@
 .mg-zeilen-panel label:hover { background: var(--mg-flaeche2); }
 .mg-zeilen-panel input { width: 20px; height: 20px; flex: none; accent-color: var(--mg-akzent); }
 .mg-zeilen-panel .mg-punkt { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+/* Zeilen im Menü lassen sich mit dem Griff links umsortieren */
+.mg-zliste { touch-action: pan-y; }
+.mg-zeile { display: flex; align-items: center; border-radius: 9px; }
+.mg-zeile label { flex: 1; min-width: 0; }
+.mg-zeile:hover { background: var(--mg-flaeche2); }
+.mg-zeile.is-zieht { background: var(--mg-flaeche2); opacity: 0.85; outline: 1px dashed var(--mg-akzent); }
+.mg-griff { flex: none; width: 26px; text-align: center; color: var(--mg-text-still); cursor: grab; font-size: 14px; line-height: 1; user-select: none; -webkit-user-select: none; touch-action: none; }
+.mg-zeile.is-zieht .mg-griff { cursor: grabbing; }
 
 /* ---- Webcam-Bild ---- */
 .mg-cam { position: relative; margin: 0 auto 10px; border-radius: 12px; overflow: hidden; background: var(--mg-flaeche2); border: 1px solid var(--mg-rand); height: clamp(120px, 40vw, 240px); width: calc(100% - 28px); }
@@ -103,6 +117,11 @@
 .mg-svg .mg-cam-mark { fill: var(--ochre, #e0a24f); opacity: 0.85; }
 .mg-svg .mg-cam-mark.is-live { fill: #e05a45; }
 .mg-svg .mg-pfeil { stroke: none; }
+/* Umsortieren durch langes Drücken im Diagramm */
+.mg-wrap.mg-sortiert { cursor: grabbing; }
+.mg-wrap.mg-sortiert .mg-scroll { touch-action: none; }
+.mg-svg .mg-sortpack { fill: var(--mg-akzent); opacity: 0.16; }
+.mg-svg .mg-sortziel { stroke: var(--mg-akzent); stroke-width: 3; }
 
 @media (max-width: 560px) {
   .mg-head { flex-direction: column; }

@@ -3,7 +3,8 @@
 Mehrere Wetterdiagramme übereinander mit einer gemeinsamen Zeitachse — Sonnenschein,
 Temperatur, Wind, Niederschlag, UV, Luftfeuchte, Bewölkung, Luftdruck, Wellen, Tide.
 Man wischt die Zeit unter einer feststehenden Auswahl-Linie hindurch; oben stehen
-Datum, Uhrzeit und alle Werte an dieser Stelle.
+Datum, Uhrzeit und alle Werte an dieser Stelle. Welche Zeilen erscheinen und in
+welcher Reihenfolge, lässt sich einstellen.
 
 Kein Zugangsschlüssel, keine fremden Bibliotheken, eine Datei plus ein Gestaltungsblatt.
 Die Daten kommen von [Open-Meteo](https://open-meteo.com) (kostenlos, ohne Anmeldung).
@@ -39,9 +40,30 @@ Mehr braucht es nicht. Alles Weitere ist wahlfrei.
 | `bildspeicher` | Adresse eines Dienstes, der vergangene Stunden vorhält (siehe unten) | keiner |
 | `zeitzone` | z. B. `'Atlantic/Canary'`. `'auto'` nimmt die Zeitzone des Ortes. | `'auto'` |
 | `tageVorher` / `tageVoraus` | Wie weit das Diagramm reicht | 1 / 8 |
-| `merkschluessel` | Präfix für die gespeicherte Auswahl (Ort, Modell, Zeilen) | `'meteogramm'` |
+| `bildMinute` | Minute nach der vollen Stunde, zu der von selbst aufgefrischt wird (passend zum Bildspeicher) | `7` |
+| `merkschluessel` | Präfix für die gespeicherte Auswahl (Ort, Modell, Zeilen, Reihenfolge) | `'meteogramm'` |
 
-Rückgabe: `{ neu(), zeichnen(), zeigeOrt(id), abbauen() }`.
+Rückgabe: `{ neu(), auffrischen(), zeichnen(), zeigeOrt(id), abbauen() }`.
+
+## Bedienung
+
+- **Wischen** verschiebt die Zeit, **Antippen** holt eine Stelle in die Mitte.
+- **‹ ›** springen einen Tag zurück oder vor.
+- **Jetzt zentrieren** springt auf die aktuelle Stunde **und holt frische Werte**.
+- **↻** holt frische Werte, ohne die gewählte Stelle zu verlassen.
+- **☰** öffnet die Zeilenauswahl: Haken setzen, was zu sehen sein soll, und am
+  Griff `⠿` die Reihenfolge durch Ziehen ändern.
+- **Lang auf eine Zeile im Diagramm drücken** (etwa eine halbe Sekunde) packt sie;
+  dann nach oben oder unten ziehen und loslassen. Wer stattdessen wischt, bricht
+  das ab – es wird also nichts versehentlich verschoben.
+
+Auswahl und Reihenfolge merkt sich das Gerät.
+
+## Wann es sich von selbst auffrischt
+
+- jede volle Stunde kurz nach `bildMinute` – dann liegt das neue Webcam-Bild bereit
+- sobald die Seite nach mehr als zehn Minuten wieder in den Vordergrund kommt
+- alle fünf Minuten wandert die „Jetzt"-Linie mit und das Live-Kamerabild wird neu geholt
 
 ## Verfügbare Zeilen
 

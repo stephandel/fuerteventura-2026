@@ -91,6 +91,7 @@
     var KAMERAS = cfg.kameras || {};
     var SPEICHER = cfg.bildspeicher || null;
     var PRAEFIX = cfg.merkschluessel || 'meteogramm';
+    var BILD_MINUTE = cfg.bildMinute != null ? cfg.bildMinute : 7;   // kurz nach dem Speichern
     var TAGE_VORHER = cfg.tageVorher != null ? cfg.tageVorher : 1;
     var TAGE_VORAUS = cfg.tageVoraus != null ? cfg.tageVoraus : 8;
 
@@ -111,6 +112,7 @@
     var ort = merkLesen('ort', ORTE[0].id);
     var modell = merkLesen('modell', MODELLE[0].id);
     var anZeilen = leseZeilenwahl();
+    var reihenfolge = leseReihenfolge();
 
     if (!ORTE.some(function(o){ return o.id === ort; })) ort = ORTE[0].id;
     if (!MODELLE.some(function(m){ return m.id === modell; })) modell = MODELLE[0].id;
@@ -123,8 +125,20 @@
       var liste = roh.split(',').filter(function(id){ return ANGEBOT.indexOf(id) >= 0; });
       return liste.length ? liste : STANDARD_AN.slice();
     }
+    // Die Reihenfolge darf man selbst festlegen. Gespeichert wird sie als Liste
+    // aller angebotenen Zeilen - neu hinzugekommene hängen wir hinten an.
+    function leseReihenfolge(){
+      var roh = merkLesen('reihenfolge', null);
+      var liste = roh ? roh.split(',').filter(function(id){ return ANGEBOT.indexOf(id) >= 0; }) : [];
+      ANGEBOT.forEach(function(id){ if (liste.indexOf(id) < 0) liste.push(id); });
+      return liste;
+    }
+    function setzeReihenfolge(neu){
+      reihenfolge = neu.slice();
+      merkSchreiben('reihenfolge', reihenfolge.join(','));
+    }
     function sichtbareZeilen(){
-      return ANGEBOT.filter(function(id){ return anZeilen.indexOf(id) >= 0; }).map(function(id){
+      return reihenfolge.filter(function(id){ return anZeilen.indexOf(id) >= 0; }).map(function(id){
         var z = Object.create(KATALOG[id]); z.id = id; return z;
       });
     }
@@ -144,12 +158,16 @@
 
     function braucheMeer(){ return sichtbareZeilen().some(function(z){ return z.meer; }); }
 
-    function laden(){
+    // opts.still     = ohne "Lade ..."-Text, die Anzeige bleibt stehen
+    // opts.behalten  = nach dem Laden wieder an dieselbe Stelle, statt auf "jetzt"
+    function laden(opts){
+      opts = opts || {};
       var o = ortObj(), m = modellObj();
       var key = o.id + '|' + m.id;
       var c = cache[key];
-      if (c && Date.now() - c.at < 15 * 60000) { daten = c.daten; nachLaden(); return; }
-      melde('Lade ' + o.name + ' · ' + m.lang + ' …');
+      if (c && Date.now() - c.at < 15 * 60000) { daten = c.daten; nachLaden(opts); return; }
+      ladeAnzeige(true);
+      if (!opts.still) melde('Lade ' + o.name + ' · ' + m.lang + ' …');
 
       var tz = encodeURIComponent(zeitzone());
       var stunden = 'temperature_2m,apparent_temperature,relative_humidity_2m,cloud_cover,' +
@@ -182,10 +200,11 @@
       }).then(function(alles){
         daten = aufbereiten(alles[0], alles[1], alles[2]);
         cache[key] = { at: Date.now(), daten: daten };
-        nachLaden();
+        nachLaden(opts);
       }).catch(function(e){
         if (global.console && console.warn) console.warn('Meteogramm:', e);
-        melde('Wetterdaten gerade nicht erreichbar – bitte später noch einmal versuchen.');
+        ladeAnzeige(false);
+        if (!opts.still) melde('Wetterdaten gerade nicht erreichbar – bitte später noch einmal versuchen.');
       });
     }
 
@@ -255,11 +274,39 @@
     function idxFuer(dt){ return (dt.getTime() - daten.t0.getTime()) / 3600000; }
     function idxFuerIso(iso){ return idxFuer(new Date(iso)); }
 
-    function nachLaden(){
+    function nachLaden(opts){
+      opts = opts || {};
       quelleText();                       // erst jetzt ist klar, woher der UV-Wert kommt
+      var alt = (opts.behalten && geo) ? idxAusScroll() : null;
       idxJetzt = idxFuer(jetztDort());
-      zeichnen(true);
+      camAktuell = null;                  // Kamerabild neu holen, nicht aus dem Zwischenspeicher
+      zeichnen(alt === null);
+      if (alt !== null) zentrieren(alt, false);
       webcamLaden();
+      ladeAnzeige(false);
+      naechsteAuffrischung();
+    }
+
+    // Kleine Rückmeldung am Auffrischen-Knopf, damit man sieht, dass etwas passiert.
+    // Kommt die Antwort aus dem Zwischenspeicher, ist sie nach 20 ms da - dann
+    // bliebe die Anzeige unsichtbar. Deshalb mindestens einen Moment stehen lassen.
+    var ladeSeit = 0, ladeEnde = null;
+    function ladeAnzeige(an){
+      var b = document.getElementById(kid('frisch'));
+      if (!b) return;
+      if (ladeEnde) { clearTimeout(ladeEnde); ladeEnde = null; }
+      if (an) {
+        ladeSeit = Date.now();
+        b.disabled = true;
+        b.classList.add('is-laedt');
+        return;
+      }
+      var rest = Math.max(0, 450 - (Date.now() - ladeSeit));
+      ladeEnde = setTimeout(function(){
+        ladeEnde = null;
+        b.disabled = false;
+        b.classList.remove('is-laedt');
+      }, rest);
     }
 
     // ---------- Zeichnen ----------
@@ -518,7 +565,10 @@
     function zentrieren(idx, weich){
       if (!geo) return;
       idx = Math.max(0, Math.min(geo.n - 1, idx));
-      try { el.scroll.scrollTo({ left: idx * pxH, behavior: weich ? 'smooth' : 'auto' }); }
+      // Sanftes Scrollen fuehrt der Browser in einem Hintergrund-Tab nicht aus -
+      // dann lieber hart springen, sonst passiert gar nichts.
+      var sanft = weich && !document.hidden;
+      try { el.scroll.scrollTo({ left: idx * pxH, behavior: sanft ? 'smooth' : 'auto' }); }
       catch(e){ el.scroll.scrollLeft = idx * pxH; }
       anzeigen();
     }
@@ -674,6 +724,7 @@
             '<button type="button" class="mg-btn" id="' + kid('zurueck') + '" aria-label="Einen Tag zurück">‹</button>' +
             '<button type="button" class="mg-btn mg-btn-jetzt" id="' + kid('jetzt') + '">Jetzt zentrieren</button>' +
             '<button type="button" class="mg-btn" id="' + kid('vor') + '" aria-label="Einen Tag vor">›</button>' +
+            '<button type="button" class="mg-btn mg-btn-frisch" id="' + kid('frisch') + '" aria-label="Werte auffrischen" title="Werte neu holen">↻</button>' +
             '<span class="mg-zeilenwahl">' +
               '<button type="button" class="mg-btn" id="' + kid('zbtn') + '" aria-expanded="false" title="Welche Zeilen anzeigen?">☰</button>' +
               '<div class="mg-zeilen-panel" id="' + kid('zpanel') + '" hidden><h4>Welche Zeilen?</h4></div>' +
@@ -714,6 +765,7 @@
       reiter(kid('orte'), ORTE, function(){ return ort; }, function(id){ ort = id; merkSchreiben('ort', id); laden(); });
       reiter(kid('modelle'), MODELLE, function(){ return modell; }, function(id){ modell = id; merkSchreiben('modell', id); quelleText(); laden(); });
       zeilenPanel();
+      sortierenImDiagramm();
 
       el.scroll.addEventListener('scroll', anzeigen, { passive: true });
       el.scroll.addEventListener('click', function(ev){
@@ -721,7 +773,11 @@
         var r = el.scroll.getBoundingClientRect();
         zentrieren((ev.clientX - r.left + el.scroll.scrollLeft - geo.padL) / pxH, true);
       });
-      document.getElementById(kid('jetzt')).addEventListener('click', function(){ zentrieren(idxJetzt, true); });
+      document.getElementById(kid('jetzt')).addEventListener('click', function(){
+        zentrieren(idxJetzt, true);
+        auffrischen(false);               // beim Sprung auf "jetzt" gleich neue Werte holen
+      });
+      document.getElementById(kid('frisch')).addEventListener('click', function(){ auffrischen(true); });
       document.getElementById(kid('zurueck')).addEventListener('click', function(){ zentrieren(idxAusScroll() - 24, true); });
       document.getElementById(kid('vor')).addEventListener('click', function(){ zentrieren(idxAusScroll() + 24, true); });
 
@@ -757,11 +813,19 @@
 
     function zeilenPanel(){
       var btn = document.getElementById(kid('zbtn')), panel = document.getElementById(kid('zpanel'));
-      panel.innerHTML = '<h4>Welche Zeilen?</h4>' + ANGEBOT.map(function(id){
-        var z = KATALOG[id];
-        return '<label><input type="checkbox" data-id="' + id + '"' + (anZeilen.indexOf(id) >= 0 ? ' checked' : '') + '>' +
-               '<span class="mg-punkt" style="background:' + z.farbe + '"></span>' + esc(z.titel) + '</label>';
-      }).join('');
+
+      function malen(){
+        panel.innerHTML = '<h4>Welche Zeilen? · Zum Umsortieren ziehen</h4>' +
+          '<div class="mg-zliste">' + reihenfolge.map(function(id){
+            var z = KATALOG[id];
+            return '<div class="mg-zeile" data-id="' + id + '">' +
+                   '<span class="mg-griff" aria-hidden="true">⠿</span>' +
+                   '<label><input type="checkbox" data-id="' + id + '"' + (anZeilen.indexOf(id) >= 0 ? ' checked' : '') + '>' +
+                   '<span class="mg-punkt" style="background:' + z.farbe + '"></span>' + esc(z.titel) + '</label></div>';
+          }).join('') + '</div>';
+      }
+      malen();
+
       btn.addEventListener('click', function(ev){
         ev.stopPropagation();
         var zu = panel.hidden;
@@ -769,6 +833,7 @@
         btn.setAttribute('aria-expanded', String(zu));
       });
       panel.addEventListener('click', function(ev){ ev.stopPropagation(); });
+
       panel.addEventListener('change', function(ev){
         var cb = ev.target.closest('input[data-id]'); if (!cb) return;
         var id = cb.getAttribute('data-id');
@@ -776,11 +841,183 @@
         else anZeilen = anZeilen.filter(function(x){ return x !== id; });
         if (!anZeilen.length) { anZeilen = [id]; cb.checked = true; }   // eine muss bleiben
         merkSchreiben('zeilen', anZeilen.join(','));
-        // Neue Zeile braucht vielleicht Meeresdaten, die noch nicht geholt sind
-        var fehlt = sichtbareZeilen().some(function(z){ return z.meer && (!daten || !daten.welle.some(function(v){ return v != null; })); });
-        if (fehlt) { cache = {}; laden(); } else { var alt = geo ? idxAusScroll() : null; zeichnen(false); if (alt !== null) zentrieren(alt, false); }
+        neuZeichnenNachWahl();
       });
+
+      // --- Umsortieren durch Ziehen ---
+      var zieht = null;
+      panel.addEventListener('pointerdown', function(ev){
+        var zeile = ev.target.closest('.mg-zeile');
+        if (!zeile || ev.target.closest('input')) return;       // Haken bleibt anklickbar
+        var liste = panel.querySelector('.mg-zliste');
+        zieht = { el: zeile, liste: liste, startY: ev.clientY, bewegt: false };
+        zeile.setPointerCapture(ev.pointerId);
+      });
+      panel.addEventListener('pointermove', function(ev){
+        if (!zieht) return;
+        if (!zieht.bewegt) {
+          if (Math.abs(ev.clientY - zieht.startY) < 5) return;
+          zieht.bewegt = true;
+          zieht.el.classList.add('is-zieht');
+        }
+        ev.preventDefault();
+        var ziel = zielZeile(zieht.liste, zieht.el, ev.clientY);
+        if (ziel === 'ende') zieht.liste.appendChild(zieht.el);
+        else if (ziel) zieht.liste.insertBefore(zieht.el, ziel);
+      });
+      function beenden(){
+        if (!zieht) return;
+        var war = zieht.bewegt;
+        zieht.el.classList.remove('is-zieht');
+        zieht = null;
+        if (!war) return;
+        setzeReihenfolge([].map.call(panel.querySelectorAll('.mg-zeile'), function(d){ return d.getAttribute('data-id'); }));
+        neuZeichnenNachWahl();
+      }
+      panel.addEventListener('pointerup', beenden);
+      panel.addEventListener('pointercancel', beenden);
+
       document.addEventListener('click', function(){ if (!panel.hidden) { panel.hidden = true; btn.setAttribute('aria-expanded', 'false'); } });
+    }
+
+    // Vor welche Zeile gehoert das gezogene Element bei dieser Hoehe?
+    function zielZeile(liste, ausser, y){
+      var kinder = [].filter.call(liste.children, function(k){ return k !== ausser; });
+      for (var i = 0; i < kinder.length; i++) {
+        var r = kinder[i].getBoundingClientRect();
+        if (y < r.top + r.height / 2) return kinder[i];
+      }
+      return 'ende';
+    }
+
+    // Nach jeder Aenderung an Auswahl oder Reihenfolge neu zeichnen - und falls
+    // eine Meereszeile dazukam, die fehlenden Daten nachholen.
+    function neuZeichnenNachWahl(){
+      var fehlt = sichtbareZeilen().some(function(z){
+        return z.meer && (!daten || !daten.welle.some(function(v){ return v != null; }));
+      });
+      if (fehlt) { cache = {}; laden({ still: true, behalten: true }); return; }
+      var alt = geo ? idxAusScroll() : null;
+      zeichnen(false);
+      if (alt !== null) zentrieren(alt, false);
+    }
+
+    // --- Umsortieren direkt im Diagramm: lange auf eine Zeile druecken ---
+    function sortierenImDiagramm(){
+      var lang = null, sortiert = null, schluckeKlick = false, start = null;
+
+      function zeileBeiY(y){
+        if (!geo) return -1;
+        for (var i = 0; i < geo.zeilen.length; i++) {
+          var g = geo.zeilen[i];
+          if (y >= g.yt && y <= g.y0 + g.h + (g.extra || 0)) return i;
+        }
+        return -1;
+      }
+
+      el.svgWrap.addEventListener('pointerdown', function(ev){
+        var r = el.svgWrap.getBoundingClientRect();
+        var i = zeileBeiY(ev.clientY - r.top);
+        if (i < 0) return;
+        start = { x: ev.clientX, y: ev.clientY };
+        lang = setTimeout(function(){
+          lang = null;
+          sortiert = { von: i, nach: i, y: ev.clientY };
+          el.scroll.style.overflowX = 'hidden';           // kein Wischen waehrend des Sortierens
+          el.wrap.classList.add('mg-sortiert');
+          markiereSortierZeile(i, i);
+          if (navigator.vibrate) { try { navigator.vibrate(12); } catch(e){} }
+        }, 450);
+      });
+
+      el.svgWrap.addEventListener('pointermove', function(ev){
+        // Wer wischt oder scrollt, will nicht sortieren: das lange Drücken abbrechen
+        if (lang) {
+          if (start && (Math.abs(ev.clientX - start.x) > 8 || Math.abs(ev.clientY - start.y) > 8)) {
+            clearTimeout(lang); lang = null; start = null;
+          }
+          return;
+        }
+        if (!sortiert) return;
+        ev.preventDefault();
+        var r = el.svgWrap.getBoundingClientRect();
+        var i = zeileBeiY(ev.clientY - r.top);
+        if (i >= 0 && i !== sortiert.nach) { sortiert.nach = i; markiereSortierZeile(sortiert.von, i); }
+      });
+
+      function loslassen(){
+        start = null;
+        if (lang) { clearTimeout(lang); lang = null; return; }
+        if (!sortiert) return;
+        var s2 = sortiert; sortiert = null;
+        el.scroll.style.overflowX = '';
+        el.wrap.classList.remove('mg-sortiert');
+        schluckeKlick = true;
+        setTimeout(function(){ schluckeKlick = false; }, 60);
+        if (s2.von === s2.nach) { zeichnen(false); return; }
+        var sicht = sichtbareZeilen().map(function(z){ return z.id; });
+        var id = sicht[s2.von];
+        var neueSicht = sicht.slice(); neueSicht.splice(s2.von, 1); neueSicht.splice(s2.nach, 0, id);
+        // unsichtbare Zeilen behalten ihren Platz relativ zum Rest
+        var neu = [], k = 0;
+        reihenfolge.forEach(function(x){ neu.push(anZeilen.indexOf(x) >= 0 ? neueSicht[k++] : x); });
+        setzeReihenfolge(neu);
+        neuZeichnenNachWahl();
+      }
+      el.svgWrap.addEventListener('pointerup', loslassen);
+      el.svgWrap.addEventListener('pointercancel', loslassen);
+      el.scroll.addEventListener('click', function(ev){
+        if (schluckeKlick || sortiert) { ev.stopPropagation(); ev.preventDefault(); }
+      }, true);
+    }
+
+    // Hebt die gepackte Zeile hervor und zeigt, wo sie landen wuerde
+    function markiereSortierZeile(von, nach){
+      var svg = el.svgWrap.querySelector('svg');
+      if (!svg || !geo) return;
+      var alt = svg.querySelector('#' + kid('sortband'));
+      if (alt) alt.parentNode.removeChild(alt);
+      var g = geo.zeilen[von], z = geo.zeilen[nach];
+      if (!g || !z) return;
+      var ns = 'http://www.w3.org/2000/svg';
+      var grp = document.createElementNS(ns, 'g');
+      grp.setAttribute('id', kid('sortband'));
+      var h = (g.y0 + g.h + (g.extra || 0)) - g.yt;
+      var r1 = document.createElementNS(ns, 'rect');
+      r1.setAttribute('class', 'mg-sortpack');
+      r1.setAttribute('x', 0); r1.setAttribute('y', g.yt);
+      r1.setAttribute('width', geo.breite); r1.setAttribute('height', h);
+      grp.appendChild(r1);
+      var l = document.createElementNS(ns, 'line');
+      l.setAttribute('class', 'mg-sortziel');
+      var yZiel = nach <= von ? z.yt : z.y0 + z.h + (z.extra || 0);
+      l.setAttribute('x1', 0); l.setAttribute('x2', geo.breite);
+      l.setAttribute('y1', yZiel); l.setAttribute('y2', yZiel);
+      grp.appendChild(l);
+      svg.appendChild(grp);
+    }
+
+    // Werte neu holen. behalten=true laesst die gewaehlte Stelle stehen.
+    function auffrischen(behalten){
+      cache = {};
+      laden({ still: true, behalten: behalten !== false });
+    }
+
+    // Die Bilder kommen jede volle Stunde kurz nach Minute 5 herein (so steht
+    // der Auslöser beim Bildspeicher). Kurz danach frischen wir von selbst auf,
+    // damit das neue Bild und die neuen Werte ohne Zutun erscheinen.
+    var auffrischUhr = null;
+    function naechsteAuffrischung(){
+      if (auffrischUhr) clearTimeout(auffrischUhr);
+      var jetzt = new Date();
+      var ziel = new Date(jetzt.getTime());
+      ziel.setSeconds(0, 0);
+      ziel.setMinutes(BILD_MINUTE);
+      if (ziel <= jetzt) ziel.setTime(ziel.getTime() + 3600000);
+      auffrischUhr = setTimeout(function(){
+        auffrischen(true);
+        naechsteAuffrischung();           // fuer den Fall, dass nachLaden nicht durchkommt
+      }, Math.max(20000, ziel - jetzt));
     }
 
     function quelleText(){
@@ -794,14 +1031,26 @@
     aufbauen();
     quelleText();
     laden();
+
+    // Kommt die Seite nach laengerer Zeit zurueck in den Vordergrund, koennen
+    // Stunden vergangen sein - dann gleich auffrischen.
+    var zuletztGesehen = Date.now();
+    document.addEventListener('visibilitychange', function(){
+      if (document.hidden) { zuletztGesehen = Date.now(); return; }
+      if (Date.now() - zuletztGesehen > 10 * 60000) auffrischen(true);
+      else if (daten) { idxJetzt = idxFuer(jetztDort()); camAktuell = null; anzeigen(); }
+      naechsteAuffrischung();
+    });
+    // Jetzt-Linie und Live-Kamerabild alle fuenf Minuten nachziehen; die Werte
+    // selbst frischt naechsteAuffrischung() zur vollen Stunde auf.
     var uhr = setInterval(function(){ if (daten) { idxJetzt = idxFuer(jetztDort()); camAktuell = null; anzeigen(); } }, 5 * 60000);
-    var frisch = setInterval(function(){ cache = {}; laden(); }, 60 * 60000);
 
     return {
       neu: function(){ cache = {}; laden(); },
       zeichnen: function(){ zeichnen(false); },
       zeigeOrt: function(id){ if (ORTE.some(function(o){ return o.id === id; })) { ort = id; merkSchreiben('ort', id); laden(); } },
-      abbauen: function(){ clearInterval(uhr); clearInterval(frisch); wurzel.innerHTML = ''; wurzel.classList.remove('mg'); }
+      auffrischen: function(){ auffrischen(true); },
+      abbauen: function(){ clearInterval(uhr); if (auffrischUhr) clearTimeout(auffrischUhr); wurzel.innerHTML = ''; wurzel.classList.remove('mg'); }
     };
   }
 
