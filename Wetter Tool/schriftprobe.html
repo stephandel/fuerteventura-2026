@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Schriftprobe – Zahlen im Wetter-Tool</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=JetBrains+Mono:wght@500;700&family=IBM+Plex+Mono:wght@500;600&family=Roboto+Mono:wght@500;700&family=DM+Mono:wght@500&family=Fira+Code:wght@500;700&family=Space+Mono:wght@700&family=Source+Code+Pro:wght@600;700&family=Geist+Mono:wght@600;700&family=Red+Hat+Mono:wght@600;700&family=Azeret+Mono:wght@600&family=Inter:wght@600;700&family=Manrope:wght@700;800&family=DM+Sans:wght@600;700&family=Outfit:wght@600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root { color-scheme: dark; --page:#14181a; --surface:#1b2124; --surface-2:#202729; --border:#303836; --ink:#ede9e0; --ink-dim:#b4ac9c; --teal:#4bc4cb; }
+  :root[data-theme="light"] { color-scheme: light; --page:#fffdf7; --surface:#f8f8f4; --surface-2:#eeeee6; --border:#d7d6c9; --ink:#1c1a17; --ink-dim:#5b564c; --teal:#0f6e76; }
+  body { margin:0; background:var(--page); color:var(--ink); font:15px/1.5 "Plus Jakarta Sans", system-ui, sans-serif; }
+  .seite { max-width:1100px; margin:0 auto; padding:24px 20px 80px; }
+  h1 { font-size:1.5rem; margin:0 0 4px; }
+  .unter { color:var(--ink-dim); margin:0 0 18px; max-width:70ch; }
+  .leiste { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:22px; }
+  .leiste button { min-height:38px; padding:0 14px; border-radius:10px; border:1px solid var(--border); background:var(--surface-2); color:var(--ink); font:600 13.5px "Plus Jakarta Sans", system-ui, sans-serif; cursor:pointer; }
+  .leiste button.is-on { border-color:var(--teal); color:var(--teal); }
+  .gitter { display:grid; grid-template-columns:repeat(auto-fill, minmax(330px, 1fr)); gap:16px; }
+  .karte { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:14px 16px 12px; }
+  .kopf { display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px; }
+  .kopf b { font-size:15px; }
+  .kopf .nr { font-family:"JetBrains Mono", monospace; font-size:12px; color:var(--ink-dim); }
+  .note { font-size:12px; color:var(--ink-dim); margin:0 0 10px; min-height:18px; }
+  .probe { font-weight:700; font-size:1.6rem; letter-spacing:-0.01em; margin:2px 0 10px; font-variant-numeric:tabular-nums; }
+  .probe small { font-size:0.6em; font-weight:600; color:var(--ink-dim); margin-left:1px; }
+  /* exakt die Liste aus dem Wetter-Tool */
+  .mg-werte { display:grid; grid-template-columns:1fr; }
+  .mg-wert { display:grid; grid-template-columns:minmax(84px,30%) auto 1fr; align-items:baseline; column-gap:12px; padding:6px 0; border-bottom:1px solid var(--border); }
+  .mg-wert:last-child { border-bottom:0; }
+  .mg-wl { font-size:12px; color:var(--ink-dim); }
+  .mg-wv { font-size:14.5px; font-weight:700; color:var(--ink); white-space:nowrap; font-variant-numeric:tabular-nums; }
+  .mg-wv small { font-size:0.78em; font-weight:600; color:var(--ink-dim); margin-left:2px; }
+  .mg-wz { font-size:11.5px; color:var(--ink-dim); text-align:right; }
+  .karte[data-font] .probe, .karte[data-font] .mg-wv { font-family: var(--f); }
+  .karte.is-aktuell { outline:2px solid var(--teal); }
+  .zeit { font-weight:700; font-size:1.05rem; margin:8px 0 2px; font-variant-numeric:tabular-nums; }
+  .karte[data-font] .zeit { font-family: var(--f); }
+  .gross .mg-wv { font-size:17px; }
+  .gross .probe { font-size:2rem; }
+</style>
+</head>
+<body>
+<div class="seite">
+  <h1>Schriftprobe für die Zahlen</h1>
+  <p class="unter">Jede Karte zeigt dieselbe Werteliste aus dem Wetter-Tool, nur die Schrift der Zahlen ist anders. Beschriftungen bleiben in Plus Jakarta Sans, der Schrift der Seite. Karte 1 ist der aktuelle Stand. Alle Zahlen sind „tabellarisch", d. h. jede Ziffer gleich breit – so bleiben Spalten bündig.</p>
+  <div class="leiste">
+    <button type="button" id="hell">☀️ Hell</button>
+    <button type="button" id="dunkel" class="is-on">🌙 Dunkel</button>
+    <button type="button" id="gross">🔍 Größer</button>
+    <span style="color:var(--ink-dim);font-size:13px">Sag mir einfach die Nummer.</span>
+  </div>
+  <div class="gitter" id="gitter"></div>
+</div>
+<script>
+  var SCHRIFTEN = [
+    { name:'JetBrains Mono', css:'"JetBrains Mono", monospace', note:'Aktuell im Einsatz. Technisch, etwas eng.', aktuell:true },
+    { name:'IBM Plex Mono', css:'"IBM Plex Mono", monospace', note:'Freundlicher, runder als JetBrains, sehr gut lesbar.' },
+    { name:'Roboto Mono', css:'"Roboto Mono", monospace', note:'Neutral, unauffällig, breit verbreitet.' },
+    { name:'DM Mono', css:'"DM Mono", monospace', note:'Schlank und leicht, wirkt edel.' },
+    { name:'Fira Code', css:'"Fira Code", monospace', note:'Klar, mit deutlich unterscheidbaren Ziffern.' },
+    { name:'Source Code Pro', css:'"Source Code Pro", monospace', note:'Ruhig und klassisch.' },
+    { name:'Geist Mono', css:'"Geist Mono", monospace', note:'Modern, geometrisch, sehr aufgeräumt.' },
+    { name:'Red Hat Mono', css:'"Red Hat Mono", monospace', note:'Weich gerundet, gut auf dem Handy.' },
+    { name:'Azeret Mono', css:'"Azeret Mono", monospace', note:'Kräftig, etwas technischer Charakter.' },
+    { name:'Space Mono', css:'"Space Mono", monospace', note:'Eigenwillig, retro – Geschmackssache.' },
+    { name:'Plus Jakarta Sans', css:'"Plus Jakarta Sans", sans-serif', note:'Die Seitenschrift selbst – alles aus einem Guss, keine Schreibmaschine.' },
+    { name:'Inter', css:'"Inter", sans-serif', note:'Der ruhige Klassiker für Zahlen in Apps.' },
+    { name:'Manrope', css:'"Manrope", sans-serif', note:'Rund und modern, passt gut zu Jakarta.' },
+    { name:'DM Sans', css:'"DM Sans", sans-serif', note:'Geometrisch, freundlich.' },
+    { name:'Outfit', css:'"Outfit", sans-serif', note:'Sehr klar, leicht technisch.' },
+    { name:'Space Grotesk', css:'"Space Grotesk", sans-serif', note:'Charaktervoll, markante Ziffern.' },
+    { name:'System-Monospace', css:'ui-monospace, "SF Mono", Menlo, monospace', note:'Die eingebaute Schrift des Geräts (iPhone: SF Mono). Kein Download nötig.' }
+  ];
+  var LISTE = [
+    ['Sonne','0','min',''], ['Temperatur','24','°','gefühlt 27°'], ['Wind','7','km/h','Böen 9 · NO'],
+    ['Regen','0,0','mm','0 % Wahrsch.'], ['UV','0,0','','niedrig'], ['Wellen','0,9','m',''],
+    ['Tide','-0,7','m','steigt'], ['Luftdruck','1015','hPa',''], ['Wasser','24','°','']
+  ];
+  var g = document.getElementById('gitter');
+  g.innerHTML = SCHRIFTEN.map(function(s, i){
+    return '<div class="karte' + (s.aktuell ? ' is-aktuell' : '') + '" data-font style="--f:' + s.css.replace(/"/g, '&quot;') + '">' +
+      '<div class="kopf"><b>' + (i+1) + ' · ' + s.name + '</b><span class="nr">' + (s.aktuell ? 'aktuell' : '') + '</span></div>' +
+      '<p class="note">' + s.note + '</p>' +
+      '<div class="zeit">23.09. · 06:38</div>' +
+      '<div class="probe">24<small>°</small> 07:44 -0,7<small>m</small> 1015<small>hPa</small></div>' +
+      '<div class="mg-werte">' + LISTE.map(function(z){
+        return '<div class="mg-wert"><span class="mg-wl">' + z[0] + '</span><span class="mg-wv">' + z[1] + (z[2] ? '<small>' + z[2] + '</small>' : '') + '</span><span class="mg-wz">' + z[3] + '</span></div>';
+      }).join('') + '</div></div>';
+  }).join('');
+  var root = document.documentElement;
+  document.getElementById('hell').onclick = function(){ root.setAttribute('data-theme','light'); setzeOn(this); };
+  document.getElementById('dunkel').onclick = function(){ root.removeAttribute('data-theme'); setzeOn(this); };
+  document.getElementById('gross').onclick = function(){ document.body.classList.toggle('gross'); this.classList.toggle('is-on'); };
+  function setzeOn(b){ ['hell','dunkel'].forEach(function(id){ document.getElementById(id).classList.toggle('is-on', document.getElementById(id) === b); }); }
+</script>
+</body>
+</html>
