@@ -91,7 +91,7 @@
   /* Fahne bleibt beim Scrollen der Seite sichtbar */
   /* Haften geht nur, wenn die Karte ihren Inhalt nicht beschneidet */
   .strich-an.fahne-klebt .mg { overflow:visible; }
-  .strich-an.fahne-klebt .mg-readout { position:sticky; top:0; z-index:6; background:var(--mg-flaeche); padding-top:10px; border-radius:0 0 10px 10px; }
+  .strich-an.fahne-klebt .mg-readout { position:sticky; top:0; z-index:6; background:var(--mg-flaeche); padding-top:10px; padding-bottom:8px; border-radius:0 0 12px 12px; box-shadow:0 10px 14px -10px rgba(0,0,0,.55); }
   .strich-an.fahne-klebt .mg-readout::after { display:none; }
   .strich-an.fahne-klebt .mg-readout::before { content:""; position:absolute; left:50%; bottom:0; width:2px; height:10px; margin-left:-1px; background:var(--mg-text); opacity:.85; }
 
