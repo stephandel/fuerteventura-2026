@@ -8,8 +8,8 @@
 <meta name="apple-mobile-web-app-title" content="Fuerteventura">
 <link rel="stylesheet" href="vendor/leaflet.css">
 <script defer src="vendor/leaflet.js"></script>
-<link rel="stylesheet" href="Wetter%20Tool/meteogramm.css?v=20260923b">
-<script defer src="Wetter%20Tool/meteogramm.js?v=20260923b"></script>
+<link rel="stylesheet" href="Wetter%20Tool/meteogramm.css?v=20260923d">
+<script defer src="Wetter%20Tool/meteogramm.js?v=20260923d"></script>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
 <link rel="apple-touch-icon" sizes="167x167" href="images/apple-touch-icon-167.png">
@@ -290,6 +290,11 @@ details[open] summary::before { content: "− "; }
 .wx-tile.wt-mond { position: relative; overflow: hidden; }
 .wx-tile.wt-mond > .wt-h, .wx-tile.wt-mond > .wt-v, .wx-tile.wt-mond > .wt-s { position: relative; z-index: 1; }
 .mond-bild { position: absolute; right: -34px; top: 50%; transform: translateY(-50%); pointer-events: none; opacity: 0.5; }
+.mond-foto-rahmen { position: absolute; right: -34px; top: 50%; width: 132px; height: 132px; transform: translateY(-50%); border-radius: 50%; overflow: hidden; pointer-events: none; opacity: 0.62; }
+.mond-foto-rahmen[hidden] { display: none; }
+.mond-foto { width: 108%; height: 108%; margin: -4%; display: block; filter: grayscale(1); }
+:root[data-theme="dark"] .mond-foto-rahmen { opacity: 0.55; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .mond-foto-rahmen { opacity: 0.55; } }
 .mond-dunkel { fill: #2b3034; }
 .mond-hell { fill: #b9bec3; }
 .mond-krater { fill: #000; opacity: 0.12; }
@@ -945,6 +950,12 @@ table.price-table tfoot td.num { color: var(--teal); }
 .icon-wahl button.is-on img { outline: 2.5px solid var(--teal); outline-offset: 3px; }
 .icon-wahl button:focus-visible { outline: none; }
 .icon-wahl button:focus-visible img { outline: 2.5px solid var(--ochre); outline-offset: 3px; }
+.icon-oeffnen { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--border); }
+.icon-oeffnen p { margin: 0; font-size: 13px; line-height: 1.55; color: var(--ink-dim); }
+.icon-oeffnen-reihe { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.icon-oeffnen-reihe .btn { display: inline-flex; align-items: center; min-height: 40px; }
+.icon-oeffnen-klein { margin-top: 10px !important; font-size: 12px !important; }
+.icon-adresse { display: block; width: 100%; margin-top: 10px; padding: 9px 11px; border: 1px solid var(--teal); border-radius: 8px; background: var(--surface-2); color: var(--ink); font-family: "JetBrains Mono", monospace; font-size: 12.5px; }
 .icon-anleitung { margin-top: 20px; font-size: 13px; line-height: 1.55; color: var(--ink-dim); }
 .icon-anleitung strong { color: var(--ink); }
 .icon-anleitung ol { margin: 8px 0 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; }
@@ -1241,6 +1252,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 .aktiv-liste li { display: flex; gap: 11px; align-items: flex-start; font-size: 14.5px; line-height: 1.45; }
 .aktiv-icon { flex: none; width: 26px; height: 26px; border-radius: 50%; background: var(--surface-2); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 13px; }
 .aktiv-text b { font-weight: 700; }
+.aktiv-text a { color: var(--teal); font-weight: 700; }
 .aktiv-zeit { display: block; font-size: 12px; color: var(--ink-dim); font-family: "JetBrains Mono", monospace; }
 .aktiv-leer { color: var(--ink-dim); font-size: 14px; margin: 0; }
 
@@ -4065,6 +4077,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       <h2>📱 App-Symbol f&#252;r den Home-Bildschirm</h2>
       <p class="sub">Welches Symbol soll die Seite tragen, wenn sie auf dem Handy wie eine App liegt? Antippen w&#228;hlt aus &#8211; jedes Ger&#228;t kann ein anderes haben. Die Symbole stehen hier in <strong>Originalgr&#246;&#223;e</strong>, also genau so gro&#223;, wie sie sp&#228;ter zwischen den anderen Apps liegen.</p>
       <div class="icon-wahl" id="icon-wahl"></div>
+      <div class="icon-oeffnen" id="icon-oeffnen"></div>
       <div class="icon-anleitung" id="icon-anleitung"></div>
     </div>
 
@@ -4296,6 +4309,15 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       });
       return;
     }
+    if (hash === 'app-icon-box') {
+      LAST_IN_TAB['mehr'] = 'links';
+      showPage('links', {noScrollTop:true});
+      requestAnimationFrame(function(){
+        var el = document.getElementById('app-icon-box');
+        if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
+      });
+      return;
+    }
     if (hash.indexOf('ex-') === 0) {
       // Sprung zu einer Ausflugskarte (z. B. aus der Vorab-Box)
       LAST_IN_TAB['entdecken'] = 'ausfluege';
@@ -4517,7 +4539,8 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       { h: '🌡️ Gefühlt', v: Math.round(c.apparent_temperature) + '°', s: 'bei ' + Math.round(c.temperature_2m) + '° gemessen' },
       { h: '💦 Luftfeuchte', v: c.relative_humidity_2m + '%', s: 'Küstenlage, meist moderat' },
       { h: '🌊 Wassertemperatur', v: '22–23°', s: 'Oktober-Mittel · <a href="https://www.meerestemperatur.de/europa/fuerteventura/corralejo/" target="_blank" rel="noopener">Tageswert prüfen ↗</a>' },
-      { h: '🌑 Mond', v: moonPhaseName(new Date()), klasse: 'wt-mond', hinter: moonSvg(moonPhaseFraction(new Date()), 132),
+      { h: '🌑 Mond', v: moonPhaseName(new Date()), klasse: 'wt-mond',
+        hinter: moonSvg(moonPhaseFraction(new Date()), 132) + '<span class="mond-foto-rahmen" id="mond-foto-rahmen" hidden><img class="mond-foto" id="mond-foto" alt=""></span>',
         s: Math.round((1 - Math.cos(2 * Math.PI * moonPhaseFraction(new Date()))) / 2 * 100) + ' % beleuchtet · Neumond am 10.10.' }
     ];
     box.innerHTML = tiles.map(function(t){
@@ -4525,6 +4548,30 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
         '<div class="wt-v">' + t.v + '</div>' + (t.extra || '') +
         '<div class="wt-s">' + t.s + '</div></div>';
     }).join('');
+    mondFotoLaden();
+  }
+
+  // Echtes Mondbild von der NASA: für jede Stunde des Jahres ein aus Daten der
+  // Mondsonde LRO gerechnetes Bild, frei nutzbar (NASA/GSFC Scientific
+  // Visualization Studio, "Dial-A-Moon"). Die Schnittstelle dort lässt fremde
+  // Seiten nicht zu, das Bildmuster ist aber öffentlich: Bild Nr. = Stunde des
+  // Jahres in Weltzeit. Der Pfad gilt für 2026; für ein anderes Jahr die neue
+  // Kennung unter svs.gsfc.nasa.gov ("Moon Phase and Libration") nachtragen.
+  // Lädt das Bild nicht, bleibt die gezeichnete Scheibe stehen.
+  var MOND_BILDER = { 2026: 'https://svs.gsfc.nasa.gov/vis/a000000/a005500/a005587/frames/730x730_1x1_30p/moon.' };
+  function mondFotoLaden(){
+    var rahmen = document.getElementById('mond-foto-rahmen'), img = document.getElementById('mond-foto');
+    if (!rahmen || !img) return;
+    var jetzt = new Date(), jahr = jetzt.getUTCFullYear();
+    if (!MOND_BILDER[jahr]) return;
+    var nr = Math.floor((jetzt.getTime() - Date.UTC(jahr, 0, 1)) / 3600000) + 1;   // Stunde des Jahres, ab 1
+    img.onload = function(){
+      rahmen.hidden = false;
+      var svg = rahmen.parentNode.querySelector('.mond-bild');
+      if (svg) svg.style.display = 'none';
+    };
+    img.onerror = function(){ rahmen.hidden = true; };
+    img.src = MOND_BILDER[jahr] + ('0000' + nr).slice(-4) + '.jpg';
   }
 
   // Grobe Mondphase — reicht für die Anzeige, kein Ersatz für ein Ephemeriden-Programm
@@ -7479,6 +7526,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     { at: '2026-09-20T04:45', text: '<b>Zwei neue Unterk\u00fcnfte dazugekommen.</b> Nr.\u00a023 <b>Maisonette mit Meerblick-Terrasse</b> (1.796\u00a0\u20ac, alle 13\u00a0N\u00e4chte frei) und Nr.\u00a024 <b>Blick auf Lobos \u2013 Sea\u00a0&amp; Sand Dunes</b> (463\u00a0\u20ac, nur 04.\u201308.10., also nur als Mittelteil). Beide mit gro\u00dfer Terrasse und Meerblick, beide ohne Pool und ohne Klimaanlage.' },
     { at: '2026-09-20T04:20', text: '<b>Ghea ist raus</b> \u2013 f\u00fcr unseren Zeitraum ausgebucht. Die Nummern sind danach neu vergeben, die Liste l\u00e4uft wieder l\u00fcckenlos.' },
     { at: '2026-09-20T02:30', text: '<b>Das Herz auf den Karten geht wieder.</b> Bei 13 der Unterk\u00fcnfte passierte beim Antippen nichts \u2013 betroffen waren genau die, die zuletzt dazugekommen sind. Eure alten Favoriten sind dabei leider verloren gegangen.' },
+    { at: '2026-09-23T07:50', text: '<b>Das App-Symbol l\u00e4sst sich jetzt aussuchen \u2013 13 Varianten stehen zur Wahl.</b> Gold auf T\u00fcrkis, auf Wei\u00df, auf Meerwasser, Schwarz-Wei\u00df, Nacht, Strandfoto und mehr. Sie stehen dort in <b>Originalgr\u00f6\u00dfe</b>, also genau so gro\u00df wie sp\u00e4ter zwischen den anderen Apps. Dazu Kn\u00f6pfe, die die Seite gleich in Safari oder Chrome \u00f6ffnen \u2013 von dort geht \u201eZum Home-Bildschirm\u201c. <a href="#app-icon-box">Zur Symbol-Auswahl \u2192</a> <i>Achtung: ein Symbol, das schon auf dem Home-Bildschirm liegt, \u00e4ndert sich nicht \u2013 daf\u00fcr l\u00f6schen und neu hinzuf\u00fcgen.</i>' },
     { at: '2026-09-19T21:30', text: '<b>Die Kosten pro Person stehen jetzt oben in der Leiste</b>, solange ihr im Bereich \u201ePlanen\u201c seid \u2013 auch beim Scrollen.' }
   ];
 
@@ -7998,6 +8046,70 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     if (man) man.href = id === 'klassik' ? 'manifest.json' : 'manifest-' + id + '.json';
     return id;
   }
+  // Zum Hinzufuegen auf den Home-Bildschirm muss die Seite im echten Browser
+  // stehen - aus der installierten App heraus geht es nicht. iOS kennt keinen
+  // offiziellen Weg, Safari von aussen aufzurufen; "x-safari-https:" ist ein
+  // undokumentiertes Schema, das je nach iOS-Fassung greift oder eben nicht.
+  // Deshalb steht daneben immer "Adresse kopieren" als sicherer Rueckfall.
+  function appIconOeffnenZeichnen(){
+    var el = document.getElementById('icon-oeffnen');
+    if (!el) return;
+    var adresse = location.href.split('#')[0];          // ohne Anker, sonst merkt
+    var ohneSchema = adresse.replace(/^https?:\/\//, ''); // sich iOS die Unterseite
+    var istIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+                 (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    var istAndroid = /Android/.test(navigator.userAgent);
+    var knoepfe = [];
+    if (istIOS) {
+      knoepfe.push('<a class="btn btn-outline" href="x-safari-' + adresse + '">\uD83E\uDDED In Safari öffnen</a>');
+      knoepfe.push('<a class="btn btn-outline" href="googlechromes://' + ohneSchema + '">\uD83C\uDF10 In Chrome öffnen</a>');
+    } else if (istAndroid) {
+      knoepfe.push('<a class="btn btn-outline" href="intent://' + ohneSchema + '#Intent;scheme=https;package=com.android.chrome;end">\uD83C\uDF10 In Chrome öffnen</a>');
+    }
+    knoepfe.push('<button type="button" class="btn btn-outline" id="icon-kopieren">\uD83D\uDD17 Adresse kopieren</button>');
+    var amHandy = istIOS || istAndroid;
+    var text = isStandalone()
+      ? 'Du bist gerade <b>in der App</b> – von hier aus kann das Handy nichts zum Home-Bildschirm hinzufügen. Erst im Browser öffnen:'
+      : (amHandy
+        ? 'Damit das Symbol auf den Home-Bildschirm kann, muss die Seite im Browser stehen:'
+        : 'Auf dem Handy stehen hier Knöpfe, die die Seite gleich in Safari oder Chrome öffnen. Am Rechner hilft nur die Adresse:');
+    var klein = amHandy
+      ? 'Die Knöpfe öffnen die Startseite <b>ohne Anhängsel in der Adresse</b> – sonst merkt sich das Handy diese Unterseite als App-Start. ' +
+        (istIOS ? 'Passiert beim Safari-Knopf nichts, lässt deine iOS-Fassung den Sprung nicht zu: dann <b>Adresse kopieren</b> und oben in die Adresszeile von Safari einsetzen.'
+                : 'Passiert nichts, <b>Adresse kopieren</b> und im Browser einsetzen.')
+      : 'Kopiert wird die Startseite <b>ohne Anhängsel</b> – sonst merkt sich das Handy diese Unterseite als App-Start.';
+    el.innerHTML = '<p>' + text + '</p><div class="icon-oeffnen-reihe">' + knoepfe.join('') + '</div>' +
+      '<input class="icon-adresse" id="icon-adresse" readonly hidden>' +
+      '<p class="icon-oeffnen-klein">' + klein + '</p>';
+    var kop = document.getElementById('icon-kopieren');
+    var feld = document.getElementById('icon-adresse');
+    if (kop) kop.addEventListener('click', function(){
+      function fertig(){
+        kop.textContent = '\u2713 Kopiert';
+        setTimeout(function(){ kop.innerHTML = '\uD83D\uDD17 Adresse kopieren'; }, 2000);
+      }
+      // Klappt das Kopieren nicht (aeltere Browser, fehlende Freigabe), wird die
+      // Adresse zum Markieren ausgeklappt - der Knopf bleibt, wie er ist.
+      function zumAbschreiben(){
+        if (!feld) return;
+        feld.hidden = false;
+        feld.value = adresse;
+        feld.focus(); feld.select();
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(adresse).then(fertig, zumAbschreiben);
+        return;
+      }
+      var t = document.createElement('textarea');
+      t.value = adresse; t.style.position = 'fixed'; t.style.opacity = '0';
+      document.body.appendChild(t); t.select();
+      var ok = false;
+      try { ok = document.execCommand('copy'); } catch(e){}
+      document.body.removeChild(t);
+      if (ok) fertig(); else zumAbschreiben();
+    });
+  }
+
   function appIconWahlZeichnen(){
     var box = document.getElementById('icon-wahl'), anl = document.getElementById('icon-anleitung');
     if (!box) return;
@@ -8028,6 +8140,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   }
   appIconAnwenden(lsGet('fuerte-app-icon', 'klassik'));
   appIconWahlZeichnen();
+  appIconOeffnenZeichnen();
 
   // ============================================================
   //  Meteogramm auf der Wetterseite

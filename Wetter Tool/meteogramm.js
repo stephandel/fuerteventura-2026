@@ -146,7 +146,7 @@
     var BAND_TAG = 22, BAND_CAM = 16, TITEL_H = 22, BAND_UNTEN = 24, TAGESINFO_H = 34;
     var ZEILE_H_SCHMAL = 72, ZEILE_H_BREIT = 92, PXH_BREIT = 24;
 
-    var el = {}, daten = null, cache = {}, geo = null;
+    var el = {}, daten = null, cache = {}, geo = null, altT0 = null;
     var pxH = 26, idxJetzt = 0, sammler = 0, camAktuell = null;
     var webcam = { shots: [], speicher: false, ort: null };
     var ort = merkLesen('ort', ORTE[0].id);
@@ -319,11 +319,17 @@
     function nachLaden(opts){
       opts = opts || {};
       quelleText();                       // erst jetzt ist klar, woher der UV-Wert kommt
-      var alt = (opts.behalten && geo) ? idxAusScroll() : null;
+      // Die gewählte Stelle als Uhrzeit merken, nicht als Bildschirmposition:
+      // rutscht das Datenfenster über Nacht um einen Tag weiter, zeigten
+      // dieselben Pixel sonst dieselbe Uhrzeit am nächsten Tag.
+      var altZeit = (opts.behalten && geo && altT0) ? new Date(altT0.getTime() + idxAusScroll() * 3600000) : null;
+      altT0 = daten.t0;
       idxJetzt = idxFuer(jetztDort());
       camAktuell = null;                  // Kamerabild neu holen, nicht aus dem Zwischenspeicher
-      zeichnen(alt === null);
-      if (alt !== null) zentrieren(alt, false);
+      var altIdx = altZeit ? idxFuer(altZeit) : null;
+      if (altIdx !== null && (altIdx < 0 || altIdx > daten.zeit.length - 1)) altIdx = null;   // liegt nicht mehr im Fenster
+      zeichnen(altIdx === null);
+      if (altIdx !== null) zentrieren(altIdx, false);
       webcamLaden();
       if (ansicht !== 'webcam') filmVorladen();
       ladeAnzeige(false);
@@ -475,6 +481,7 @@
 
       webcamMarken();
       if (zentrierJetzt) zentrieren(idxJetzt, false); else anzeigen();
+      datumsLabelsPruefen();
     }
 
     function zeichneZeile(s, g, x, n, pxH){
@@ -614,6 +621,7 @@
       try { el.scroll.scrollTo({ left: idx * pxH, behavior: sanft ? 'smooth' : 'auto' }); }
       catch(e){ el.scroll.scrollLeft = idx * pxH; }
       anzeigen();
+      datumsLabelsPruefen();
     }
 
     function wertBei(z, f){
@@ -645,12 +653,7 @@
 
         var links = Math.max(0, Math.min(geo.n - 1, f - el.scroll.clientWidth / 2 / pxH + 0.5));
         var dtL = new Date(daten.t0.getTime() + Math.floor(links) * 3600000);
-        // Datum im Diagramm verstecken, solange es unter der festen Achse läge -
-        // sonst stünde es doppelt neben dem Datum am linken Rand.
-        var links2 = el.scroll.scrollLeft;
-        [].forEach.call(el.svgWrap.querySelectorAll('.mg-datum'), function(t){
-          t.style.visibility = (parseFloat(t.getAttribute('data-x')) - links2 < 104) ? 'hidden' : '';
-        });
+        datumsLabelsPruefen();
 
         var axd = document.getElementById(kid('ax-datum'));
         if (axd) axd.textContent = (dtL.toDateString() === jetztDort().toDateString())
@@ -683,6 +686,16 @@
         '<span class="mg-wl">' + esc(titel) + '</span>' +
         '<span class="mg-wv">' + c.wert + (c.einheit ? '<small>' + esc(c.einheit) + '</small>' : '') + '</span>' +
         '<span class="mg-wz">' + esc(c.zusatz || '') + '</span></div>';
+    }
+
+    // Datum im Diagramm verstecken, solange es unter der festen Achse läge -
+    // sonst stünde es doppelt neben dem Datum am linken Rand.
+    function datumsLabelsPruefen(){
+      if (!el.svgWrap || !el.scroll) return;
+      var links2 = el.scroll.scrollLeft;
+      [].forEach.call(el.svgWrap.querySelectorAll('.mg-datum'), function(t){
+        t.style.visibility = (parseFloat(t.getAttribute('data-x')) - links2 < 104) ? 'hidden' : '';
+      });
     }
 
     function relText(h){
@@ -1258,7 +1271,9 @@
     var zuletztGesehen = Date.now();
     document.addEventListener('visibilitychange', function(){
       if (document.hidden) { zuletztGesehen = Date.now(); filmStopp(); return; }
-      if (Date.now() - zuletztGesehen > 10 * 60000) auffrischen(true);
+      var pause = Date.now() - zuletztGesehen;
+      if (pause > 2 * 3600000) auffrischen(false);          // lange weg gewesen: wieder bei "jetzt" anfangen
+      else if (pause > 10 * 60000) auffrischen(true);       // kurz weg: Stelle behalten, Werte auffrischen
       else if (daten) { idxJetzt = idxFuer(jetztDort()); camAktuell = null; anzeigen(); }
       naechsteAuffrischung();
     });
