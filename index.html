@@ -8,8 +8,8 @@
 <meta name="apple-mobile-web-app-title" content="Fuerteventura">
 <link rel="stylesheet" href="vendor/leaflet.css">
 <script defer src="vendor/leaflet.js"></script>
-<link rel="stylesheet" href="Wetter%20Tool/meteogramm.css">
-<script defer src="Wetter%20Tool/meteogramm.js"></script>
+<link rel="stylesheet" href="Wetter%20Tool/meteogramm.css?v=20260923b">
+<script defer src="Wetter%20Tool/meteogramm.js?v=20260923b"></script>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
 <link rel="apple-touch-icon" sizes="167x167" href="images/apple-touch-icon-167.png">
@@ -920,6 +920,22 @@ table.price-table tfoot td.num { color: var(--teal); }
 .link-card:hover { border-color: var(--teal); }
 .link-card strong { color: var(--ink); font-size: 13.5px; }
 .link-card span { color: var(--ink-dim); font-size: 12.5px; }
+
+/* ---- App-Symbol: Vorschau in echter Home-Bildschirm-Groesse ----
+   Ein iOS-App-Symbol ist 60 x 60 Punkt gross, die Ecken sind mit rund
+   22,5 % der Kantenlaenge gerundet. Genau so stehen sie hier, damit man
+   vor dem Hinzufuegen sieht, wie klein das Symbol spaeter wirklich ist. */
+.icon-wahl { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 20px 8px; margin-top: 16px; max-width: 440px; }
+.icon-wahl button { appearance: none; -webkit-appearance: none; background: none; border: 0; padding: 4px 2px; margin: 0; cursor: pointer; font: inherit; font-size: 11px; line-height: 1.25; letter-spacing: .01em; color: var(--ink-dim); text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.icon-wahl img { width: 60px; height: 60px; border-radius: 13.5px; display: block; box-shadow: 0 2px 7px rgba(0,0,0,.4); transition: transform .12s ease; }
+.icon-wahl button:hover img { transform: scale(1.07); }
+.icon-wahl button.is-on { color: var(--ink); font-weight: 700; }
+.icon-wahl button.is-on img { outline: 2.5px solid var(--teal); outline-offset: 3px; }
+.icon-wahl button:focus-visible { outline: none; }
+.icon-wahl button:focus-visible img { outline: 2.5px solid var(--ochre); outline-offset: 3px; }
+.icon-anleitung { margin-top: 20px; font-size: 13px; line-height: 1.55; color: var(--ink-dim); }
+.icon-anleitung strong { color: var(--ink); }
+.icon-anleitung ol { margin: 8px 0 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; }
 
 /* ---- results head / car thumb / pin badge ---- */
 .results-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; }
@@ -4035,7 +4051,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 
         <div class="links-box" id="app-icon-box">
       <h2>📱 App-Symbol f&#252;r den Home-Bildschirm</h2>
-      <p class="sub">Welches Symbol soll die Seite tragen, wenn sie auf dem Handy wie eine App liegt? Antippen w&#228;hlt aus &#8211; jedes Ger&#228;t kann ein anderes haben.</p>
+      <p class="sub">Welches Symbol soll die Seite tragen, wenn sie auf dem Handy wie eine App liegt? Antippen w&#228;hlt aus &#8211; jedes Ger&#228;t kann ein anderes haben. Die Symbole stehen hier in <strong>Originalgr&#246;&#223;e</strong>, also genau so gro&#223;, wie sie sp&#228;ter zwischen den anderen Apps liegen.</p>
       <div class="icon-wahl" id="icon-wahl"></div>
       <div class="icon-anleitung" id="icon-anleitung"></div>
     </div>
@@ -7930,7 +7946,11 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   // Wahl selbst liegt nur auf diesem Gerät.
   var APP_ICONS = [
     { id: 'klassik', name: 'Klassik' }, { id: 'nacht', name: 'Nacht' }, { id: 'sonnenuntergang', name: 'Sonnenuntergang' },
-    { id: 'lagune', name: 'Lagune' }, { id: 'sand', name: 'Sand' }, { id: 'foto', name: 'Strandfoto' }
+    { id: 'lagune', name: 'Lagune' }, { id: 'sand', name: 'Sand' }, { id: 'foto', name: 'Strandfoto' },
+    { id: 'original', name: 'Original' }, { id: 'gold-rahmen', name: 'Gold mit Rahmen' },
+    { id: 'gold-matt', name: 'Gold matt' }, { id: 'gold-weiss', name: 'Gold auf Weiß' },
+    { id: 'gold-tuerkis', name: 'Gold auf Türkis' }, { id: 'gold-meer', name: 'Gold auf Meer' },
+    { id: 'schwarz-weiss', name: 'Schwarz-Weiß' }
   ];
   function appIconAnwenden(id){
     var ok = APP_ICONS.some(function(a){ return a.id === id; });
@@ -7945,7 +7965,10 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     if (!box) return;
     var aktiv = appIconAnwenden(lsGet('fuerte-app-icon', 'klassik'));
     box.innerHTML = APP_ICONS.map(function(a){
-      return '<button type="button" data-id="' + a.id + '" class="' + (a.id === aktiv ? 'is-on' : '') + '"><img src="images/icon-' + a.id + '-192.png" alt="" loading="lazy">' + a.name + '</button>';
+      var an = a.id === aktiv;
+      return '<button type="button" data-id="' + a.id + '" aria-pressed="' + an + '" class="' + (an ? 'is-on' : '') + '">' +
+             '<img src="images/icon-' + a.id + '-192.png" width="60" height="60" alt="" loading="lazy">' +
+             '<span>' + a.name + '</span></button>';
     }).join('');
     var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
     var steht = isStandalone();
@@ -7956,11 +7979,14 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
         ? '<li>Safari: unten das <strong>Teilen-Symbol</strong> antippen</li><li><strong>„Zum Home-Bildschirm“</strong> wählen</li><li>Hinzufügen – fertig, das gewählte Symbol liegt auf dem Home-Bildschirm.</li>'
         : '<li>Chrome: oben rechts <strong>⋮</strong> antippen</li><li><strong>„Zum Startbildschirm hinzufügen“</strong> bzw. „App installieren“ wählen</li><li>Bestätigen – das gewählte Symbol liegt auf dem Startbildschirm.</li>') +
       '</ol>';
-    box.addEventListener('click', function(ev){
-      var b = ev.target.closest('button[data-id]'); if (!b) return;
-      lsSet('fuerte-app-icon', b.getAttribute('data-id'));
-      appIconWahlZeichnen();
-    }, { once: true });
+    if (!box.dataset.verkabelt) {
+      box.dataset.verkabelt = '1';
+      box.addEventListener('click', function(ev){
+        var b = ev.target.closest('button[data-id]'); if (!b) return;
+        lsSet('fuerte-app-icon', b.getAttribute('data-id'));
+        appIconWahlZeichnen();
+      });
+    }
   }
   appIconAnwenden(lsGet('fuerte-app-icon', 'klassik'));
   appIconWahlZeichnen();
