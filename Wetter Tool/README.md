@@ -37,6 +37,7 @@ Mehr braucht es nicht. Alles Weitere ist wahlfrei.
 | `zeilen` | Welche Zeilen angeboten werden, in dieser Reihenfolge | alle außer Luftdruck |
 | `zeilenStandard` | Welche davon beim ersten Öffnen angehakt sind | alle angebotenen |
 | `kameras` | `{ ortId: { name, live, quelle, seite, hinweis? } }` — `live` ist die Adresse eines Standbilds | keine |
+| `karte` | Satelliten- und Niederschlagsbilder. `false` schaltet sie ab. Sonst ein Objekt, das die Vorgaben überschreibt: `wms`, `basis`, `auflage`, `schritt` (Minuten je Bild), `verzug` (wie weit das neueste Bild hinterherhinkt), `bilder` (Länge des Films), `bereich` (`{sued, west, nord, ost}` in Grad), `quelle`, `link` | EUMETSAT, Ausschnitt um den ersten Ort |
 | `bildspeicher` | Adresse eines Dienstes, der vergangene Stunden vorhält (siehe unten) | keiner |
 | `zeitzone` | z. B. `'Atlantic/Canary'`. `'auto'` nimmt die Zeitzone des Ortes. | `'auto'` |
 | `tageVorher` / `tageVoraus` | Wie weit das Diagramm reicht | 1 / 8 |
@@ -51,6 +52,9 @@ Rückgabe: `{ neu(), auffrischen(), zeichnen(), zeigeOrt(id), abbauen() }`.
 - **‹ ›** springen einen Tag zurück oder vor.
 - **Jetzt zentrieren** springt auf die aktuelle Stunde **und holt frische Werte**.
 - **↻** holt frische Werte, ohne die gewählte Stelle zu verlassen.
+- **📷 Webcam · 🛰️ Satellit · 🌧️ Regen** schalten das Bild über dem Diagramm um.
+  Satellit und Regen folgen der gewählten Zeit: wischt man zurück, wandert auch
+  das Satellitenbild zurück. **▶** spielt die letzten zwei Stunden als Film.
 - **☰** öffnet die Zeilenauswahl: Haken setzen, was zu sehen sein soll, und am
   Griff `⠿` die Reihenfolge durch Ziehen ändern.
 - **Lang auf eine Zeile im Diagramm drücken** (etwa eine halbe Sekunde) packt sie;
@@ -102,6 +106,24 @@ stündlich ein Bild wegspeichert und zwei Wege anbietet:
 
 `t` ist die volle Stunde in Ortszeit, `url` darf absolut oder relativ sein.
 Ein fertiger Cloudflare-Worker dafür liegt im Nachbarprojekt unter `worker/`.
+
+## Satellit und Niederschlag
+
+Die Bilder kommen vom offenen Kartendienst von [EUMETSAT](https://view.eumetsat.int/)
+(Meteosat, kein Schlüssel nötig):
+
+- **Satellit** — `mtg_fd:rgb_geocolour`, alle 10 Minuten. Tagsüber echte Farben,
+  nachts Wolken im Infrarot plus die Lichter der Städte.
+- **Regen** — dasselbe Bild, darüber `mtg_fd:h40b` (satellitengestützter
+  Niederschlag) als durchsichtige Auflage.
+
+Das neueste Bild hinkt etwa 40–50 Minuten hinterher; der Baustein fragt deshalb
+nie neuer als `verzug` an. Ein Archiv gibt es bis zwei Jahre zurück, man kann
+also auch nachsehen, wie es an einem vergangenen Tag aussah.
+
+**Kein Regenradar:** Über dem Atlantik und den Kanaren gibt es keine
+Radarabdeckung (geprüft mit RainViewer: leere Kacheln). Der Niederschlag hier
+ist aus Satellitendaten abgeleitet — gröber als ein Radar, aber flächendeckend.
 
 ## Browser
 

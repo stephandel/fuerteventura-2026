@@ -38,9 +38,22 @@
 .mg-readout { min-width: 0; flex: 1; }
 .mg-zeit { font-family: var(--mg-mono); font-size: 1.05rem; font-weight: 700; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; min-height: 24px; }
 .mg-rel { font-family: var(--mg-serif); font-size: 12.5px; font-weight: 600; color: var(--mg-text-still); }
-.mg-werte { display: flex; flex-wrap: wrap; gap: 5px 8px; margin-top: 6px; }
-.mg-chip { display: inline-flex; align-items: center; gap: 5px; font-family: var(--mg-mono); font-size: 12.5px; color: var(--mg-text); background: var(--mg-flaeche2); border: 1px solid var(--mg-rand); border-radius: 999px; padding: 3px 9px 3px 7px; white-space: nowrap; }
-.mg-chip i { width: 8px; height: 8px; border-radius: 50%; background: var(--c, var(--mg-rand)); flex: none; }
+/* Wetterlage neben Datum und Uhrzeit */
+.mg-lage { display: flex; align-items: center; gap: 7px; margin-top: 3px; font-size: 14px; color: var(--mg-text-still); min-height: 22px; }
+.mg-lage-i { font-size: 1.15rem; line-height: 1; }
+
+/* Die Werte als ruhiges Raster statt als Pillenfeld */
+.mg-werte { display: grid; grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
+  border-top: 1px solid var(--mg-rand); margin-bottom: 10px; }
+.mg-wert { padding: 9px 10px 10px; display: flex; flex-direction: column; gap: 1px; min-width: 0; position: relative;
+  border-right: 1px solid var(--mg-rand); border-bottom: 1px solid var(--mg-rand); }
+.mg-wert::before { content: ""; position: absolute; left: 0; top: 9px; bottom: 10px; width: 3px; border-radius: 0 2px 2px 0; background: var(--c, var(--mg-rand)); }
+.mg-wl { font-size: 10px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--mg-text-still); font-weight: 700;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-left: 8px; }
+.mg-wv { font-family: var(--mg-mono); font-size: 1.22rem; font-weight: 700; line-height: 1.15; color: var(--mg-text); padding-left: 8px; }
+.mg-wv small { font-size: 0.62em; font-weight: 600; color: var(--mg-text-still); margin-left: 1px; }
+.mg-wz { font-size: 10.5px; color: var(--mg-text-still); line-height: 1.3; min-height: 13px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-left: 8px; }
 .mg-knoepfe { display: flex; gap: 6px; flex: none; }
 .mg-btn { min-height: 40px; min-width: 40px; padding: 0 12px; border-radius: 11px; border: 1px solid var(--mg-rand); background: var(--mg-flaeche2); color: var(--mg-text); font: 600 13.5px/1 var(--mg-serif); cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .mg-btn:active { transform: scale(0.97); }
@@ -69,6 +82,26 @@
 .mg-zeile.is-zieht { background: var(--mg-flaeche2); opacity: 0.85; outline: 1px dashed var(--mg-akzent); }
 .mg-griff { flex: none; width: 26px; text-align: center; color: var(--mg-text-still); cursor: grab; font-size: 14px; line-height: 1; user-select: none; -webkit-user-select: none; touch-action: none; }
 .mg-zeile.is-zieht .mg-griff { cursor: grabbing; }
+
+/* ---- Ansichten: Webcam, Satellit, Regen ---- */
+.mg-ansichten { display: flex; gap: 6px; padding: 0 14px 10px; flex-wrap: wrap; }
+.mg-atab { min-height: 36px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--mg-rand); background: var(--mg-flaeche2);
+  color: var(--mg-text-still); font: 600 13px/1 var(--mg-serif); cursor: pointer; white-space: nowrap; -webkit-tap-highlight-color: transparent; }
+.mg-atab.is-on { border-color: var(--mg-akzent); color: var(--mg-text); background: var(--mg-flaeche); }
+
+/* ---- Satelliten- und Regenkarte ---- */
+.mg-karte { position: relative; margin: 0 auto 10px; width: calc(100% - 28px); max-height: 380px; border-radius: 12px; overflow: hidden;
+  background: #0a1018; border: 1px solid var(--mg-rand); }
+.mg-karte[hidden] { display: none; }
+.mg-karte img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+/* Keine Aufhell-Überlagerung: auf weißen Tageswolken wäre das Grün sonst
+   unsichtbar. Die Niederschlagsflächen bringen ihre eigene Durchsicht mit. */
+.mg-k-auflage { }
+.mg-k-auflage[hidden] { display: none; }
+.mg-play { position: absolute; left: 10px; top: 10px; width: 42px; height: 42px; border-radius: 50%; border: 0;
+  background: rgba(0,0,0,0.55); color: #fff; font-size: 15px; cursor: pointer; backdrop-filter: blur(3px); -webkit-tap-highlight-color: transparent; }
+.mg-play:active { transform: scale(0.94); }
+.mg-karte.is-film .mg-play { background: var(--mg-akzent); color: #06222a; }
 
 /* ---- Webcam-Bild ---- */
 .mg-cam { position: relative; margin: 0 auto 10px; border-radius: 12px; overflow: hidden; background: var(--mg-flaeche2); border: 1px solid var(--mg-rand); height: clamp(120px, 40vw, 240px); width: calc(100% - 28px); }
@@ -123,6 +156,10 @@
 .mg-svg .mg-sortpack { fill: var(--mg-akzent); opacity: 0.16; }
 .mg-svg .mg-sortziel { stroke: var(--mg-akzent); stroke-width: 3; }
 
+@media (max-width: 420px) {
+  .mg-werte { grid-template-columns: repeat(auto-fit, minmax(92px, 1fr)); }
+  .mg-wv { font-size: 1.08rem; }
+}
 @media (max-width: 560px) {
   .mg-head { flex-direction: column; }
   .mg-knoepfe { width: 100%; }

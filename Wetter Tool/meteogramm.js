@@ -34,34 +34,51 @@
   //   vorher    Summenwert der vergangenen Stunde (Balken linksbündig setzen)
   //   meer      braucht die Meeres-Abfrage
   var KATALOG = {
-    sonne:   { titel:'Sonnenschein', einheit:'min', art:'balken', feld:'sonne', farbe:'#e6c245',
+    sonne:   { titel:'Sonnenschein', kurz:'Sonne', einheit:'min', art:'balken', feld:'sonne', farbe:'#e6c245',
                min:0, max:60, ticks:[0,30,60], vorher:true, icon:'☀️', tagesinfo:true,
-               fmt:function(v){ return Math.round(v) + ' min'; } },
+               fmt:function(v){ return Math.round(v) + ' min'; },
+               zelle:function(v){ return { wert: Math.round(v), einheit: 'min' }; } },
     temp:    { titel:'Temperatur', einheit:'°C', art:'linie', feld:'temp', feld2:'gefuehlt', farbe:'#ef8a5c',
                extrema:'tag', icon:'🌡️',
-               fmt:function(v, v2){ return Math.round(v) + '°' + (v2 != null ? ' (gefühlt ' + Math.round(v2) + '°)' : ''); } },
+               fmt:function(v, v2){ return Math.round(v) + '°' + (v2 != null ? ' (gefühlt ' + Math.round(v2) + '°)' : ''); },
+               zelle:function(v, v2){ return { wert: Math.round(v), einheit: '°', zusatz: v2 != null ? 'gefühlt ' + Math.round(v2) + '°' : '' }; } },
     wind:    { titel:'Wind', einheit:'km/h', art:'balken', feld:'wind', feld2:'boe', farbe:'#7fb3d9',
                min:0, icon:'💨', pfeile:'windrichtung',
-               fmt:function(v, v2){ return Math.round(v) + (v2 != null ? ' (Böen ' + Math.round(v2) + ')' : '') + ' km/h'; } },
-    regen:   { titel:'Niederschlag', einheit:'mm; Wahrsch. %', art:'balken', feld:'regen_mm', feld2:null, farbe:'#4f8fd0',
+               fmt:function(v, v2){ return Math.round(v) + (v2 != null ? ' (Böen ' + Math.round(v2) + ')' : '') + ' km/h'; },
+               zelle:function(v, v2, d, i){
+                 var zu = v2 != null ? 'Böen ' + Math.round(v2) : '';
+                 if (d && d.windrichtung[i] != null) zu += (zu ? ' · ' : '') + HIMMEL[Math.round(d.windrichtung[i] / 45) % 8];
+                 return { wert: Math.round(v), einheit: 'km/h', zusatz: zu };
+               } },
+    regen:   { titel:'Niederschlag', kurz:'Regen', einheit:'mm; Wahrsch. %', art:'balken', feld:'regen_mm', feld2:null, farbe:'#4f8fd0',
                min:0, vorher:true, icon:'💧', prozentlinie:'regen_pct',
-               fmt:function(v, v2, d, i){ return dez(v, 1) + ' mm'; } },
-    uv:      { titel:'UV-Index', einheit:'', art:'balken', feld:'uv', farbe:'#d98032',
+               fmt:function(v){ return dez(v, 1) + ' mm'; },
+               zelle:function(v, v2, d, i){
+                 return { wert: dez(v, 1), einheit: 'mm',
+                          zusatz: (d && d.regen_pct[i] != null) ? Math.round(d.regen_pct[i]) + ' % Wahrsch.' : '' };
+               } },
+    uv:      { titel:'UV-Index', kurz:'UV', einheit:'', art:'balken', feld:'uv', farbe:'#d98032',
                min:0, ticks:[0,4,8], icon:'🔆', farbskala:'uv',
-               fmt:function(v){ return dez(v, 1) + ' (' + uvText(v) + ')'; } },
-    feuchte: { titel:'Rel. Luftfeuchte', einheit:'%', art:'linie', feld:'feuchte', farbe:'#68c8e0',
+               fmt:function(v){ return dez(v, 1) + ' (' + uvText(v) + ')'; },
+               zelle:function(v){ return { wert: dez(v, 1), einheit: '', zusatz: uvText(v) }; } },
+    feuchte: { titel:'Rel. Luftfeuchte', kurz:'Feuchte', einheit:'%', art:'linie', feld:'feuchte', farbe:'#68c8e0',
                min:0, max:100, ticks:[0,50,100], icon:'💦',
-               fmt:function(v){ return Math.round(v) + ' %'; } },
+               fmt:function(v){ return Math.round(v) + ' %'; },
+               zelle:function(v){ return { wert: Math.round(v), einheit: '%' }; } },
     wolken:  { titel:'Bewölkung', einheit:'%', art:'balken', feld:'wolken', farbe:'#9aa7b4',
                min:0, max:100, ticks:[0,50,100], icon:'☁️',
-               fmt:function(v){ return Math.round(v) + ' %'; } },
+               fmt:function(v){ return Math.round(v) + ' %'; },
+               zelle:function(v){ return { wert: Math.round(v), einheit: '%', zusatz: v < 15 ? 'wolkenlos' : v < 50 ? 'heiter' : v < 85 ? 'wolkig' : 'bedeckt' }; } },
     druck:   { titel:'Luftdruck', einheit:'hPa', art:'linie', feld:'druck', farbe:'#c3a6d8',
-               icon:'🧭', fmt:function(v){ return Math.round(v) + ' hPa'; } },
+               icon:'🧭', fmt:function(v){ return Math.round(v) + ' hPa'; },
+               zelle:function(v){ return { wert: Math.round(v), einheit: 'hPa' }; } },
     welle:   { titel:'Wellen', einheit:'m', art:'linie', feld:'welle', farbe:'#6fc9b8',
-               min:0, meer:true, icon:'🌊', fmt:function(v){ return dez(v, 1) + ' m'; } },
+               min:0, meer:true, icon:'🌊', fmt:function(v){ return dez(v, 1) + ' m'; },
+               zelle:function(v){ return { wert: dez(v, 1), einheit: 'm' }; } },
     tide:    { titel:'Tide', einheit:'m', art:'linie', feld:'tide', farbe:'#4bc4cb',
                glatt:true, extrema:'tide', meer:true, icon:'🌊',
-               fmt:function(v){ return (v > 0 ? '+' : '') + dez(v, 1) + ' m'; } }
+               fmt:function(v){ return (v > 0 ? '+' : '') + dez(v, 1) + ' m'; },
+               zelle:function(v, v2, d, i, steigt){ return { wert: (v > 0 ? '+' : '') + dez(v, 1), einheit: 'm', zusatz: steigt == null ? '' : (steigt ? 'steigt' : 'fällt') }; } }
   };
 
   var ZEILEN_STANDARD = ['sonne','temp','wind','regen','uv','feuchte','wolken','welle','tide'];
@@ -92,6 +109,29 @@
     var SPEICHER = cfg.bildspeicher || null;
     var PRAEFIX = cfg.merkschluessel || 'meteogramm';
     var BILD_MINUTE = cfg.bildMinute != null ? cfg.bildMinute : 7;   // kurz nach dem Speichern
+
+    // Satelliten- und Niederschlagsbilder. Vorgabe: EUMETSAT, offen zugänglich,
+    // ohne Schlüssel. `bereich` ist der gezeigte Kartenausschnitt in Grad.
+    var KARTE = cfg.karte === false ? null : Object.assign({
+      wms:      'https://view.eumetsat.int/geoserver/wms',
+      basis:    'mtg_fd:rgb_geocolour',
+      auflage:  'mtg_fd:h40b',
+      schritt:  10,          // Minuten zwischen zwei Bildern
+      verzug:   50,          // so viel hinkt das neueste Bild hinterher
+      bilder:   13,          // so viele Bilder hat der Film (13 x 10 Min. = 2 Std.)
+      quelle:   'EUMETSAT',
+      link:     'https://view.eumetsat.int/'
+    }, cfg.karte || {});
+    // Ohne eigene Angabe ein Ausschnitt rund um den ersten Ort - so passt der
+    // Baustein auch für andere Gegenden, ohne dass man etwas einstellen muss.
+    if (KARTE && !KARTE.bereich) {
+      var o0 = ORTE[0];
+      KARTE.bereich = { sued: o0.lat - 3.5, nord: o0.lat + 3.5,
+                        west: o0.lon - 6.5, ost: o0.lon + 6.5 };
+    }
+    var ANSICHTEN = [{ id:'webcam', name:'Webcam', icon:'📷' }];
+    if (KARTE) ANSICHTEN.push({ id:'satellit', name:'Satellit', icon:'🛰️' },
+                               { id:'regen', name:'Regen', icon:'🌧️' });
     var TAGE_VORHER = cfg.tageVorher != null ? cfg.tageVorher : 1;
     var TAGE_VORAUS = cfg.tageVoraus != null ? cfg.tageVoraus : 8;
 
@@ -110,6 +150,8 @@
     var pxH = 26, idxJetzt = 0, sammler = 0, camAktuell = null;
     var webcam = { shots: [], speicher: false, ort: null };
     var ort = merkLesen('ort', ORTE[0].id);
+    var ansicht = merkLesen('ansicht', 'webcam');
+    if (!ANSICHTEN.some(function(a2){ return a2.id === ansicht; })) ansicht = 'webcam';
     var modell = merkLesen('modell', MODELLE[0].id);
     var anZeilen = leseZeilenwahl();
     var reihenfolge = leseReihenfolge();
@@ -283,6 +325,7 @@
       zeichnen(alt === null);
       if (alt !== null) zentrieren(alt, false);
       webcamLaden();
+      if (ansicht !== 'webcam') filmVorladen();
       ladeAnzeige(false);
       naechsteAuffrischung();
     }
@@ -395,7 +438,7 @@
         if (istTag) {
           var dt = new Date(iso);
           var lab = (dt.toDateString() === heuteStr) ? 'Heute' : WOCHENTAG[dt.getDay()] + ' ' + pad2(dt.getDate()) + '.' + pad2(dt.getMonth() + 1) + '.';
-          s.push('<text class="mg-datum" x="' + (x(i2) + 6) + '" y="15">' + lab + '</text>');
+          s.push('<text class="mg-datum" x="' + (x(i2) + 6) + '" y="15" data-x="' + (x(i2) + 6) + '">' + lab + '</text>');
         }
       }
 
@@ -602,28 +645,44 @@
 
         var links = Math.max(0, Math.min(geo.n - 1, f - el.scroll.clientWidth / 2 / pxH + 0.5));
         var dtL = new Date(daten.t0.getTime() + Math.floor(links) * 3600000);
+        // Datum im Diagramm verstecken, solange es unter der festen Achse läge -
+        // sonst stünde es doppelt neben dem Datum am linken Rand.
+        var links2 = el.scroll.scrollLeft;
+        [].forEach.call(el.svgWrap.querySelectorAll('.mg-datum'), function(t){
+          t.style.visibility = (parseFloat(t.getAttribute('data-x')) - links2 < 104) ? 'hidden' : '';
+        });
+
         var axd = document.getElementById(kid('ax-datum'));
         if (axd) axd.textContent = (dtL.toDateString() === jetztDort().toDateString())
           ? 'Heute' : WOCHENTAG[dtL.getDay()] + ' ' + pad2(dtL.getDate()) + '.' + pad2(dtL.getMonth() + 1) + '.';
 
-        var chips = [];
         var iR = Math.max(0, Math.min(geo.n - 1, Math.round(f)));
         var code = daten.code[iR];
-        if (code != null) chips.push('<span class="mg-chip">' + wmoIcon(code, daten.tag[iR]) + ' ' + (WMO_TEXT[code] || '') + '</span>');
-        sichtbareZeilen().forEach(function(z){
+        el.lage.innerHTML = code != null
+          ? '<span class="mg-lage-i">' + wmoIcon(code, daten.tag[iR]) + '</span>' + esc(WMO_TEXT[code] || '')
+          : '';
+
+        var zellen = sichtbareZeilen().map(function(z){
           var w = wertBei(z, f);
-          if (w.v == null) return;
-          var icon = z.icon;
-          if (z.id === 'tide') { var w2 = wertBei(z, Math.min(geo.n - 1, f + 1)); icon = (w2.v != null && w2.v > w.v) ? '🔼 Tide' : '🔽 Tide'; }
-          var txt = z.fmt(w.v, w.v2);
-          if (z.id === 'wind' && daten.windrichtung[iR] != null) txt += ' aus ' + HIMMEL[Math.round(daten.windrichtung[iR] / 45) % 8];
-          if (z.id === 'regen' && daten.regen_pct[iR] != null) txt += ' · ' + Math.round(daten.regen_pct[iR]) + ' %';
-          chips.push('<span class="mg-chip" style="--c:' + z.farbe + '"><i></i>' + icon + ' ' + txt + '</span>');
+          if (w.v == null) return '';
+          var steigt = null;
+          if (z.id === 'tide') { var w2 = wertBei(z, Math.min(geo.n - 1, f + 1)); steigt = w2.v != null ? w2.v > w.v : null; }
+          var c = z.zelle ? z.zelle(w.v, w.v2, daten, iR, steigt) : { wert: z.fmt(w.v, w.v2), einheit: '' };
+          return zelleHtml(z.kurz || z.titel, c, z.farbe);
         });
-        if (daten.wasser[iR] != null) chips.push('<span class="mg-chip" style="--c:#3fa9c9"><i></i>🏊 Wasser ' + Math.round(daten.wasser[iR]) + '°</span>');
-        el.werte.innerHTML = chips.join('');
-        webcamZeigen(f);
+        if (daten.wasser[iR] != null) {
+          zellen.push(zelleHtml('Wasser', { wert: Math.round(daten.wasser[iR]), einheit: '°' }, '#3fa9c9'));
+        }
+        el.werte.innerHTML = zellen.join('');
+        bildZeigen(f);
       }, 16);
+    }
+
+    function zelleHtml(titel, c, farbe){
+      return '<div class="mg-wert" style="--c:' + farbe + '">' +
+        '<span class="mg-wl">' + esc(titel) + '</span>' +
+        '<span class="mg-wv">' + c.wert + (c.einheit ? '<small>' + esc(c.einheit) + '</small>' : '') + '</span>' +
+        '<span class="mg-wz">' + esc(c.zusatz || '') + '</span></div>';
     }
 
     function relText(h){
@@ -706,6 +765,136 @@
         (quelle ? ' · ' + quelle : '');
     }
 
+    // ---------- Satelliten- und Regenkarte ----------
+
+    // Achtung, zwei Zeitwelten: die Werte im Diagramm tragen die Ortszeit des
+    // Urlaubsorts, gelesen als wäre es die Zeit des Geräts. Der Bildserver will
+    // dagegen echte Weltzeit. Der Unterschied ist genau die Verschiebung
+    // zwischen Gerät und Urlaubsort.
+    // Auf volle Minuten runden: jetztDort() geht über eine Textausgabe und
+    // schwankt um Sekunden - sonst verschluckt die Beschriftung eine Minute.
+    function zeitVersatz(){ return Math.round((jetztDort().getTime() - Date.now()) / 60000) * 60000; }
+    function ortszeitNachEcht(datum){ return new Date(datum.getTime() - zeitVersatz()); }
+    function echtNachOrtszeit(datum){ return new Date(datum.getTime() + zeitVersatz()); }
+
+    // Das neueste verfügbare Bild (echte Zeit), auf das Raster abgerundet
+    function neuestesBild(){
+      var ms = KARTE.schritt * 60000;
+      return new Date(Math.floor((Date.now() - KARTE.verzug * 60000) / ms) * ms);
+    }
+
+    // Zu einem Zeitpunkt aus dem Diagramm das passende Bild - nie aus der Zukunft
+    function kartenZeit(ortsDatum){
+      var ms = KARTE.schritt * 60000;
+      var t = Math.min(ortszeitNachEcht(ortsDatum).getTime(), neuestesBild().getTime());
+      return new Date(Math.floor(t / ms) * ms);
+    }
+
+    function kartenUrl(zeit, mitRegen){
+      var b = KARTE.bereich;
+      // In Grad gerechnet wären die Bilder in die Breite gezogen; nahe am
+      // Äquator ist ein Längengrad kürzer als ein Breitengrad.
+      var mitte = (b.sued + b.nord) / 2;
+      var breiteGrad = (b.ost - b.west) * Math.cos(mitte * Math.PI / 180);
+      var hoehe = 480, breite = Math.round(hoehe * breiteGrad / (b.nord - b.sued));
+      return KARTE.wms + '?service=WMS&version=1.3.0&request=GetMap&styles=' +
+        '&crs=EPSG:4326&bbox=' + b.sued + ',' + b.west + ',' + b.nord + ',' + b.ost +
+        '&width=' + breite + '&height=' + hoehe +
+        '&layers=' + encodeURIComponent(mitRegen ? KARTE.auflage : KARTE.basis) +
+        (mitRegen ? '&format=image/png&transparent=true' : '&format=image/jpeg') +
+        '&time=' + zeit.toISOString().replace(/\.\d+Z$/, '.000Z');
+    }
+
+    function kartenSeitenverhaeltnis(){
+      var b = KARTE.bereich;
+      var mitte = (b.sued + b.nord) / 2;
+      return ((b.ost - b.west) * Math.cos(mitte * Math.PI / 180)) / (b.nord - b.sued);
+    }
+
+    var filmLaeuft = false, filmUhr = null, filmIdx = 0;
+
+    function kartenZeigen(f){
+      if (!KARTE || !el.karte) return;
+      var zeit = filmLaeuft ? filmZeit(filmIdx) : kartenZeit(new Date(daten.t0.getTime() + f * 3600000));
+      kartenBildSetzen(zeit);
+    }
+
+    function filmZeit(i){
+      return new Date(neuestesBild().getTime() - (KARTE.bilder - 1 - i) * KARTE.schritt * 60000);
+    }
+
+    var kartenAktuell = null;
+    function kartenBildSetzen(zeit){
+      var mitRegen = ansicht === 'regen';
+      var schluessel = zeit.getTime() + '|' + mitRegen;
+      if (kartenAktuell === schluessel) return;
+      kartenAktuell = schluessel;
+      el.kBasis.src = kartenUrl(zeit, false);
+      el.kAuflage.hidden = !mitRegen;
+      if (mitRegen) el.kAuflage.src = kartenUrl(zeit, true);
+      var o = echtNachOrtszeit(zeit);      // beschriftet wird in Ortszeit des Urlaubsorts
+      el.kText.innerHTML = '<b>' + (mitRegen ? '🌧️ Niederschlag' : '🛰️ Satellit') + '</b> · ' +
+        pad2(o.getDate()) + '.' + pad2(o.getMonth() + 1) + '. ' + pad2(o.getHours()) + ':' + pad2(o.getMinutes()) +
+        ' · <a href="' + esc(KARTE.link) + '" target="_blank" rel="noopener" style="color:inherit">' + esc(KARTE.quelle) + ' ↗</a>';
+    }
+
+    function filmSchalten(){
+      if (filmLaeuft) { filmStopp(); return; }
+      filmLaeuft = true; filmIdx = 0;
+      el.play.textContent = '⏸';
+      el.play.setAttribute('aria-label', 'Film anhalten');
+      el.karte.classList.add('is-film');
+      filmUhr = setInterval(function(){
+        filmIdx = (filmIdx + 1) % (KARTE.bilder + 3);      // am Ende kurz stehen bleiben
+        kartenBildSetzen(filmZeit(Math.min(filmIdx, KARTE.bilder - 1)));
+      }, 420);
+      kartenBildSetzen(filmZeit(0));
+    }
+    function filmStopp(){
+      filmLaeuft = false;
+      if (filmUhr) { clearInterval(filmUhr); filmUhr = null; }
+      if (el.play) { el.play.textContent = '▶'; el.play.setAttribute('aria-label', 'Film abspielen'); }
+      if (el.karte) el.karte.classList.remove('is-film');
+      kartenAktuell = null;
+      anzeigen();
+    }
+
+    // Bilder des Films vorab holen, damit er nicht ruckelt
+    function filmVorladen(){
+      if (!KARTE) return;
+      for (var i = 0; i < KARTE.bilder; i++) {
+        var im = new Image(); im.src = kartenUrl(filmZeit(i), false);
+        if (ansicht === 'regen') { var im2 = new Image(); im2.src = kartenUrl(filmZeit(i), true); }
+      }
+    }
+
+    // Verteilt je nach gewählter Ansicht
+    function bildZeigen(f){
+      if (ansicht === 'webcam') { if (el.karte) el.karte.hidden = true; webcamZeigen(f); return; }
+      if (el.cam) el.cam.hidden = true;
+      if (el.karte) el.karte.hidden = false;
+      kartenZeigen(f);
+    }
+
+    function ansichtSetzen(id){
+      if (ansicht === id) return;
+      filmStopp();
+      ansicht = id;
+      merkSchreiben('ansicht', id);
+      kartenAktuell = null; camAktuell = null;
+      ansichtReiterMalen();
+      anzeigen();
+      if (id !== 'webcam') filmVorladen();
+    }
+
+    function ansichtReiterMalen(){
+      if (!el.ansichten) return;
+      el.ansichten.innerHTML = ANSICHTEN.map(function(a2){
+        return '<button type="button" class="mg-atab' + (a2.id === ansicht ? ' is-on' : '') + '" data-id="' + a2.id + '">' +
+               a2.icon + ' ' + esc(a2.name) + '</button>';
+      }).join('');
+    }
+
     // ---------- Oberfläche ----------
 
     var lfdNr = (einbauen.zaehler = (einbauen.zaehler || 0) + 1);
@@ -719,7 +908,10 @@
           '<div class="mg-tabs mg-tabs-modell" id="' + kid('modelle') + '" role="tablist" aria-label="Wettermodell"></div>' +
         '</div>' +
         '<div class="mg-head">' +
-          '<div class="mg-readout"><div class="mg-zeit" id="' + kid('zeit') + '"></div><div class="mg-werte" id="' + kid('werte') + '"></div></div>' +
+          '<div class="mg-readout">' +
+            '<div class="mg-zeit" id="' + kid('zeit') + '"></div>' +
+            '<div class="mg-lage" id="' + kid('lage') + '"></div>' +
+          '</div>' +
           '<div class="mg-knoepfe">' +
             '<button type="button" class="mg-btn" id="' + kid('zurueck') + '" aria-label="Einen Tag zurück">‹</button>' +
             '<button type="button" class="mg-btn mg-btn-jetzt" id="' + kid('jetzt') + '">Jetzt zentrieren</button>' +
@@ -731,6 +923,14 @@
             '</span>' +
           '</div>' +
         '</div>' +
+        '<div class="mg-werte" id="' + kid('werte') + '"></div>' +
+        (ANSICHTEN.length > 1 ? '<div class="mg-ansichten" id="' + kid('ansichten') + '" role="tablist" aria-label="Bildansicht"></div>' : '') +
+        (KARTE ? '<div class="mg-karte" id="' + kid('karte') + '" hidden>' +
+          '<img class="mg-k-basis" id="' + kid('kbasis') + '" alt="Satellitenbild" decoding="async">' +
+          '<img class="mg-k-auflage" id="' + kid('kauflage') + '" alt="" decoding="async" hidden>' +
+          '<button type="button" class="mg-play" id="' + kid('play') + '" aria-label="Film abspielen">▶</button>' +
+          '<div class="mg-cam-text" id="' + kid('ktext') + '"></div>' +
+        '</div>' : '') +
         '<div class="mg-cam" id="' + kid('cam') + '" hidden><img id="' + kid('camimg') + '" alt="Webcam-Bild" decoding="async" referrerpolicy="no-referrer"><div class="mg-cam-text" id="' + kid('camtext') + '"></div></div>' +
         '<div class="mg-wrap" id="' + kid('wrap') + '">' +
           '<div class="mg-scroll" id="' + kid('scroll') + '"><div class="mg-svgwrap" id="' + kid('svgwrap') + '"></div></div>' +
@@ -747,6 +947,27 @@
       el.werte   = document.getElementById(kid('werte'));
       el.cam     = document.getElementById(kid('cam'));
       el.quelle  = document.getElementById(kid('quelle'));
+      el.lage    = document.getElementById(kid('lage'));
+      el.ansichten = document.getElementById(kid('ansichten'));
+      if (KARTE) {
+        el.karte    = document.getElementById(kid('karte'));
+        el.kBasis   = document.getElementById(kid('kbasis'));
+        el.kAuflage = document.getElementById(kid('kauflage'));
+        el.kText    = document.getElementById(kid('ktext'));
+        el.play     = document.getElementById(kid('play'));
+        el.karte.style.aspectRatio = kartenSeitenverhaeltnis().toFixed(3);
+        el.play.addEventListener('click', function(ev){ ev.stopPropagation(); filmSchalten(); });
+        el.kBasis.addEventListener('error', function(){
+          el.kText.textContent = 'Für diesen Zeitpunkt gibt es noch kein Satellitenbild.';
+        });
+      }
+      if (el.ansichten) {
+        ansichtReiterMalen();
+        el.ansichten.addEventListener('click', function(ev){
+          var b2 = ev.target.closest('.mg-atab'); if (!b2) return;
+          ansichtSetzen(b2.getAttribute('data-id'));
+        });
+      }
       el.camImg = document.getElementById(kid('camimg'));
       el.camText = document.getElementById(kid('camtext'));
       el.camImg.addEventListener('load', function(){
@@ -1036,7 +1257,7 @@
     // Stunden vergangen sein - dann gleich auffrischen.
     var zuletztGesehen = Date.now();
     document.addEventListener('visibilitychange', function(){
-      if (document.hidden) { zuletztGesehen = Date.now(); return; }
+      if (document.hidden) { zuletztGesehen = Date.now(); filmStopp(); return; }
       if (Date.now() - zuletztGesehen > 10 * 60000) auffrischen(true);
       else if (daten) { idxJetzt = idxFuer(jetztDort()); camAktuell = null; anzeigen(); }
       naechsteAuffrischung();
@@ -1050,7 +1271,7 @@
       zeichnen: function(){ zeichnen(false); },
       zeigeOrt: function(id){ if (ORTE.some(function(o){ return o.id === id; })) { ort = id; merkSchreiben('ort', id); laden(); } },
       auffrischen: function(){ auffrischen(true); },
-      abbauen: function(){ clearInterval(uhr); if (auffrischUhr) clearTimeout(auffrischUhr); wurzel.innerHTML = ''; wurzel.classList.remove('mg'); }
+      abbauen: function(){ clearInterval(uhr); if (auffrischUhr) clearTimeout(auffrischUhr); filmStopp(); wurzel.innerHTML = ''; wurzel.classList.remove('mg'); }
     };
   }
 
