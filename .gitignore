@@ -14,3 +14,5 @@
 !vendor/
 !vendor/**
 !favicon.ico
+!dossiers/
+!dossiers/*.pdf
