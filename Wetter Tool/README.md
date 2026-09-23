@@ -36,7 +36,7 @@ Mehr braucht es nicht. Alles Weitere ist wahlfrei.
 | `modelle` | Liste `{ id, name, lang, hinweis? }`. `id` ist ein Open-Meteo-Modell. Ab zwei Modellen erscheinen Reiter. | Mix, ECMWF, ICON, GFS |
 | `zeilen` | Welche Zeilen angeboten werden, in dieser Reihenfolge | alle außer Luftdruck |
 | `zeilenStandard` | Welche davon beim ersten Öffnen angehakt sind | alle angebotenen |
-| `kameras` | `{ ortId: { name, live, quelle, seite, hinweis? } }` — `live` ist die Adresse eines Standbilds | keine |
+| `kameras` | `{ ortId: kamera }` oder `{ ortId: [kamera, kamera, …] }` mit `kamera = { id?, name, live, quelle, seite, hinweis? }`. `live` ist die Adresse eines Standbilds. Bei mehreren Kameras erscheint oben rechts im Bild ein Umschalter; `id` ist zugleich der Schlüssel im Bildspeicher. | keine |
 | `karte` | Satelliten- und Niederschlagsbilder. `false` schaltet sie ab. Sonst ein Objekt, das die Vorgaben überschreibt: `wms`, `basis`, `auflage`, `schritt` (Minuten je Bild), `verzug` (wie weit das neueste Bild hinterherhinkt), `bilder` (Länge des Films), `bereich` (`{sued, west, nord, ost}` in Grad), `quelle`, `link` | EUMETSAT, Ausschnitt um den ersten Ort |
 | `bildspeicher` | Adresse eines Dienstes, der vergangene Stunden vorhält (siehe unten) | keiner |
 | `zeitzone` | z. B. `'Atlantic/Canary'`. `'auto'` nimmt die Zeitzone des Ortes. | `'auto'` |

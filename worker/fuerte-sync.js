@@ -8,7 +8,7 @@
 //                          (je Liste: nur die mitgeschickten Arten werden ersetzt)
 //   POST /note          -> Notiz anhängen
 //   POST /note/delete   -> eigene Notiz löschen
-//   GET  /webcam?ort=x  -> Liste der gespeicherten Webcam-Bilder (letzte 3 Tage)
+//   GET  /webcam?ort=x  -> Liste der gespeicherten Bilder einer Kamera (Schlüssel wie in WEBCAMS)
 //   GET  /webcam/bild/7 -> ein gespeichertes Bild (ohne Herkunftsprüfung, damit <img> es laden kann)
 //   GET  /webcam/jetzt  -> von Hand ein Bild je Ort holen (zum Testen)
 //
@@ -38,17 +38,24 @@ const WEBCAMS = {
     quelle: 'SkylineWebcams',
     link: 'https://www.skylinewebcams.com/en/webcam/espana/canarias/corralejo/grandes-playas-corralejo.html'
   },
+  // MeteoSurf Canarias sammelt Strandkameras und gibt die Bilder frei heraus;
+  // Zeitstempel steht im Bild, Last-Modified verrät das Alter (ca. alle 15 Min.).
+  cotillo: {
+    name: 'El Cotillo, Hafen', art: 'bild',
+    url: 'https://www.meteosurfcanarias.com/1-webcams/webcam-el-cotillo.jpg',
+    quelle: 'MeteoSurf Canarias',
+    link: 'https://www.meteosurfcanarias.com/webcams/new/de/strand-webcams-insel_fuerteventura.php'
+  },
   sotavento: {
     name: 'Sotavento, Playa Barca', art: 'youtube', video: '8CxYZ4tPTmo',
     quelle: 'René Egli · YouTube',
     link: 'https://www.youtube.com/watch?v=8CxYZ4tPTmo'
   },
-  // Für El Cotillo gibt es keine frei zugängliche Kamera - ersatzweise Corralejo.
-  cotillo: {
-    name: 'Grandes Playas, Corralejo', art: 'skyline',
-    url: 'https://cdn.skylinewebcams.com/live6086.jpg',
-    quelle: 'SkylineWebcams',
-    link: 'https://www.skylinewebcams.com/en/webcam/espana/canarias/corralejo/grandes-playas-corralejo.html'
+  jandia: {
+    name: 'Faro de Jandía, Morro Jable', art: 'bild',
+    url: 'https://www.meteosurfcanarias.com/1-webcams/webcam-faro-jandia.jpg',
+    quelle: 'MeteoSurf Canarias',
+    link: 'https://www.meteosurfcanarias.com/webcams/new/de/strand-webcams-insel_fuerteventura.php'
   }
 };
 const WEBCAM_TAGE = 4;          // so lange bleiben Bilder liegen

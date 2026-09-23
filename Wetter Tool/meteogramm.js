@@ -106,6 +106,19 @@
     var ORTE = cfg.orte && cfg.orte.length ? cfg.orte : [{ id:'ort', name:'Ort', lat:52.52, lon:13.405 }];
     var MODELLE = cfg.modelle && cfg.modelle.length ? cfg.modelle : MODELLE_STANDARD;
     var KAMERAS = cfg.kameras || {};
+    // Je Ort eine Kamera oder eine Liste. Jede bekommt eine Kennung - sie ist
+    // zugleich der Schlüssel im Bildspeicher.
+    function kamerasVon(ortId){
+      var k = KAMERAS[ortId]; if (!k) return [];
+      var liste = Array.isArray(k) ? k : [k];
+      return liste.map(function(c, i){ return Object.assign({ id: c.id || (i ? ortId + '-' + (i + 1) : ortId) }, c); });
+    }
+    function aktiveKamera(){
+      var liste = kamerasVon(ort); if (!liste.length) return null;
+      var gemerkt = merkLesen('cam-' + ort, '');
+      var treffer = liste.filter(function(c){ return c.id === gemerkt; })[0];
+      return treffer || liste[0];
+    }
     var SPEICHER = cfg.bildspeicher || null;
     var PRAEFIX = cfg.merkschluessel || 'meteogramm';
     var BILD_MINUTE = cfg.bildMinute != null ? cfg.bildMinute : 7;   // kurz nach dem Speichern
@@ -709,13 +722,15 @@
     // ---------- Webcam ----------
 
     function webcamLaden(){
-      var o = ortObj();
-      webcam = { shots: [], ort: o.id, speicher: false };
-      if (!SPEICHER) { webcamMarken(); anzeigen(); return; }
-      fetch(SPEICHER + '/webcam?ort=' + encodeURIComponent(o.id))
+      var cam = aktiveKamera();
+      var schluessel = ort + '/' + (cam ? cam.id : '-');
+      webcam = { shots: [], ort: schluessel, speicher: false };
+      camWahlMalen();
+      if (!SPEICHER || !cam) { webcamMarken(); anzeigen(); return; }
+      fetch(SPEICHER + '/webcam?ort=' + encodeURIComponent(cam.id))
         .then(function(r){ if (!r.ok) throw new Error(r.status); return r.json(); })
         .then(function(j){
-          if (!j || !Array.isArray(j.shots) || webcam.ort !== o.id) return;
+          if (!j || !Array.isArray(j.shots) || webcam.ort !== schluessel) return;
           webcam.speicher = true;
           webcam.shots = j.shots.map(function(sh){
             return { i: idxFuerIso(sh.t), url: sh.url.indexOf('http') === 0 ? sh.url : SPEICHER + sh.url };
@@ -739,15 +754,26 @@
         if (sh.i < 0 || sh.i >= geo.n) return;
         s.push('<rect class="mg-cam-mark" x="' + (geo.x(sh.i) - 3) + '" y="' + (BAND_TAG + 3) + '" width="6" height="' + (BAND_CAM - 7) + '" rx="1.5"/>');
       });
-      if (KAMERAS[ort] && idxJetzt >= 0 && idxJetzt < geo.n) {
+      if (aktiveKamera() && idxJetzt >= 0 && idxJetzt < geo.n) {
         s.push('<rect class="mg-cam-mark is-live" x="' + (geo.x(idxJetzt) - 3) + '" y="' + (BAND_TAG + 3) + '" width="6" height="' + (BAND_CAM - 7) + '" rx="1.5"/>');
       }
       g.innerHTML = s.join('');
     }
 
+    // Umschalter zwischen mehreren Kameras eines Orts (nur wenn es mehrere gibt)
+    function camWahlMalen(){
+      var box = document.getElementById(kid('camwahl')); if (!box) return;
+      var liste = kamerasVon(ort), akt = aktiveKamera();
+      if (liste.length < 2) { box.innerHTML = ''; box.hidden = true; return; }
+      box.hidden = false;
+      box.innerHTML = liste.map(function(c){
+        return '<button type="button" class="mg-camtab' + (akt && c.id === akt.id ? ' is-on' : '') + '" data-id="' + esc(c.id) + '">' + esc(c.kurz || c.name.split(',')[0]) + '</button>';
+      }).join('');
+    }
+
     function webcamZeigen(f){
       if (!el.cam) return;
-      var cam = KAMERAS[ort];
+      var cam = aktiveKamera();
       if (!cam) { el.cam.hidden = true; return; }
       el.cam.hidden = false;
 
@@ -944,7 +970,9 @@
           '<button type="button" class="mg-play" id="' + kid('play') + '" aria-label="Film abspielen">▶</button>' +
           '<div class="mg-cam-text" id="' + kid('ktext') + '"></div>' +
         '</div>' : '') +
-        '<div class="mg-cam" id="' + kid('cam') + '" hidden><img id="' + kid('camimg') + '" alt="Webcam-Bild" decoding="async" referrerpolicy="no-referrer"><div class="mg-cam-text" id="' + kid('camtext') + '"></div></div>' +
+        '<div class="mg-cam" id="' + kid('cam') + '" hidden><img id="' + kid('camimg') + '" alt="Webcam-Bild" decoding="async" referrerpolicy="no-referrer">' +
+          '<div class="mg-camwahl" id="' + kid('camwahl') + '" hidden></div>' +
+          '<div class="mg-cam-text" id="' + kid('camtext') + '"></div></div>' +
         '<div class="mg-wrap" id="' + kid('wrap') + '">' +
           '<div class="mg-scroll" id="' + kid('scroll') + '"><div class="mg-svgwrap" id="' + kid('svgwrap') + '"></div></div>' +
           '<div class="mg-achse" id="' + kid('achse') + '"></div>' +
@@ -988,6 +1016,12 @@
         // matschig aus - deshalb nur so weit aufziehen, wie es verträgt.
         var w = el.camImg.naturalWidth || 0;
         el.cam.style.maxWidth = w ? Math.max(360, Math.round(w * 1.6)) + 'px' : '';
+      });
+      document.getElementById(kid('camwahl')).addEventListener('click', function(ev){
+        var b2 = ev.target.closest('.mg-camtab'); if (!b2) return;
+        merkSchreiben('cam-' + ort, b2.getAttribute('data-id'));
+        camAktuell = null;
+        webcamLaden();
       });
       el.camImg.addEventListener('error', function(){
         el.cam.classList.add('is-leer');

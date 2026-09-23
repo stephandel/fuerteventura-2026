@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="meteogramm.css?v=20260923e">
+<link rel="stylesheet" href="meteogramm.css?v=20260923f">
 <style>
   /* ---- Seite (wie die Fuerteventura-Seite) ---- */
   :root { color-scheme: dark; --page:#14181a; --surface:#1b2124; --surface-2:#202729; --border:#303836; --ink:#ede9e0; --ink-dim:#b4ac9c; --teal:#4bc4cb; --ochre:#e0a24f; }
@@ -128,7 +128,7 @@
   </div>
 </div>
 
-<script src="meteogramm.js?v=20260923e"></script>
+<script src="meteogramm.js?v=20260923f"></script>
 <script>
   var EINST = {
     zeitzone: 'Atlantic/Canary', merkschluessel: 'fuerte-mg',
@@ -141,9 +141,27 @@
     zeilen: ['sonne','temp','wind','regen','uv','feuchte','wolken','welle','tide','druck'],
     zeilenStandard: ['sonne','temp','wind','regen','uv','welle','tide'],
     kameras: {
-      corralejo: { name:'Grandes Playas, Corralejo', live:'https://cdn.skylinewebcams.com/live6086.jpg', quelle:'SkylineWebcams', seite:'https://www.skylinewebcams.com/en/webcam/espana/canarias/corralejo/grandes-playas-corralejo.html' },
-      sotavento: { name:'Sotavento, Playa Barca', live:'https://i.ytimg.com/vi/8CxYZ4tPTmo/maxresdefault_live.jpg', quelle:'René Egli · YouTube', seite:'https://www.youtube.com/watch?v=8CxYZ4tPTmo' },
-      cotillo:   { name:'Grandes Playas, Corralejo', hinweis:'nächstgelegene freie Kamera', live:'https://cdn.skylinewebcams.com/live6086.jpg', quelle:'SkylineWebcams', seite:'https://www.skylinewebcams.com/en/webcam/espana/canarias/corralejo/grandes-playas-corralejo.html' }
+    corralejo: {
+      name: 'Grandes Playas, Corralejo',
+      live: 'https://cdn.skylinewebcams.com/live6086.jpg',
+      quelle: 'SkylineWebcams',
+      seite: 'https://www.skylinewebcams.com/en/webcam/espana/canarias/corralejo/grandes-playas-corralejo.html'
+    },
+    cotillo: {
+      id: 'cotillo', name: 'El Cotillo, Hafen',
+      live: 'https://www.meteosurfcanarias.com/1-webcams/webcam-el-cotillo.jpg',
+      quelle: 'MeteoSurf Canarias',
+      seite: 'https://www.meteosurfcanarias.com/webcams/new/de/strand-webcams-insel_fuerteventura.php'
+    },
+    // Zwei Kameras: eine direkt am Sotavento-Strand, eine am Leuchtturm von Jandía
+    sotavento: [
+      { id: 'sotavento', name: 'Sotavento, Playa Barca',
+      live: 'https://i.ytimg.com/vi/8CxYZ4tPTmo/maxresdefault_live.jpg',
+      quelle: 'René Egli · YouTube', seite: 'https://www.youtube.com/watch?v=8CxYZ4tPTmo' },
+      { id: 'jandia', name: 'Faro de Jandía, Morro Jable',
+      live: 'https://www.meteosurfcanarias.com/1-webcams/webcam-faro-jandia.jpg',
+      quelle: 'MeteoSurf Canarias', seite: 'https://www.meteosurfcanarias.com/webcams/new/de/strand-webcams-insel_fuerteventura.php' }
+    ]
     }
   };
 
