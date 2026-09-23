@@ -286,6 +286,18 @@ details[open] summary::before { content: "− "; }
 .sun-arc svg { display: block; width: 100%; height: 100%; overflow: visible; }
 .wind-dial { display: flex; align-items: center; gap: 10px; }
 .wind-dial svg { flex-shrink: 0; }
+/* Mond-Kachel: der Mond liegt grau hinter dem Text, rechts angeschnitten */
+.wx-tile.wt-mond { position: relative; overflow: hidden; }
+.wx-tile.wt-mond > .wt-h, .wx-tile.wt-mond > .wt-v, .wx-tile.wt-mond > .wt-s { position: relative; z-index: 1; }
+.mond-bild { position: absolute; right: -34px; top: 50%; transform: translateY(-50%); pointer-events: none; opacity: 0.5; }
+.mond-dunkel { fill: #2b3034; }
+.mond-hell { fill: #b9bec3; }
+.mond-krater { fill: #000; opacity: 0.12; }
+:root[data-theme="dark"] .mond-bild, :root:not([data-theme="light"]) .mond-bild { opacity: 0.5; }
+:root[data-theme="dark"] .mond-dunkel { fill: #3a4046; }
+:root[data-theme="dark"] .mond-hell { fill: #cfd4d8; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .mond-dunkel { fill: #3a4046; } :root:not([data-theme="light"]) .mond-hell { fill: #cfd4d8; } }
+@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) .mond-bild { opacity: 0.55; } }
 
 /* Restliche Trefferflächen */
 .pack-list input[type=checkbox], .pack-item input[type=checkbox] { width: 26px !important; height: 26px !important; flex-shrink: 0; accent-color: var(--good); }
@@ -4505,22 +4517,48 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       { h: '🌡️ Gefühlt', v: Math.round(c.apparent_temperature) + '°', s: 'bei ' + Math.round(c.temperature_2m) + '° gemessen' },
       { h: '💦 Luftfeuchte', v: c.relative_humidity_2m + '%', s: 'Küstenlage, meist moderat' },
       { h: '🌊 Wassertemperatur', v: '22–23°', s: 'Oktober-Mittel · <a href="https://www.meerestemperatur.de/europa/fuerteventura/corralejo/" target="_blank" rel="noopener">Tageswert prüfen ↗</a>' },
-      { h: '🌑 Mond', v: moonPhaseName(new Date()), s: 'Neumond am 10.10. — die dunkelsten Nächte der Reise' }
+      { h: '🌑 Mond', v: moonPhaseName(new Date()), klasse: 'wt-mond', hinter: moonSvg(moonPhaseFraction(new Date()), 132),
+        s: Math.round((1 - Math.cos(2 * Math.PI * moonPhaseFraction(new Date()))) / 2 * 100) + ' % beleuchtet · Neumond am 10.10.' }
     ];
     box.innerHTML = tiles.map(function(t){
-      return '<div class="wx-tile"><div class="wt-h">' + t.h + '</div>' +
+      return '<div class="wx-tile' + (t.klasse ? ' ' + t.klasse : '') + '">' + (t.hinter || '') + '<div class="wt-h">' + t.h + '</div>' +
         '<div class="wt-v">' + t.v + '</div>' + (t.extra || '') +
         '<div class="wt-s">' + t.s + '</div></div>';
     }).join('');
   }
 
   // Grobe Mondphase — reicht für die Anzeige, kein Ersatz für ein Ephemeriden-Programm
-  function moonPhaseName(date){
+  // Phase als Bruchteil des Mondmonats: 0 = Neumond, 0,5 = Vollmond, 1 = wieder Neumond
+  function moonPhaseFraction(date){
     var known = Date.UTC(2000, 0, 6, 18, 14);        // bekannter Neumond
     var syn = 29.530588853 * 86400000;
-    var age = ((date.getTime() - known) % syn + syn) % syn / syn;
+    return ((date.getTime() - known) % syn + syn) % syn / syn;
+  }
+  function moonPhaseName(date){
     var names = ['Neumond','Zunehmende Sichel','Erstes Viertel','Zunehmender Mond','Vollmond','Abnehmender Mond','Letztes Viertel','Abnehmende Sichel'];
-    return names[Math.floor(age * 8 + 0.5) % 8];
+    return names[Math.floor(moonPhaseFraction(date) * 8 + 0.5) % 8];
+  }
+  // Der Mond, wie er gerade am Himmel steht - in Grau, als Hintergrund der Kachel.
+  // Beleuchtete Seite: zunehmend rechts, abnehmend links (Nordhalbkugel).
+  function moonSvg(p, size){
+    var r = size / 2 - 1, cx = size / 2, cy = size / 2;
+    var t = Math.cos(2 * Math.PI * p);               // > 0 Sichel, < 0 mehr als halb voll
+    var rx = Math.max(0.01, Math.abs(t)) * r;        // Woelbung der Schattengrenze
+    var waxing = p < 0.5;
+    var outerSweep = waxing ? 1 : 0;
+    var innerSweep = waxing ? (t > 0 ? 0 : 1) : (t > 0 ? 1 : 0);   // Woelbung zur hellen Seite hin bei Sichel
+    var lit = 'M' + cx + ' ' + (cy - r) + ' A' + r + ' ' + r + ' 0 0 ' + outerSweep + ' ' + cx + ' ' + (cy + r) +
+              ' A' + rx.toFixed(2) + ' ' + r + ' 0 0 ' + innerSweep + ' ' + cx + ' ' + (cy - r) + ' Z';
+    return '<svg class="mond-bild" width="' + size + '" height="' + size + '" viewBox="0 0 ' + size + ' ' + size + '" aria-hidden="true">' +
+      '<defs><clipPath id="mond-clip"><circle cx="' + cx + '" cy="' + cy + '" r="' + r + '"/></clipPath></defs>' +
+      '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" class="mond-dunkel"/>' +
+      '<path d="' + lit + '" class="mond-hell"/>' +
+      '<g clip-path="url(#mond-clip)" class="mond-krater">' +
+        '<circle cx="' + (cx - r * 0.35) + '" cy="' + (cy - r * 0.3) + '" r="' + (r * 0.16) + '"/>' +
+        '<circle cx="' + (cx + r * 0.25) + '" cy="' + (cy + r * 0.35) + '" r="' + (r * 0.22) + '"/>' +
+        '<circle cx="' + (cx + r * 0.4) + '" cy="' + (cy - r * 0.45) + '" r="' + (r * 0.1) + '"/>' +
+        '<circle cx="' + (cx - r * 0.1) + '" cy="' + (cy + r * 0.05) + '" r="' + (r * 0.09) + '"/>' +
+      '</g></svg>';
   }
 
   // --- Startseiten-Sneak-Peek ---
