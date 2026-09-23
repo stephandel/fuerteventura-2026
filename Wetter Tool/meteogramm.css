@@ -1,0 +1,115 @@
+/* ===========================================================================
+   Meteogramm - gestapelte Wetterdiagramme mit gemeinsamer Zeitachse.
+   Eigenständiger Baustein: hängt an keiner bestimmten Seite.
+
+   Farben kommen aus CSS-Variablen der umgebenden Seite, jede mit einem
+   Ersatzwert - so sieht es auch ohne eigenes Farbschema ordentlich aus.
+   Wer eigene Farben will, setzt --mg-* am Container oder an :root.
+   =========================================================================== */
+.mg {
+  --mg-flaeche:  var(--surface,   #1b2124);
+  --mg-flaeche2: var(--surface-2, #202729);
+  --mg-rand:     var(--border,    #303836);
+  --mg-text:     var(--ink,       #ede9e0);
+  --mg-text-still: var(--ink-dim, #b4ac9c);
+  --mg-akzent:   var(--teal,      #4bc4cb);
+  --mg-schatten: var(--shadow, 0 1px 3px rgba(0,0,0,.25));
+  --mg-serif: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --mg-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  background: var(--mg-flaeche);
+  border: 1px solid var(--mg-rand);
+  border-radius: 18px;
+  margin: 0 auto 14px;
+  box-shadow: var(--mg-schatten);
+  overflow: hidden;
+  color: var(--mg-text);
+  font-family: var(--mg-serif);
+}
+
+/* ---- Kopfbereich: Orte, Modelle, Zeilenauswahl ---- */
+.mg-top { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; padding: 12px 14px 0; }
+.mg-tabs { display: inline-flex; gap: 2px; background: var(--mg-flaeche2); border: 1px solid var(--mg-rand); border-radius: 12px; padding: 3px; }
+.mg-tab { min-height: 36px; padding: 0 12px; border: 0; border-radius: 9px; background: transparent; color: var(--mg-text-still); font: 600 13.5px/1 var(--mg-serif); cursor: pointer; white-space: nowrap; -webkit-tap-highlight-color: transparent; }
+.mg-tab.is-on { background: var(--mg-flaeche); color: var(--mg-text); box-shadow: 0 1px 3px rgba(0,0,0,0.18); }
+.mg-tabs-modell .mg-tab { font-family: var(--mg-mono); font-size: 12px; padding: 0 10px; }
+
+.mg-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; padding: 12px 14px 10px; }
+.mg-readout { min-width: 0; flex: 1; }
+.mg-zeit { font-family: var(--mg-mono); font-size: 1.05rem; font-weight: 700; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; min-height: 24px; }
+.mg-rel { font-family: var(--mg-serif); font-size: 12.5px; font-weight: 600; color: var(--mg-text-still); }
+.mg-werte { display: flex; flex-wrap: wrap; gap: 5px 8px; margin-top: 6px; }
+.mg-chip { display: inline-flex; align-items: center; gap: 5px; font-family: var(--mg-mono); font-size: 12.5px; color: var(--mg-text); background: var(--mg-flaeche2); border: 1px solid var(--mg-rand); border-radius: 999px; padding: 3px 9px 3px 7px; white-space: nowrap; }
+.mg-chip i { width: 8px; height: 8px; border-radius: 50%; background: var(--c, var(--mg-rand)); flex: none; }
+.mg-knoepfe { display: flex; gap: 6px; flex: none; }
+.mg-btn { min-height: 40px; min-width: 40px; padding: 0 12px; border-radius: 11px; border: 1px solid var(--mg-rand); background: var(--mg-flaeche2); color: var(--mg-text); font: 600 13.5px/1 var(--mg-serif); cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.mg-btn:active { transform: scale(0.97); }
+.mg-btn-jetzt { border-color: var(--mg-akzent); color: var(--mg-akzent); }
+
+/* ---- Zeilenauswahl ---- */
+.mg-zeilenwahl { position: relative; }
+.mg-zeilen-panel { position: absolute; right: 0; top: calc(100% + 6px); z-index: 30; background: var(--mg-flaeche); border: 1px solid var(--mg-rand); border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); padding: 8px; min-width: 232px; }
+.mg-zeilen-panel[hidden] { display: none; }
+.mg-zeilen-panel h4 { margin: 4px 8px 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--mg-text-still); }
+.mg-zeilen-panel label { display: flex; align-items: center; gap: 10px; padding: 7px 8px; border-radius: 9px; cursor: pointer; font-size: 13.5px; min-height: 40px; }
+.mg-zeilen-panel label:hover { background: var(--mg-flaeche2); }
+.mg-zeilen-panel input { width: 20px; height: 20px; flex: none; accent-color: var(--mg-akzent); }
+.mg-zeilen-panel .mg-punkt { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+
+/* ---- Webcam-Bild ---- */
+.mg-cam { position: relative; margin: 0 auto 10px; border-radius: 12px; overflow: hidden; background: var(--mg-flaeche2); border: 1px solid var(--mg-rand); height: clamp(120px, 40vw, 240px); width: calc(100% - 28px); }
+.mg-cam img { width: 100%; height: 100%; object-fit: cover; display: block; transition: filter .3s; }
+.mg-cam.is-leer img { opacity: 0.25; filter: grayscale(1); }
+.mg-cam-text { position: absolute; left: 0; right: 0; bottom: 0; padding: 6px 10px; font-size: 12.5px; color: #fff; background: linear-gradient(0deg, rgba(0,0,0,0.72), rgba(0,0,0,0)); }
+.mg-cam.is-leer .mg-cam-text { background: none; color: var(--mg-text-still); top: 0; display: flex; align-items: center; justify-content: center; text-align: center; }
+.mg-live { display: inline-block; background: #c0392b; color: #fff; border-radius: 6px; padding: 1px 6px; font-weight: 700; font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase; }
+.mg-camhint { opacity: 0.85; font-size: 11.5px; }
+
+/* ---- Diagrammfläche ---- */
+.mg-wrap { position: relative; border-top: 1px solid var(--mg-rand); border-bottom: 1px solid var(--mg-rand); }
+.mg-scroll { overflow-x: auto; overflow-y: hidden; scrollbar-width: none; -webkit-overflow-scrolling: touch; cursor: grab; overscroll-behavior-x: contain; }
+.mg-scroll::-webkit-scrollbar { display: none; }
+.mg-svgwrap { position: relative; }
+.mg-svg { display: block; }
+.mg-achse { position: absolute; left: 0; top: 0; width: 46px; pointer-events: none; background: var(--mg-flaeche); border-right: 1px solid var(--mg-rand); }
+.mg-ax-titel { position: absolute; left: 0; padding: 0 10px 0 8px; background: var(--mg-flaeche2); border-radius: 0 6px 6px 0; display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; color: var(--mg-text-still); white-space: nowrap; }
+.mg-ax-titel small { font-weight: 600; letter-spacing: 0; }
+.mg-ax-punkt { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.mg-ax-tick { position: absolute; right: 8px; font-family: var(--mg-mono); font-size: 11px; color: var(--mg-text-still); line-height: 14px; }
+.mg-ax-datum { position: absolute; left: 0; padding: 0 10px 0 8px; display: flex; align-items: center; background: var(--mg-flaeche); font-size: 12px; font-weight: 700; color: var(--mg-text); white-space: nowrap; border-radius: 0 6px 6px 0; }
+.mg-cursor { position: absolute; top: 0; bottom: 0; left: 50%; width: 0; border-left: 2px solid var(--mg-text); opacity: 0.85; pointer-events: none; }
+.mg-cursor::before { content: ""; position: absolute; top: 0; left: -6px; border: 5px solid transparent; border-top: 7px solid var(--mg-text); }
+.mg-foot { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding: 8px 14px 10px; font-size: 11.5px; color: var(--mg-text-still); }
+
+/* ---- Innereien der Zeichnung ---- */
+.mg-svg text { font-family: var(--mg-mono); font-size: 11px; fill: var(--mg-text-still); }
+.mg-svg .mg-datum { font-family: var(--mg-serif); font-weight: 700; fill: var(--mg-text); font-size: 12px; }
+.mg-svg .mg-titelband { fill: var(--mg-flaeche2); }
+.mg-svg .mg-tagesband { fill: var(--mg-flaeche2); }
+.mg-svg .mg-nacht { fill: rgba(10,16,30,0.28); }
+.mg-svg .mg-grid { stroke: var(--mg-rand); stroke-width: 1; }
+.mg-svg .mg-tag { stroke: var(--mg-text-still); stroke-width: 1; opacity: 0.6; }
+.mg-svg .mg-balken { opacity: 0.9; }
+.mg-svg .mg-balken2 { opacity: 0.32; }
+.mg-svg .mg-linie { fill: none; stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+.mg-svg .mg-linie2 { fill: none; stroke-width: 1.6; stroke-dasharray: 4 3; opacity: 0.8; }
+.mg-svg .mg-flaeche { opacity: 0.16; }
+.mg-svg .mg-mark { fill: var(--mg-text); font-size: 10.5px; font-weight: 700; paint-order: stroke; stroke: var(--mg-flaeche); stroke-width: 3px; stroke-linejoin: round; }
+.mg-svg .mg-sonne { fill: var(--ochre, #e0a24f); font-weight: 700; font-size: 10.5px; }
+.mg-svg .mg-tagesinfo { font-size: 10.5px; }
+.mg-svg .mg-tagesinfo-stark { font-size: 11px; font-weight: 700; fill: var(--mg-text); }
+.mg-svg .mg-jetzt { stroke: var(--mg-akzent); stroke-width: 1.5; stroke-dasharray: 4 3; }
+.mg-svg .mg-jetzt-t { fill: var(--mg-akzent); font-weight: 700; }
+.mg-svg .mg-cam-mark { fill: var(--ochre, #e0a24f); opacity: 0.85; }
+.mg-svg .mg-cam-mark.is-live { fill: #e05a45; }
+.mg-svg .mg-pfeil { stroke: none; }
+
+@media (max-width: 560px) {
+  .mg-head { flex-direction: column; }
+  .mg-knoepfe { width: 100%; }
+  .mg-btn-jetzt { flex: 1; }
+  .mg-top { flex-direction: column; }
+  .mg-tabs { width: 100%; }
+  .mg-tab { flex: 1; text-align: center; }
+  .mg-zeilen-panel { left: 0; right: auto; }
+}

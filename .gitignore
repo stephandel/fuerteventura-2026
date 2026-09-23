@@ -1,11 +1,12 @@
 *
 !.gitignore
 !index.html
-!meteogramm.js
 !README.md
 !manifest.json
 !manifest-*.json
 !sw.js
+!Wetter Tool/
+!Wetter Tool/**
 !worker/
 !worker/**
 !images/

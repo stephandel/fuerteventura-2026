@@ -8,7 +8,8 @@
 <meta name="apple-mobile-web-app-title" content="Fuerteventura">
 <link rel="stylesheet" href="vendor/leaflet.css">
 <script defer src="vendor/leaflet.js"></script>
-<script defer src="meteogramm.js"></script>
+<link rel="stylesheet" href="Wetter%20Tool/meteogramm.css">
+<script defer src="Wetter%20Tool/meteogramm.js"></script>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
 <link rel="apple-touch-icon" sizes="167x167" href="images/apple-touch-icon-167.png">
@@ -558,89 +559,9 @@ body { font-size: var(--fs-body); }
 .sunset-bar b { font-family: "JetBrains Mono", monospace; }
 .sunset-bar .sb-cta { margin-left: auto; background: rgba(35,22,10,0.16); border: 1px solid rgba(35,22,10,0.25); color: #23160a; border-radius: 999px; padding: 3px 11px; font-size: 12px; font-weight: 700; text-decoration: none; white-space: nowrap; }
 
-/* ================= Meteogramm (gestapelte Diagramme, gemeinsame Zeitachse) ================= */
-/* Die Wetterseite läuft in einer schmaleren Spalte als der Rest: über die
-   volle Breite eines Laptops sähen die Diagramme flach gezogen aus.
-   Auf dem Handy greift die Grenze ohnehin nicht. */
+/* Das Meteogramm bringt seine Gestaltung selbst mit: "Wetter Tool/meteogramm.css".
+   Hier steht nur noch, wie breit die Wetterseite laufen soll. */
 #page-wetter .wrap { max-width: 760px; }
-.mg-card { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; margin: 0 auto 14px; box-shadow: var(--shadow); overflow: hidden; }
-.mg-top { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; padding: 12px 14px 0; }
-.mg-tabs { display: inline-flex; gap: 2px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 3px; }
-.mg-tab { min-height: 36px; padding: 0 12px; border: 0; border-radius: 9px; background: transparent; color: var(--ink-dim); font: 600 13.5px/1 "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif; cursor: pointer; white-space: nowrap; -webkit-tap-highlight-color: transparent; }
-.mg-tab.is-on { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,0.18); }
-.mg-tabs-modell .mg-tab { font-family: "JetBrains Mono", monospace; font-size: 12px; padding: 0 10px; }
-.mg-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; padding: 12px 14px 10px; }
-.mg-readout { min-width: 0; flex: 1; }
-.mg-zeit { font-family: "JetBrains Mono", monospace; font-size: 1.05rem; font-weight: 700; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; min-height: 24px; }
-.mg-rel { font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif; font-size: var(--fs-cap); font-weight: 600; color: var(--ink-dim); }
-.mg-werte { display: flex; flex-wrap: wrap; gap: 5px 8px; margin-top: 6px; }
-.mg-chip { display: inline-flex; align-items: center; gap: 5px; font-family: "JetBrains Mono", monospace; font-size: 12.5px; color: var(--ink); background: var(--surface-2); border: 1px solid var(--border); border-radius: 999px; padding: 3px 9px 3px 7px; white-space: nowrap; }
-.mg-chip i { width: 8px; height: 8px; border-radius: 50%; background: var(--c, var(--border)); flex: none; }
-.mg-chip i:empty:not([style]) { display: none; }
-.mg-knoepfe { display: flex; gap: 6px; flex: none; }
-.mg-btn { min-height: 40px; min-width: 40px; padding: 0 12px; border-radius: 11px; border: 1px solid var(--border); background: var(--surface-2); color: var(--ink); font: 600 13.5px/1 "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif; cursor: pointer; -webkit-tap-highlight-color: transparent; }
-.mg-btn:active { transform: scale(0.97); }
-.mg-btn-jetzt { border-color: var(--teal); color: var(--teal); }
-.mg-cam { position: relative; margin: 0 auto 10px; border-radius: 12px; overflow: hidden; background: var(--surface-2); border: 1px solid var(--border); height: clamp(120px, 40vw, 240px); width: calc(100% - 28px); }
-.mg-cam img { width: 100%; height: 100%; object-fit: cover; display: block; transition: filter .3s; }
-.mg-cam.is-leer img { opacity: 0.25; filter: grayscale(1); }
-.mg-cam-text { position: absolute; left: 0; right: 0; bottom: 0; padding: 6px 10px; font-size: var(--fs-cap); color: #fff; background: linear-gradient(0deg, rgba(0,0,0,0.72), rgba(0,0,0,0)); }
-.mg-cam.is-leer .mg-cam-text { background: none; color: var(--ink-dim); top: 0; display: flex; align-items: center; justify-content: center; text-align: center; }
-.mg-demo { display: inline-block; background: var(--ochre); color: #1c1a17; border-radius: 6px; padding: 1px 6px; font-weight: 700; font-size: 11px; margin-left: 4px; }
-.mg-live { display: inline-block; background: #c0392b; color: #fff; border-radius: 6px; padding: 1px 6px; font-weight: 700; font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase; }
-.mg-camhint { opacity: 0.85; font-size: 11.5px; }
-.mg-svg .mg-cam-mark.is-live { fill: #e05a45; }
-.mg-wrap { position: relative; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-.mg-scroll { overflow-x: auto; overflow-y: hidden; scrollbar-width: none; -webkit-overflow-scrolling: touch; cursor: grab; overscroll-behavior-x: contain; }
-.mg-scroll::-webkit-scrollbar { display: none; }
-.mg-svgwrap { position: relative; }
-.mg-svg { display: block; }
-.mg-achse { position: absolute; left: 0; top: 0; width: 46px; pointer-events: none; background: var(--surface); border-right: 1px solid var(--border); }
-.mg-ax-titel { position: absolute; left: 0; padding: 0 10px 0 8px; background: var(--surface-2); border-radius: 0 6px 6px 0; display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-dim); white-space: nowrap; }
-.mg-ax-titel small { font-weight: 600; text-transform: none; letter-spacing: 0; }
-.mg-ax-punkt { width: 8px; height: 8px; border-radius: 50%; flex: none; }
-.mg-ax-tick { position: absolute; right: 8px; font-family: "JetBrains Mono", monospace; font-size: 11px; color: var(--ink-dim); line-height: 14px; }
-.mg-ax-datum { position: absolute; left: 0; padding: 0 10px 0 8px; display: flex; align-items: center; background: var(--surface); font-size: 12px; font-weight: 700; color: var(--ink); white-space: nowrap; border-radius: 0 6px 6px 0; }
-.mg-svg .mg-sonne { fill: var(--ochre); font-weight: 700; font-size: 10.5px; }
-.mg-cursor { position: absolute; top: 0; bottom: 0; left: 50%; width: 0; border-left: 2px solid var(--ink); opacity: 0.85; pointer-events: none; }
-.mg-cursor::before { content: ""; position: absolute; top: 0; left: -6px; border: 5px solid transparent; border-top: 7px solid var(--ink); }
-.mg-foot { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding: 8px 14px 10px; font-size: 11.5px; color: var(--ink-dim); }
-/* Diagramm-Innereien */
-.mg-svg text { font-family: "JetBrains Mono", monospace; font-size: 11px; fill: var(--ink-dim); }
-.mg-svg .mg-datum { font-family: "Plus Jakarta Sans", ui-sans-serif, system-i, sans-serif; font-weight: 700; fill: var(--ink); font-size: 12px; }
-.mg-svg .mg-titelband { fill: var(--surface-2); }
-.mg-svg .mg-nacht { fill: rgba(20,30,50,0.10); }
-:root[data-theme="dark"] .mg-svg .mg-nacht { fill: rgba(0,0,0,0.28); }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .mg-svg .mg-nacht { fill: rgba(0,0,0,0.28); } }
-.mg-svg .mg-grid { stroke: var(--border); stroke-width: 1; }
-.mg-svg .mg-tag { stroke: var(--ink-dim); stroke-width: 1; opacity: 0.6; }
-.mg-svg .mg-balken { opacity: 0.9; }
-.mg-svg .mg-balken2 { opacity: 0.32; }
-.mg-svg .mg-linie { fill: none; stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
-.mg-svg .mg-flaeche { opacity: 0.16; }
-.mg-svg .mg-mark { fill: var(--ink); font-size: 10.5px; font-weight: 700; paint-order: stroke; stroke: var(--surface); stroke-width: 3px; stroke-linejoin: round; }
-.mg-svg .mg-jetzt { stroke: var(--teal); stroke-width: 1.5; stroke-dasharray: 4 3; }
-.mg-svg .mg-jetzt-t { fill: var(--teal); font-weight: 700; }
-.mg-svg .mg-cam-mark { fill: var(--ochre); opacity: 0.85; }
-.mg-svg .mg-cam-t { font-size: 11px; }
-@media (max-width: 560px) {
-  .mg-head { flex-direction: column; }
-  .mg-knoepfe { width: 100%; }
-  .mg-btn-jetzt { flex: 1; }
-  .mg-top { flex-direction: column; }
-  .mg-tabs { width: 100%; }
-  .mg-tab { flex: 1; text-align: center; }
-}
-
-/* ---- App-Symbol wählen ---- */
-.icon-wahl { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 12px; margin-top: 14px; }
-.icon-wahl button { display: flex; flex-direction: column; align-items: center; gap: 7px; padding: 10px 6px; border-radius: 14px; border: 2px solid var(--border); background: var(--surface); cursor: pointer; font: 600 12.5px/1.2 "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif; color: var(--ink-dim); -webkit-tap-highlight-color: transparent; }
-.icon-wahl button img { width: 64px; height: 64px; border-radius: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.25); }
-.icon-wahl button.is-on { border-color: var(--teal); color: var(--ink); background: var(--surface-2); }
-.icon-wahl button.is-on::after { content: "✓ gewählt"; font-size: 11px; color: var(--teal); }
-.icon-anleitung { margin-top: 14px; font-size: var(--fs-sub); color: var(--ink-dim); line-height: 1.55; }
-.icon-anleitung ol { margin: 8px 0 0; padding-left: 20px; }
-.icon-anleitung strong { color: var(--ink); }
 
 /* ---- Sonnen-Tabelle auf der Wetterseite ---- */
 .sun-table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 13.5px; }
@@ -2127,9 +2048,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       </div>
     </div>
 
-    <div class="mg-card" id="meteogramm">
-      <p class="sub" style="padding:14px">Lade Wetterverlauf&#8230;</p>
-    </div>
+    <div id="meteogramm"><p class="sub" style="padding:14px">Lade Wetterverlauf&#8230;</p></div>
 
     <div class="wx-card" id="wx-days-card">
       <h3>&#128197; Die n&#228;chsten 7 Tage</h3>
@@ -7982,6 +7901,55 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   }
   appIconAnwenden(lsGet('fuerte-app-icon', 'klassik'));
   appIconWahlZeichnen();
+
+  // ============================================================
+  //  Meteogramm auf der Wetterseite
+  //  Der Baustein liegt unter "Wetter Tool/" und weiss nichts von
+  //  Fuerteventura - Orte, Zeilen und Kameras kommen von hier.
+  //  Welche Kameras taugen und warum, steht in Wetter Tool/README.md.
+  // ============================================================
+  (function initMeteogramm(){
+    function start(){
+      if (!window.Meteogramm || !document.getElementById('meteogramm')) return;
+      window.FUERTE_MG = window.Meteogramm.einbauen({
+        ziel: '#meteogramm',
+        zeitzone: 'Atlantic/Canary',
+        merkschluessel: 'fuerte-mg',
+        bildspeicher: window.FUERTE_WEBCAM_URL || 'https://fuerte-sync.stephanhandel.workers.dev',
+        orte: [
+          { id: 'corralejo', name: 'Corralejo',  lat: 28.7297, lon: -13.8672, meer: { lat: 28.7297, lon: -13.8672 } },
+          { id: 'cotillo',   name: 'El Cotillo', lat: 28.6855, lon: -14.0110, meer: { lat: 28.69,   lon: -14.03   } },
+          { id: 'sotavento', name: 'Sotavento',  lat: 28.1560, lon: -14.2275, meer: { lat: 28.145,  lon: -14.21   } }
+        ],
+        zeilen: ['sonne','temp','wind','regen','uv','feuchte','wolken','welle','tide','druck'],
+        zeilenStandard: ['sonne','temp','wind','regen','uv','welle','tide'],
+        kameras: {
+          corralejo: {
+            name: 'Grandes Playas, Corralejo',
+            live: 'https://cdn.skylinewebcams.com/live6086.jpg',
+            quelle: 'SkylineWebcams',
+            seite: 'https://www.skylinewebcams.com/en/webcam/espana/canarias/corralejo/grandes-playas-corralejo.html'
+          },
+          sotavento: {
+            name: 'Sotavento, Playa Barca',
+            live: 'https://i.ytimg.com/vi/8CxYZ4tPTmo/maxresdefault_live.jpg',
+            quelle: 'René Egli · YouTube',
+            seite: 'https://www.youtube.com/watch?v=8CxYZ4tPTmo'
+          },
+          // Fuer El Cotillo gibt es keine frei zugaengliche Kamera.
+          cotillo: {
+            name: 'Grandes Playas, Corralejo',
+            hinweis: 'nächstgelegene freie Kamera – für El Cotillo gibt es keine',
+            live: 'https://cdn.skylinewebcams.com/live6086.jpg',
+            quelle: 'SkylineWebcams',
+            seite: 'https://www.skylinewebcams.com/en/webcam/espana/canarias/corralejo/grandes-playas-corralejo.html'
+          }
+        }
+      });
+    }
+    if (window.Meteogramm) start();
+    else window.addEventListener('DOMContentLoaded', start);
+  })();
 
   // ---- Merkt, wer zuletzt was getan hat (fuer die Startseite) ----
   var AKT_KEY = 'fuerte-aktivitaet';

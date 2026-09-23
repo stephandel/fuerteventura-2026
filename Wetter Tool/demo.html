@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Meteogramm – Beispielseite</title>
+<link rel="stylesheet" href="meteogramm.css">
+<style>
+  /* Nur für diese Beispielseite. Der Baustein bringt seine eigene Gestaltung mit. */
+  :root { color-scheme: dark; --surface:#1b2124; --surface-2:#202729; --border:#303836;
+          --ink:#ede9e0; --ink-dim:#b4ac9c; --teal:#4bc4cb; --ochre:#e0a24f; --page:#14181a; }
+  @media (prefers-color-scheme: light) {
+    :root { color-scheme: light; --surface:#f8f8f4; --surface-2:#eeeee6; --border:#d7d6c9;
+            --ink:#1c1a17; --ink-dim:#5b564c; --teal:#0f6e76; --ochre:#b5741f; --page:#fffdf7; }
+  }
+  body { margin:0; background:var(--page); color:var(--ink); font:15px/1.55 "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif; }
+  .seite { max-width:760px; margin:0 auto; padding:24px 20px 60px; }
+  h1 { font-size:1.6rem; margin:0 0 4px; }
+  p.unter { color:var(--ink-dim); margin:0 0 20px; }
+  h2 { font-size:1.05rem; margin:34px 0 10px; }
+  pre { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:14px; overflow-x:auto; font-size:12.5px; }
+</style>
+</head>
+<body>
+<div class="seite">
+  <h1>Meteogramm</h1>
+  <p class="unter">Beispielseite des Bausteins. Drei Orte, vier Wettermodelle, Zeilen über ☰ ein- und ausblendbar.</p>
+
+  <div id="wetter"></div>
+
+  <h2>So wurde es eingebaut</h2>
+  <pre id="code"></pre>
+</div>
+
+<script src="meteogramm.js"></script>
+<script>
+  var einstellungen = {
+    ziel: '#wetter',
+    zeitzone: 'Atlantic/Canary',
+    merkschluessel: 'demo-meteogramm',
+    orte: [
+      { id:'corralejo', name:'Corralejo',  lat:28.7297, lon:-13.8672, meer:{ lat:28.7297, lon:-13.8672 } },
+      { id:'cotillo',   name:'El Cotillo', lat:28.6855, lon:-14.0110, meer:{ lat:28.69,   lon:-14.03   } },
+      { id:'sotavento', name:'Sotavento',  lat:28.1560, lon:-14.2275, meer:{ lat:28.145,  lon:-14.21   } }
+    ],
+    zeilen: ['sonne','temp','wind','regen','uv','feuchte','wolken','welle','tide','druck'],
+    zeilenStandard: ['sonne','temp','wind','regen','uv','tide'],
+    kameras: {
+      corralejo: { name:'Grandes Playas, Corralejo',
+                   live:'https://cdn.skylinewebcams.com/live6086.jpg', quelle:'SkylineWebcams',
+                   seite:'https://www.skylinewebcams.com/en/webcam/espana/canarias/corralejo/grandes-playas-corralejo.html' },
+      sotavento: { name:'Sotavento, Playa Barca',
+                   live:'https://i.ytimg.com/vi/8CxYZ4tPTmo/maxresdefault_live.jpg', quelle:'René Egli · YouTube',
+                   seite:'https://www.youtube.com/watch?v=8CxYZ4tPTmo' }
+    }
+  };
+  Meteogramm.einbauen(einstellungen);
+  document.getElementById('code').textContent =
+    'Meteogramm.einbauen(' + JSON.stringify(einstellungen, null, 2) + ');';
+</script>
+</body>
+</html>
