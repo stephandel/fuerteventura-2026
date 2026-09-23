@@ -8061,12 +8061,12 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     var istAndroid = /Android/.test(navigator.userAgent);
     var knoepfe = [];
     if (istIOS) {
-      knoepfe.push('<a class="btn btn-outline" href="x-safari-' + adresse + '">\uD83E\uDDED In Safari öffnen</a>');
-      knoepfe.push('<a class="btn btn-outline" href="googlechromes://' + ohneSchema + '">\uD83C\uDF10 In Chrome öffnen</a>');
+      knoepfe.push('<a class="btn btn-outline" href="x-safari-' + adresse + '">\uD83E\uDDED\u00a0In Safari öffnen</a>');
+      knoepfe.push('<a class="btn btn-outline" href="googlechromes://' + ohneSchema + '">\uD83C\uDF10\u00a0In Chrome öffnen</a>');
     } else if (istAndroid) {
-      knoepfe.push('<a class="btn btn-outline" href="intent://' + ohneSchema + '#Intent;scheme=https;package=com.android.chrome;end">\uD83C\uDF10 In Chrome öffnen</a>');
+      knoepfe.push('<a class="btn btn-outline" href="intent://' + ohneSchema + '#Intent;scheme=https;package=com.android.chrome;end">\uD83C\uDF10\u00a0In Chrome öffnen</a>');
     }
-    knoepfe.push('<button type="button" class="btn btn-outline" id="icon-kopieren">\uD83D\uDD17 Adresse kopieren</button>');
+    knoepfe.push('<button type="button" class="btn btn-outline" id="icon-kopieren">\uD83D\uDD17\u00a0Adresse kopieren</button>');
     var amHandy = istIOS || istAndroid;
     var text = isStandalone()
       ? 'Du bist gerade <b>in der App</b> – von hier aus kann das Handy nichts zum Home-Bildschirm hinzufügen. Erst im Browser öffnen:'
@@ -8086,7 +8086,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     if (kop) kop.addEventListener('click', function(){
       function fertig(){
         kop.textContent = '\u2713 Kopiert';
-        setTimeout(function(){ kop.innerHTML = '\uD83D\uDD17 Adresse kopieren'; }, 2000);
+        setTimeout(function(){ kop.innerHTML = '\uD83D\uDD17\u00a0Adresse kopieren'; }, 2000);
       }
       // Klappt das Kopieren nicht (aeltere Browser, fehlende Freigabe), wird die
       // Adresse zum Markieren ausgeklappt - der Knopf bleibt, wie er ist.
