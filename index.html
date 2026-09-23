@@ -8,8 +8,8 @@
 <meta name="apple-mobile-web-app-title" content="Fuerteventura">
 <link rel="stylesheet" href="vendor/leaflet.css">
 <script defer src="vendor/leaflet.js"></script>
-<link rel="stylesheet" href="Wetter%20Tool/meteogramm.css?v=20260923d">
-<script defer src="Wetter%20Tool/meteogramm.js?v=20260923d"></script>
+<link rel="stylesheet" href="Wetter%20Tool/meteogramm.css?v=20260923e">
+<script defer src="Wetter%20Tool/meteogramm.js?v=20260923e"></script>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
 <link rel="apple-touch-icon" sizes="167x167" href="images/apple-touch-icon-167.png">
@@ -290,11 +290,17 @@ details[open] summary::before { content: "− "; }
 .wx-tile.wt-mond { position: relative; overflow: hidden; }
 .wx-tile.wt-mond > .wt-h, .wx-tile.wt-mond > .wt-v, .wx-tile.wt-mond > .wt-s { position: relative; z-index: 1; }
 .mond-bild { position: absolute; right: -34px; top: 50%; transform: translateY(-50%); pointer-events: none; opacity: 0.5; }
-.mond-foto-rahmen { position: absolute; right: -34px; top: 50%; width: 132px; height: 132px; transform: translateY(-50%); border-radius: 50%; overflow: hidden; pointer-events: none; opacity: 0.62; }
+/* Das Foto läuft nach links weich aus, damit der Text darüber lesbar bleibt;
+   das Bild wird etwas größer als der Rahmen gezogen, so verschwindet der
+   schwarze Rand des NASA-Bildes. Im hellen Modus schwächer, sonst erschlägt es. */
+.mond-foto-rahmen { position: absolute; right: -40px; top: 50%; width: 140px; height: 140px; transform: translateY(-50%); border-radius: 50%; overflow: hidden; pointer-events: none; opacity: 0.42;
+  -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0) 8%, rgba(0,0,0,0.55) 40%, #000 70%); mask-image: linear-gradient(to right, rgba(0,0,0,0) 8%, rgba(0,0,0,0.55) 40%, #000 70%); }
 .mond-foto-rahmen[hidden] { display: none; }
-.mond-foto { width: 108%; height: 108%; margin: -4%; display: block; filter: grayscale(1); }
-:root[data-theme="dark"] .mond-foto-rahmen { opacity: 0.55; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .mond-foto-rahmen { opacity: 0.55; } }
+.mond-foto { width: 114%; height: 114%; margin: -7%; display: block; filter: grayscale(1) contrast(0.9); }
+/* Text bekommt einen Hof in der Kachelfarbe - lesbar auch dort, wo er den Mond überlappt */
+.wx-tile.wt-mond > .wt-v, .wx-tile.wt-mond > .wt-s, .wx-tile.wt-mond > .wt-h { text-shadow: 0 0 6px var(--surface), 0 0 3px var(--surface), 0 0 1px var(--surface); }
+:root[data-theme="dark"] .mond-foto-rahmen { opacity: 0.6; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .mond-foto-rahmen { opacity: 0.6; } }
 .mond-dunkel { fill: #2b3034; }
 .mond-hell { fill: #b9bec3; }
 .mond-krater { fill: #000; opacity: 0.12; }
