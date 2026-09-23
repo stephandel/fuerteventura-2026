@@ -12,9 +12,10 @@
 //   GET  /webcam/bild/7 -> ein gespeichertes Bild (ohne Herkunftsprüfung, damit <img> es laden kann)
 //   GET  /webcam/jetzt  -> von Hand ein Bild je Ort holen (zum Testen)
 //
-// Dazu ein Cron-Auslöser (im Dashboard: Settings -> Triggers -> Cron, z. B. "5 * * * *"),
+// Dazu ein Cron-Auslöser (im Dashboard: Settings -> Trigger Events -> Cron, "5 * * * *"),
 // der jede Stunde das aktuelle Webcam-Bild holt und in D1 ablegt. Es wird kein
-// Zugangsschlüssel gebraucht - die Kameras geben ihr Standbild frei heraus.
+// Zugangsschlüssel gebraucht - die Kameras geben ihr Standbild frei heraus, und
+// die Tabelle legt der Worker beim ersten Zugriff selbst an.
 //
 // Antwort ist immer der vollständige neue Stand, damit die Seite nach
 // jeder Änderung sofort das Richtige anzeigen kann.
@@ -116,6 +117,21 @@ async function standLesen(env) {
 
 // ---------- Webcam-Bilder ----------
 
+// Die Bildtabelle legt der Worker selbst an, damit niemand von Hand SQL
+// eintippen muss. Kostet beim ersten Aufruf einer Worker-Instanz eine Abfrage.
+let tabelleGeprueft = false;
+async function tabelleSicherstellen(env) {
+  if (tabelleGeprueft) return;
+  await env.DB.prepare(
+    'CREATE TABLE IF NOT EXISTS webcam_shots (' +
+    ' id INTEGER PRIMARY KEY AUTOINCREMENT,' +
+    ' ort TEXT NOT NULL, t TEXT NOT NULL, taken_at INTEGER NOT NULL,' +
+    ' mime TEXT, bytes BLOB, quelle TEXT, link TEXT,' +
+    ' UNIQUE (ort, t))'
+  ).run();
+  tabelleGeprueft = true;
+}
+
 // Volle Stunde in kanarischer Ortszeit als "JJJJ-MM-TTTHH:00"
 function ortsStunde(d) {
   const f = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Atlantic/Canary', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', hour12: false });
@@ -173,6 +189,7 @@ async function bildHolen(ortId, env) {
 }
 
 async function alleBilderHolen(env) {
+  await tabelleSicherstellen(env);
   const out = [];
   for (const ortId of Object.keys(WEBCAMS)) {
     try { out.push(await bildHolen(ortId, env)); }
@@ -184,6 +201,7 @@ async function alleBilderHolen(env) {
 }
 
 async function bilderListe(ortId, env) {
+  await tabelleSicherstellen(env);
   const z = await env.DB.prepare(
     'SELECT id, t, quelle, link FROM webcam_shots WHERE ort = ? ORDER BY t ASC'
   ).bind(ortId).all();
@@ -209,9 +227,15 @@ export default {
     // Gespeichertes Webcam-Bild: darf jeder sehen, sonst kann <img> es nicht laden
     const bildTreffer = pfad.match(/^\/webcam\/bild\/(\d+)$/);
     if (request.method === 'GET' && bildTreffer && env.DB) {
-      const z = await env.DB.prepare('SELECT mime, bytes FROM webcam_shots WHERE id = ?').bind(Number(bildTreffer[1])).first();
-      if (!z) return new Response('kein Bild', { status: 404 });
-      return new Response(z.bytes, { headers: { 'Content-Type': z.mime || 'image/jpeg', 'Cache-Control': 'public, max-age=86400, immutable' } });
+      let z = null;
+      try {
+        await tabelleSicherstellen(env);
+        z = await env.DB.prepare('SELECT mime, bytes FROM webcam_shots WHERE id = ?').bind(Number(bildTreffer[1])).first();
+      } catch (e) { return new Response('Fehler', { status: 500 }); }
+      if (!z || !z.bytes) return new Response('kein Bild', { status: 404 });
+      // D1 liefert BLOBs je nach Fassung als ArrayBuffer oder als Zahlenliste.
+      const roh = Array.isArray(z.bytes) ? new Uint8Array(z.bytes) : z.bytes;
+      return new Response(roh, { headers: { 'Content-Type': z.mime || 'image/jpeg', 'Cache-Control': 'public, max-age=86400, immutable' } });
     }
 
     if (request.method === 'OPTIONS') {
