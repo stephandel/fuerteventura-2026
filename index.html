@@ -1212,6 +1212,14 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 .neu-hinweis strong { color: var(--ink); }
 .adresse-link { color: inherit; text-decoration: none; }
 .adresse-link:hover, .adresse-link:focus-visible { text-decoration: underline; color: var(--teal); }
+.fussnote-box { margin: 8px 0 0 }
+.fussnote-box > summary { list-style: none; cursor: pointer; font-size: 12.5px; font-weight: 600; color: var(--warn);
+  display: flex; align-items: center; gap: 6px; padding: 5px 2px; border-radius: 8px; }
+.fussnote-box > summary::-webkit-details-marker { display: none }
+.fussnote-box > summary::before { content: "\26A0\FE0F"; font-size: 12px }
+.fussnote-box > summary::after { content: "\25BE"; margin-left: auto; font-size: 11px; transition: transform .15s ease }
+.fussnote-box[open] > summary::after { transform: rotate(180deg) }
+.fussnote-box > summary:hover { color: var(--ink) }
 .excel-fussnote { font-size: 12.5px; line-height: 1.45; color: var(--warn); background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 7px 10px; margin: 8px 0 0; }
 
 
@@ -1317,7 +1325,6 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 .kat-grid .card-head h3 { font-size: 1.12rem; line-height: 1.22; }
 .kat-grid .adresse, .kat-grid .adresse-leer { min-height: 38px; margin: 4px 0 0; }
 
-.kat-grid .excel-fussnote { display: none; }
 .kat-grid .rating-line { height: 24px; overflow: hidden; margin: 2px 0 0; white-space: nowrap; text-overflow: ellipsis; }
 /* Der Pruef-Sticker neben dem Titel drueckt den Namen zusammen - die Info steht ohnehin in der Bewertungszeile */
 .kat-grid .card-head .badge { display: none; }
@@ -4813,11 +4820,17 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   // Kostenrechnung diesen Preis statt der Hochrechnung.
   // Neue Zeile = genau so, wie das Portal den Zeitraum ausweist (Anreise/Abreise).
   var TEILPREISE = {
+    // Villa Laura: Abreise immer 12.10., Preise vom Gastgeber am 24.09.2026.
+    // Der Sprung zwischen 6 und 7 Naechten ist kein Tippfehler - ab der
+    // siebten Nacht greift ein Wochenrabatt, die Nacht kostet dann nur 107 EUR.
     'villa-laura': [
-      { von: '2026-10-02', bis: '2026-10-12', preis: 2842 },
-      { von: '2026-10-03', bis: '2026-10-12', preis: 2543 },
-      { von: '2026-10-07', bis: '2026-10-12', preis: 1562 },
-      { von: '2026-10-08', bis: '2026-10-12', preis: 1260 }
+      { von: '2026-10-02', bis: '2026-10-12', preis: 2841.52 },
+      { von: '2026-10-03', bis: '2026-10-12', preis: 2542.56 },
+      { von: '2026-10-04', bis: '2026-10-12', preis: 2243.60 },
+      { von: '2026-10-05', bis: '2026-10-12', preis: 1969.32 },
+      { von: '2026-10-06', bis: '2026-10-12', preis: 1862.70 },
+      { von: '2026-10-07', bis: '2026-10-12', preis: 1561.29 },
+      { von: '2026-10-08', bis: '2026-10-12', preis: 1259.88 }
     ],
     'atalaya-maisonette': [
       { von: '2026-09-29', bis: '2026-10-12', preis: 1795.95 },
@@ -5098,11 +5111,16 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
         t += '<div class="sp-body">' + (bild ? '' : '<div class="sp-label">Teil ' + (k + 1) + '</div>') +
           '<div class="sp-dates">' + fmtShort(von) + ' – ' + fmtShort(von + naechte) + ' · ' + naechteTxt + '</div>';
         if (a) {
+          // Wie in computeTotal(): der echte Angebotspreis schlaegt die
+          // Hochrechnung, sonst zeigt diese Uebersicht andere Zahlen als
+          // die Karte darunter.
           var genau = a.nights === naechte;
-          var kosten = genau ? a.total : a.ppn * naechte;
+          var echt = echterTeilpreis(slugs[k], von, naechte);
+          var kosten = echt !== null ? echt : (genau ? a.total : a.ppn * naechte);
+          var geschaetzt = (echt === null && !genau);
           t += '<div class="sp-name"><a href="#c-' + slugs[k] + '">' + escapeHtml(a.name) + '</a></div>' +
-               '<div class="sp-cost">' + (genau ? '' : '≈ ') + fmtEuro0(kosten) + ' €' +
-               ' <span class="dim" style="font-weight:400">(' + fmtEuro0(a.ppn) + ' €/Nacht)</span></div>';
+               '<div class="sp-cost">' + (geschaetzt ? '≈ ' : '') + fmtEuro0(kosten) + ' €' +
+               ' <span class="dim" style="font-weight:400">(' + fmtEuro0(kosten / naechte) + ' €/Nacht)</span></div>';
           // Passt der Zeitraum dieses Teils ueberhaupt zur Verfuegbarkeit?
           // Das war vorher an ein Feld geknuepft, das nie gesetzt wurde.
           var e = (typeof EXCEL_STAND !== 'undefined') ? EXCEL_STAND[slugs[k]] : null;
@@ -8320,8 +8338,17 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     'villa-87': { ppn: 164.5, gesamt: 658, frei: ['2026-09-29','2026-10-03'],
       krit: { pool:'ja', eigpool:'ja', heizpool:'ja', grill:'ja', ac:'ja', balkon:'ja', kueche:'ja', wlan:'ja', parken:'ja', wholeplace:'ja', freecancel:'ja' },
       adresse: 'C. Pardelas, 35660 Corralejo, Las Palmas (Resort Bahiazul)' },
-    'villa-laura': { ppn: 284.2, gesamt: 2842, frei: ['2026-10-02','2026-10-12'],
-      fussnote: '<strong>Erst ab 02.10. frei</strong> \u2013 die ersten drei N\u00e4chte (29.09.\u201301.10.) sind vergeben. <strong>Die Gastgeberin bietet uns die Poolheizung geschenkt an</strong> (sonst 30\u00a0\u20ac pro Tag), die Preise gelten also inklusive. Preise je nach Anreisetag (Stand 24.09.2026): <strong>02.\u201312.10.</strong> 10\u00a0N\u00e4chte 2.842\u00a0\u20ac \u00b7 <strong>03.\u201312.10.</strong> 9\u00a0N\u00e4chte 2.543\u00a0\u20ac \u00b7 <strong>07.\u201312.10.</strong> 5\u00a0N\u00e4chte 1.562\u00a0\u20ac \u00b7 <strong>08.\u201312.10.</strong> 4\u00a0N\u00e4chte 1.260\u00a0\u20ac. Je sp\u00e4ter die Anreise, desto teurer die einzelne Nacht (284\u00a0\u20ac \u2192 315\u00a0\u20ac). <strong>Nicht erstattungsf\u00e4hig</strong> \u2013 nur 24\u00a0Stunden nach Buchung kostenlos stornierbar.',
+    'villa-laura': { ppn: 284.15, gesamt: 2841.52, frei: ['2026-10-02','2026-10-12'],
+      fussnote: '<strong>Erst ab 02.10. frei</strong> \u2013 die ersten drei N\u00e4chte (29.09.\u201301.10.) sind vergeben. <strong>Die Gastgeberin schenkt uns die Poolheizung</strong> (sonst 30\u00a0\u20ac pro Tag), alle Preise gelten also mit beheiztem Pool. Abreise ist immer der 12.10., der Gastgeberpreis h\u00e4ngt am Anreisetag (Stand 24.09.2026):<br>' +
+        '<span style="display:inline-block;margin-top:4px;line-height:1.7">' +
+        '02.10. \u00b7 10\u00a0N\u00e4chte \u00b7 <b>2.841,52\u00a0\u20ac</b> \u00b7 284\u00a0\u20ac/Nacht<br>' +
+        '03.10. \u00b7 9\u00a0N\u00e4chte \u00b7 <b>2.542,56\u00a0\u20ac</b> \u00b7 283\u00a0\u20ac/Nacht<br>' +
+        '04.10. \u00b7 8\u00a0N\u00e4chte \u00b7 <b>2.243,60\u00a0\u20ac</b> \u00b7 280\u00a0\u20ac/Nacht<br>' +
+        '05.10. \u00b7 7\u00a0N\u00e4chte \u00b7 <b>1.969,32\u00a0\u20ac</b> \u00b7 281\u00a0\u20ac/Nacht<br>' +
+        '06.10. \u00b7 6\u00a0N\u00e4chte \u00b7 <b>1.862,70\u00a0\u20ac</b> \u00b7 310\u00a0\u20ac/Nacht<br>' +
+        '07.10. \u00b7 5\u00a0N\u00e4chte \u00b7 <b>1.561,29\u00a0\u20ac</b> \u00b7 312\u00a0\u20ac/Nacht<br>' +
+        '08.10. \u00b7 4\u00a0N\u00e4chte \u00b7 <b>1.259,88\u00a0\u20ac</b> \u00b7 315\u00a0\u20ac/Nacht</span><br>' +
+        '<strong>Der Knick liegt bei sieben N\u00e4chten:</strong> ab dem 05.10. greift ein Wochenrabatt von gut 22\u00a0% statt 14\u00a0%. Die siebte Nacht kostet deshalb nur <b>107\u00a0\u20ac</b> \u2013 jede andere rund 300\u00a0\u20ac. Wer ohnehin am 06.10. anreisen w\u00fcrde, bekommt den Tag davor also fast geschenkt. <strong>Nicht erstattungsf\u00e4hig</strong> \u2013 nur 24\u00a0Stunden nach Buchung kostenlos stornierbar.',
       krit: { pool:'ja', eigpool:'ja', heizpool:'ja', grill:'ja', ac:'ja', balkon:'ja', kueche:'ja', wlan:'ja', parken:'ja', wholeplace:'ja', freecancel:'nein' },
       adresse: 'C. Pardelas, 7, 35660 Corralejo, Las Palmas' },
 
@@ -9097,13 +9124,23 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       var alteZeile = body.querySelector('.adresse-genau');
       if (alteZeile) alteZeile.remove();
 
+      // Die Fussnote bekommt eine eigene Aufklapp-Zeile direkt unter dem Preis.
+      // Ausgeklappt wuerde sie die Kartenhoehen verschieben - frueher stand
+      // deshalb display:none darauf, und damit war sie nirgends zu sehen.
+      // Zugeklappt kostet sie genau eine Zeile, auf jeder Karte dieselbe.
       if (e.fussnote) {
+        var box = document.createElement('details');
+        box.className = 'fussnote-box';
+        var sum = document.createElement('summary');
+        sum.textContent = 'Hinweis zu Preis und Zeitraum';
+        box.appendChild(sum);
         var f = document.createElement('p');
         f.className = 'excel-fussnote';
         f.innerHTML = e.fussnote;
+        box.appendChild(f);
         var preis = body.querySelector('.preisblock');
-        if (preis) preis.parentNode.insertBefore(f, preis.nextSibling);
-        else body.appendChild(f);
+        if (preis) preis.parentNode.insertBefore(box, preis.nextSibling);
+        else body.appendChild(box);
       }
 
       var links = body.querySelector('.card-links');
@@ -9916,7 +9953,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       hinweis: '<strong>Erf\u00fcllt alle zehn Kriterien \u2013 und ist als einzige Bahiazul-Villa kostenlos stornierbar</strong> (bis 28.09.). Drei Suiten mit eigenem Bad, 4 B\u00e4der, privater Pool mit Chill-Out-Bereich, Dachterrasse mit Grill, Whirlpool und balinesischem Bett, zentrale Klimaanlage, eigene Garage. Gastgeber ist Dario Santos (Canary Rental Manager SL), Superhost seit 10 Jahren mit 694 Bewertungen. <strong>Die Poolheizung kostet 22\u00a0\u20ac pro Tag</strong> (dann 26\u00a0\u00b0C) \u2013 acht Euro g\u00fcnstiger als bei Villa Laura. <strong>Nur 29.09.\u201303.10. frei</strong> (4 N\u00e4chte), danach bis zum 19.10. durchgehend belegt \u2013 sie kommt also nur als Teil\u00a01 in Frage und konkurriert dort mit der Casita Maracuya. Preis mit Last-Minute-Rabatt: 658\u00a0\u20ac statt 725\u00a0\u20ac (Stand 23.09.2026).' },
 
     { slug: 'villa-laura', name: 'Villa Laura \u2013 beheizter Pool & Whirlpool', art: 'Bahiazul', ort: 'Corralejo (Geafond)', portal: 'Airbnb',
-      ppn: 284.2, total: 2842, rating: null, bew: null,
+      ppn: 284.15, total: 2841.52, rating: null, bew: null,
       lat: 28.7093358, lng: -13.8710096,
       frei: ['2026-10-02','2026-10-12'],
       link: 'https://www.airbnb.de/rooms/1753577964850039747?check_in=2026-09-29&check_out=2026-10-12&adults=2',
