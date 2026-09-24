@@ -4895,6 +4895,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     ],
     'casita-maracuya':       [ { von: '2026-09-29', bis: '2026-10-03', preis: 340 } ],
     'villa-87':              [ { von: '2026-09-29', bis: '2026-10-03', preis: 746 } ],
+    'villa-10-3':            [ { von: '2026-09-29', bis: '2026-10-03', preis: 732 } ],
     'veaco-bahiazul':        [ { von: '2026-10-03', bis: '2026-10-09', preis: 1264.54 } ],
     'mc-apartments-rosario': [ { von: '2026-09-29', bis: '2026-10-06', preis: 612 },
                                { von: '2026-10-10', bis: '2026-10-12', preis: 200 } ]
@@ -8176,7 +8177,8 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     { slug: 'bahiazul',        kanal: 'bahiazul.com',  bew: '8,6/10 · 94 Bew.',  storno: 'frei bis 26.09.',        heiz: '31 €/Nacht, eingerechnet' },
     { slug: 'villa-laura',     kanal: 'Airbnb',        bew: 'noch keine',             storno: 'nicht erstattungsfähig', heiz: 'geschenkt' },
     { slug: 'renacer-zen',     kanal: 'Airbnb',        bew: '9,8/10 · 9 Bew.',   storno: 'nicht erstattungsfähig', heiz: '20 €/Nacht, eingerechnet' },
-    { slug: 'villa-87',        kanal: 'Airbnb',        bew: '9,6/10 · 79 Bew.',  storno: 'frei bis 28.09.',        heiz: '22 €/Nacht, eingerechnet' },
+    { slug: 'villa-87',        kanal: 'Airbnb',        bew: '9,6/10 · 79 Bew.',  storno: 'frei bis 28.09.',        heiz: '22 €/Nacht, eingerechnet', ausgebucht: 'seit 24.09. abends vergeben' },
+    { slug: 'villa-10-3',      kanal: 'Airbnb',        bew: '9,7/10 · 60 Bew.',  storno: 'kostenlos stornierbar',  heiz: '22 €/Nacht, eingerechnet', name: 'Villa 10.3' },
     { slug: 'veaco-bahiazul',  kanal: 'Villas Veaco',  bew: '9,2/10 · 652 Bew.', storno: 'frei bis 29.09.',        heiz: '20 €/Nacht, eingerechnet' }
   ];
 
@@ -8283,12 +8285,14 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
          '<div class="vgl-tabbox"><table class="vgl-tab"><thead><tr>' +
          '<th>Villa</th><th>Frei</th><th>Gesamt</th><th>Je Nacht</th><th>Bewertung</th>' +
          '</tr></thead><tbody>';
-    VGL_VILLEN.map(function(v){
+    var wegVillen = VGL_VILLEN.filter(function(v){ return v.ausgebucht; });
+    VGL_VILLEN.filter(function(v){ return !v.ausgebucht; }).map(function(v){
       var e = EXCEL_STAND[v.slug] || {};
       var n = e.frei ? vglNachtIndex(e.frei[1]) - vglNachtIndex(e.frei[0]) : 0;
       return { v: v, e: e, n: n, ppn: e.ppn || 0 };
     }).sort(function(a, b){ return a.ppn - b.ppn; }).forEach(function(r){
-      h += '<tr><td><a href="#c-' + r.v.slug + '">' + escapeHtml(vglName(r.v.slug)) + '</a>' +
+      var angezeigt = escapeHtml(r.v.name || vglName(r.v.slug));
+      h += '<tr><td>' + (LISTINGS[r.v.slug] ? '<a href="#c-' + r.v.slug + '">' + angezeigt + '</a>' : angezeigt) +
            '<span class="dim" style="display:block;font-size:12px">' + r.v.kanal + ' · ' + r.v.heiz + '</span></td>' +
            '<td>' + (r.e.frei ? vglTag(r.e.frei[0]) + '–' + vglTag(r.e.frei[1]) + '<br>' + r.n + ' N.' : '–') + '</td>' +
            '<td>' + fmtEuro0(r.e.gesamt || 0) + ' €</td>' +
@@ -8296,8 +8300,11 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
            '<td>' + r.v.bew + '<span class="dim" style="display:block;font-size:12px">' + r.v.storno + '</span></td></tr>';
     });
     h += '</tbody></table></div>' +
-         '<p class="vgl-note" style="margin-top:12px"><strong>Drei weitere Villen der Anlage sind im ganzen Reisezeitraum ausgebucht:</strong></p>' +
+         '<p class="vgl-note" style="margin-top:12px"><strong>Diese Villen der Anlage sind im Reisezeitraum ausgebucht:</strong></p>' +
          '<div class="vgl-weg">' +
+         wegVillen.map(function(v){
+           return '<div><strong>' + escapeHtml(v.name || vglName(v.slug)) + '</strong><span>' + v.kanal + ' · ' + v.ausgebucht + '</span></div>';
+         }).join('') +
          '<div><strong>Villa Excellence</strong><span>bahiazul.com · beheizter Privatpool, Whirlpool, tägliche Reinigung</span></div>' +
          '<div><strong>Royal Villa</strong><span>bahiazul.com · beheizter Privatpool, Whirlpool, Reinigung alle 2 Tage</span></div>' +
          '<div><strong>Villa Familiar con Piscina Climatizada</strong><span>Villas Veaco · beheizter Pool, Verbindungstür zwischen den Schlafzimmern</span></div>' +
@@ -8556,7 +8563,11 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     'villa-87': { ppn: 186.5, gesamt: 746, frei: ['2026-09-29','2026-10-03'],
       krit: { pool:'ja', eigpool:'ja', heizpool:'ja', grill:'ja', ac:'ja', balkon:'ja', kueche:'ja', wlan:'ja', parken:'ja', wholeplace:'ja', freecancel:'ja' },
       adresse: 'C. Pardelas, 35660 Corralejo, Las Palmas (Resort Bahiazul)',
-      fussnote: '<strong>Preis inklusive Poolheizung:</strong> 658\u00a0\u20ac Villa + 88\u00a0\u20ac Heizung (22\u00a0\u20ac je Nacht, dann 26\u00a0\u00b0C). Ohne Heizung 658\u00a0\u20ac. <strong>Nur 29.09.\u201303.10. frei</strong> (4 N\u00e4chte), danach bis zum 19.10. belegt \u2013 kommt also nur als Teil\u00a01 in Frage und konkurriert dort mit der Casita Maracuya. Als einzige Bahiazul-Villa <strong>kostenlos stornierbar bis 28.09.</strong>' },
+      fussnote: '<strong>Am 24.09. abends ausgebucht.</strong> Mittags war der Zeitraum 29.09.\u201303.10. noch f\u00fcr 658\u00a0\u20ac buchbar, abends meldete Airbnb \u201eDieser Zeitraum ist nicht verf\u00fcgbar\u201c. Die Zahlen unten sind der letzte bekannte Stand (658\u00a0\u20ac Villa + 88\u00a0\u20ac Poolheizung zu 22\u00a0\u20ac je Nacht). <strong>Als Ersatz gibt es die Villa\u00a010.3</strong> vom selben Anbieter \u2013 gleiche Gr\u00f6\u00dfe, gleiche Heizung, 644\u00a0\u20ac statt 658\u00a0\u20ac.' },
+    'villa-10-3': { ppn: 183, gesamt: 732, frei: ['2026-09-29','2026-10-03'],
+      krit: { pool:'ja', eigpool:'ja', heizpool:'ja', grill:'ja', ac:'ja', balkon:'ja', kueche:'ja', wlan:'ja', parken:'ja', wholeplace:'ja', freecancel:'ja' },
+      adresse: 'C. Pardelas, 35660 Corralejo, Las Palmas (Resort Bahiazul)',
+      fussnote: '<strong>Preis inklusive Poolheizung:</strong> 644\u00a0\u20ac Villa + 88\u00a0\u20ac Heizung (22\u00a0\u20ac je Nacht). Am 24.09.2026 gefunden, als die Villa\u00a08.7 ausgebucht war \u2013 <strong>selber Anbieter, gleiche Gr\u00f6\u00dfe, 14\u00a0\u20ac g\u00fcnstiger</strong>. 6 G\u00e4ste, 3 Schlafzimmer, 4 Betten, 4 B\u00e4der, <strong>4,85 aus 60 Bewertungen</strong>, kostenlos stornierbar. <strong>Nur 29.09.\u201303.10. frei</strong> (4 N\u00e4chte) \u2013 kommt also nur als Teil\u00a01 in Frage. Noch keine eigene Karte unter Unterk\u00fcnfte.' },
     'villa-laura': { ppn: 284.15, gesamt: 2841.52, frei: ['2026-10-02','2026-10-12'],
       fussnote: '<strong>Erst ab 02.10. frei</strong> \u2013 die ersten drei N\u00e4chte (29.09.\u201301.10.) sind vergeben. <strong>Die Gastgeberin schenkt uns die Poolheizung</strong> (sonst 30\u00a0\u20ac je Nacht) \u2013 als einzige Bahiazul-Villa steht hier deshalb <strong>kein Heizungsaufschlag</strong> im Preis, das Becken ist trotzdem beheizt. Abreise ist immer der 12.10., der Gastgeberpreis h\u00e4ngt am Anreisetag (Stand 24.09.2026):<br>' +
         '<span style="display:inline-block;margin-top:4px;line-height:1.7">' +
