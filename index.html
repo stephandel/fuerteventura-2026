@@ -661,6 +661,13 @@ body { font-size: var(--fs-body); }
 .partial-flag { position: absolute; left: 0; right: 0; bottom: 0; display: flex; justify-content: flex-end; padding: 10px; pointer-events: none; }
 .partial-flag span { background: var(--ochre); color: #fff; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.04em; }
 .partial-flag.ist-ausgebucht span { background: var(--bad); }
+/* ---- ausgebuchte Unterkunft: grosser roter Stempel im Bild ---- */
+.card.ist-weg .card-media img { filter: grayscale(.85) brightness(.75); }
+.weg-stempel { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; z-index: 4; }
+.weg-stempel span { background: #C62828; color: #fff; font-weight: 800; font-size: clamp(24px, 6vw, 36px); letter-spacing: .08em; text-transform: uppercase; line-height: 1.05; text-align: center; padding: 10px 24px 12px; border: 3px solid #fff; border-radius: 12px; transform: rotate(-9deg); box-shadow: 0 8px 28px rgba(0,0,0,.4); }
+.weg-stempel small { display: block; margin-top: 6px; font-size: 13px; font-weight: 700; letter-spacing: .02em; text-transform: none; }
+.card.ist-weg .select-btn { opacity: .45; pointer-events: none; }
+.card.ist-weg h3 { text-decoration: line-through; text-decoration-color: #C62828; text-decoration-thickness: 2px; }
 .avail-box { background: var(--warn-bg); color: var(--warn); border-radius: 10px; padding: 10px 12px; font-size: 13px; line-height: 1.5; }
 .avail-box strong { color: var(--warn); }
 
@@ -1557,7 +1564,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   <div class="page-header wrap">
     <div class="eyebrow">29.09.–12.10.2026 · 13 Nächte · 2 Personen</div>
     <h1>Unterkünfte</h1>
-    <p class="sub">Letzter Stand: <strong>24.09.2026</strong> &#8211; alle 30 Unterk&#252;nfte gepr&#252;ft</p>
+    <p class="sub">Letzter Stand: <strong>25.09.2026</strong> &#8211; 27 von 30 Unterk&#252;nften gepr&#252;ft (Capit&#225;n Aleycar, Oasis Royal und Villa Deluxe Veaco lassen sich nur von Hand pr&#252;fen)</p>
     <div class="stat-strip stat-strip-kompakt">
       <div class="stat"><span class="n" id="stat-anzahl">–</span><span class="l">Unterkünfte im Vergleich</span></div>
       <div class="stat"><span class="n" id="stat-voll">–</span><span class="l">für alle 13 Nächte frei</span></div>
@@ -1701,7 +1708,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   </div>
 </article>
 
-<article class="card" id="c-sun-sea-villa" data-bilder="images/sun-sea-villa-foto2.webp|images/sun-sea-villa-foto3.webp" data-price="2420" data-ppn="242" data-rating="10.0" data-beach="1670" data-pool="true" data-grill="true" data-ac="true" data-freecancel="false" data-wholeplace="true" data-partial="true" data-maxout="2026-10-11" data-lat="28.711760408564" data-lng="-13.864955667207">
+<article class="card" id="c-sun-sea-villa" data-bilder="images/sun-sea-villa-foto2.webp|images/sun-sea-villa-foto3.webp" data-price="2440" data-ppn="244" data-rating="10.0" data-beach="1670" data-pool="true" data-grill="true" data-ac="true" data-freecancel="false" data-wholeplace="true" data-partial="true" data-maxout="2026-10-11" data-lat="28.711760408564" data-lng="-13.864955667207">
   <div class="card-media">
     <img src="images/sun-sea-villa-heated-pool.webp" alt="Sun Sea villa - heated pool, Geafond bei Corralejo" loading="lazy">
     <span class="pin-badge">14</span>
@@ -1933,7 +1940,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 </article>
 
 
-<article class="card" id="c-fuertenomad" data-price="2024.0" data-rating="10.0" data-beach="722" data-pool="false" data-grill="true" data-ac="true" data-freecancel="true" data-wholeplace="true" data-ppn="155.7" data-lat="28.6977519" data-lng="-13.8881256">
+<article class="card" id="c-fuertenomad" data-price="1819" data-rating="10.0" data-beach="722" data-pool="false" data-grill="true" data-ac="true" data-freecancel="true" data-wholeplace="true" data-ppn="155.7" data-lat="28.6977519" data-lng="-13.8881256">
   <div class="card-media">
     <img src="images/casa-fuertenomad.webp" alt="Casa FuerteNomad" loading="lazy">
     <span class="pin-badge">15</span>
@@ -1989,7 +1996,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   </div>
 </article>
 
-<article class="card" id="c-tao-caleta-mar" data-bilder="images/tao-caleta-mar-foto2.webp|images/tao-caleta-mar-foto3.webp" data-price="1492" data-rating="8.6" data-beach="362" data-pool="false" data-grill="false" data-ac="true" data-freecancel="true" data-wholeplace="false" data-ppn="114.77" data-lat="28.72632669541164" data-lng="-13.849805641811372">
+<article class="card" id="c-tao-caleta-mar" data-bilder="images/tao-caleta-mar-foto2.webp|images/tao-caleta-mar-foto3.webp" data-price="2209" data-rating="8.6" data-beach="362" data-pool="false" data-grill="false" data-ac="true" data-freecancel="true" data-wholeplace="false" data-ppn="114.77" data-lat="28.72632669541164" data-lng="-13.849805641811372">
   <div class="card-media">
     <img src="images/hotel-boutique-tao-caleta-mar.webp" alt="Hotel Boutique TAO Caleta Mar" loading="lazy">
     <span class="pin-badge">21</span>
@@ -2034,11 +2041,11 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 <div class="check-row" title="unklar"><span class="check-icon warn">?</span><span class="check-label">Niedrige/keine Kaution</span></div></div>
         <h4>Aus Bewertungen</h4><div class="quotes"><blockquote>„Tolle Lage, sehr ruhig. Der Frühstücksraum mit Aussicht auf Dünen und Meer ist traumhaft.“</blockquote><blockquote>„...unser Zimmer war groß und ebenerdig, ruhig bei Nacht, tagsüber viel befahrene Straße...“</blockquote></div>
         <div class="pro-con">
-          <div><h4>Pro</h4><ul class="pro"><li>Mit Abstand günstigste Option (737,50 € p.P.)</li><li>1.103 Bewertungen – riesige, verlässliche Datenbasis</li><li>Direkt an den Dünen, mehrfach explizit als „sehr ruhig“ beschrieben</li></ul></div>
+          <div><h4>Pro</h4><ul class="pro"><li>Günstigstes Hotel der Liste (Stand 25.09.: 2.209 €, 1.104,50 € p.P.)</li><li>1.103 Bewertungen – riesige, verlässliche Datenbasis</li><li>Direkt an den Dünen, mehrfach explizit als „sehr ruhig“ beschrieben</li></ul></div>
           <div><h4>Contra</h4><ul class="con"><li>Ist ein 3-Sterne-Hotel, KEINE eigene ganze Unterkunft – Zimmer, geteiltes Haus/Anlage</li><li>Nur ausgewählte Zimmer haben eine Küche (Standard-Doppelzimmer nicht)</li><li>Nicht kostenlos stornierbar</li></ul></div>
         </div>
         <h4>Stornierung</h4>
-        <p class="dist-line">Doppelzimmer, nicht kostenlos stornierbar (1.738 €). Mit kostenloser Stornierung bis 22.09.2026 kostet es 1.931 €. Frühstück inbegriffen.</p>
+        <p class="dist-line">Am 25.09.2026 nur noch das Doppelzimmer mit Meerblick frei: 2.209 € für 2 Personen, Frühstück inbegriffen (vorher 1.738 €).</p>
       </div>
     </details>
   </div>
@@ -4928,14 +4935,20 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     // Neu aufgenommen am 24.09.2026, alle Betraege mit Poolheizung
     'amanecer-zen': [
       { von: '2026-09-29', bis: '2026-10-12', preis: 3477 },
-      { von: '2026-10-03', bis: '2026-10-12', preis: 2265.30 }
+      { von: '2026-10-03', bis: '2026-10-12', preis: 2265.30 },
+      // 25.09.2026, jeweils + 20 EUR Heizung je Nacht
+      { von: '2026-09-29', bis: '2026-10-03', preis: 980 },
+      { von: '2026-10-05', bis: '2026-10-12', preis: 1800 },
+      { von: '2026-10-06', bis: '2026-10-12', preis: 1557 },
+      { von: '2026-10-07', bis: '2026-10-12', preis: 1314 },
+      { von: '2026-10-08', bis: '2026-10-12', preis: 1060 }
     ],
     'villa-alegria-royal': [
       { von: '2026-10-02', bis: '2026-10-08', preis: 1490.50 },
       { von: '2026-10-03', bis: '2026-10-08', preis: 1271.28 }
     ],
     'villa-tiguaro':             [ { von: '2026-10-09', bis: '2026-10-12', preis: 1080 } ],
-    'exklusive-villa-bahiazul':  [ { von: '2026-10-04', bis: '2026-10-07', preis: 1057 } ],
+    'exklusive-villa-bahiazul':  [ { von: '2026-10-04', bis: '2026-10-07', preis: 1081 } ],
     'villa-12-6':                [ { von: '2026-10-10', bis: '2026-10-12', preis: 660 } ],
     // Villa Laura: Abreise immer 12.10., Preise vom Gastgeber am 24.09.2026.
     // Der Sprung zwischen 6 und 7 Naechten ist kein Tippfehler - ab der
@@ -4949,11 +4962,15 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       { von: '2026-10-07', bis: '2026-10-12', preis: 1561.29 },
       { von: '2026-10-08', bis: '2026-10-12', preis: 1259.88 }
     ],
+    // Maisonette, Stand 25.09.2026: ab 29.09. nur noch der teurere Tarif
     'atalaya-maisonette': [
-      { von: '2026-09-29', bis: '2026-10-12', preis: 1795.95 },
-      { von: '2026-09-29', bis: '2026-10-05', preis: 920 },
+      { von: '2026-09-29', bis: '2026-10-12', preis: 1987 },
+      { von: '2026-09-29', bis: '2026-10-03', preis: 724 },
+      { von: '2026-09-29', bis: '2026-10-05', preis: 1013 },
+      { von: '2026-09-29', bis: '2026-10-06', preis: 1088 },
       { von: '2026-10-03', bis: '2026-10-07', preis: 571 },
-      { von: '2026-10-03', bis: '2026-10-08', preis: 686 }
+      { von: '2026-10-03', bis: '2026-10-08', preis: 686 },
+      { von: '2026-10-03', bis: '2026-10-12', preis: 1246 }
     ],
     // Beide Betraege mit Poolheizung (31 EUR je Nacht)
     'bahiazul': [
@@ -4963,15 +4980,17 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     'renacer-zen': [
       { von: '2026-10-02', bis: '2026-10-12', preis: 2497 },
       { von: '2026-10-03', bis: '2026-10-12', preis: 2253.60 },
-      { von: '2026-10-07', bis: '2026-10-12', preis: 1280.80 }
+      { von: '2026-10-07', bis: '2026-10-12', preis: 1280.80 },
+      // 25.09.2026, + 20 EUR Heizung je Nacht
+      { von: '2026-10-05', bis: '2026-10-12', preis: 1768 },
+      { von: '2026-10-06', bis: '2026-10-12', preis: 1524 }
     ],
     'villa-paradisus':        [ { von: '2026-09-29', bis: '2026-10-12', preis: 2797 } ],
     'casita-maracuya':       [ { von: '2026-09-29', bis: '2026-10-03', preis: 340 } ],
     'villa-87':              [ { von: '2026-09-29', bis: '2026-10-03', preis: 746 } ],
     'villa-10-3':            [ { von: '2026-09-29', bis: '2026-10-03', preis: 732 } ],
     'veaco-bahiazul':        [ { von: '2026-10-03', bis: '2026-10-09', preis: 1264.54 } ],
-    'mc-apartments-rosario': [ { von: '2026-09-29', bis: '2026-10-06', preis: 612 },
-                               { von: '2026-10-10', bis: '2026-10-12', preis: 200 } ]
+    'mc-apartments-rosario': [ { von: '2026-10-02', bis: '2026-10-12', preis: 900 } ]
   };
 
   // Nacht Nr. i als ISO-Datum - Nacht 0 ist der 29.09.2026.
@@ -7715,6 +7734,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   // Aenderungen an der Seite selbst - nicht von Stephan oder Bilgen, sondern
   // an Angebot und Funktion. Stehen gleichberechtigt neben Notizen und Herzen.
   var SEITEN_NEUIGKEITEN = [
+    { at: '2026-09-25T11:30', text: '<b>Casita Maracuya ist ausgebucht</b> \u2013 Airbnb meldet alle N\u00e4chte als belegt. Sie tr\u00e4gt jetzt einen roten Stempel im Bild, ebenso Der Garten\u00a07, H10 Ocean Dreams und Villa\u00a08.7. Die Vergleichsseite rechnet A1\u2013A3, B1 und B2 deshalb mit der <b>Villa\u00a010.3</b> statt der Casita. Beim Preis-Check aller Angebote ge\u00e4ndert: <b>Maisonette</b> ab 29.09. teurer (13\u00a0N\u00e4chte 1.987\u00a0\u20ac), <b>TAO Caleta Mar</b> 2.209\u00a0\u20ac statt 1.492\u00a0\u20ac, <b>MC Apartments</b> jetzt 02.\u201312.10. f\u00fcr 900\u00a0\u20ac. G\u00fcnstiger: FuerteNomad, MyHome Urban, Secrets Bah\u00eda Real.' },
     { at: '2026-09-25T09:30', text: '<b>Der Bahiazul Premier Garden hat die ersten vier N\u00e4chte verloren.</b> Er war gestern noch f\u00fcr alle 13\u00a0N\u00e4chte zu haben und als \u201eLetztes!\u201c markiert \u2013 heute ist <b>nur noch 03.\u201312.10.</b> frei (2.454\u00a0\u20ac mit Poolheizung). Die Variante ohne Umzug f\u00e4llt damit weg; <b>Aufteilung A2 (Casita + Premier Garden) gibt es aber weiter f\u00fcr 2.794\u00a0\u20ac</b> \u2013 und sie ist <b>noch bis morgen, 26.09., kostenlos stornierbar</b>. Ohne Umzug bleiben die Villa lujo tranquila (2.797\u00a0\u20ac, Pool nicht heizbar, \u201enoch 1 verf\u00fcgbar\u201c) und Natural Amanecer Zen (3.477\u00a0\u20ac) \u2013 beide nicht stornierbar. <a href="#vergleich">Zum Vergleich \u2192</a>' },
     { at: '2026-09-24T22:10', text: '<b>Das ganze Bahiazul-Gel\u00e4nde durchgesucht \u2013 f\u00fcnf Villen sind neu dazugekommen.</b> Die wichtigste ist <b>Natural Amanecer Zen (Nr.\u00a05)</b>: sie hat als <b>einzige Airbnb-Villa der Anlage alle 13\u00a0N\u00e4chte am St\u00fcck frei</b> \u2013 3.477\u00a0\u20ac mit Poolheizung. <b>Ohne Umzug</b> ginge es im Resort aber auch schon vorher: mit der Villa lujo tranquila (2.797\u00a0\u20ac, Pool nicht heizbar) oder dem Bahiazul Premier Garden (3.455\u00a0\u20ac) \u2013 beide g\u00fcnstiger. Dazu <b>Villa Alegria Royal (Nr.\u00a08)</b> mit 97\u00a0Bewertungen, die stabilste Bewertungsbasis aller Airbnb-Villen im Resort, sowie drei kurze Fenster zum Anst\u00fcckeln: <b>Villa Tiguaro (Nr.\u00a01)</b> und <b>Villa\u00a012.6 (Nr.\u00a03)</b> f\u00fcr den Schluss, beide kostenlos stornierbar, und die <b>Exklusive Villa (Nr.\u00a02)</b> f\u00fcr die Mitte \u2013 als einzige mit Poolheizung ohne Aufpreis. Die Bahiazul-Villen belegen jetzt die <b>Nr.\u00a01\u201311</b>, alles andere ist f\u00fcnf Nummern nachger\u00fcckt. Neun weitere Villen der Anlage sind ausgebucht, vier haben zu kurze L\u00fccken \u2013 beides steht jetzt unter <a href="#vergleich">Planen \u2192 Vergleich</a>.' },
     { at: '2026-09-24T13:44', text: '<b>Neu in den Bahiazul Villas: Natural Renacer Zen (Nr.\u00a07).</b> Eigenst\u00e4ndige Villa mit privatem Pool, Whirlpool auf dem Dach, Grill und Klimaanlage, 3\u00a0Schlafzimmer mit je eigenem Bad. <b>Frei ab 02.10.</b> (mindestens 5\u00a0N\u00e4chte): 10\u00a0N\u00e4chte kosten 2.497\u00a0\u20ac mit Poolheizung, das sind 250\u00a0\u20ac je Nacht \u2013 gut 30\u00a0\u20ac weniger als Villa Laura. Haken: erst <b>9\u00a0Bewertungen</b> (4,89) und <b>nicht erstattungsf\u00e4hig</b>. Alle Unterk\u00fcnfte ab Nr.\u00a03 sind eine Nummer nachger\u00fcckt.' },
@@ -8235,18 +8255,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   var LAURA_LISTE = 362;   // Nachtpreis der Villa Laura ohne jeden Rabatt
 
   var VGL_VARIANTEN = [
-    { k: 'A1', teile: [['casita-maracuya','2026-09-29','2026-10-03'], ['villa-laura','2026-10-03','2026-10-12']],
-      hinweis: 'Die meisten N\u00e4chte in der Villa Laura, nur ein Umzug.' },
-    { k: 'A2', teile: [['casita-maracuya','2026-09-29','2026-10-03'], ['bahiazul','2026-10-03','2026-10-12']],
+    { k: 'A1', teile: [['villa-10-3','2026-09-29','2026-10-03'], ['villa-laura','2026-10-03','2026-10-12']],
+      hinweis: 'Die meisten N\u00e4chte in der Villa Laura, nur ein Umzug innerhalb der Anlage.' },
+    { k: 'A2', teile: [['villa-10-3','2026-09-29','2026-10-03'], ['bahiazul','2026-10-03','2026-10-12']],
       hinweis: 'Fr\u00fchst\u00fcck inklusive und noch bis 26.09. kostenlos stornierbar.' },
-    { k: 'A3', teile: [['casita-maracuya','2026-09-29','2026-10-03'], ['renacer-zen','2026-10-03','2026-10-12']],
+    { k: 'A3', teile: [['villa-10-3','2026-09-29','2026-10-03'], ['renacer-zen','2026-10-03','2026-10-12']],
       hinweis: 'Eigene Villa mit Pool und Whirlpool zum niedrigeren Nachtpreis \u2013 aber erst 9\u00a0Bewertungen und nicht erstattungsf\u00e4hig.' },
-    { k: 'B1', teile: [['casita-maracuya','2026-09-29','2026-10-03'], ['atalaya-maisonette','2026-10-03','2026-10-07'], ['villa-laura','2026-10-07','2026-10-12']] },
-    { k: 'B2', teile: [['casita-maracuya','2026-09-29','2026-10-03'], ['atalaya-maisonette','2026-10-03','2026-10-08'], ['villa-laura','2026-10-08','2026-10-12']] },
+    { k: 'B1', teile: [['villa-10-3','2026-09-29','2026-10-03'], ['atalaya-maisonette','2026-10-03','2026-10-07'], ['villa-laura','2026-10-07','2026-10-12']] },
+    { k: 'B2', teile: [['villa-10-3','2026-09-29','2026-10-03'], ['atalaya-maisonette','2026-10-03','2026-10-08'], ['villa-laura','2026-10-08','2026-10-12']] },
     { k: 'C',  teile: [['atalaya-maisonette','2026-09-29','2026-10-05'], ['villa-laura','2026-10-05','2026-10-12']],
-      hinweis: 'Ohne Casita \u2013 daf\u00fcr Meerblick von Anfang an.' },
+      hinweis: 'Meerblick von Anfang an, danach Villa Laura.' },
     { k: 'D1', teile: [['villa-paradisus','2026-09-29','2026-10-12']],
-      hinweis: '<strong>Kein Umzug</strong> \u2013 und zugleich die g\u00fcnstigste Variante \u00fcberhaupt. Haken: <strong>der Pool l\u00e4sst sich gar nicht heizen</strong> (rund 21\u00a0\u00b0C im Becken), Sauberkeit mit 8,6/10 der schw\u00e4chste Wert der Auswahl, nicht stornierbar.' },
+      hinweis: '<strong>Kein Umzug</strong> \u2013 und die g\u00fcnstigste Variante ohne Umzug. Haken: <strong>der Pool l\u00e4sst sich gar nicht heizen</strong> (rund 21\u00a0\u00b0C im Becken), Sauberkeit mit 8,6/10 der schw\u00e4chste Wert der Auswahl, nicht stornierbar.' },
     { k: 'D2', teile: [['amanecer-zen','2026-09-29','2026-10-12']],
       hinweis: '<strong>Kein Umzug</strong> in einer eigenen Villa mit Pool und Whirlpool \u2013 aber die teuerste der drei und mit erst 12\u00a0Bewertungen, nicht erstattungsf\u00e4hig.' }
   ];
@@ -8271,7 +8291,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     { slug: 'villa-laura',     kanal: 'Airbnb',        bew: 'noch keine',             storno: 'nicht erstattungsfähig', heiz: 'geschenkt' },
     { slug: 'renacer-zen',     kanal: 'Airbnb',        bew: '9,8/10 · 9 Bew.',   storno: 'nicht erstattungsfähig', heiz: '20 €/Nacht, eingerechnet' },
     { slug: 'villa-87',        kanal: 'Airbnb',        bew: '9,6/10 · 79 Bew.',  storno: 'frei bis 28.09.',        heiz: '22 €/Nacht, eingerechnet', ausgebucht: 'seit 24.09. abends vergeben' },
-    { slug: 'villa-10-3',      kanal: 'Airbnb',        bew: '9,7/10 · 60 Bew.',  storno: 'kostenlos stornierbar',  heiz: '22 €/Nacht, eingerechnet', name: 'Villa 10.3' },
+    { slug: 'villa-10-3',      kanal: 'Airbnb',        bew: '9,7/10 · 60 Bew.',  storno: 'frei bis 27.09.',        heiz: '22 €/Nacht, eingerechnet', name: 'Villa 10.3' },
     { slug: 'veaco-bahiazul',  kanal: 'Villas Veaco',  bew: '9,2/10 · 652 Bew.', storno: 'frei bis 29.09.',        heiz: '20 €/Nacht, eingerechnet' }
   ];
 
@@ -8283,7 +8303,8 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     return p[2] + '.' + p[1] + '.';
   }
   function vglName(slug){
-    return (LISTINGS[slug] && LISTINGS[slug].name) || slug;
+    var v = VGL_VILLEN.filter(function(x){ return x.slug === slug; })[0];
+    return (LISTINGS[slug] && LISTINGS[slug].name) || (v && v.name) || slug;
   }
   // Preis eines Abschnitts: echter Angebotspreis, sonst hochgerechnet.
   function vglTeilpreis(slug, von, bis){
@@ -8699,12 +8720,13 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       krit: { pool:'nein', eigpool:'nein', heizpool:'nein', grill:'nein', ac:'nein', balkon:'ja', kueche:'ja', wlan:'ja', parken:'ja', wholeplace:'ja', freecancel:'ja' },
       adresse: 'Calle Abubilla, Geafond, 35660 La Oliva, Las Palmas' },
 
-    'atalaya-maisonette': { ppn: 138.15, gesamt: 1795.95, frei: ['2026-09-29','2026-10-12'],
-      fussnote: '<strong>Als Mittelteil gerechnet</strong> (Stand 24.09.2026): <strong>03.\u201307.10.</strong> 4\u00a0N\u00e4chte 571\u00a0\u20ac statt 825\u00a0\u20ac \u00b7 <strong>03.\u201308.10.</strong> 5\u00a0N\u00e4chte 686\u00a0\u20ac statt 1.012\u00a0\u20ac. Pro Nacht also 137\u00a0\u20ac bzw. 143\u00a0\u20ac \u2013 mit Abstand die g\u00fcnstigste Art, die Tage zwischen Casita und Bahiazul zu f\u00fcllen.',
+    'atalaya-maisonette': { ppn: 152.85, gesamt: 1987, frei: ['2026-09-29','2026-10-12'],
+      fussnote: '<strong>Stand 25.09.2026:</strong> Mit Anreise 29.09. zeigt Airbnb nur noch den Tarif mit anteiliger Erstattung, alle 13\u00a0N\u00e4chte kosten jetzt <strong>1.987\u00a0\u20ac</strong> (vorher 1.796\u00a0\u20ac). Weitere Preise: 29.09.\u201303.10. 724\u00a0\u20ac \u00b7 29.09.\u201305.10. 1.013\u00a0\u20ac \u00b7 29.09.\u201306.10. 1.088\u00a0\u20ac \u00b7 <strong>ab 03.10. weiter g\u00fcnstig und nicht erstattbar:</strong> 03.\u201307.10. 571\u00a0\u20ac \u00b7 03.\u201308.10. 686\u00a0\u20ac \u00b7 03.\u201312.10. 1.246\u00a0\u20ac.',
       krit: { pool:'nein', eigpool:'nein', heizpool:'nein', grill:'nein', ac:'nein', balkon:'ja', kueche:'ja', wlan:'ja', parken:'ja', wholeplace:'ja', freecancel:'nein' },
       adresse: 'C. la Atalaya, 7, 35660 Corralejo, Las Palmas' },
 
     'casita-maracuya': { ppn: 85, gesamt: 340, frei: ['2026-09-29','2026-10-03'],
+      fussnote: '<strong>Ausgebucht seit 25.09.2026.</strong> Airbnb meldet alle N\u00e4chte vom 29.09. bis 12.10. als belegt (im Belegungskalender gepr\u00fcft). Der Preis ist der letzte bekannte Stand. Ersatz f\u00fcr die ersten vier N\u00e4chte: Villa\u00a010.3 (732\u00a0\u20ac, kostenlos stornierbar bis 27.09.), Maisonette (724\u00a0\u20ac) oder Amanecer Zen (980\u00a0\u20ac).',
       krit: { pool:'ja', eigpool:'nein', heizpool:'ja', grill:'nein', ac:'ja', balkon:'ja', kueche:'ja', wlan:'ja', parken:'ja', wholeplace:'ja', freecancel:'nein' },
       adresse: 'C. Carabela, 14, 35660 Corralejo, Las Palmas', website: 'https://kazabuenavista.weebly.com/' },
 
@@ -8727,7 +8749,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       adresse: 'Calle Punta Prieta 34, 35660 Corralejo',
       fussnote: 'Korrektur vom 17.09.: Der beheizte Pool ist laut FeWo-direkt ein <strong>Gemeinschaftspool</strong>, kein eigener.' },
 
-    'fuertenomad': { ppn: 142.54, gesamt: 1853, frei: ['2026-09-29','2026-10-12'],
+    'fuertenomad': { ppn: 139.92, gesamt: 1819, frei: ['2026-09-29','2026-10-12'],
       krit: { pool:'ja', eigpool:'ja', heizpool:'nein', grill:'ja', ac:'ja', balkon:'ja', kueche:'ja', wlan:'ja', parken:'ja', wholeplace:'ja', freecancel:'ja' },
       adresse: 'La capellanía, C. Drago, 29, Casa 24, 35660 Corralejo, Las Palmas' },
 
@@ -8736,7 +8758,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       adresse: 'C. Pardelas, 7, 35660 Corralejo, Las Palmas',
       fussnote: '<strong>Preis inklusive Poolheizung:</strong> 1.144,54\u00a0\u20ac Villa + 120\u00a0\u20ac Heizung (20\u00a0\u20ac je Nacht \u2013 die g\u00fcnstigste im Resort, Villa\u00a08.7 nimmt 22\u00a0\u20ac, Villa Laura 30\u00a0\u20ac, Bahiazul 31\u00a0\u20ac). Ohne Heizung 1.144,54\u00a0\u20ac. <strong>Kostenlos stornierbar bis 29.09.2026, keine Kaution</strong>, IGIC 7\u00a0% ist im Preis. Direkt gebucht \u00fcber direct.witbooking.com.' },
 
-    'sun-sea-villa': { ppn: 242, gesamt: 2420, frei: ['2026-09-29','2026-10-09'],
+    'sun-sea-villa': { ppn: 244, gesamt: 2440, frei: ['2026-09-29','2026-10-09'],
       krit: { pool:'ja', eigpool:'ja', heizpool:'ja', grill:'ja', ac:'ja', balkon:'ja', kueche:'ja', wlan:'ja', parken:'ja', wholeplace:'ja', freecancel:'nein' },
       adresse: 'Corralejo (Geafond), 35660, Las Palmas' },
 
@@ -8744,12 +8766,12 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       krit: { pool:'ja', eigpool:'nein', heizpool:'nein', grill:'ja', ac:'nein', balkon:'ja', kueche:'ja', wlan:'ja', parken:'ja', wholeplace:'ja', freecancel:'ja' },
       adresse: 'Marina Sol Villa, C. Tarabilla, 14, 35660 Corralejo, Las Palmas' },
 
-    'mc-apartments-rosario': { ppn: 87.43, gesamt: 612, frei: ['2026-09-29','2026-10-06'],
+    'mc-apartments-rosario': { ppn: 90, gesamt: 900, frei: ['2026-10-02','2026-10-12'],
       krit: { pool:'nein', eigpool:'nein', heizpool:'nein', grill:'nein', ac:'nein', balkon:'ja', kueche:'ja', wlan:'ja', parken:'ja', wholeplace:'ja', freecancel:'unklar' },
       adresse: 'Calle Guadiana 32, Puerto del Rosario',
-      fussnote: '<strong>Zeitraum ist zerrissen:</strong> Seit dem 23.09.2026 sind die N\u00e4chte vom 06. bis 09.10. belegt. Buchbar sind noch 29.09.\u201306.10. (7\u00a0N\u00e4chte, 612\u00a0\u20ac) und 10.\u201312.10. (2\u00a0N\u00e4chte, 200\u00a0\u20ac).' },
+      fussnote: '<strong>Zeitraum hat sich verschoben:</strong> Am 25.09.2026 waren die N\u00e4chte 30.09. und 01.10. belegt, 29.09.\u201306.10. geht nicht mehr. Daf\u00fcr ist <strong>02.\u201312.10.</strong> am St\u00fcck frei: 10\u00a0N\u00e4chte f\u00fcr 900\u00a0\u20ac.' },
 
-    'myhome-urban': { ppn: 98.31, gesamt: 1278, frei: ['2026-09-29','2026-10-12'],
+    'myhome-urban': { ppn: 94.31, gesamt: 1226, frei: ['2026-09-29','2026-10-12'],
       krit: { pool:'nein', eigpool:'nein', heizpool:'nein', grill:'nein', ac:'ja', balkon:'ja', kueche:'ja', wlan:'ja', parken:'ja', wholeplace:'ja', freecancel:'unklar' },
       adresse: 'C. Le\u00f3n y Castillo, 16, 35600 Puerto del Rosario, Las Palmas',
       fussnote: '<strong>Wieder komplett frei:</strong> Am 23.09.2026 waren erstmals alle 13\u00a0N\u00e4chte buchbar \u2013 die L\u00fccke am Ende des Zeitraums hat sich geschlossen.' },
@@ -8758,7 +8780,8 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       krit: { pool:'nein', eigpool:'nein', heizpool:'nein', grill:'nein', ac:'ja', balkon:'ja', kueche:'ja', wlan:'ja', parken:'ja', wholeplace:'ja', freecancel:'unklar' },
       adresse: '28.496807, -13.865688, Puerto del Rosario' },
 
-    'tao-caleta-mar': { ppn: 114.77, gesamt: 1492, frei: ['2026-09-29','2026-10-12'],
+    'tao-caleta-mar': { ppn: 169.92, gesamt: 2209, frei: ['2026-09-29','2026-10-12'],
+      fussnote: '<strong>Deutlich teurer geworden:</strong> Am 25.09.2026 war nur noch das Doppelzimmer mit Meerblick frei, f\u00fcr 2\u00a0Personen 2.209\u00a0\u20ac (vorher 1.492\u00a0\u20ac). Booking meldet \u201enoch 1\u201c.',
       krit: { pool:'nein', eigpool:'nein', heizpool:'unklar', grill:'nein', ac:'ja', balkon:'ja', kueche:'nein', wlan:'ja', parken:'ja', wholeplace:'nein', freecancel:'ja' },
       adresse: 'Avenida Grandes Playas, 125, 35660 Corralejo',
       website: 'https://taoapartamentos.com/en/accommodations-in-fuerteventura/tao-caleta-mar' },
@@ -8773,12 +8796,12 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       adresse: 'C. Abubilla, 35660 Corralejo, Las Palmas', website: 'https://islandhomefuerteventura.com/' },
 
     'h10-ocean-dreams': { ppn: 186.18, gesamt: 2048, frei: ['2026-09-29','2026-10-10'],
-      fussnote: '<strong>Nicht mehr der ganze Zeitraum:</strong> Am 23.09.2026 war der 11. und 12.10. ausgebucht. L\u00e4ngster buchbarer Aufenthalt 29.09.\u201310.10., 11\u00a0N\u00e4chte ab 2.048\u00a0\u20ac (g\u00fcnstigster von mehreren Tarifen).',
+      fussnote: '<strong>Auf Booking.com ausgebucht seit 25.09.2026.</strong> Keine Zimmer mehr f\u00fcr 29.09.\u201310.10., auch nicht f\u00fcr 29.09.\u201303.10. oder 03.\u201310.10. Preis = letzter bekannter Stand (2.048\u00a0\u20ac). Direkt beim Hotel k\u00f6nnte es noch Zimmer geben.',
       krit: { pool:'ja', eigpool:'nein', heizpool:'ja', grill:'nein', ac:'ja', balkon:'ja', kueche:'nein', wlan:'ja', parken:'ja', wholeplace:'nein', freecancel:'ja' },
       adresse: 'Las Palmeras, 2, 35660 Corralejo',
       website: 'https://www.h10hotels.com/en/fuerteventura-hotels/h10-ocean-dreams' },
 
-    'secrets-bahia-real': { ppn: 361.38, gesamt: 4698, frei: ['2026-09-29','2026-10-12'],
+    'secrets-bahia-real': { ppn: 355.62, gesamt: 4623, frei: ['2026-09-29','2026-10-12'],
       krit: { pool:'ja', eigpool:'nein', heizpool:'ja', grill:'nein', ac:'ja', balkon:'ja', kueche:'nein', wlan:'ja', parken:'ja', wholeplace:'nein', freecancel:'ja' },
       adresse: 'Avenida Grandes Playas, 35660 Corralejo',
       website: 'https://www.hyatt.com/secrets/en-US/secbr-secrets-bahia-real' },
@@ -8794,6 +8817,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       adresse: 'C. la Cancela, 3, 35650 Lajares, Las Palmas' },
 
     'der-garten-7-lajares': { ppn: 121.43, gesamt: 850, frei: ['2026-09-29','2026-10-06'],
+      fussnote: '<strong>Ausgebucht seit 25.09.2026.</strong> Frei sind nur noch die N\u00e4chte 03.\u201306.10., Airbnb verlangt aber mindestens 4\u00a0N\u00e4chte. 29.09.\u201306.10. meldet \u201eDieser Zeitraum ist nicht verf\u00fcgbar\u201c. Preis = letzter bekannter Stand.',
       krit: { pool:'nein', eigpool:'nein', heizpool:'nein', grill:'ja', ac:'nein', balkon:'ja', kueche:'ja', wlan:'ja', parken:'ja', wholeplace:'ja', freecancel:'ja' },
       adresse: 'Calle Los Costales, 7, 35650 Lajares, Las Palmas' },
     'villa-tiguaro': { ppn: 360, gesamt: 1080, frei: ['2026-10-09','2026-10-12'],
@@ -8801,10 +8825,10 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       adresse: 'C. Pardelas, 7, 35660 Corralejo, Las Palmas',
       fussnote: '<strong>Preis inklusive Poolheizung:</strong> 1.014\u00a0\u20ac Villa + 66\u00a0\u20ac Heizung (22\u00a0\u20ac je Nacht \u00d7 3). <strong>Nur die letzten drei N\u00e4chte frei</strong> (09.\u201312.10.) \u2013 als Schlussst\u00fcck einer Aufteilung. Glatte <strong>5,0 aus 26\u00a0Bewertungen</strong>, Superhost und G\u00e4ste-Favorit. <strong>Kostenlos stornierbar bis 04.10.</strong> Mit 360\u00a0\u20ac je Nacht die teuerste Villa der Anlage.' },
 
-    'exklusive-villa-bahiazul': { ppn: 352.33, gesamt: 1057, frei: ['2026-10-04','2026-10-07'],
+    'exklusive-villa-bahiazul': { ppn: 360.33, gesamt: 1081, frei: ['2026-10-04','2026-10-07'],
       krit: { pool:'ja', eigpool:'ja', heizpool:'ja', grill:'ja', ac:'ja', balkon:'ja', kueche:'ja', wlan:'ja', parken:'ja', wholeplace:'ja', freecancel:'unklar' },
       adresse: 'C. Pardelas, 7, 35660 Corralejo, Las Palmas',
-      fussnote: '<strong>Einzige Villa der Anlage mit Poolheizung ohne Aufpreis</strong> \u2013 die 1.057\u00a0\u20ac sind der Endpreis f\u00fcr drei N\u00e4chte. <strong>Nur 04.\u201307.10. frei</strong>, also nur als Mittelst\u00fcck brauchbar. Erst <strong>4\u00a0Bewertungen</strong> (5,0) \u2013 schmale Basis. <strong>Stornobedingungen standen nicht auf der Seite</strong> und sind vor einer Buchung zu erfragen.' },
+      fussnote: '<strong>Einzige Villa der Anlage mit Poolheizung ohne Aufpreis</strong> \u2013 die 1.081\u00a0\u20ac sind der Endpreis (am 25.09. von 1.057\u00a0\u20ac gestiegen) f\u00fcr drei N\u00e4chte. <strong>Nur 04.\u201307.10. frei</strong>, also nur als Mittelst\u00fcck brauchbar. Erst <strong>4\u00a0Bewertungen</strong> (5,0) \u2013 schmale Basis. <strong>Stornobedingungen standen nicht auf der Seite</strong> und sind vor einer Buchung zu erfragen.' },
 
     'villa-12-6': { ppn: 330, gesamt: 660, frei: ['2026-10-10','2026-10-12'],
       krit: { pool:'ja', eigpool:'ja', heizpool:'ja', grill:'ja', ac:'ja', balkon:'ja', kueche:'ja', wlan:'ja', parken:'ja', wholeplace:'ja', freecancel:'ja' },
@@ -9113,7 +9137,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
    "Die Lage ist die schwächste Teilnote (4,8)",
    "13 Bewertungen sind für eine glatte 5,0 eine schmale Basis"
   ],
-  "fazit": "Modern, technisch top ausgestattet und makellos bewertet — aber der geteilte Pool bricht euer Hauptkriterium. Für 2.024 € gibt es Alternativen mit eigenem Pool."
+  "fazit": "Modern, technisch top ausgestattet und makellos bewertet — aber der geteilte Pool bricht euer Hauptkriterium. Für 1.819 € gibt es Alternativen mit eigenem Pool."
  },
  "capitan-aleycar": {
   "rang": 15,
@@ -9333,6 +9357,29 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 
   // Kriterien und Preise aus der Tabelle auf eine Karte schreiben.
   // Muss laufen, BEVOR die Symbolreihe und der Preisblock gebaut werden.
+  // Ausgebuchte Unterkuenfte: grosser roter Stempel im Bild, Name
+  // durchgestrichen, nicht mehr fuer die Kostenrechnung waehlbar.
+  // Laeuft ganz am Ende, damit kein spaeterer Umbau den Stempel entfernt.
+  var AUSGEBUCHT = {
+    'casita-maracuya':      'seit 25.09. \u00b7 alle N\u00e4chte belegt',
+    'villa-87':             'seit 24.09. \u00b7 Zeitraum vergeben',
+    'der-garten-7-lajares': 'seit 25.09. \u00b7 nur noch 3 N\u00e4chte frei',
+    'h10-ocean-dreams':     'seit 25.09. auf Booking.com'
+  };
+  function ausgebuchtAnwenden(){
+    Object.keys(AUSGEBUCHT).forEach(function(slug){
+      var card = document.getElementById('c-' + slug);
+      if (!card) return;
+      card.classList.add('ist-weg');
+      var media = card.querySelector('.card-media');
+      if (!media || media.querySelector('.weg-stempel')) return;
+      var st = document.createElement('div');
+      st.className = 'weg-stempel';
+      st.innerHTML = '<span>Ausgebucht<small>' + AUSGEBUCHT[slug] + '</small></span>';
+      media.appendChild(st);
+    });
+  }
+
   function excelStandAnwenden(){
     document.querySelectorAll('#card-grid .card, .kat-grid .card').forEach(function(card){
       var e = EXCEL_STAND[slugOf(card)];
@@ -10206,16 +10253,16 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       hinweis: 'Superhost und Gäste-Favorit, 4,97 aus 30 Bewertungen. <strong>Aber: der Pool ist gemeinsam genutzt</strong>, nicht privat – damit fällt euer Muss-Kriterium. 3 Schlafzimmer, Meerblick, Strandzugang, WLAN mit 285 Mbit/s, kostenlose Stornierung. Preis zeigt Airbnb nur nach Anmeldung.' },
 
     { slug: 'mc-apartments-rosario', name: 'MC Apartments – Hafen von Rosario', art: 'Stadtwohnung', ort: 'Puerto del Rosario', portal: 'Airbnb',
-      ppn: 87.43, total: 612, rating: null, bew: 158,
+      ppn: 90, total: 900, rating: null, bew: 158,
       lat: 28.494194, lng: -13.8646697,
-      frei: ['2026-09-29','2026-10-06'],
-      link: 'https://www.airbnb.de/rooms/35674743?check_in=2026-09-29&check_out=2026-10-12&adults=2',
+      frei: ['2026-10-02','2026-10-12'],
+      link: 'https://www.airbnb.de/rooms/35674743?check_in=2026-10-02&check_out=2026-10-12&adults=2',
       bilder: ['https://a0.muscache.com/im/pictures/miso/Hosting-35674743/original/9f102d20-012b-4c6f-8f86-b00b56d9b35d.jpeg?im_w=720'],
       krit: { pool: 'nein', heizpool: 'nein', grill: 'unklar', ac: 'unklar', kueche: 'ja', wlan: 'ja', parken: 'ja', wholeplace: 'ja', freecancel: 'unklar' },
       hinweis: '158 Bewertungen – die breiteste Datenbasis der vier. 2 Schlafzimmer, Strandzugang, eigener Parkplatz. <strong>Liegt aber in Puerto del Rosario</strong>, rund 38 km südlich von Corralejo.' },
 
     { slug: 'myhome-urban', name: 'MyHome Urban Apartments', art: 'Stadtwohnung', ort: 'Puerto del Rosario', portal: 'Airbnb',
-      ppn: 98.31, total: 1278, rating: null, bew: null,
+      ppn: 94.31, total: 1226, rating: null, bew: null,
       lat: 28.498919, lng: -13.8589709,
       frei: ['2026-09-29','2026-10-12'],
       link: 'https://www.airbnb.de/rooms/1069551451590743237?check_in=2026-09-29&check_out=2026-10-12&adults=2',
@@ -10270,7 +10317,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       hinweis: 'Nur für Erwachsene, direkt an den Dünen. 8,8 aus 615 Bewertungen. Balkon und Klimaanlage gehören zur Standardausstattung des Hauses.' },
 
     { slug: 'secrets-bahia-real', name: 'Secrets Bahía Real Resort & Spa – Adults Only', art: 'Hotel', ort: 'Corralejo', portal: 'Booking.com',
-      ppn: 361.38, total: 4698, rating: 8.8, bew: 846,
+      ppn: 355.62, total: 4623, rating: 8.8, bew: 846,
       lat: 28.725654, lng: -13.8514064,
       frei: ['2026-09-29','2026-10-12'],
       link: 'https://www.booking.com/hotel/es/secrets-bahia-real.de.html?aid=898224&checkin=2026-09-29&checkout=2026-10-12&group_adults=2&group_children=0&no_rooms=1',
@@ -10307,7 +10354,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 
     // --- Am 20.09.2026 von Stephan gefunden ---
     { slug: 'atalaya-maisonette', name: 'Maisonette mit Meerblick-Terrasse', art: 'Stadtwohnung', ort: 'Corralejo', portal: 'Airbnb',
-      ppn: 138.15, total: 1795.95, rating: 9.6, ratingTxt: '4,81/5', bew: 54,
+      ppn: 152.85, total: 1987, rating: 9.6, ratingTxt: '4,81/5', bew: 54,
       lat: 28.7440809, lng: -13.8656412,
       frei: ['2026-09-29','2026-10-12'],
       link: 'https://www.airbnb.de/rooms/53180767?check_in=2026-09-29&check_out=2026-10-12&adults=2',
@@ -10379,7 +10426,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       hinweis: 'Luxusvilla f\u00fcr bis zu 6 G\u00e4ste mit <strong>3 Schlafzimmern, jedes mit eigenem Bad</strong>, Wohnzimmer und K\u00fcche. Sonnenterrasse mit <strong>balinesischem Bett, Grill und Whirlpool</strong>. Gastgeber Francisco ist <strong>Superhost</strong>, die Villa ist <strong>G\u00e4ste-Favorit</strong> mit glatten <strong>5,0 aus 26 Bewertungen</strong> \u2013 die beste Note aller Villen der Anlage mit belastbarer Zahl an Bewertungen. <strong>Poolheizung 22\u00a0\u20ac pro Tag</strong>, im Preis eingerechnet (3\u00a0N\u00e4chte: 66\u00a0\u20ac). <strong>Nur die letzten 3\u00a0N\u00e4chte frei</strong> (09.\u201312.10.) \u2013 taugt damit als Schlussst\u00fcck einer Aufteilung. <strong>Kostenlose Stornierung bis 04.10.</strong> Mit 360\u00a0\u20ac je Nacht die teuerste Villa der Anlage.' },
 
     { slug: 'exklusive-villa-bahiazul', name: 'Exklusive Villa in Bahiazul \u2013 Poolheizung inklusive', art: 'Bahiazul', ort: 'Corralejo (Geafond)', portal: 'Airbnb',
-      ppn: 352.33, total: 1057, rating: 10.0, ratingTxt: '5,0/5', bew: 4,
+      ppn: 360.33, total: 1081, rating: 10.0, ratingTxt: '5,0/5', bew: 4,
       lat: 28.7093358, lng: -13.8710096,
       frei: ['2026-10-04','2026-10-07'],
       link: 'https://www.airbnb.de/rooms/1327723891328207334?check_in=2026-10-04&check_out=2026-10-07&adults=2',
@@ -10520,5 +10567,6 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   // Zum Schluss, damit die Einschaetzung auf jeder Karte an derselben Stelle
   // sitzt - Notizfeld und Hinweise haengen sich sonst darunter.
   bewertungAnwenden();
+  ausgebuchtAnwenden();
 })();
 </script>
