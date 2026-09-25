@@ -5,7 +5,7 @@ findet unten alles, um nahtlos weiterzumachen. Die Bedienung und Einstellungen d
 `README.md`, ausführlichere Hintergründe im Gedächtnis des Projekts (Notizen `fuerte-meteogramm`,
 `fuerte-webcams`, `fuerte-satellitenbilder`, `fuerte-mondbild`, `fuerte-offene-punkte`).
 
-Stand: **24.09.2026**
+Stand: **25.09.2026**
 
 ## Für wen
 
@@ -19,7 +19,7 @@ keine Pillen, nicht „zu rund“**.
 |---|---|
 | `meteogramm.js` / `meteogramm.css` | Der Baustein selbst. Weiß nichts von Fuerteventura. |
 | `demo.html` | Zum Ausprobieren ohne die große Seite. |
-| `entwurf.html` | Gestaltungs-Labor: Varianten zum Umschalten (siehe unten). |
+| `entwurf.html` | Zeigt den Baustein allein, mit Hell/Dunkel-Schalter (früher Gestaltungs-Labor). |
 | `schriftprobe.html` | 17 Schriften für die Zahlen zur Auswahl. |
 | `../index.html` | Die Fuerteventura-Seite; ruft `Meteogramm.einbauen({...})` mit Orten, Zeilen, Kameras auf. |
 | `../worker/fuerte-sync.js` | Cloudflare-Worker: speichert stündlich Webcam-Bilder (Bildspeicher). |
@@ -30,15 +30,19 @@ diesem Ordner wird mit veröffentlicht (Positivliste in `../.gitignore`), also a
 
 ## Offene Entscheidungen von Stephan
 
-1. **Gestaltungs-Labor (`entwurf.html`)** – Schalter oben: Bild oben/unten/beides, Werte „am Strich“
-   an/aus, Knöpfe unten/oben, Zusatzzeile an/aus, Datumsfahne haftet/scrollt, hell/dunkel.
-   **Empfehlung:** Bild unten + am Strich + Knöpfe unten + Fahne haftet.
-   Wenn Stephan entscheidet: im Baustein selbst umsetzen (`meteogramm.css`/`.js`), nicht als
-   Überlagerung wie im Labor.
-2. **Schrift für die Zahlen (`schriftprobe.html`)** – Stephan nennt eine Nummer 1–17. Nr. 1 =
+1. **Schrift für die Zahlen (`schriftprobe.html`)** – Stephan nennt eine Nummer 1–17. Nr. 1 =
    JetBrains Mono = Ist-Stand. Umstellen: `--mg-mono` in `meteogramm.css` + Google-Fonts-Link in
    `../index.html`.
-3. **Mond im hellen Modus** bewusst blass (Deckkraft 0,42) – kräftiger oder so lassen?
+2. **Mond im hellen Modus** bewusst blass (Deckkraft 0,42) – kräftiger oder so lassen?
+
+## Entschieden
+
+- **Aufbau (25.09.2026, fest im Baustein):** Bild unten, Werte „am Strich“, Knöpfe unten,
+  Datumsfahne haftet beim Scrollen. Reihenfolge im Baustein: Reiter → Fahne (`.mg-readout`, sticky)
+  → Werteliste mit Mittelstrich → Diagramm → Bildreiter + Bild → Knöpfe → Fußzeile. `.mg-head` gibt
+  es nicht mehr; `.mg` hat `overflow: visible`, sonst haftet die Fahne nicht. Abstand nach oben über
+  `--mg-haft-oben`; `../index.html` setzt ihn auf die Höhe der Menüleiste. Das Zeilen-Menü ☰ klappt
+  nach oben auf. Zusatzzeile (Böen, gefühlt …) bleibt an.
 
 ## Offene technische Punkte
 

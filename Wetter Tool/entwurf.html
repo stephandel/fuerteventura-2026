@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="meteogramm.css?v=20260923f">
+<link rel="stylesheet" href="meteogramm.css?v=20260925a">
 <style>
   /* ---- Seite (wie die Fuerteventura-Seite) ---- */
   :root { color-scheme: dark; --page:#14181a; --surface:#1b2124; --surface-2:#202729; --border:#303836; --ink:#ede9e0; --ink-dim:#b4ac9c; --teal:#4bc4cb; --ochre:#e0a24f; }
@@ -29,106 +29,23 @@
      Karte wächst auf mehrere tausend Pixel. */
   .labor { display:grid; gap:20px; grid-template-columns:minmax(0,1fr); }
   .labor > * { min-width:0; }
-  .vergleich .labor { grid-template-columns:minmax(0,1fr) minmax(0,1fr); }
-  @media (max-width: 900px) { .vergleich .labor { grid-template-columns:minmax(0,1fr); } }
-  .titel { font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-dim); margin:0 0 6px; }
-
-  /* =====================================================================
-     Variante "am Strich": alles hängt am senkrechten Auswahl-Strich
-     ===================================================================== */
-  /* Als Flex-Spalte dürfen die Bausteine nicht breiter werden als die Karte -
-     sonst zieht das breite Diagramm alles in die Länge. */
-  .labor .mg > * { min-width:0; max-width:100%; }
-  .strich-an .mg { position:relative; display:flex; flex-direction:column; }
-  .strich-an .mg-head { display:contents; }             /* Datum und Knöpfe werden eigene Bausteine */
-
-  /* Reihenfolge der Bausteine */
-  .strich-an .mg-top       { order:1; }
-  .strich-an .mg-readout   { order:4; }
-  .strich-an .mg-werte     { order:5; }
-  .strich-an .mg-wrap      { order:6; }
-  .strich-an .mg-knoepfe   { order:9; }
-  .strich-an .mg-foot      { order:10; }
-  .strich-an.bild-oben  .mg-ansichten { order:2; }
-  .strich-an.bild-oben  .mg-karte, .strich-an.bild-oben .mg-cam { order:3; }
-  .strich-an.bild-unten .mg-ansichten { order:7; }
-  .strich-an.bild-unten .mg-karte, .strich-an.bild-unten .mg-cam { order:8; }
-  .strich-an.knoepfe-oben .mg-knoepfe { order:1; }
-  .strich-an.knoepfe-oben .mg-top { order:0; }
-
-  /* Datum und Uhrzeit als Fahne am oberen Ende des Strichs */
-  .strich-an .mg-readout { display:flex; flex-direction:column; align-items:center; padding:14px 14px 0; min-width:0; }
-  .strich-an .mg-zeit { display:inline-flex; align-items:baseline; gap:8px; background:var(--mg-text); color:var(--mg-flaeche); border-radius:8px; padding:5px 12px; font-size:1rem; min-height:0; }
-  .strich-an .mg-zeit .mg-rel { color:var(--mg-flaeche); opacity:.72; }
-  .strich-an .mg-lage { justify-content:center; margin:6px 0 0; }
-  /* kurzer Strich von der Fahne zur Liste */
-  .strich-an .mg-readout::after { content:""; width:2px; height:14px; margin-top:8px; background:var(--mg-text); opacity:.85; }
-
-  /* Werteliste: Bezeichnung links vom Strich, Wert rechts davon */
-  .strich-an .mg-werte { position:relative; grid-template-columns:1fr; padding:0 14px; margin:0; }
-  .strich-an .mg-werte::before { content:""; position:absolute; left:50%; top:0; bottom:0; border-left:2px solid var(--mg-text); opacity:.85; margin-left:-1px; }
-  .strich-an .mg-wert { grid-template-columns:1fr 1fr; grid-template-areas:"l v" "l z"; column-gap:0; padding:6px 0; align-items:start; }
-  .strich-an.zusatz-aus .mg-wz { display:none; }
-  .strich-an.zusatz-aus .mg-wert { padding:7px 0; }
-  .strich-an .mg-wl { grid-area:l; text-align:right; padding-right:16px; align-self:center; font-size:12.5px; }
-  .strich-an .mg-wv { grid-area:v; padding-left:16px; }
-  .strich-an .mg-wz { grid-area:z; padding-left:16px; text-align:left; margin-top:-3px; line-height:1.25; }
-  .strich-an .mg-wz:empty { display:none; }
-  .strich-an .mg-wert:last-child { border-bottom:0; }
-  /* Bandbreite: der Strich läuft ohne Bruch in das Diagramm hinein */
-  .strich-an .mg-wrap { border-top:1px solid var(--mg-rand); }
-
-  /* Bildreiter mittig unter bzw. über dem Bild */
-  .strich-an .mg-ansichten { justify-content:center; padding:10px 14px; }
-  .strich-an.bild-unten .mg-ansichten { padding-top:12px; }
-
-  /* Knöpfe als Leiste unter dem Diagramm - auf dem Handy nah am Daumen */
-  .strich-an .mg-knoepfe { width:100%; justify-content:center; padding:10px 14px 4px; box-sizing:border-box; }
-  .strich-an .mg-btn-jetzt { flex:0 1 220px; }
-  .strich-an .mg-zeilen-panel { left:14px; right:14px; top:auto; bottom:calc(100% + 6px); }
-  .strich-an.knoepfe-oben .mg-zeilen-panel { top:calc(100% + 6px); bottom:auto; }
-
-  /* Fahne bleibt beim Scrollen der Seite sichtbar */
-  /* Haften geht nur, wenn die Karte ihren Inhalt nicht beschneidet */
-  .strich-an.fahne-klebt .mg { overflow:visible; }
-  .strich-an.fahne-klebt .mg-readout { position:sticky; top:0; z-index:6; background:var(--mg-flaeche); padding-top:10px; padding-bottom:8px; border-radius:0 0 12px 12px; box-shadow:0 10px 14px -10px rgba(0,0,0,.55); }
-  .strich-an.fahne-klebt .mg-readout::after { display:none; }
-  .strich-an.fahne-klebt .mg-readout::before { content:""; position:absolute; left:50%; bottom:0; width:2px; height:10px; margin-left:-1px; background:var(--mg-text); opacity:.85; }
-
-  /* Reiter etwas leiser */
-  .strich-an .mg-top { padding-bottom:2px; }
-  .strich-an .mg-tabs-modell .mg-tab { font-size:11.5px; }
-
-  /* Variante "wie bisher": nur die Bildposition umschaltbar */
-  .strich-aus .mg { display:flex; flex-direction:column; }
-  .strich-aus .mg-top { order:1; }  .strich-aus .mg-head { order:2; }  .strich-aus .mg-werte { order:3; }
-  .strich-aus .mg-wrap { order:6; } .strich-aus .mg-foot { order:9; }
-  .strich-aus.bild-oben .mg-ansichten { order:0; } .strich-aus.bild-oben .mg-karte, .strich-aus.bild-oben .mg-cam { order:0; }
-  .strich-aus.bild-oben .mg-ansichten { padding-top:12px; }
-  .strich-aus.bild-unten .mg-ansichten { order:7; } .strich-aus.bild-unten .mg-karte, .strich-aus.bild-unten .mg-cam { order:8; }
 </style>
 </head>
 <body>
 <div class="seite" id="seite">
   <h1>Wetter-Tool – Entwurf</h1>
-  <p class="unter">Gestaltungs-Labor. Oben umschalten, unten vergleichen. Alles hier ist ein Vorschlag, nichts davon ist auf der Wetterseite aktiv.</p>
+  <p class="unter">Entschieden am 25.09.2026 und fest im Baustein: Bild unten, Werte am Strich, Knöpfe unten, Datumsfahne bleibt oben stehen.</p>
 
   <div class="regler">
-    <span class="gruppe">Bild <span class="seg" data-schalter="bild"><button data-wert="oben">oben</button><button data-wert="unten">unten</button><button data-wert="vergleich">beides nebeneinander</button></span></span>
-    <span class="gruppe">Am Strich <span class="seg" data-schalter="strich"><button data-wert="an">an</button><button data-wert="aus">aus (wie bisher)</button></span></span>
-    <span class="gruppe">Knöpfe <span class="seg" data-schalter="knoepfe"><button data-wert="unten">unten</button><button data-wert="oben">oben</button></span></span>
-    <span class="gruppe">Zusatzzeile <span class="seg" data-schalter="zusatz"><button data-wert="an">an</button><button data-wert="aus">aus</button></span></span>
-    <span class="gruppe">Fahne <span class="seg" data-schalter="fahne"><button data-wert="klebt">bleibt oben</button><button data-wert="frei">scrollt mit</button></span></span>
     <span class="gruppe"><span class="seg" data-schalter="thema"><button data-wert="dunkel">dunkel</button><button data-wert="hell">hell</button></span></span>
   </div>
 
   <div class="labor" id="labor">
-    <div id="a"><p class="titel" id="titel-a" hidden>Bild oben</p><div id="wetter-a"></div></div>
-    <div id="b" hidden><p class="titel">Bild unten</p><div id="wetter-b"></div></div>
+    <div><div id="wetter-a"></div></div>
   </div>
 </div>
 
-<script src="meteogramm.js?v=20260923f"></script>
+<script src="meteogramm.js?v=20260925a"></script>
 <script>
   var EINST = {
     zeitzone: 'Atlantic/Canary', merkschluessel: 'fuerte-mg',
@@ -165,23 +82,14 @@
     }
   };
 
-  var wahl = { bild:'unten', strich:'an', knoepfe:'unten', fahne:'klebt', zusatz:'an', thema:'dunkel' };
-  try { Object.assign(wahl, JSON.parse(localStorage.getItem('fuerte-entwurf') || '{}')); } catch(e){}
+  var wahl = { thema:'dunkel' };
+  try { var alt = JSON.parse(localStorage.getItem('fuerte-entwurf') || '{}'); if (alt.thema) wahl.thema = alt.thema; } catch(e){}
 
-  var instA = null, instB = null;
+  var inst = null;
   function anwenden(){
-    var seite = document.getElementById('seite'), a = document.getElementById('a'), b = document.getElementById('b');
-    var vergleich = wahl.bild === 'vergleich';
-    seite.classList.toggle('vergleich', vergleich);
-    b.hidden = !vergleich;
-    document.getElementById('titel-a').hidden = !vergleich;
-    var klassen = 'strich-' + wahl.strich + ' knoepfe-' + wahl.knoepfe + ' fahne-' + wahl.fahne + ' zusatz-' + wahl.zusatz;
-    a.className = klassen + ' bild-' + (vergleich ? 'oben' : wahl.bild);
-    b.className = klassen + ' bild-unten';
     document.documentElement.setAttribute('data-theme', wahl.thema === 'hell' ? 'light' : 'dark');
-    if (!instA) instA = Meteogramm.einbauen(Object.assign({ ziel:'#wetter-a' }, EINST));
-    if (vergleich && !instB) instB = Meteogramm.einbauen(Object.assign({ ziel:'#wetter-b' }, EINST));
-    if (instA) instA.zeichnen(); if (instB) instB.zeichnen();
+    if (!inst) inst = Meteogramm.einbauen(Object.assign({ ziel:'#wetter-a' }, EINST));
+    else inst.zeichnen();
     document.querySelectorAll('.regler button').forEach(function(btn){
       var s = btn.parentNode.getAttribute('data-schalter');
       btn.classList.toggle('is-on', wahl[s] === btn.getAttribute('data-wert'));

@@ -92,6 +92,14 @@ Der Baustein nimmt die Farben der umgebenden Seite, wenn sie diese Variablen set
 Fehlen sie, greifen eingebaute Ersatzwerte (dunkel). Die Farben der Diagrammlinien
 stehen in `meteogramm.js` im `KATALOG`.
 
+## Datumsfahne
+
+Datum und Uhrzeit stehen als Fahne oben am Auswahl-Strich und bleiben beim Scrollen der Seite
+stehen. Hat die Seite eine feste Menüleiste, setzt sie `--mg-haft-oben` am Ziel-Element auf deren
+Höhe (z. B. `ziel.style.setProperty('--mg-haft-oben', nav.offsetHeight + 'px')`), sonst rutscht die
+Fahne darunter. Das Ziel-Element und seine Eltern dürfen kein `overflow: hidden` haben, sonst haftet
+die Fahne nicht.
+
 ## Vergangene Stunden (wahlfrei)
 
 Ohne `bildspeicher` zeigt der Baustein nur das Kamerabild der **laufenden** Stunde,

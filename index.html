@@ -8,8 +8,8 @@
 <meta name="apple-mobile-web-app-title" content="Fuerteventura">
 <link rel="stylesheet" href="vendor/leaflet.css">
 <script defer src="vendor/leaflet.js"></script>
-<link rel="stylesheet" href="Wetter%20Tool/meteogramm.css?v=20260923f">
-<script defer src="Wetter%20Tool/meteogramm.js?v=20260923f"></script>
+<link rel="stylesheet" href="Wetter%20Tool/meteogramm.css?v=20260925a">
+<script defer src="Wetter%20Tool/meteogramm.js?v=20260925a"></script>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
 <link rel="apple-touch-icon" sizes="167x167" href="images/apple-touch-icon-167.png">
@@ -8489,6 +8489,10 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   (function initMeteogramm(){
     function start(){
       if (!window.Meteogramm || !document.getElementById('meteogramm')) return;
+      // Die Datumsfahne des Wetter-Tools haftet beim Scrollen direkt unter der Menüleiste
+      var mgZiel = document.getElementById('meteogramm'), nav = document.querySelector('nav.topnav');
+      function fahnenAbstand(){ if (nav) mgZiel.style.setProperty('--mg-haft-oben', nav.offsetHeight + 'px'); }
+      fahnenAbstand(); window.addEventListener('resize', fahnenAbstand);
       window.FUERTE_MG = window.Meteogramm.einbauen({
         ziel: '#meteogramm',
         zeitzone: 'Atlantic/Canary',

@@ -946,23 +946,17 @@
           '<div class="mg-tabs" id="' + kid('orte') + '" role="tablist" aria-label="Ort"></div>' +
           '<div class="mg-tabs mg-tabs-modell" id="' + kid('modelle') + '" role="tablist" aria-label="Wettermodell"></div>' +
         '</div>' +
-        '<div class="mg-head">' +
-          '<div class="mg-readout">' +
-            '<div class="mg-zeit" id="' + kid('zeit') + '"></div>' +
-            '<div class="mg-lage" id="' + kid('lage') + '"></div>' +
-          '</div>' +
-          '<div class="mg-knoepfe">' +
-            '<button type="button" class="mg-btn" id="' + kid('zurueck') + '" aria-label="Einen Tag zurück">‹</button>' +
-            '<button type="button" class="mg-btn mg-btn-jetzt" id="' + kid('jetzt') + '">Jetzt zentrieren</button>' +
-            '<button type="button" class="mg-btn" id="' + kid('vor') + '" aria-label="Einen Tag vor">›</button>' +
-            '<button type="button" class="mg-btn mg-btn-frisch" id="' + kid('frisch') + '" aria-label="Werte auffrischen" title="Werte neu holen">↻</button>' +
-            '<span class="mg-zeilenwahl">' +
-              '<button type="button" class="mg-btn" id="' + kid('zbtn') + '" aria-expanded="false" title="Welche Zeilen anzeigen?">☰</button>' +
-              '<div class="mg-zeilen-panel" id="' + kid('zpanel') + '" hidden><h4>Welche Zeilen?</h4></div>' +
-            '</span>' +
-          '</div>' +
+        // Datum und Uhrzeit als Fahne oben am Auswahl-Strich; sie bleibt beim Scrollen stehen
+        '<div class="mg-readout">' +
+          '<div class="mg-zeit" id="' + kid('zeit') + '"></div>' +
+          '<div class="mg-lage" id="' + kid('lage') + '"></div>' +
         '</div>' +
         '<div class="mg-werte" id="' + kid('werte') + '"></div>' +
+        '<div class="mg-wrap" id="' + kid('wrap') + '">' +
+          '<div class="mg-scroll" id="' + kid('scroll') + '"><div class="mg-svgwrap" id="' + kid('svgwrap') + '"></div></div>' +
+          '<div class="mg-achse" id="' + kid('achse') + '"></div>' +
+          '<div class="mg-cursor" aria-hidden="true"></div>' +
+        '</div>' +
         (ANSICHTEN.length > 1 ? '<div class="mg-ansichten" id="' + kid('ansichten') + '" role="tablist" aria-label="Bildansicht"></div>' : '') +
         (KARTE ? '<div class="mg-karte" id="' + kid('karte') + '" hidden>' +
           '<img class="mg-k-basis" id="' + kid('kbasis') + '" alt="Satellitenbild" decoding="async">' +
@@ -973,10 +967,16 @@
         '<div class="mg-cam" id="' + kid('cam') + '" hidden><img id="' + kid('camimg') + '" alt="Webcam-Bild" decoding="async" referrerpolicy="no-referrer">' +
           '<div class="mg-camwahl" id="' + kid('camwahl') + '" hidden></div>' +
           '<div class="mg-cam-text" id="' + kid('camtext') + '"></div></div>' +
-        '<div class="mg-wrap" id="' + kid('wrap') + '">' +
-          '<div class="mg-scroll" id="' + kid('scroll') + '"><div class="mg-svgwrap" id="' + kid('svgwrap') + '"></div></div>' +
-          '<div class="mg-achse" id="' + kid('achse') + '"></div>' +
-          '<div class="mg-cursor" aria-hidden="true"></div>' +
+        // Knöpfe unten, nah am Daumen
+        '<div class="mg-knoepfe">' +
+          '<button type="button" class="mg-btn" id="' + kid('zurueck') + '" aria-label="Einen Tag zurück">‹</button>' +
+          '<button type="button" class="mg-btn mg-btn-jetzt" id="' + kid('jetzt') + '">Jetzt zentrieren</button>' +
+          '<button type="button" class="mg-btn" id="' + kid('vor') + '" aria-label="Einen Tag vor">›</button>' +
+          '<button type="button" class="mg-btn mg-btn-frisch" id="' + kid('frisch') + '" aria-label="Werte auffrischen" title="Werte neu holen">↻</button>' +
+          '<span class="mg-zeilenwahl">' +
+            '<button type="button" class="mg-btn" id="' + kid('zbtn') + '" aria-expanded="false" title="Welche Zeilen anzeigen?">☰</button>' +
+            '<div class="mg-zeilen-panel" id="' + kid('zpanel') + '" hidden><h4>Welche Zeilen?</h4></div>' +
+          '</span>' +
         '</div>' +
         '<div class="mg-foot"><span>← Wischen → · Auswahl in der Mitte · Antippen holt die Stelle in die Mitte</span><span id="' + kid('quelle') + '"></span></div>';
 

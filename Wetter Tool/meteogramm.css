@@ -16,13 +16,17 @@
   --mg-schatten: var(--shadow, 0 1px 3px rgba(0,0,0,.25));
   --mg-serif: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
   --mg-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* Wie weit die Datumsfahne beim Scrollen vom oberen Rand bleibt
+     (z. B. Höhe einer festen Menüleiste der Seite) */
+  --mg-haft-oben: 0px;
 
   background: var(--mg-flaeche);
   border: 1px solid var(--mg-rand);
   border-radius: 18px;
   margin: 0 auto 14px;
   box-shadow: var(--mg-schatten);
-  overflow: hidden;
+  /* Nicht beschneiden: sonst kann die Datumsfahne beim Scrollen nicht haften */
+  overflow: visible;
   color: var(--mg-text);
   font-family: var(--mg-serif);
 }
@@ -34,31 +38,40 @@
 .mg-tab.is-on { background: var(--mg-flaeche); color: var(--mg-text); box-shadow: 0 1px 3px rgba(0,0,0,0.18); }
 .mg-tabs-modell .mg-tab { font-family: var(--mg-mono); font-size: 12px; padding: 0 10px; }
 
-.mg-head { position: relative; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; padding: 12px 14px 10px; }
-.mg-readout { min-width: 0; flex: 1; }
-.mg-zeit { font-family: var(--mg-mono); font-size: 1.05rem; font-weight: 700; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; min-height: 24px; }
-.mg-rel { font-family: var(--mg-serif); font-size: 12.5px; font-weight: 600; color: var(--mg-text-still); }
-/* Wetterlage neben Datum und Uhrzeit */
-.mg-lage { display: flex; align-items: center; gap: 7px; margin-top: 3px; font-size: 14px; color: var(--mg-text-still); min-height: 22px; }
+.mg-top { padding-bottom: 2px; }
+.mg-tabs-modell .mg-tab { font-size: 11.5px; }
+
+/* ---- Datumsfahne am oberen Ende des Auswahl-Strichs ----
+   Bleibt beim Scrollen der Seite oben stehen, damit man immer sieht,
+   zu welcher Stunde die Werte gehören. */
+.mg-readout { position: sticky; top: var(--mg-haft-oben); z-index: 6; display: flex; flex-direction: column; align-items: center; min-width: 0;
+  padding: 10px 14px 8px; background: var(--mg-flaeche); border-radius: 0 0 12px 12px; box-shadow: 0 10px 14px -10px rgba(0,0,0,.55); }
+/* kurzes Strichstück von der Fahne hinunter zur Werteliste */
+.mg-readout::before { content: ""; position: absolute; left: 50%; bottom: 0; width: 2px; height: 10px; margin-left: -1px; background: var(--mg-text); opacity: .85; }
+.mg-zeit { display: inline-flex; align-items: baseline; gap: 8px; flex-wrap: wrap; justify-content: center; padding: 5px 12px; border-radius: 8px;
+  background: var(--mg-text); color: var(--mg-flaeche); font-family: var(--mg-mono); font-size: 1rem; font-weight: 700; }
+.mg-rel { font-family: var(--mg-serif); font-size: 12.5px; font-weight: 600; color: var(--mg-flaeche); opacity: .72; }
+/* Wetterlage unter Datum und Uhrzeit */
+.mg-lage { display: flex; align-items: center; justify-content: center; gap: 7px; margin: 6px 0 0; font-size: 14px; color: var(--mg-text-still); min-height: 22px; }
 .mg-lage-i { font-size: 1.15rem; line-height: 1; }
 
-/* Die Werte als schlichte Liste: Bezeichnung, Zahl, Zusatz - keine Kästen,
-   keine Farben, nur eine feine Linie zwischen den Zeilen. Auf dem Laptop zwei
-   Spalten nebeneinander, auf dem Handy eine. */
-.mg-werte { display: grid; grid-template-columns: 1fr; padding: 2px 14px 10px; }
-.mg-wert { display: grid; grid-template-columns: minmax(84px, 30%) auto 1fr; align-items: baseline; column-gap: 12px;
+/* Die Werte "am Strich": der Auswahl-Strich läuft senkrecht durch die Liste,
+   links davon die Bezeichnung, rechts Zahl und Zusatz darunter. Keine Kästen,
+   keine Farben, nur eine feine Linie zwischen den Zeilen. */
+.mg-werte { position: relative; display: grid; grid-template-columns: 1fr; padding: 0 14px; }
+.mg-werte::before { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; margin-left: -1px; border-left: 2px solid var(--mg-text); opacity: .85; }
+.mg-wert { display: grid; grid-template-columns: 1fr 1fr; grid-template-areas: "l v" "l z"; align-items: start; column-gap: 0;
   padding: 6px 0; border-bottom: 1px solid var(--mg-rand); min-width: 0; }
 .mg-wert:last-child { border-bottom: 0; }
-.mg-wl { font-size: 12px; color: var(--mg-text-still); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.mg-wv { font-family: var(--mg-mono); font-size: 14.5px; font-weight: 700; color: var(--mg-text); white-space: nowrap; }
+.mg-wl { grid-area: l; align-self: center; text-align: right; padding-right: 16px; font-size: 12.5px; color: var(--mg-text-still); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mg-wv { grid-area: v; padding-left: 16px; font-family: var(--mg-mono); font-size: 14.5px; font-weight: 700; color: var(--mg-text); white-space: nowrap; }
 .mg-wv small { font-size: 0.78em; font-weight: 600; color: var(--mg-text-still); margin-left: 2px; }
-.mg-wz { font-size: 11.5px; color: var(--mg-text-still); text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.mg-wz { grid-area: z; padding-left: 16px; margin-top: -3px; line-height: 1.25; font-size: 11.5px; color: var(--mg-text-still); text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 .mg-wz:empty { display: none; }
-@media (min-width: 560px) {
-  .mg-werte { grid-template-columns: 1fr 1fr; column-gap: 32px; }
-}
 
-.mg-knoepfe { display: flex; gap: 6px; flex: none; }
+/* Knöpfe als Leiste unter Diagramm und Bild - auf dem Handy nah am Daumen */
+.mg-knoepfe { position: relative; display: flex; justify-content: center; gap: 6px; padding: 10px 14px 4px; }
+.mg-btn-jetzt { flex: 0 1 220px; }
 .mg-btn { min-height: 40px; min-width: 40px; padding: 0 12px; border-radius: 11px; border: 1px solid var(--mg-rand); background: var(--mg-flaeche2); color: var(--mg-text); font: 600 13.5px/1 var(--mg-serif); cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .mg-btn:active { transform: scale(0.97); }
 .mg-btn-jetzt { border-color: var(--mg-akzent); color: var(--mg-akzent); }
@@ -71,7 +84,7 @@
 
 /* ---- Zeilenauswahl ---- */
 .mg-zeilenwahl { position: relative; }
-.mg-zeilen-panel { position: absolute; right: 0; top: calc(100% + 6px); z-index: 30; background: var(--mg-flaeche); border: 1px solid var(--mg-rand); border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); padding: 8px; min-width: 232px; max-width: calc(100vw - 32px); max-height: min(62vh, 470px); overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.mg-zeilen-panel { position: absolute; right: 0; bottom: calc(100% + 6px); z-index: 30; background: var(--mg-flaeche); border: 1px solid var(--mg-rand); border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); padding: 8px; min-width: 232px; max-width: calc(100vw - 32px); max-height: min(62vh, 470px); overflow-y: auto; -webkit-overflow-scrolling: touch; }
 .mg-zeilen-panel[hidden] { display: none; }
 .mg-zeilen-panel h4 { margin: 4px 8px 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--mg-text-still); }
 .mg-zeilen-panel label { display: flex; align-items: center; gap: 10px; padding: 7px 8px; border-radius: 9px; cursor: pointer; font-size: 13.5px; min-height: 40px; }
@@ -88,7 +101,7 @@
 .mg-zeile.is-zieht .mg-griff { cursor: grabbing; }
 
 /* ---- Ansichten: Webcam, Satellit, Regen ---- */
-.mg-ansichten { display: flex; gap: 6px; padding: 0 14px 10px; flex-wrap: wrap; }
+.mg-ansichten { display: flex; justify-content: center; gap: 6px; padding: 12px 14px 10px; flex-wrap: wrap; }
 .mg-atab { min-height: 36px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--mg-rand); background: var(--mg-flaeche2);
   color: var(--mg-text-still); font: 600 13px/1 var(--mg-serif); cursor: pointer; white-space: nowrap; -webkit-tap-highlight-color: transparent; }
 .mg-atab.is-on { border-color: var(--mg-akzent); color: var(--mg-text); background: var(--mg-flaeche); }
@@ -166,9 +179,6 @@
 .mg-svg .mg-sortziel { stroke: var(--mg-akzent); stroke-width: 3; }
 
 @media (max-width: 560px) {
-  .mg-head { flex-direction: column; }
-  .mg-knoepfe { width: 100%; }
-  .mg-btn-jetzt { flex: 1; }
   .mg-top { flex-direction: column; }
   .mg-tabs { width: 100%; }
   .mg-tab { flex: 1; text-align: center; }
