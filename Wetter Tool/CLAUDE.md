@@ -20,7 +20,7 @@ keine Pillen, nicht „zu rund“**.
 | `meteogramm.js` / `meteogramm.css` | Der Baustein selbst. Weiß nichts von Fuerteventura. |
 | `demo.html` | Zum Ausprobieren ohne die große Seite. |
 | `entwurf.html` | Zeigt den Baustein allein, mit Hell/Dunkel-Schalter (früher Gestaltungs-Labor). |
-| `schriftprobe.html` | 17 Schriften für die Zahlen zur Auswahl. |
+| `schriftprobe.html` | 18 Schriften für die Zahlen zur Auswahl (Nr. 18 = Arial). |
 | `../index.html` | Die Fuerteventura-Seite; ruft `Meteogramm.einbauen({...})` mit Orten, Zeilen, Kameras auf. |
 | `../worker/fuerte-sync.js` | Cloudflare-Worker: speichert stündlich Webcam-Bilder (Bildspeicher). |
 
@@ -30,7 +30,7 @@ diesem Ordner wird mit veröffentlicht (Positivliste in `../.gitignore`), also a
 
 ## Offene Entscheidungen von Stephan
 
-1. **Schrift für die Zahlen (`schriftprobe.html`)** – Stephan nennt eine Nummer 1–17. Nr. 1 =
+1. **Schrift für die Zahlen (`schriftprobe.html`)** – Stephan nennt eine Nummer 1–18. Nr. 1 =
    JetBrains Mono = Ist-Stand. Umstellen: `--mg-mono` in `meteogramm.css` + Google-Fonts-Link in
    `../index.html`.
 2. **Mond im hellen Modus** bewusst blass (Deckkraft 0,42) – kräftiger oder so lassen?
