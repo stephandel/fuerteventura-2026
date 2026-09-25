@@ -292,11 +292,14 @@ details[open] summary::before { content: "− "; }
 .mond-bild { position: absolute; right: -34px; top: 50%; transform: translateY(-50%); pointer-events: none; opacity: 0.5; }
 /* Das Foto läuft nach links weich aus, damit der Text darüber lesbar bleibt;
    das Bild wird etwas größer als der Rahmen gezogen, so verschwindet der
-   schwarze Rand des NASA-Bildes. Im hellen Modus schwächer, sonst erschlägt es. */
-.mond-foto-rahmen { position: absolute; right: -40px; top: 50%; width: 140px; height: 140px; transform: translateY(-50%); border-radius: 50%; overflow: hidden; pointer-events: none; opacity: 0.42;
+   schwarze Rand des NASA-Bildes. Im hellen Modus abgedunkelt, sonst verschwindet
+   der helle Mond auf dem hellen Grund. */
+.mond-foto-rahmen { position: absolute; right: -40px; top: 50%; width: 140px; height: 140px; transform: translateY(-50%); border-radius: 50%; overflow: hidden; pointer-events: none; opacity: 0.85;
   -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0) 8%, rgba(0,0,0,0.55) 40%, #000 70%); mask-image: linear-gradient(to right, rgba(0,0,0,0) 8%, rgba(0,0,0,0.55) 40%, #000 70%); }
 .mond-foto-rahmen[hidden] { display: none; }
-.mond-foto { width: 114%; height: 114%; margin: -7%; display: block; filter: grayscale(1) contrast(0.9); }
+.mond-foto { width: 114%; height: 114%; margin: -7%; display: block; filter: grayscale(1) brightness(0.72) contrast(1.15); }
+:root[data-theme="dark"] .mond-foto { filter: grayscale(1) contrast(0.9); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .mond-foto { filter: grayscale(1) contrast(0.9); } }
 /* Text bekommt einen Hof in der Kachelfarbe - lesbar auch dort, wo er den Mond überlappt */
 .wx-tile.wt-mond > .wt-v, .wx-tile.wt-mond > .wt-s, .wx-tile.wt-mond > .wt-h { text-shadow: 0 0 6px var(--surface), 0 0 3px var(--surface), 0 0 1px var(--surface); }
 :root[data-theme="dark"] .mond-foto-rahmen { opacity: 0.6; }
@@ -308,7 +311,8 @@ details[open] summary::before { content: "− "; }
 :root[data-theme="dark"] .mond-dunkel { fill: #3a4046; }
 :root[data-theme="dark"] .mond-hell { fill: #cfd4d8; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .mond-dunkel { fill: #3a4046; } :root:not([data-theme="light"]) .mond-hell { fill: #cfd4d8; } }
-@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) .mond-bild { opacity: 0.55; } }
+@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) .mond-bild { opacity: 0.8; } }
+:root[data-theme="light"] .mond-bild { opacity: 0.8; }
 
 /* Restliche Trefferflächen */
 .pack-list input[type=checkbox], .pack-item input[type=checkbox] { width: 26px !important; height: 26px !important; flex-shrink: 0; accent-color: var(--good); }
@@ -4600,7 +4604,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       { h: '🌊 Wassertemperatur', v: '22–23°', s: 'Oktober-Mittel · <a href="https://www.meerestemperatur.de/europa/fuerteventura/corralejo/" target="_blank" rel="noopener">Tageswert prüfen ↗</a>' },
       { h: '🌑 Mond', v: moonPhaseName(new Date()), klasse: 'wt-mond',
         hinter: moonSvg(moonPhaseFraction(new Date()), 132) + '<span class="mond-foto-rahmen" id="mond-foto-rahmen" hidden><img class="mond-foto" id="mond-foto" alt=""></span>',
-        s: Math.round((1 - Math.cos(2 * Math.PI * moonPhaseFraction(new Date()))) / 2 * 100) + ' % beleuchtet · Neumond am 10.10.' }
+        s: Math.round((1 - Math.cos(2 * Math.PI * moonPhaseFraction(new Date()))) / 2 * 100) + ' % beleuchtet<br>' + mondphaseText(naechsteMondphase(new Date())) }
     ];
     box.innerHTML = tiles.map(function(t){
       return '<div class="wx-tile' + (t.klasse ? ' ' + t.klasse : '') + '">' + (t.hinter || '') + '<div class="wt-h">' + t.h + '</div>' +
@@ -4631,6 +4635,61 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     };
     img.onerror = function(){ rahmen.hidden = true; };
     img.src = MOND_BILDER[jahr] + ('0000' + nr).slice(-4) + '.jpg';
+  }
+
+  // Genaue Zeitpunkte der Mondphasen nach J. Meeus, "Astronomical Algorithms", Kap. 49
+  // (Genauigkeit wenige Minuten). art: 0 = Neumond, 0.25 = erstes Viertel, 0.5 = Vollmond, 0.75 = letztes Viertel
+  function mondPhaseZeit(k){
+    var r = Math.PI / 180, T = k / 1236.85, art = k - Math.floor(k);
+    var JDE = 2451550.09766 + 29.530588861 * k + 0.00015437 * T * T - 0.00000015 * T * T * T + 0.00000000073 * T * T * T * T;
+    var E = 1 - 0.002516 * T - 0.0000074 * T * T;
+    var M  = (2.5534 + 29.1053567 * k - 0.0000014 * T * T) * r;
+    var Mm = (201.5643 + 385.81693528 * k + 0.0107582 * T * T + 0.00001238 * T * T * T) * r;
+    var F  = (160.7108 + 390.67050284 * k - 0.0016118 * T * T - 0.00000227 * T * T * T) * r;
+    var O  = (124.7746 - 1.56375588 * k + 0.0020672 * T * T) * r;
+    var s = Math.sin, c;
+    if (art === 0 || art === 0.5) {
+      var voll = art === 0.5;
+      c = (voll ? -0.40614 : -0.40720) * s(Mm) + (voll ? 0.17302 : 0.17241) * E * s(M) + (voll ? 0.01614 : 0.01608) * s(2 * Mm)
+        + (voll ? 0.01043 : 0.01039) * s(2 * F) + (voll ? 0.00734 : 0.00739) * E * s(Mm - M) - (voll ? 0.00515 : 0.00514) * E * s(Mm + M)
+        + (voll ? 0.00209 : 0.00208) * E * E * s(2 * M) - 0.00111 * s(Mm - 2 * F) - 0.00057 * s(Mm + 2 * F)
+        + 0.00056 * E * s(2 * Mm + M) - 0.00042 * s(3 * Mm) + 0.00042 * E * s(M + 2 * F) + 0.00038 * E * s(M - 2 * F)
+        - 0.00024 * E * s(2 * Mm - M) - 0.00017 * s(O) - 0.00007 * s(Mm + 2 * M) + 0.00004 * s(2 * Mm - 2 * F)
+        + 0.00004 * s(3 * M) + 0.00003 * s(Mm + M - 2 * F) + 0.00003 * s(2 * Mm + 2 * F) - 0.00003 * s(Mm + M + 2 * F)
+        + 0.00003 * s(Mm - M + 2 * F) - 0.00002 * s(Mm - M - 2 * F) - 0.00002 * s(3 * Mm + M) + 0.00002 * s(4 * Mm);
+    } else {
+      c = -0.62801 * s(Mm) + 0.17172 * E * s(M) - 0.01183 * E * s(Mm + M) + 0.00862 * s(2 * Mm) + 0.00804 * s(2 * F)
+        + 0.00454 * E * s(Mm - M) + 0.00204 * E * E * s(2 * M) - 0.00180 * s(Mm - 2 * F) - 0.00070 * s(Mm + 2 * F)
+        - 0.00040 * s(3 * Mm) - 0.00034 * E * s(2 * Mm - M) + 0.00032 * E * s(M + 2 * F) + 0.00032 * E * s(M - 2 * F)
+        - 0.00028 * E * E * s(Mm + 2 * M) + 0.00027 * E * s(2 * Mm + M) - 0.00017 * s(O) - 0.00005 * s(Mm - M - 2 * F)
+        + 0.00004 * s(2 * Mm + 2 * F) - 0.00004 * s(Mm + M + 2 * F) + 0.00004 * s(Mm - 2 * M) + 0.00003 * s(Mm + M - 2 * F)
+        + 0.00003 * s(3 * M) + 0.00002 * s(2 * Mm - 2 * F) + 0.00002 * s(Mm - M + 2 * F) - 0.00002 * s(3 * Mm + M);
+      var W = 0.00306 - 0.00038 * E * Math.cos(M) + 0.00026 * Math.cos(Mm) - 0.00002 * Math.cos(Mm - M) + 0.00002 * Math.cos(Mm + M) + 0.00002 * Math.cos(2 * F);
+      c += art === 0.25 ? W : -W;
+    }
+    // Planeten-Zusatzglieder
+    var A = [299.77 + 0.107408 * k - 0.009173 * T * T, 251.88 + 0.016321 * k, 251.83 + 26.651886 * k, 349.42 + 36.412478 * k,
+      84.66 + 18.206239 * k, 141.74 + 53.303771 * k, 207.14 + 2.453732 * k, 154.84 + 7.306860 * k, 29.16 + 27.261239 * k,
+      205.66 + 0.121824 * k, 283.87 + 1.844379 * k, 157.64 + 0.070286 * k, 110.41 + 42.216316 * k, 342.51 + 0.041301 * k];
+    var G = [325, 165, 164, 126, 110, 62, 60, 56, 47, 42, 40, 37, 35, 23];
+    for (var i = 0; i < 14; i++) c += G[i] * 0.000001 * s(A[i] * r);
+    // JDE ist Terrestrische Zeit; rund 69 s Unterschied zur Weltzeit
+    return new Date((JDE + c - 2440587.5) * 86400000 - 69000);
+  }
+  // Nächster Voll- oder Neumond ab jetzt: { name, zeit }
+  function naechsteMondphase(ab){
+    var k = Math.floor(((ab.getTime() / 86400000 + 2440587.5) - 2451550.09766) / 29.530588861 * 2) / 2 - 0.5;
+    for (var n = 0; n < 6; n++, k += 0.5) {
+      var z = mondPhaseZeit(k);
+      if (z > ab) return { name: (k - Math.floor(k)) === 0.5 ? 'Vollmond' : 'Neumond', zeit: z };
+    }
+  }
+  // "Vollmond am 26.09. um 17:49 Uhr" - in Ortszeit der Kanaren
+  function mondphaseText(p){
+    var opt = { timeZone: 'Atlantic/Canary' }, tag;
+    try { tag = p.zeit.toLocaleDateString('de-DE', Object.assign({ day: '2-digit', month: '2-digit' }, opt)); }
+    catch(e){ tag = p.zeit.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' }); }
+    return p.name + ' am ' + tag + ' um ' + fmtCanary(p.zeit) + ' Uhr';
   }
 
   // Grobe Mondphase — reicht für die Anzeige, kein Ersatz für ein Ephemeriden-Programm

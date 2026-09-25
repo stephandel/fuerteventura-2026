@@ -30,7 +30,7 @@ diesem Ordner wird mit veröffentlicht (Positivliste in `../.gitignore`), also a
 
 ## Offene Entscheidungen von Stephan
 
-1. **Mond im hellen Modus** bewusst blass (Deckkraft 0,42) – kräftiger oder so lassen?
+Keine – alle entschieden (siehe unten).
 
 ## Entschieden
 
@@ -43,6 +43,9 @@ diesem Ordner wird mit veröffentlicht (Positivliste in `../.gitignore`), also a
 - **Schrift für die Zahlen (25.09.2026):** Arial (Nr. 18 der Schriftprobe), gesetzt über `--mg-mono`
   in `meteogramm.css`. Kein Download nötig; der JetBrains-Mono-Link in `../index.html` bleibt, weil
   die Seite ihn an anderen Stellen nutzt.
+- **Mond-Kachel (25.09.2026, in `../index.html`):** im hellen Modus kräftiger (Foto abgedunkelt,
+  Deckkraft 0,85). Darunter steht der nächste Voll- oder Neumond mit genauer Uhrzeit in Ortszeit
+  (`naechsteMondphase()`, Rechnung nach Meeus, geprüft gegen die US-Sternwarte USNO: auf die Minute gleich).
 
 ## Offene technische Punkte
 
