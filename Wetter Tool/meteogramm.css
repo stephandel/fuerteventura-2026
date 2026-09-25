@@ -15,7 +15,8 @@
   --mg-akzent:   var(--teal,      #4bc4cb);
   --mg-schatten: var(--shadow, 0 1px 3px rgba(0,0,0,.25));
   --mg-serif: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
-  --mg-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* Schrift für die Zahlen: Arial (gewählt 25.09.2026, Nr. 18 der Schriftprobe) */
+  --mg-mono: Arial, Helvetica, sans-serif;
   /* Wie weit die Datumsfahne beim Scrollen vom oberen Rand bleibt
      (z. B. Höhe einer festen Menüleiste der Seite) */
   --mg-haft-oben: 0px;

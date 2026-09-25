@@ -30,10 +30,7 @@ diesem Ordner wird mit veröffentlicht (Positivliste in `../.gitignore`), also a
 
 ## Offene Entscheidungen von Stephan
 
-1. **Schrift für die Zahlen (`schriftprobe.html`)** – Stephan nennt eine Nummer 1–18. Nr. 1 =
-   JetBrains Mono = Ist-Stand. Umstellen: `--mg-mono` in `meteogramm.css` + Google-Fonts-Link in
-   `../index.html`.
-2. **Mond im hellen Modus** bewusst blass (Deckkraft 0,42) – kräftiger oder so lassen?
+1. **Mond im hellen Modus** bewusst blass (Deckkraft 0,42) – kräftiger oder so lassen?
 
 ## Entschieden
 
@@ -43,6 +40,9 @@ diesem Ordner wird mit veröffentlicht (Positivliste in `../.gitignore`), also a
   es nicht mehr; `.mg` hat `overflow: visible`, sonst haftet die Fahne nicht. Abstand nach oben über
   `--mg-haft-oben`; `../index.html` setzt ihn auf die Höhe der Menüleiste. Das Zeilen-Menü ☰ klappt
   nach oben auf. Zusatzzeile (Böen, gefühlt …) bleibt an.
+- **Schrift für die Zahlen (25.09.2026):** Arial (Nr. 18 der Schriftprobe), gesetzt über `--mg-mono`
+  in `meteogramm.css`. Kein Download nötig; der JetBrains-Mono-Link in `../index.html` bleibt, weil
+  die Seite ihn an anderen Stellen nutzt.
 
 ## Offene technische Punkte
 
