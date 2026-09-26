@@ -21,6 +21,7 @@ keine Pillen, nicht „zu rund“**.
 | `demo.html` | Zum Ausprobieren ohne die große Seite. |
 | `entwurf.html` | Zeigt den Baustein allein, mit Hell/Dunkel-Schalter (früher Gestaltungs-Labor). |
 | `schriftprobe.html` | 18 Schriften für die Zahlen zur Auswahl (Nr. 18 = Arial). |
+| `wetterkopf-probe.html` | Probeseite für den großen Wetterkasten oben auf der Wetterseite: 4 Hintergründe × 5 Aufbauten × 9 Schriften, Simulator für Wetter/Tageszeit. Fotos `../images/wx-*.webp`. |
 | `../index.html` | Die Fuerteventura-Seite; ruft `Meteogramm.einbauen({...})` mit Orten, Zeilen, Kameras auf. |
 | `../worker/fuerte-sync.js` | Cloudflare-Worker: speichert stündlich Webcam-Bilder (Bildspeicher). |
 
@@ -30,7 +31,11 @@ diesem Ordner wird mit veröffentlicht (Positivliste in `../.gitignore`), also a
 
 ## Offene Entscheidungen von Stephan
 
-Keine – alle entschieden (siehe unten).
+1. **Wetterkopf (`wetterkopf-probe.html`, gebaut 26.09.2026)** – Stephan nennt „Hintergrund A–D · Aufbau 1–5 ·
+   Schrift 1–9 · Ecken“ (steht unten auf der Seite). Empfehlung: Hintergrund D (Foto + Bewegung), Aufbau 2
+   (Tageskurve), Schrift 4 (Inter dünn). Umsetzung dann in `../index.html` (`.wx-hero`, `renderWx…` um Zeile 4690);
+   Bild-Logik `fotoFuer()`, Himmel-Zeichner `Himmel`, Kurven `tageskurve()` usw. aus der Probeseite übernehmen.
+   Calima: Open-Meteo Air-Quality `current=dust`, ab 100 µg/m³ gilt es als Calima.
 
 ## Entschieden
 

@@ -1,0 +1,965 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Wetterkopf – Probe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Inter:wght@200;300;500&family=Manrope:wght@300;500&family=Outfit:wght@200;300&family=Space+Grotesk:wght@400;500&family=Fraunces:opsz,wght@9..144,300;9..144,500&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+  /* ---------- Seite (Farben wie die Fuerteventura-Seite) ---------- */
+  :root { color-scheme: dark; --page:#14181a; --surface:#1b2124; --surface-2:#202729; --border:#303836; --ink:#ede9e0; --ink-dim:#b4ac9c; --teal:#4bc4cb; --ochre:#e0a24f; }
+  :root[data-theme="light"] { color-scheme: light; --page:#e9ebe6; --surface:#f8f8f4; --surface-2:#eeeee6; --border:#d7d6c9; --ink:#1c1a17; --ink-dim:#5b564c; --teal:#0f6e76; --ochre:#b5741f; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--page); color:var(--ink); font:15px/1.55 "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif; }
+  .seite { max-width:1320px; margin:0 auto; padding:18px 16px 120px; }
+  h1 { font-size:1.45rem; margin:0 0 4px; letter-spacing:-0.01em; }
+  h2 { font-size:1.12rem; margin:0 0 2px; letter-spacing:-0.01em; }
+  .unter { color:var(--ink-dim); margin:0 0 16px; max-width:72ch; }
+  .abschnitt { margin:34px 0 0; }
+  .abschnitt > .unter { margin-bottom:14px; }
+  .nr { color:var(--teal); font-weight:700; margin-right:6px; }
+
+  /* ---------- Simulator-Leiste ---------- */
+  .regler { position:sticky; top:0; z-index:40; margin:0 -16px; padding:10px 16px 8px; background:color-mix(in srgb, var(--page) 92%, transparent);
+    backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); border-bottom:1px solid var(--border); padding-top:calc(10px + env(safe-area-inset-top, 0px)); }
+  .zeile { display:flex; align-items:baseline; gap:4px 12px; overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch; white-space:nowrap; padding:2px 0; }
+  .zeile::-webkit-scrollbar { display:none; }
+  .zeile .was { font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-dim); min-width:74px; flex:none; }
+  .wahl { border:0; background:none; color:var(--ink-dim); font:600 13.5px "Plus Jakarta Sans", system-ui, sans-serif; padding:6px 2px 5px; cursor:pointer; border-bottom:2px solid transparent; flex:none; min-height:34px; }
+  .wahl.is-on { color:var(--ink); border-bottom-color:var(--teal); }
+  .status { font-size:12px; color:var(--ink-dim); margin-top:2px; min-height:18px; }
+  .status b { color:var(--ink); font-weight:600; }
+
+  /* ---------- Vergleichskarten ---------- */
+  .raster { display:grid; gap:22px 18px; grid-template-columns:repeat(auto-fill, minmax(min(100%, 330px), 1fr)); }
+  .karte { min-width:0; }
+  .karte-kopf { display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin:0 0 8px; }
+  .karte-kopf b { font-size:14.5px; }
+  .karte-kopf .emp { color:var(--teal); font-size:12px; font-weight:700; white-space:nowrap; }
+  .karte .buehne { max-width:440px; }
+  .karte.is-gewaehlt .buehne { outline:2px solid var(--teal); outline-offset:4px; border-radius:calc(var(--kopf-ecke) + 4px); }
+  .pro, .contra { font-size:12.5px; color:var(--ink-dim); margin:8px 0 0; line-height:1.45; }
+  .pro::before { content:"+ "; color:var(--teal); font-weight:700; }
+  .contra { margin-top:3px; }
+  .contra::before { content:"– "; color:var(--ochre); font-weight:700; }
+  .waehlen { margin-top:8px; border:0; background:none; padding:6px 0; color:var(--teal); font:700 13px "Plus Jakarta Sans", system-ui, sans-serif; cursor:pointer; }
+  .karte.is-gewaehlt .waehlen { color:var(--ink-dim); cursor:default; }
+  .camwahl { display:flex; gap:12px; font-size:12px; margin:0 0 6px; }
+  .camwahl button { border:0; background:none; color:var(--ink-dim); font:600 12px "Plus Jakarta Sans", system-ui, sans-serif; padding:2px 0; border-bottom:2px solid transparent; cursor:pointer; }
+  .camwahl button.is-on { color:var(--ink); border-bottom-color:var(--teal); }
+
+  /* Schriftproben */
+  .schriften { display:grid; gap:10px; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); }
+  .schrift { text-align:left; border:1px solid var(--border); background:var(--surface); color:var(--ink); border-radius:10px; padding:10px 12px 9px; cursor:pointer; min-width:0; }
+  .schrift.is-on { border-color:var(--teal); box-shadow:inset 0 0 0 1px var(--teal); }
+  .schrift .probe { font-size:2.6rem; line-height:1; display:block; margin:2px 0 6px; }
+  .schrift small { display:block; font-size:11.5px; color:var(--ink-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .schrift small b { color:var(--ink); font-weight:600; }
+
+  /* Feinschliff */
+  .fein { display:grid; gap:4px; }
+
+  /* Auswahl unten */
+  .auswahl { position:fixed; left:0; right:0; bottom:0; z-index:50; background:var(--surface); border-top:1px solid var(--border);
+    padding:10px 16px calc(10px + env(safe-area-inset-bottom, 0px)); font-size:13px; box-shadow:0 -6px 18px rgba(0,0,0,.18); }
+  .auswahl-in { max-width:1320px; margin:0 auto; display:flex; flex-wrap:wrap; gap:2px 14px; align-items:baseline; }
+  .auswahl b { color:var(--teal); }
+  .auswahl .dim { color:var(--ink-dim); font-size:12px; }
+
+  /* ======================================================================
+     Der Wetterkopf selbst
+     ====================================================================== */
+  :root { --kopf-ecke:12px; --kz-font:Arial, Helvetica, sans-serif; --kz-gewicht:400; --kz-abstand:-0.04em; }
+  .kopf { position:relative; overflow:hidden; border-radius:var(--kopf-ecke); color:#fff; isolation:isolate;
+    background:#1d4f6b; min-height:220px; box-shadow:0 1px 3px rgba(0,0,0,.25); font-family:"Plus Jakarta Sans", system-ui, sans-serif; }
+  .kopf-bg { position:absolute; inset:0; z-index:0; }
+  .kopf-bg img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
+  .kopf-bg canvas { position:absolute; inset:0; width:100%; height:100%; display:block; }
+  .kopf-bg.faehrt img { animation:faehrt 48s ease-in-out infinite alternate; transform-origin:60% 40%; }
+  @keyframes faehrt { from { transform:scale(1.02); } to { transform:scale(1.10) translateX(-1.5%); } }
+  .still .kopf-bg.faehrt img { animation:none; }
+  @media (prefers-reduced-motion: reduce) { .kopf-bg.faehrt img { animation:none; } }
+  .kopf-schleier { position:absolute; inset:0; z-index:1; pointer-events:none;
+    background:linear-gradient(180deg, rgba(4,14,22,.42) 0%, rgba(4,14,22,.08) 38%, rgba(4,14,22,.10) 55%, rgba(4,14,22,.62) 100%); }
+  .kopf-in { position:relative; z-index:2; padding:16px 18px 16px; }
+  .kopf svg { display:block; overflow:visible; }
+  .kopf svg text { font-family:var(--kz-font); fill:rgba(255,255,255,.86); font-size:10.5px; }
+  .kopf .schatten, .kopf-in { text-shadow:0 1px 8px rgba(0,0,0,.35); }
+  .kz { font-family:var(--kz-font); font-weight:var(--kz-gewicht); letter-spacing:var(--kz-abstand); font-variant-numeric:tabular-nums; }
+  .ort { font-size:12.5px; letter-spacing:.02em; opacity:.9; }
+  .lage { font-size:14.5px; font-weight:600; }
+  .lage .ic { margin-right:7px; }
+  .klein { font-size:12px; opacity:.85; }
+
+  /* A · wie bisher */
+  .a1 .temp { font-size:4.2rem; line-height:.95; margin:4px 0 2px; }
+  .a1 .hilo { font-size:13px; opacity:.92; margin-top:2px; }
+  .a1 .stand { font-size:11.5px; opacity:.72; margin-top:10px; }
+
+  /* B · Tageskurve */
+  .a2 { min-height:300px; }
+  .a2 .oben { display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
+  .a2 .temp { font-size:3.9rem; line-height:.92; margin:4px 0 4px; }
+  .a2 .rechts { text-align:right; font-size:12.5px; line-height:1.55; padding-top:4px; }
+  .a2 .rechts .kz { font-size:14px; }
+  .a2 .diagramm { margin-top:10px; }
+  .a2 .legende { display:flex; gap:14px; font-size:11px; opacity:.85; margin-top:4px; }
+  .a2 .legende i { display:inline-block; width:14px; height:2px; vertical-align:middle; margin-right:5px; border-radius:1px; }
+
+  /* C · Horizont */
+  .a3 { min-height:300px; }
+  .a3 .kopf-schleier { background:linear-gradient(180deg, rgba(4,14,22,.40) 0%, rgba(4,14,22,.05) 45%, rgba(4,14,22,.35) 100%); }
+  .a3 .oben { display:flex; justify-content:space-between; gap:10px; }
+  .a3 .temp { font-size:4rem; line-height:.92; margin:4px 0 3px; }
+  .a3 .klein { margin-top:3px; }
+  .a3 .rechts { text-align:right; font-size:12.5px; line-height:1.55; padding-top:4px; }
+  .a3 .szene { position:absolute; inset:0; z-index:1; pointer-events:none; }
+  .a3 .unten { position:absolute; left:18px; right:18px; bottom:14px; z-index:2; display:flex; justify-content:space-between; align-items:flex-end; gap:10px; font-size:12.5px; }
+  .a3 .unten .kz { font-size:13.5px; }
+
+  /* D · Stundenleiste */
+  .a4 { min-height:300px; }
+  .a4 .oben { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+  .a4 .temp { font-size:3.3rem; line-height:.92; margin:3px 0 3px; }
+  .a4 .werte { display:grid; grid-template-columns:auto auto; gap:1px 10px; font-size:12px; padding-top:4px; text-align:right; }
+  .a4 .werte span:nth-child(odd) { opacity:.75; text-align:left; }
+  .a4 .werte .kz { font-size:13px; }
+  .a4 .leiste { margin-top:10px; }
+
+  /* E · Ruhig */
+  .a5 { min-height:280px; }
+  .a5 .kopf-schleier { background:linear-gradient(90deg, rgba(4,14,22,.62) 0%, rgba(4,14,22,.25) 60%, rgba(4,14,22,.12) 100%); }
+  .a5 .ort { text-transform:uppercase; letter-spacing:.14em; font-size:11px; }
+  .a5 .temp { font-size:5.6rem; line-height:.9; margin:10px 0 8px; }
+  .a5 .satz { font-size:14.5px; line-height:1.5; max-width:30ch; }
+  .a5 .linien { margin-top:14px; }
+</style>
+</head>
+<body>
+<div class="seite" id="seite">
+  <h1>Wetterkopf – Probe</h1>
+  <p class="unter">Hier kannst du den großen Wetterkasten oben auf der Wetterseite in Ruhe aussuchen: den Hintergrund, den Aufbau und die Schrift. Mit der Leiste oben spielst du jedes Wetter und jede Tageszeit durch. „Echt“ zeigt das, was gerade in Corralejo los ist. Unten steht deine Auswahl, die sagst du mir einfach.</p>
+
+  <div class="regler" id="regler">
+    <div class="zeile" data-gruppe="wetter"><span class="was">Wetter</span></div>
+    <div class="zeile" data-gruppe="zeit"><span class="was">Tageszeit</span></div>
+    <div class="zeile" data-gruppe="thema"><span class="was">Seite</span></div>
+    <div class="status" id="status">Lade echte Werte …</div>
+  </div>
+
+  <section class="abschnitt">
+    <h2><span class="nr">1</span>Hintergrund</h2>
+    <p class="unter">Vier Wege, wie das Bild zum Wetter passt. Gezeigt im Aufbau, den du unter 2 gewählt hast.</p>
+    <div class="raster" id="raster-hg"></div>
+  </section>
+
+  <section class="abschnitt">
+    <h2><span class="nr">2</span>Aufbau</h2>
+    <p class="unter">Fünf Anordnungen, alle mit dem Hintergrund aus 1. Temperatur (orange) und Tide (türkis) laufen als Linien mit, wie im großen Wetter-Tool; der helle senkrechte Strich ist „jetzt“.</p>
+    <div class="raster" id="raster-aufbau"></div>
+  </section>
+
+  <section class="abschnitt">
+    <h2><span class="nr">3</span>Schrift für die Zahlen</h2>
+    <p class="unter">Gilt für die große Temperatur und alle Zahlen im Kasten. Die Beschriftungen bleiben in der Schrift der Seite.</p>
+    <div class="schriften" id="schriften"></div>
+  </section>
+
+  <section class="abschnitt">
+    <h2><span class="nr">4</span>Feinschliff</h2>
+    <div class="fein">
+      <div class="zeile" data-gruppe="ecke"><span class="was">Ecken</span></div>
+      <div class="zeile" data-gruppe="bewegung"><span class="was">Bewegung</span></div>
+    </div>
+  </section>
+</div>
+
+<div class="auswahl"><div class="auswahl-in" id="auswahl"></div></div>
+
+<script>
+(function(){
+  'use strict';
+
+  // ======================================================================
+  //  Auswahl und Schalter
+  // ======================================================================
+  var GRUPPEN = {
+    wetter: [['echt','Echt'],['sonnig','☀️ Sonnig'],['heiter','🌤️ Heiter'],['bewoelkt','☁️ Bewölkt'],['regen','🌧️ Regen'],['gewitter','⛈️ Gewitter'],['calima','🌫️ Calima']],
+    zeit:   [['echt','Echt'],['morgen','Morgen'],['mittag','Mittag'],['abend','Abendsonne'],['nacht','Nacht']],
+    thema:  [['dunkel','Dunkel'],['hell','Hell']],
+    ecke:   [['20','Rund'],['12','Sanft'],['4','Fast eckig']],
+    bewegung: [['an','An'],['aus','Aus']]
+  };
+  var HINTERGRUENDE = [
+    { id:'A', name:'Foto je Wetterlage', pro:'Sieht sofort schön aus, ruhig, kaum Aufwand – zehn ausgesuchte Fotos, von Sonne bis Sternennacht.', contra:'Nie genau dieser Himmel, sondern ein passendes Stimmungsbild.' },
+    { id:'B', name:'Echte Webcam', pro:'Völlig echt: so sieht es gerade wirklich aus.', contra:'Nachts fast schwarz, Kameras fallen aus, Corralejo liefert nur ein kleines, unscharfes Bild. Der Simulator wirkt hier nicht.' },
+    { id:'C', name:'Gezeichneter Himmel', pro:'Passt genau: Wolkenmenge wie gemessen, Wolken ziehen mit dem echten Wind, Sonne und Mond (mit echter Phase) stehen richtig, Wasserlinie folgt der Tide. Blick von Corralejo nach Lobos.', contra:'Wirkt wie eine Illustration, nicht wie ein Foto.' },
+    { id:'D', name:'Foto + leichte Bewegung', emp:true, pro:'Das Schönste von beiden: passendes Foto, darüber ziehen Wolkenschleier mit dem echten Wind, bei Regen feine Tropfen, bei Gewitter ein Wetterleuchten. Das Foto fährt ganz langsam.', contra:'Etwas mehr Rechenarbeit fürs Handy (hält sich aber in Grenzen).' }
+  ];
+  var AUFBAUTEN = [
+    { id:'1', name:'Wie bisher', pro:'Vertraut, groß und klar.', contra:'Verschenkt Platz – kein Verlauf, keine Tide.' },
+    { id:'2', name:'Tageskurve', emp:true, pro:'Auf einen Blick: wie warm es heute noch wird und wann Hoch- und Niedrigwasser sind. Genau wie im großen Wetter-Tool, nur für heute.', contra:'Etwas mehr Inhalt, kleine Beschriftungen.' },
+    { id:'3', name:'Horizont', pro:'Der Hingucker: die Sonne wandert auf ihrem Bogen (nachts der Mond), und die Tide ist wirklich das Wasser unten im Bild.', contra:'Verspielter; die Temperatur zeigt nur Hoch und Tief, keine Kurve.' },
+    { id:'4', name:'Stundenleiste', pro:'Die nächsten 24 Stunden in 2-Stunden-Schritten: Symbol, Temperatur als Linie, darunter die Tide. Dazu Wind, Wasser und UV.', contra:'Am vollsten von allen.' },
+    { id:'5', name:'Ruhig', pro:'Große Zahl, ein Satz in normaler Sprache, zwei feine Linien. Sehr aufgeräumt.', contra:'Die Linien sind nur Andeutung, ohne Uhrzeiten.' }
+  ];
+  var SCHRIFTEN = [
+    { id:'1', name:'Arial', note:'wie jetzt im Wetter-Tool', fam:'Arial, Helvetica, sans-serif', w:400, ls:'-0.04em' },
+    { id:'2', name:'Plus Jakarta Sans', note:'Schrift der Seite', fam:'"Plus Jakarta Sans", sans-serif', w:500, ls:'-0.045em' },
+    { id:'3', name:'JetBrains Mono', note:'bisher im Wetterkasten', fam:'"JetBrains Mono", monospace', w:700, ls:'-0.06em' },
+    { id:'4', name:'Inter, dünn', note:'wie Apples Wetter-App', fam:'Inter, sans-serif', w:200, ls:'-0.04em' },
+    { id:'5', name:'Manrope, leicht', note:'rund und modern', fam:'Manrope, sans-serif', w:300, ls:'-0.045em' },
+    { id:'6', name:'Outfit, dünn', note:'klar und leicht', fam:'Outfit, sans-serif', w:200, ls:'-0.03em' },
+    { id:'7', name:'Space Grotesk', note:'markant, etwas technisch', fam:'"Space Grotesk", sans-serif', w:400, ls:'-0.05em' },
+    { id:'8', name:'Fraunces', note:'Serifen, edel wie ein Magazin', fam:'Fraunces, Georgia, serif', w:300, ls:'-0.03em' },
+    { id:'9', name:'DM Serif Display', note:'kräftige Serifen, plakativ', fam:'"DM Serif Display", Georgia, serif', w:400, ls:'-0.02em' }
+  ];
+
+  var wahl = { wetter:'echt', zeit:'echt', thema:'dunkel', ecke:'12', bewegung:'an', hg:'D', aufbau:'2', schrift:'4', cam:'sotavento' };
+  try { Object.assign(wahl, JSON.parse(localStorage.getItem('fuerte-wetterkopf') || '{}')); } catch (e) {}
+  function merken(){ try { localStorage.setItem('fuerte-wetterkopf', JSON.stringify(wahl)); } catch (e) {} }
+
+  Object.keys(GRUPPEN).forEach(function(g){
+    var z = document.querySelector('.zeile[data-gruppe="' + g + '"]');
+    GRUPPEN[g].forEach(function(o){
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'wahl'; b.textContent = o[1].replace(' ', '\u00a0'); b.setAttribute('data-wert', o[0]);
+      b.addEventListener('click', function(){ wahl[g] = o[0]; merken(); alles(); });
+      z.appendChild(b);
+    });
+  });
+
+  // ======================================================================
+  //  Wetterdaten (echt, mit Rückfall)
+  // ======================================================================
+  var LAT = 28.7297, LON = -13.8672;
+  var WMO_TEXT = {0:'Klarer Himmel',1:'Überwiegend klar',2:'Teilweise bewölkt',3:'Bedeckt',45:'Nebel',48:'Reifnebel',51:'Leichter Niesel',53:'Niesel',55:'Starker Niesel',
+    61:'Leichter Regen',63:'Regen',65:'Starker Regen',80:'Regenschauer',81:'Regenschauer',82:'Heftige Schauer',95:'Gewitter',96:'Gewitter mit Hagel',99:'Gewitter mit Hagel'};
+  var WMO_ICON = {0:'☀️',1:'🌤️',2:'⛅',3:'☁️',45:'🌫️',48:'🌫️',51:'🌦️',53:'🌦️',55:'🌦️',61:'🌧️',63:'🌧️',65:'🌧️',80:'🌦️',81:'🌧️',82:'⛈️',95:'⛈️',96:'⛈️',99:'⛈️'};
+
+  var echt = null;   // was die Schnittstellen liefern
+
+  function stundenSeitHeute(str, heute){
+    // "2026-09-26T09:45" -> Stunden seit heute 0 Uhr (Ortszeit)
+    var d = Date.UTC(+str.slice(0,4), +str.slice(5,7) - 1, +str.slice(8,10));
+    var h = Date.UTC(+heute.slice(0,4), +heute.slice(5,7) - 1, +heute.slice(8,10));
+    return (d - h) / 3600000 + (+str.slice(11,13)) + (+str.slice(14,16)) / 60;
+  }
+  function ortsJetzt(){
+    var f = new Intl.DateTimeFormat('de-DE', { timeZone:'Atlantic/Canary', hour:'2-digit', minute:'2-digit', hour12:false });
+    var t = f.formatToParts(new Date()).reduce(function(o, p){ o[p.type] = p.value; return o; }, {});
+    return (+t.hour % 24) + (+t.minute) / 60;
+  }
+  function ersatzDaten(){
+    var temp = [], tide = [], code = [];
+    for (var h = 0; h < 48; h++) {
+      temp.push(21.5 + 4 * Math.sin(Math.PI * (h - 9) / 12) * (Math.sin(Math.PI * (h % 24 - 6) / 24) > 0 ? 1 : .6));
+      tide.push(1.05 * Math.cos(2 * Math.PI * (h - 3.4) / 12.42));
+      code.push(1);
+    }
+    return { temp: 24, gefuehlt: 25, code: 1, wolken: 20, wind: 22, windRicht: 30, boeen: 34, uv: 5, uvMax: 8, feuchte: 60,
+      hoch: 26, tief: 20, auf: 7.75, unter: 19.8, stdTemp: temp, stdCode: code, tide: tide, wasser: 23.2, welle: 1.1, staub: 0, ersatz: true };
+  }
+
+  function laden(){
+    var urlW = 'https://api.open-meteo.com/v1/forecast?latitude=' + LAT + '&longitude=' + LON +
+      '&current=temperature_2m,apparent_temperature,weather_code,cloud_cover,wind_speed_10m,wind_direction_10m,wind_gusts_10m,uv_index,relative_humidity_2m' +
+      '&hourly=temperature_2m,weather_code&daily=sunrise,sunset,temperature_2m_max,temperature_2m_min,uv_index_max&timezone=Atlantic%2FCanary&forecast_days=2';
+    var urlM = 'https://marine-api.open-meteo.com/v1/marine?latitude=' + LAT + '&longitude=' + LON +
+      '&hourly=sea_level_height_msl,wave_height,sea_surface_temperature&timezone=Atlantic%2FCanary&forecast_days=2';
+    var urlL = 'https://air-quality-api.open-meteo.com/v1/air-quality?latitude=' + LAT + '&longitude=' + LON + '&current=dust&timezone=Atlantic%2FCanary';
+    function hol(u){ return fetch(u).then(function(r){ if (!r.ok) throw new Error(r.status); return r.json(); }); }
+    Promise.all([hol(urlW), hol(urlM).catch(function(){ return null; }), hol(urlL).catch(function(){ return null; })]).then(function(a){
+      var W = a[0], M = a[1], L = a[2], heute = W.hourly.time[0].slice(0, 10), c = W.current;
+      var jetzt = Math.round(ortsJetzt());
+      echt = {
+        temp: c.temperature_2m, gefuehlt: c.apparent_temperature, code: c.weather_code, wolken: c.cloud_cover,
+        wind: c.wind_speed_10m, windRicht: c.wind_direction_10m, boeen: c.wind_gusts_10m, uv: c.uv_index, feuchte: c.relative_humidity_2m,
+        uvMax: W.daily.uv_index_max[0], hoch: W.daily.temperature_2m_max[0], tief: W.daily.temperature_2m_min[0],
+        auf: stundenSeitHeute(W.daily.sunrise[0], heute), unter: stundenSeitHeute(W.daily.sunset[0], heute),
+        stdTemp: W.hourly.temperature_2m, stdCode: W.hourly.weather_code,
+        tide: M ? M.hourly.sea_level_height_msl : ersatzDaten().tide,
+        wasser: M ? M.hourly.sea_surface_temperature[jetzt] : null,
+        welle: M ? M.hourly.wave_height[jetzt] : null,
+        staub: L && L.current ? L.current.dust : 0
+      };
+      alles();
+    }).catch(function(){ echt = ersatzDaten(); alles(); });
+  }
+
+  // Aus echten Daten und Simulator die Lage bauen, die gezeichnet wird
+  var SIM = {
+    sonnig:   { code:0,  wolken:4,   regen:0,  staub:0,   text:'Klarer Himmel' },
+    heiter:   { code:2,  wolken:38,  regen:0,  staub:0,   text:'Heiter, ein paar Wolken' },
+    bewoelkt: { code:3,  wolken:92,  regen:0,  staub:0,   text:'Bedeckt' },
+    regen:    { code:63, wolken:100, regen:.6, staub:0,   text:'Regen' },
+    gewitter: { code:95, wolken:100, regen:.9, staub:0,   text:'Gewitter' },
+    calima:   { code:0,  wolken:12,  regen:0,  staub:320, text:'Calima – Saharastaub' }
+  };
+  function szeneAus(code, wolken, staub){
+    if (code >= 95) return 'gewitter';
+    if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) return 'regen';
+    if (staub >= 100) return 'calima';
+    if (code === 45 || code === 48 || code === 3 || wolken >= 75) return 'bewoelkt';
+    if (code === 1 || code === 2 || wolken >= 25) return 'heiter';
+    return 'sonnig';
+  }
+  function regenStaerke(code){
+    if (code >= 95) return .9;
+    if ([55,65,82].indexOf(code) >= 0) return .9;
+    if ([53,63,81].indexOf(code) >= 0) return .6;
+    if ([51,61,80].indexOf(code) >= 0) return .3;
+    return 0;
+  }
+  function wert(arr, h){
+    if (!arr || !arr.length) return null;
+    h = Math.max(0, Math.min(arr.length - 1.001, h));
+    var i = Math.floor(h), f = h - i, a = arr[i], b = arr[i + 1];
+    if (a == null) return b; if (b == null) return a;
+    return a + (b - a) * f;
+  }
+  function lage(){
+    var E = echt || ersatzDaten();
+    var L = Object.assign({}, E);
+    // Uhrzeit
+    var t = ortsJetzt();
+    if (wahl.zeit === 'morgen') t = E.auf + 0.35;
+    if (wahl.zeit === 'mittag') t = 13.5;
+    if (wahl.zeit === 'abend')  t = E.unter - 0.45;
+    if (wahl.zeit === 'nacht')  t = 22.6;
+    L.t = t;
+    L.simZeit = wahl.zeit !== 'echt';
+    if (L.simZeit) { L.temp = wert(E.stdTemp, t); L.gefuehlt = L.temp + (E.gefuehlt - E.temp); }
+    // Wetter
+    if (wahl.wetter !== 'echt') {
+      var s = SIM[wahl.wetter];
+      L.code = s.code; L.wolken = s.wolken; L.staub = s.staub; L.szene = wahl.wetter; L.regen = s.regen; L.text = s.text;
+    } else {
+      L.szene = szeneAus(E.code, E.wolken, E.staub || 0);
+      L.regen = regenStaerke(E.code);
+      L.text = L.szene === 'calima' ? 'Calima – Saharastaub' : (WMO_TEXT[E.code] || 'Aktuell');
+    }
+    L.tag = t > L.auf && t < L.unter;
+    L.icon = L.szene === 'calima' ? '🌫️' : (!L.tag && L.code <= 1 ? '🌙' : (!L.tag && L.code <= 3 ? '☁️' : (WMO_ICON[L.code] || '☀️')));
+    L.mond = mondPhase(new Date());
+    L.extreme = tidenExtreme(L.tide);
+    return L;
+  }
+
+  // Hoch- und Niedrigwasser aus den Stundenwerten, mit Feinrechnung zwischen den Stunden
+  function tidenExtreme(tide){
+    var out = [];
+    for (var i = 1; i < tide.length - 1; i++) {
+      var a = tide[i - 1], b = tide[i], c = tide[i + 1];
+      if (a == null || b == null || c == null) continue;
+      var hoch = b > a && b >= c, tief = b < a && b <= c;
+      if (!hoch && !tief) continue;
+      var n = a - 2 * b + c, off = n ? (a - c) / (2 * n) : 0;
+      out.push({ h: i + off, hoch: hoch, wert: b - (a - c) * off / 4 });
+    }
+    return out;
+  }
+  function naechstesExtrem(L){ for (var i = 0; i < L.extreme.length; i++) if (L.extreme[i].h > L.t) return L.extreme[i]; return null; }
+  function mondPhase(d){
+    var syn = 29.530588853 * 864e5, bek = Date.UTC(2000, 0, 6, 18, 14);
+    return (((d - bek) % syn) + syn) % syn / syn;
+  }
+  function uhr(h){ h = ((h % 24) + 24) % 24; var m = Math.round(h * 60); return pad(Math.floor(m / 60) % 24) + ':' + pad(m % 60); }
+  function pad(n){ return (n < 10 ? '0' : '') + n; }
+  function komma(v, st){ return v == null ? '–' : v.toFixed(st).replace('.', ','); }
+  var RICHT = ['Nord','Nordost','Ost','Südost','Süd','Südwest','West','Nordwest'];
+  var RICHT_K = ['N','NO','O','SO','S','SW','W','NW'];
+  function richtung(g, kurz){ var i = Math.round(((g % 360) + 360) % 360 / 45) % 8; return (kurz ? RICHT_K : RICHT)[i]; }
+  function windWort(k){ return k < 6 ? 'Kaum Wind' : k < 20 ? 'Leichter Wind' : k < 29 ? 'Mäßiger Wind' : k < 39 ? 'Frischer Wind' : k < 50 ? 'Starker Wind' : 'Stürmischer Wind'; }
+
+  // ======================================================================
+  //  Hintergründe
+  // ======================================================================
+  var BILD = '../images/';
+  function fotoFuer(L){
+    var s = L.szene, t = L.t;
+    if (!L.tag) return (L.wolken > 60 || s === 'regen' || s === 'gewitter') ? 'wx-nachtwolken.webp' : 'wx-nachtklar.webp';
+    if (s === 'regen') return 'wx-regen.webp';
+    if (s === 'gewitter') return 'wx-gewitter.webp';
+    if (s === 'calima') return 'wx-calima.webp';
+    if (t - L.auf < 1.3 && s !== 'bewoelkt') return 'wx-morgen.webp';
+    if (L.unter - t < 1.6 && s !== 'bewoelkt') return 'wx-abend.webp';
+    return { sonnig:'strand-tuerkis.webp', heiter:'wx-heiter.webp', bewoelkt:'wx-bewoelkt.webp' }[s] || 'strand-tuerkis.webp';
+  }
+  var KAMERAS = {
+    corralejo: { name:'Corralejo', url:'https://cdn.skylinewebcams.com/live6086.jpg' },
+    cotillo:   { name:'El Cotillo', url:'https://www.meteosurfcanarias.com/1-webcams/webcam-el-cotillo.jpg' },
+    sotavento: { name:'Sotavento', url:'https://i.ytimg.com/vi/8CxYZ4tPTmo/maxresdefault_live.jpg' }
+  };
+
+  // ---------- Gezeichneter Himmel ----------
+  var FARBEN = [   // Sonnenhöhe s: -1 tiefe Nacht ... 0 Horizont ... 1 Mittag
+    { s:-1,   oben:[7,13,28],    unten:[20,34,68] },
+    { s:-.35, oben:[22,34,74],   unten:[92,82,128] },
+    { s:0,    oben:[52,78,138],  unten:[242,152,96] },
+    { s:.2,   oben:[60,112,184], unten:[250,196,132] },
+    { s:.55,  oben:[22,100,192], unten:[118,188,238] },
+    { s:1,    oben:[16,92,186],  unten:[108,180,236] }
+  ];
+  function mix(a, b, f){ return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, a[2] + (b[2] - a[2]) * f]; }
+  function rgb(c, al){ return 'rgba(' + Math.round(c[0]) + ',' + Math.round(c[1]) + ',' + Math.round(c[2]) + ',' + (al == null ? 1 : al) + ')'; }
+  function sonnenHoehe(L){
+    var t = L.t;
+    if (t >= L.auf && t <= L.unter) return Math.sin(Math.PI * (t - L.auf) / (L.unter - L.auf));
+    var ab = t < L.auf ? L.auf - t : t - L.unter;
+    return -Math.min(1, ab / 1.3);
+  }
+  function himmelFarben(L){
+    var s = sonnenHoehe(L), i = 0;
+    while (i < FARBEN.length - 2 && s > FARBEN[i + 1].s) i++;
+    var A = FARBEN[i], B = FARBEN[i + 1], f = Math.max(0, Math.min(1, (s - A.s) / (B.s - A.s)));
+    var o = mix(A.oben, B.oben, f), u = mix(A.unten, B.unten, f);
+    var nacht = Math.max(0, Math.min(1, -s / .5));
+    var grau = { sonnig:0, heiter:.12, bewoelkt:.72, regen:.85, gewitter:.92, calima:0 }[L.szene] || 0;
+    var go = mix([116,128,142], [16,20,28], nacht), gu = mix([184,192,200], [36,42,54], nacht);
+    if (L.szene === 'gewitter') { go = mix([46,54,64], [10,12,16], nacht); gu = mix([92,102,112], [26,30,38], nacht); }
+    o = mix(o, go, grau); u = mix(u, gu, grau);
+    if (L.szene === 'calima') { o = mix(o, mix([196,166,120],[46,36,26],nacht), .55); u = mix(u, mix([232,200,150],[70,54,38],nacht), .7); }
+    return { oben:o, unten:u, s:s, nacht:nacht };
+  }
+
+  var wolkenCache = {};
+  function wolkenBild(nr, farbe){
+    var key = nr + '|' + farbe.join(',');
+    if (wolkenCache[key]) return wolkenCache[key];
+    var c = document.createElement('canvas'); c.width = 340; c.height = 150;
+    var g = c.getContext('2d'), zufall = zufallsFolge(nr * 97 + 13);
+    var n = 12 + Math.floor(zufall() * 8);
+    g.save(); g.beginPath(); g.rect(0, 0, 340, 112); g.clip();          // flache Unterkante
+    for (var i = 0; i < n; i++) {
+      var x = 40 + zufall() * 260, bogen = Math.sin((x - 40) / 260 * Math.PI);
+      var r = 16 + zufall() * 22 + bogen * 16, y = 104 - bogen * 38 - zufall() * 18;
+      var rg = g.createRadialGradient(x, y - r * .3, r * .1, x, y, r);
+      rg.addColorStop(0, rgb(farbe, 1)); rg.addColorStop(.72, rgb(farbe, .9)); rg.addColorStop(1, rgb(farbe, 0));
+      g.fillStyle = rg; g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill();
+    }
+    g.restore();
+    // Schatten an der Unterseite für etwas Körper
+    g.globalCompositeOperation = 'source-atop';
+    var sh = g.createLinearGradient(0, 40, 0, 150);
+    sh.addColorStop(0, 'rgba(0,0,0,0)'); sh.addColorStop(1, 'rgba(30,40,60,.42)');
+    g.fillStyle = sh; g.fillRect(0, 0, 340, 150);
+    wolkenCache[key] = c;
+    return c;
+  }
+  function zufallsFolge(seed){ var s = seed >>> 0; return function(){ s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; }; }
+
+  function Himmel(canvas, opt){
+    this.c = canvas; this.g = canvas.getContext('2d'); this.opt = opt; this.zeit = 0; this.blitz = 0; this.naechsterBlitz = 3 + Math.random() * 5;
+  }
+  Himmel.prototype.setze = function(L){
+    this.L = L; this.F = himmelFarben(L);
+    var w = this.c.clientWidth || 360, h = this.c.clientHeight || 260, dpr = Math.min(2, window.devicePixelRatio || 1);
+    if (this.c.width !== Math.round(w * dpr)) { this.c.width = Math.round(w * dpr); this.c.height = Math.round(h * dpr); }
+    this.w = w; this.h = h; this.dpr = dpr;
+    var z = zufallsFolge(7 + L.wolken);
+    // Wolken: Menge nach Bedeckungsgrad, bei bedecktem Himmel größer und tiefer
+    var dicht = L.wolken / 100, n = Math.round(dicht * 16 * (this.opt.ueber ? .45 : 1)) + (L.szene === 'gewitter' ? 3 : 0);
+    var farbe = this.wolkenFarbe(L);
+    this.wolken = [];
+    for (var i = 0; i < n; i++) {
+      var tiefe = .45 + z() * .8;
+      this.wolken.push({ x: z() * (w + 300) - 150, y: h * (.02 + z() * (this.opt.ueber ? .6 : .5)) - 30, sk: (w / 340) * (.32 + z() * .38) * (1 + dicht * 1.1) * tiefe,
+        tiefe: tiefe, bild: wolkenBild(i % 6, farbe) });
+    }
+    this.wolken.sort(function(a, b){ return a.tiefe - b.tiefe; });
+    // Regen
+    this.tropfen = [];
+    var nt = Math.round(L.regen * 150 * (w / 400));
+    for (var j = 0; j < nt; j++) this.tropfen.push({ x: z() * w, y: z() * h, l: 7 + z() * 10, v: 520 + z() * 360 });
+    // Sterne
+    this.sterne = [];
+    for (var k = 0; k < 120; k++) this.sterne.push({ x: z() * w, y: z() * h * .66, r: z() < .12 ? 1.3 : .7, p: z() * 6.28 });
+    // Zugrichtung: Wind kommt aus windRicht, Blick von Corralejo nach Norden (Osten = rechts)
+    var nach = (L.windRicht + 180) * Math.PI / 180;
+    this.dx = Math.sin(nach); if (Math.abs(this.dx) < .25) this.dx = this.dx < 0 ? -.25 : .25;
+    this.tempo = (5 + (L.wind || 0) * .75) * (w / 400);
+  };
+  Himmel.prototype.wolkenFarbe = function(L){
+    var F = himmelFarben(L), n = F.nacht;
+    var basis = { sonnig:[255,255,255], heiter:[250,250,252], bewoelkt:[196,202,210], regen:[140,148,160], gewitter:[88,96,108], calima:[228,208,170] }[L.szene];
+    if (F.s > -.2 && F.s < .25 && L.szene !== 'regen' && L.szene !== 'gewitter') basis = mix(basis, [250,196,160], .55 * (1 - Math.abs(F.s - .05) / .3));
+    return mix(basis, [58,68,88], n * .85).map(Math.round);
+  };
+  Himmel.prototype.schritt = function(dt){
+    if (!this.L) return;            // noch nicht eingerichtet
+    var L = this.L, w = this.w, h = this.h, g = this.g, F = this.F, ueber = this.opt.ueber;
+    this.zeit += dt;
+    g.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
+    g.clearRect(0, 0, w, h);
+    var horizont = h * .68;
+
+    if (!ueber) {
+      var hg = g.createLinearGradient(0, 0, 0, horizont);
+      hg.addColorStop(0, rgb(F.oben)); hg.addColorStop(1, rgb(F.unten));
+      g.fillStyle = hg; g.fillRect(0, 0, w, horizont + 1);
+    }
+    // Sterne
+    var klar = 1 - L.wolken / 100;
+    if (F.nacht > .2 && klar > .1 && L.szene !== 'calima') {
+      for (var i = 0; i < this.sterne.length; i++) {
+        var st = this.sterne[i], a = F.nacht * klar * (.45 + .55 * Math.sin(this.zeit * 1.3 + st.p)) * (ueber ? .5 : .9);
+        if (st.y > horizont - 4) continue;
+        g.fillStyle = 'rgba(255,255,255,' + a.toFixed(3) + ')';
+        g.fillRect(st.x, st.y, st.r, st.r);
+      }
+    }
+    // Sonne und Mond auf ihrem Bogen
+    if (!ueber && this.opt.sonne !== false) {
+      if (L.tag) {
+        var f = (L.t - L.auf) / (L.unter - L.auf), sx = w * (.08 + .84 * f), sy = horizont - Math.sin(Math.PI * f) * horizont * .82;
+        var sicht = L.szene === 'calima' ? .55 : Math.max(.08, 1 - L.wolken / 100 * .92);
+        var tief = 1 - Math.min(1, F.s / .35);
+        var kern = mix([255,248,226], [255,178,102], tief), glut = g.createRadialGradient(sx, sy, 0, sx, sy, w * .22);
+        glut.addColorStop(0, rgb(kern, .55 * sicht)); glut.addColorStop(1, rgb(kern, 0));
+        g.fillStyle = glut; g.beginPath(); g.arc(sx, sy, w * .22, 0, 6.29); g.fill();
+        g.fillStyle = rgb(kern, .95 * sicht); g.beginPath(); g.arc(sx, sy, w * .028, 0, 6.29); g.fill();
+        this.sonneX = sx; this.sonneSicht = sicht * (1 - Math.min(1, F.s / .6) * .6);
+      } else {
+        var dauer = L.auf + 24 - L.unter, fn = (((L.t - L.unter) % 24) + 24) % 24 / dauer;
+        var mx = w * (.1 + .8 * fn), my = horizont - Math.sin(Math.PI * fn) * horizont * .7, mr = w * .032;
+        var ms = Math.max(.15, 1 - L.wolken / 100 * .85);
+        var mg = g.createRadialGradient(mx, my, 0, mx, my, mr * 5);
+        mg.addColorStop(0, 'rgba(230,236,255,' + (.28 * ms) + ')'); mg.addColorStop(1, 'rgba(230,236,255,0)');
+        g.fillStyle = mg; g.beginPath(); g.arc(mx, my, mr * 5, 0, 6.29); g.fill();
+        g.globalAlpha = ms; mondZeichnen(g, mx, my, mr, L.mond); g.globalAlpha = 1;
+        this.sonneX = mx; this.sonneSicht = .35 * ms;
+      }
+    }
+    // Wolken ziehen mit dem Wind
+    for (var k = 0; k < this.wolken.length; k++) {
+      var wo = this.wolken[k], bw = 340 * wo.sk, bh = 150 * wo.sk;
+      wo.x += this.dx * this.tempo * wo.tiefe * dt;
+      if (wo.x > w + 40) wo.x = -bw - 40; if (wo.x < -bw - 40) wo.x = w + 40;
+      g.globalAlpha = (ueber ? .24 : .9) * (.55 + wo.tiefe * .45);
+      g.drawImage(wo.bild, wo.x, wo.y, bw, bh);
+    }
+    g.globalAlpha = 1;
+    if (!ueber) this.meerZeichnen(horizont);
+    // Calima: gelblicher Dunst über allem
+    if (L.szene === 'calima') {
+      var dg = g.createLinearGradient(0, 0, 0, h);
+      dg.addColorStop(0, rgb(mix([214,178,120],[40,30,20],F.nacht), ueber ? .25 : .18)); dg.addColorStop(1, rgb(mix([226,190,130],[50,40,26],F.nacht), ueber ? .42 : .5));
+      g.fillStyle = dg; g.fillRect(0, 0, w, h);
+    }
+    // Regen
+    if (this.tropfen.length) {
+      g.strokeStyle = 'rgba(210,224,240,' + (ueber ? .38 : .32) + ')'; g.lineWidth = 1; g.beginPath();
+      var schraeg = this.dx * Math.min(.5, (L.wind || 10) / 60);
+      for (var r = 0; r < this.tropfen.length; r++) {
+        var tr = this.tropfen[r];
+        tr.y += tr.v * dt; tr.x += tr.v * schraeg * dt;
+        if (tr.y > h) { tr.y = -tr.l; tr.x = Math.random() * w; }
+        if (tr.x > w) tr.x -= w; if (tr.x < 0) tr.x += w;
+        g.moveTo(tr.x, tr.y); g.lineTo(tr.x - schraeg * tr.l, tr.y - tr.l);
+      }
+      g.stroke();
+    }
+    // Gewitter: Wetterleuchten
+    if (L.szene === 'gewitter' && !this.opt.still) {
+      this.naechsterBlitz -= dt;
+      if (this.naechsterBlitz <= 0) { this.blitz = .5; this.naechsterBlitz = 4 + Math.random() * 7; }
+      if (this.blitz > 0) {
+        var bf = this.blitz > .35 ? (.5 - this.blitz) / .15 : (this.blitz > .25 ? .3 : this.blitz / .25 * .7);
+        g.fillStyle = 'rgba(225,230,255,' + (Math.max(0, bf) * .55).toFixed(3) + ')'; g.fillRect(0, 0, w, h);
+        this.blitz -= dt;
+      }
+    }
+  };
+  // Meer mit Lobos am Horizont und Strand vorn; die Wasserlinie folgt der Tide
+  Himmel.prototype.meerZeichnen = function(horizont){
+    var g = this.g, w = this.w, h = this.h, L = this.L, F = this.F;
+    var grau = { sonnig:0, heiter:.1, bewoelkt:.6, regen:.72, gewitter:.8, calima:.35 }[L.szene] || 0;
+    var tiefBlau = mix(mix([14,78,112],[6,14,28],F.nacht), [70,86,98], grau * (1 - F.nacht));
+    var tuerkis = mix(mix([40,160,176],[10,26,40],F.nacht), [104,128,136], grau * (1 - F.nacht));
+    var mg = g.createLinearGradient(0, horizont, 0, h);
+    mg.addColorStop(0, rgb(mix(tiefBlau, F.unten, .25))); mg.addColorStop(1, rgb(tuerkis));
+    g.fillStyle = mg; g.fillRect(0, horizont, w, h - horizont);
+    // Lobos
+    var ins = mix(mix(F.unten, [50,62,72], .6), [6,9,16], F.nacht * .8);
+    g.fillStyle = rgb(ins);
+    g.beginPath(); g.moveTo(w * .50, horizont + .5);
+    g.quadraticCurveTo(w * .56, horizont - h * .018, w * .60, horizont - h * .022);
+    g.lineTo(w * .635, horizont - h * .058); g.lineTo(w * .665, horizont - h * .03);
+    g.quadraticCurveTo(w * .74, horizont - h * .026, w * .80, horizont - h * .01);
+    g.quadraticCurveTo(w * .84, horizont, w * .87, horizont + .5); g.closePath(); g.fill();
+    // Glitzern unter Sonne oder Mond
+    if (this.sonneSicht > .1 && this.sonneX != null) {
+      g.fillStyle = 'rgba(255,236,200,' + (this.sonneSicht * .5).toFixed(3) + ')';
+      for (var i = 0; i < 26; i++) {
+        var yy = horizont + 3 + (i / 26) * (h * .16), br = 4 + (i / 26) * 26;
+        var fl = Math.sin(this.zeit * 3 + i * 1.7);
+        if (fl < 0) continue;
+        g.fillRect(this.sonneX - br / 2 + Math.sin(i * 2.3 + this.zeit) * br * .4, yy, br * (.3 + fl * .5), 1.2);
+      }
+    }
+    // Strand: Wasserkante hebt und senkt sich mit der Tide
+    var tide = wert(L.tide, L.t) || 0, kante = h * .87 - tide * h * .025;
+    var sand = mix(mix([232,210,168],[176,132,92], Math.max(0, 1 - Math.abs(F.s - .1) / .3) * .5), [34,34,44], F.nacht * .9);
+    sand = mix(sand, [150,146,138], grau * .4 * (1 - F.nacht));
+    g.fillStyle = rgb(sand);
+    g.beginPath(); g.moveTo(0, h);
+    for (var x = 0; x <= w; x += 8) g.lineTo(x, kante + Math.sin(this.zeit * .9 + x * .018) * 2.2 + Math.sin(x * .05) * 1.5);
+    g.lineTo(w, h); g.closePath(); g.fill();
+    g.strokeStyle = 'rgba(255,255,255,' + (.55 * (1 - F.nacht * .7)).toFixed(2) + ')'; g.lineWidth = 1.4; g.beginPath();
+    for (var x2 = 0; x2 <= w; x2 += 8) { var yk = kante + Math.sin(this.zeit * .9 + x2 * .018) * 2.2 + Math.sin(x2 * .05) * 1.5; if (x2) g.lineTo(x2, yk); else g.moveTo(x2, yk); }
+    g.stroke();
+  };
+  function mondZeichnen(g, x, y, r, p){
+    var t = Math.cos(2 * Math.PI * p), rx = Math.max(.01, Math.abs(t)) * r, zu = p < .5;
+    g.fillStyle = 'rgba(200,205,220,.16)'; g.beginPath(); g.arc(x, y, r, 0, 6.29); g.fill();
+    g.fillStyle = '#f3efe2'; g.beginPath();
+    if (zu) {
+      g.arc(x, y, r, -Math.PI / 2, Math.PI / 2, false);
+      if (t > 0) g.ellipse(x, y, rx, r, 0, Math.PI / 2, -Math.PI / 2, true); else g.ellipse(x, y, rx, r, 0, Math.PI / 2, 3 * Math.PI / 2, false);
+    } else {
+      g.arc(x, y, r, Math.PI / 2, 3 * Math.PI / 2, false);
+      if (t > 0) g.ellipse(x, y, rx, r, 0, 3 * Math.PI / 2, Math.PI / 2, true); else g.ellipse(x, y, rx, r, 0, -Math.PI / 2, Math.PI / 2, false);
+    }
+    g.fill();
+  }
+
+  // Eine Uhr für alle Himmel; gezeichnet wird nur, was zu sehen ist
+  var himmelListe = [];
+  var sichtbar = new WeakMap();
+  var beobachter = 'IntersectionObserver' in window ? new IntersectionObserver(function(es){ es.forEach(function(e){ sichtbar.set(e.target, e.isIntersecting); }); }) : null;
+  var zuletzt = 0;
+  function takt(ts){
+    var dt = Math.min(.1, (ts - zuletzt) / 1000 || .016); zuletzt = ts;
+    var ruhig = wahl.bewegung === 'aus' || matchMedia('(prefers-reduced-motion: reduce)').matches;
+    himmelListe.forEach(function(H){
+      if (!H.c.isConnected) return;
+      if (beobachter && sichtbar.get(H.c) === false) return;
+      if (ruhig) { if (!H.gemalt) { H.opt.still = true; H.schritt(0); H.gemalt = true; } return; }
+      H.schritt(dt);
+    });
+    requestAnimationFrame(takt);
+  }
+  requestAnimationFrame(takt);
+
+  function hintergrundBauen(box, hgId, L, opt){
+    var bg = document.createElement('div'); bg.className = 'kopf-bg';
+    box.appendChild(bg);
+    if (hgId === 'A' || hgId === 'D') {
+      var img = document.createElement('img'); img.alt = ''; img.decoding = 'async'; img.src = BILD + fotoFuer(L);
+      bg.appendChild(img);
+      if (hgId === 'D') bg.classList.add('faehrt');
+    }
+    if (hgId === 'B') {
+      var cam = KAMERAS[wahl.cam] || KAMERAS.sotavento, ci = document.createElement('img');
+      ci.alt = ''; ci.referrerPolicy = 'no-referrer'; ci.src = cam.url + '?fv=' + Math.floor(Date.now() / 300000);
+      ci.onerror = function(){ ci.src = BILD + 'wx-bewoelkt.webp'; ci.style.filter = 'grayscale(1) brightness(.5)'; };
+      bg.appendChild(ci);
+    }
+    if (hgId === 'C' || hgId === 'D') {
+      var cv = document.createElement('canvas'); bg.appendChild(cv);
+      var H = new Himmel(cv, { ueber: hgId === 'D', sonne: !(opt && opt.ohneSonne) });
+      requestAnimationFrame(function(){ H.setze(L); H.gemalt = false; H.schritt(0); });   // sofort ein erstes Bild, auch außerhalb der Sicht
+      himmelListe.push(H);
+      if (beobachter) beobachter.observe(cv);
+    }
+    var sl = document.createElement('div'); sl.className = 'kopf-schleier'; box.appendChild(sl);
+  }
+
+  // ======================================================================
+  //  Kurven
+  // ======================================================================
+  // Weiche Linie durch Punkte (Catmull-Rom als Bézier)
+  function pfad(p){
+    if (!p.length) return '';
+    var d = 'M' + p[0][0].toFixed(1) + ' ' + p[0][1].toFixed(1);
+    for (var i = 0; i < p.length - 1; i++) {
+      var p0 = p[i - 1] || p[i], p1 = p[i], p2 = p[i + 1], p3 = p[i + 2] || p2;
+      d += ' C' + (p1[0] + (p2[0] - p0[0]) / 6).toFixed(1) + ' ' + (p1[1] + (p2[1] - p0[1]) / 6).toFixed(1) + ' ' +
+        (p2[0] - (p3[0] - p1[0]) / 6).toFixed(1) + ' ' + (p2[1] - (p3[1] - p1[1]) / 6).toFixed(1) + ' ' + p2[0].toFixed(1) + ' ' + p2[1].toFixed(1);
+    }
+    return d;
+  }
+  function punkte(arr, h0, h1, x0, x1, y0, y1, vmin, vmax, schritt){
+    var p = [];
+    for (var h = h0; h <= h1 + 1e-6; h += (schritt || 1)) {
+      var v = wert(arr, h); if (v == null) continue;
+      p.push([x0 + (h - h0) / (h1 - h0) * (x1 - x0), y1 - (v - vmin) / (vmax - vmin || 1) * (y1 - y0)]);
+    }
+    return p;
+  }
+  function spanne(arr, h0, h1){
+    var lo = 1e9, hi = -1e9;
+    for (var h = Math.floor(h0); h <= Math.ceil(h1); h++) { var v = arr[h]; if (v == null) continue; if (v < lo) lo = v; if (v > hi) hi = v; }
+    return [lo, hi];
+  }
+  var ORANGE = '#ffb86b', TUERKIS = '#6fe0dc';
+
+  // Tageskurve (Aufbau 2): heute 0-24 Uhr
+  function tageskurve(L, W){
+    var H = 140, x0 = 2, x1 = W - 2, tY0 = 16, tY1 = 58, dY0 = 80, dY1 = 106;
+    var st = spanne(L.stdTemp, 0, 24), sd = spanne(L.tide, 0, 24);
+    var xh = function(h){ return x0 + h / 24 * (x1 - x0); };
+    var tp = punkte(L.stdTemp, 0, 24, x0, x1, tY0, tY1, st[0], st[1]);
+    var dp = punkte(L.tide, 0, 24, x0, x1, dY0, dY1, sd[0], sd[1], .5);
+    var s = '<svg width="' + W + '" height="' + H + '" aria-hidden="true">';
+    // Nacht dunkler
+    s += '<rect x="' + x0 + '" y="0" width="' + (xh(L.auf) - x0) + '" height="' + (H - 18) + '" fill="rgba(0,10,25,.13)"/>';
+    s += '<rect x="' + xh(L.unter) + '" y="0" width="' + (x1 - xh(L.unter)) + '" height="' + (H - 18) + '" fill="rgba(0,10,25,.13)"/>';
+    // Temperatur
+    s += '<path d="' + pfad(tp) + '" fill="none" stroke="' + ORANGE + '" stroke-width="2.2" stroke-linecap="round"/>';
+    var imax = 0, imin = 0;
+    for (var h = 0; h <= 24; h++) { if (L.stdTemp[h] > L.stdTemp[imax]) imax = h; if (L.stdTemp[h] < L.stdTemp[imin]) imin = h; }
+    [[imax, -6], [imin, 14]].forEach(function(m){
+      var x = xh(m[0]), y = tY1 - (L.stdTemp[m[0]] - st[0]) / (st[1] - st[0] || 1) * (tY1 - tY0);
+      s += '<circle cx="' + x + '" cy="' + y + '" r="2.4" fill="' + ORANGE + '"/>';
+      s += '<text x="' + Math.max(12, Math.min(W - 12, x)) + '" y="' + (y + m[1]) + '" text-anchor="middle">' + Math.round(L.stdTemp[m[0]]) + '°</text>';
+    });
+    // Tide
+    s += '<path d="' + pfad(dp) + '" fill="none" stroke="' + TUERKIS + '" stroke-width="2" stroke-linecap="round"/>';
+    L.extreme.forEach(function(e){
+      if (e.h < 0 || e.h > 24) return;
+      var x = xh(e.h), y = dY1 - (e.wert - sd[0]) / (sd[1] - sd[0] || 1) * (dY1 - dY0);
+      s += '<circle cx="' + x + '" cy="' + y + '" r="2.2" fill="' + TUERKIS + '"/>';
+      s += '<text x="' + Math.max(16, Math.min(W - 16, x)) + '" y="' + (e.hoch ? y - 6 : y + 13) + '" text-anchor="middle">' + (e.hoch ? '↑' : '↓') + uhr(e.h) + '</text>';
+    });
+    // Achse
+    [6, 12, 18].forEach(function(hh){ s += '<text x="' + xh(hh) + '" y="' + (H - 1) + '" text-anchor="middle" style="opacity:.7">' + hh + ' Uhr</text>'; });
+    // Jetzt
+    var xj = xh(L.t);
+    s += '<line x1="' + xj + '" x2="' + xj + '" y1="4" y2="' + (H - 18) + '" stroke="#fff" stroke-width="1.5" opacity=".9"/>';
+    var tj = tY1 - (wert(L.stdTemp, L.t) - st[0]) / (st[1] - st[0] || 1) * (tY1 - tY0);
+    var dj = dY1 - (wert(L.tide, L.t) - sd[0]) / (sd[1] - sd[0] || 1) * (dY1 - dY0);
+    s += '<circle cx="' + xj + '" cy="' + tj + '" r="4" fill="#fff" stroke="' + ORANGE + '" stroke-width="2"/>';
+    s += '<circle cx="' + xj + '" cy="' + dj + '" r="4" fill="#fff" stroke="' + TUERKIS + '" stroke-width="2"/>';
+    return s + '</svg>';
+  }
+
+  // Horizont (Aufbau 3): Sonnenbogen oben, Tide als Wasser unten
+  function horizont(L, W, Hh){
+    var s = '<svg width="' + W + '" height="' + Hh + '" aria-hidden="true">';
+    var bx0 = Math.round(W * .44), bx1 = W - 20, basis = Hh * .56, hoehe = Hh * .45;   // Bogen rechts, links bleibt Platz für die Temperatur
+    var bogen = 'M' + bx0 + ' ' + basis + ' Q' + (W / 2) + ' ' + (basis - hoehe * 2) + ' ' + bx1 + ' ' + basis;
+    s += '<path d="' + bogen + '" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="1.3" stroke-dasharray="2 5"/>';
+    s += '<line x1="' + bx0 + '" x2="' + bx1 + '" y1="' + basis + '" y2="' + basis + '" stroke="rgba(255,255,255,.25)"/>';
+    s += '<text x="' + bx0 + '" y="' + (basis + 14) + '">↑ ' + uhr(L.auf) + '</text>';
+    s += '<text x="' + bx1 + '" y="' + (basis + 14) + '" text-anchor="end">' + uhr(L.unter) + ' ↓</text>';
+    var f, tag = L.tag;
+    if (tag) f = (L.t - L.auf) / (L.unter - L.auf);
+    else f = ((((L.t - L.unter) % 24) + 24) % 24) / (L.auf + 24 - L.unter);
+    var px = bx0 + (bx1 - bx0) * f, py = (1 - f) * (1 - f) * basis + 2 * (1 - f) * f * (basis - hoehe * 2) + f * f * basis;
+    if (tag) {
+      s += '<circle cx="' + px + '" cy="' + py + '" r="16" fill="rgba(255,214,140,.25)"/>';
+      s += '<circle cx="' + px + '" cy="' + py + '" r="7.5" fill="#ffd98c"/>';
+    } else {
+      s += '<circle cx="' + px + '" cy="' + py + '" r="14" fill="rgba(220,230,255,.18)"/>';
+      s += mondSvg(px, py, 7.5, L.mond);
+    }
+    // Wasser: Tide der nächsten Stunden, links jetzt
+    var h0 = L.t - 3, h1 = L.t + 15, sd = spanne(L.tide, 0, 40), y0 = Hh - 62, y1 = Hh - 26;
+    var p = punkte(L.tide, h0, h1, 0, W, y0, y1, sd[0], sd[1], .5);
+    s += '<path d="' + pfad(p) + ' L' + W + ' ' + Hh + ' L0 ' + Hh + ' Z" fill="rgba(80,200,210,.30)"/>';
+    s += '<path d="' + pfad(p) + '" fill="none" stroke="' + TUERKIS + '" stroke-width="1.8"/>';
+    var xj = (L.t - h0) / (h1 - h0) * W, yj = y1 - (wert(L.tide, L.t) - sd[0]) / (sd[1] - sd[0] || 1) * (y1 - y0);
+    s += '<circle cx="' + xj + '" cy="' + yj + '" r="4" fill="#fff" stroke="' + TUERKIS + '" stroke-width="2"/>';
+    L.extreme.forEach(function(e){
+      if (e.h < h0 + .5 || e.h > h1 - .5) return;
+      var x = (e.h - h0) / (h1 - h0) * W, y = y1 - (e.wert - sd[0]) / (sd[1] - sd[0] || 1) * (y1 - y0);
+      s += '<circle cx="' + x + '" cy="' + y + '" r="2.4" fill="' + TUERKIS + '"/>';
+    });
+    return s + '</svg>';
+  }
+  function mondSvg(x, y, r, p){
+    var t = Math.cos(2 * Math.PI * p), rx = Math.max(.01, Math.abs(t)) * r, zu = p < .5;
+    var au = zu ? 1 : 0, iu = zu ? (t > 0 ? 0 : 1) : (t > 0 ? 1 : 0);
+    return '<circle cx="' + x + '" cy="' + y + '" r="' + r + '" fill="rgba(200,205,220,.25)"/>' +
+      '<path d="M' + x + ' ' + (y - r) + ' A' + r + ' ' + r + ' 0 0 ' + au + ' ' + x + ' ' + (y + r) + ' A' + rx.toFixed(2) + ' ' + r + ' 0 0 ' + iu + ' ' + x + ' ' + (y - r) + ' Z" fill="#f3efe2"/>';
+  }
+
+  // Stundenleiste (Aufbau 4): nächste 24 Stunden in 2-Stunden-Schritten
+  function stundenleiste(L, W){
+    var H = 150, n = 12, start = Math.ceil(L.t), sp = W / n;
+    var stunden = []; for (var i = 0; i < n; i++) stunden.push(start + i * 2);
+    var st = spanne(L.stdTemp, start, start + 22), tY0 = 40, tY1 = 70;
+    var sd = spanne(L.tide, start - 1, start + 23), dY0 = 104, dY1 = 128;
+    var s = '<svg width="' + W + '" height="' + H + '" aria-hidden="true">';
+    var tp = stunden.map(function(h, i){ return [sp * (i + .5), tY1 - (wert(L.stdTemp, h) - st[0]) / (st[1] - st[0] || 1) * (tY1 - tY0)]; });
+    s += '<path d="' + pfad(tp) + '" fill="none" stroke="' + ORANGE + '" stroke-width="2"/>';
+    stunden.forEach(function(h, i){
+      var x = sp * (i + .5), hh = h % 24, tag = hh > L.auf && hh < L.unter;
+      var code = L.stdCode[h] != null ? L.stdCode[h] : L.code;
+      if (wahl.wetter !== 'echt') code = L.code;
+      var ic = L.szene === 'calima' ? '🌫️' : (!tag && code <= 1 ? '🌙' : (!tag && code <= 3 ? '☁️' : (WMO_ICON[code] || '☀️')));
+      s += '<text x="' + x + '" y="11" text-anchor="middle" style="opacity:.8">' + (i === 0 ? 'jetzt' : pad(hh)) + '</text>';
+      s += '<text x="' + x + '" y="29" text-anchor="middle" style="font-size:13px;font-family:system-ui">' + ic + '</text>';
+      s += '<circle cx="' + x + '" cy="' + tp[i][1] + '" r="2.3" fill="' + ORANGE + '"/>';
+      s += '<text x="' + x + '" y="' + (tY1 + 16) + '" text-anchor="middle">' + Math.round(wert(L.stdTemp, h)) + '°</text>';
+    });
+    var dp = punkte(L.tide, start - .5 * 2, start + 23, 0, W, dY0, dY1, sd[0], sd[1], .5);
+    s += '<path d="' + pfad(dp) + ' L' + W + ' ' + H + ' L0 ' + H + ' Z" fill="rgba(80,200,210,.22)"/>';
+    s += '<path d="' + pfad(dp) + '" fill="none" stroke="' + TUERKIS + '" stroke-width="1.8"/>';
+    L.extreme.forEach(function(e){
+      if (e.h < start - 1 || e.h > start + 23) return;
+      var x = (e.h - (start - 1)) / 24 * W, y = dY1 - (e.wert - sd[0]) / (sd[1] - sd[0] || 1) * (dY1 - dY0);
+      s += '<circle cx="' + x + '" cy="' + y + '" r="2.2" fill="' + TUERKIS + '"/>';
+      s += '<text x="' + Math.max(18, Math.min(W - 18, x)) + '" y="' + (e.hoch ? y - 6 : y + 13) + '" text-anchor="middle">' + uhr(e.h) + '</text>';
+    });
+    return s + '</svg>';
+  }
+
+  // Zwei feine Linien (Aufbau 5)
+  function feineLinien(L, W){
+    var H = 46, st = spanne(L.stdTemp, 0, 24), sd = spanne(L.tide, 0, 24);
+    var xh = function(h){ return h / 24 * W; };
+    var s = '<svg width="' + W + '" height="' + H + '" aria-hidden="true">';
+    s += '<path d="' + pfad(punkte(L.stdTemp, 0, 24, 0, W, 4, 20, st[0], st[1])) + '" fill="none" stroke="' + ORANGE + '" stroke-width="1.4" opacity=".95"/>';
+    s += '<path d="' + pfad(punkte(L.tide, 0, 24, 0, W, 28, 42, sd[0], sd[1], .5)) + '" fill="none" stroke="' + TUERKIS + '" stroke-width="1.4" opacity=".95"/>';
+    var xj = xh(L.t);
+    s += '<line x1="' + xj + '" x2="' + xj + '" y1="0" y2="' + H + '" stroke="#fff" stroke-width="1" opacity=".7"/>';
+    return s + '</svg>';
+  }
+
+  // ======================================================================
+  //  Die fünf Aufbauten
+  // ======================================================================
+  function temperatur(L){ return Math.round(L.temp) + '°'; }
+  function kopfBauen(ziel, aufbau, hg, L){
+    var box = document.createElement('div');
+    box.className = 'kopf a' + aufbau;
+    ziel.appendChild(box);
+    hintergrundBauen(box, hg, L, { ohneSonne: aufbau === '3' });
+    var inn = document.createElement('div'); inn.className = 'kopf-in'; box.appendChild(inn);
+    var ex = naechstesExtrem(L), W = Math.max(260, (box.clientWidth || 360) - 36);
+    var wasser = L.wasser != null ? komma(L.wasser, 0) + '°' : '–';
+    var stand = (L.simZeit || wahl.wetter !== 'echt') ? 'Simulation · ' + uhr(L.t) + ' Uhr' : 'Open-Meteo · Stand ' + uhr(ortsJetzt()) + ' Uhr Ortszeit';
+    if (aufbau === '1') {
+      inn.innerHTML = '<div class="ort">Corralejo, Fuerteventura</div><div class="temp kz">' + temperatur(L) + '</div>' +
+        '<div class="lage"><span class="ic">' + L.icon + '</span>' + L.text + '</div>' +
+        '<div class="hilo kz">Heute ' + Math.round(L.hoch) + '°  ·  Tief ' + Math.round(L.tief) + '°  ·  gefühlt ' + Math.round(L.gefuehlt) + '°</div>' +
+        '<div class="stand">' + stand + '</div>';
+    }
+    if (aufbau === '2') {
+      inn.innerHTML = '<div class="oben"><div><div class="ort">Corralejo</div><div class="temp kz">' + temperatur(L) + '</div>' +
+        '<div class="lage"><span class="ic">' + L.icon + '</span>' + L.text + '</div></div>' +
+        '<div class="rechts">Hoch <span class="kz">' + Math.round(L.hoch) + '°</span><br>Tief <span class="kz">' + Math.round(L.tief) + '°</span><br>gefühlt <span class="kz">' + Math.round(L.gefuehlt) + '°</span></div></div>' +
+        '<div class="diagramm">' + tageskurve(L, W) + '</div>' +
+        '<div class="legende"><span><i style="background:' + ORANGE + '"></i>Temperatur</span><span><i style="background:' + TUERKIS + '"></i>Tide' +
+        (ex ? ' · ' + (ex.hoch ? 'Hochwasser' : 'Niedrigwasser') + ' <span class="kz">' + uhr(ex.h) + '</span>' : '') + '</span></div>';
+    }
+    if (aufbau === '3') {
+      var Hh = 300;
+      var sz = document.createElement('div'); sz.className = 'szene'; sz.innerHTML = horizont(L, box.clientWidth || 360, Hh);
+      box.insertBefore(sz, inn);
+      inn.innerHTML = '<div class="ort">Corralejo</div><div class="temp kz">' + temperatur(L) + '</div>' +
+        '<div class="lage"><span class="ic">' + L.icon + '</span>' + L.text + '</div>' +
+        '<div class="klein">Wasser <span class="kz">' + wasser + '</span> · Wind <span class="kz">' + Math.round(L.wind) + '</span> km/h ' + richtung(L.windRicht, true) + '</div>';
+      var un = document.createElement('div'); un.className = 'unten';
+      un.innerHTML = '<span>' + (ex ? (ex.hoch ? 'Flut · Hoch um ' : 'Ebbe · Tief um ') + '<span class="kz">' + uhr(ex.h) + '</span>' : 'Tide') + '</span>' +
+        '<span>Hoch <span class="kz">' + Math.round(L.hoch) + '°</span> · Tief <span class="kz">' + Math.round(L.tief) + '°</span></span>';
+      box.appendChild(un);
+    }
+    if (aufbau === '4') {
+      inn.innerHTML = '<div class="oben"><div><div class="ort">Corralejo</div><div class="temp kz">' + temperatur(L) + '</div>' +
+        '<div class="lage"><span class="ic">' + L.icon + '</span>' + L.text + '</div></div>' +
+        '<div class="werte"><span>Wind</span><span><span class="kz">' + Math.round(L.wind) + '</span> ' + richtung(L.windRicht, true) + '</span>' +
+        '<span>Böen</span><span class="kz">' + Math.round(L.boeen) + '</span>' +
+        '<span>Wasser</span><span class="kz">' + wasser + '</span>' +
+        '<span>UV heute</span><span class="kz">' + Math.round(L.uvMax) + '</span></div></div>' +
+        '<div class="leiste">' + stundenleiste(L, W) + '</div>';
+    }
+    if (aufbau === '5') {
+      var satz = L.text + ', ' + Math.round(L.temp) + '°' + (Math.abs(L.gefuehlt - L.temp) >= 2 ? ', gefühlt ' + Math.round(L.gefuehlt) + '°' : '') + '. ' +
+        windWort(L.wind) + ' aus ' + richtung(L.windRicht) + (L.wasser != null ? ', das Meer hat ' + Math.round(L.wasser) + '°' : '') + '.' +
+        (ex ? ' ' + (ex.hoch ? 'Hochwasser' : 'Niedrigwasser') + ' um ' + uhr(ex.h) + '.' : '');
+      inn.innerHTML = '<div class="ort">Corralejo · ' + uhr(L.t) + '</div><div class="temp kz">' + temperatur(L) + '</div>' +
+        '<div class="satz">' + satz + '</div><div class="linien">' + feineLinien(L, W) + '</div>';
+    }
+    return box;
+  }
+
+  // ======================================================================
+  //  Seite zusammensetzen
+  // ======================================================================
+  function karte(ziel, titel, emp, text, gewaehlt, beiWahl, vorBuehne){
+    var k = document.createElement('div'); k.className = 'karte' + (gewaehlt ? ' is-gewaehlt' : '');
+    k.innerHTML = '<div class="karte-kopf"><b>' + titel + '</b>' + (emp ? '<span class="emp">Empfehlung</span>' : '') + '</div>';
+    if (vorBuehne) k.appendChild(vorBuehne);
+    var b = document.createElement('div'); b.className = 'buehne'; k.appendChild(b);
+    ziel.appendChild(k);
+    var p = document.createElement('p'); p.className = 'pro'; p.textContent = text.pro; k.appendChild(p);
+    var c = document.createElement('p'); c.className = 'contra'; c.textContent = text.contra; k.appendChild(c);
+    var w = document.createElement('button'); w.type = 'button'; w.className = 'waehlen'; w.textContent = gewaehlt ? '✓ Gewählt' : 'Diese nehmen';
+    w.addEventListener('click', beiWahl); k.appendChild(w);
+    return b;
+  }
+
+  function alles(){
+    document.documentElement.setAttribute('data-theme', wahl.thema === 'hell' ? 'light' : 'dark');
+    document.documentElement.style.setProperty('--kopf-ecke', wahl.ecke + 'px');
+    var sf = SCHRIFTEN.filter(function(s){ return s.id === wahl.schrift; })[0] || SCHRIFTEN[0];
+    document.documentElement.style.setProperty('--kz-font', sf.fam);
+    document.documentElement.style.setProperty('--kz-gewicht', sf.w);
+    document.documentElement.style.setProperty('--kz-abstand', sf.ls);
+    document.body.classList.toggle('still', wahl.bewegung === 'aus');
+    document.querySelectorAll('.zeile[data-gruppe]').forEach(function(z){
+      var g = z.getAttribute('data-gruppe');
+      z.querySelectorAll('.wahl').forEach(function(b){ b.classList.toggle('is-on', b.getAttribute('data-wert') === wahl[g]); });
+    });
+    var L = lage();
+    var st = document.getElementById('status');
+    if (echt) {
+      st.innerHTML = (echt.ersatz ? 'Keine Verbindung – Beispielwerte. ' : 'Echt jetzt in Corralejo: <b>' + (WMO_TEXT[echt.code] || '') + ', ' + Math.round(echt.temp) + '°</b>, Wolken ' + echt.wolken + ' %, Wind ' + Math.round(echt.wind) + ' km/h aus ' + richtung(echt.windRicht) + ', Saharastaub ' + Math.round(echt.staub || 0) + ' µg/m³. ') +
+        (wahl.wetter !== 'echt' || wahl.zeit !== 'echt' ? 'Gezeigt: <b>' + L.text + ' um ' + uhr(L.t) + ' Uhr</b>.' : '');
+    }
+
+    himmelListe = [];
+    var r1 = document.getElementById('raster-hg'); r1.innerHTML = '';
+    HINTERGRUENDE.forEach(function(H){
+      var vor = null;
+      if (H.id === 'B') {
+        vor = document.createElement('div'); vor.className = 'camwahl';
+        Object.keys(KAMERAS).forEach(function(id){
+          var b = document.createElement('button'); b.type = 'button'; b.textContent = KAMERAS[id].name;
+          if (id === wahl.cam) b.className = 'is-on';
+          b.addEventListener('click', function(){ wahl.cam = id; merken(); alles(); });
+          vor.appendChild(b);
+        });
+        var hw = document.createElement('span'); hw.style.cssText = 'margin-left:auto;color:var(--ink-dim)';
+        hw.textContent = (wahl.wetter !== 'echt' || wahl.zeit !== 'echt') ? 'zeigt immer das echte Jetzt' : 'live';
+        vor.appendChild(hw);
+      }
+      var b = karte(r1, H.id + ' · ' + H.name, H.emp, H, wahl.hg === H.id, function(){ wahl.hg = H.id; merken(); alles(); }, vor);
+      kopfBauen(b, wahl.aufbau, H.id, L);
+    });
+    var r2 = document.getElementById('raster-aufbau'); r2.innerHTML = '';
+    AUFBAUTEN.forEach(function(A){
+      var b = karte(r2, A.id + ' · ' + A.name, A.emp, A, wahl.aufbau === A.id, function(){ wahl.aufbau = A.id; merken(); alles(); });
+      kopfBauen(b, A.id, wahl.hg, L);
+    });
+    var sch = document.getElementById('schriften'); sch.innerHTML = '';
+    SCHRIFTEN.forEach(function(S){
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'schrift' + (S.id === wahl.schrift ? ' is-on' : '');
+      b.innerHTML = '<span class="probe" style="font-family:' + S.fam.replace(/"/g, '&quot;') + ';font-weight:' + S.w + ';letter-spacing:' + S.ls + '">' + Math.round(L.temp) + '°</span>' +
+        '<small><b>' + S.id + ' · ' + S.name + '</b></small><small>' + S.note + '</small>';
+      b.addEventListener('click', function(){ wahl.schrift = S.id; merken(); alles(); });
+      sch.appendChild(b);
+    });
+    var H = HINTERGRUENDE.filter(function(h){ return h.id === wahl.hg; })[0], A = AUFBAUTEN.filter(function(a){ return a.id === wahl.aufbau; })[0];
+    var eck = GRUPPEN.ecke.filter(function(e){ return e[0] === wahl.ecke; })[0][1];
+    document.getElementById('auswahl').innerHTML = '<span>Deine Auswahl:</span> <b>Hintergrund ' + H.id + '</b> <span class="dim">' + H.name + '</span>' +
+      ' <b>Aufbau ' + A.id + '</b> <span class="dim">' + A.name + '</span> <b>Schrift ' + sf.id + '</b> <span class="dim">' + sf.name + '</span>' +
+      ' <b>Ecken ' + eck.toLowerCase() + '</b> <span class="dim">– sag mir einfach diese Zeile.</span>';
+  }
+
+  var groesse = null;
+  window.addEventListener('resize', function(){ clearTimeout(groesse); groesse = setTimeout(alles, 250); });
+  alles();
+  laden();
+  // Echte Werte alle 15 Minuten nachladen
+  setInterval(laden, 15 * 60000);
+})();
+</script>
+</body>
+</html>
