@@ -4304,6 +4304,12 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     </div>
 
     <div class="einst-block">
+      <h3>Untere Leiste im Querformat</h3>
+      <button type="button" class="einst-schalter" data-einst="leiste" aria-pressed="true"><span>Nach dem Drehen wieder ausklappen</span><span class="knopf" aria-hidden="true"></span></button>
+      <p class="einst-text" style="margin:6px 0 0">Im Querformat l&#228;sst sich die Leiste mit dem Pfeil rechts an den linken Rand einklappen. Ist dieser Schalter an, ist sie nach dem Hochkant-Drehen wieder vollst&#228;ndig da. Ist er aus, bleibt sie eingeklappt, bis du sie selbst wieder ausklappst.</p>
+    </div>
+
+    <div class="einst-block">
       <h3>Unterk&#252;nfte</h3>
       <button type="button" class="einst-schalter" data-einst="weg" aria-pressed="false"><span>Ausgebuchte und ausgeblendete verstecken</span><span class="knopf" aria-hidden="true"></span></button>
       <p class="einst-text" style="margin:6px 0 0">Wirkt nur auf diesem Ger&#228;t. Derselbe Schalter steht auch oben auf der Unterk&#252;nfte-Seite.</p>
@@ -4566,12 +4572,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       k.firstChild.innerHTML = '<svg viewBox="0 0 24 24"><path d="' + (zu ? 'M9 5l7 7-7 7' : 'M15 5l-7 7 7 7') + '"/></svg>';
       k.setAttribute('aria-label', zu ? 'Leiste ausklappen' : 'Leiste einklappen');
     }
-    setzen(lsGet('fuerte-leiste-zu', '0') === '1');
+    // Standard: nach dem Drehen (und beim Neuladen) wieder ausgeklappt.
+    // Wer das in den Einstellungen abschaltet, behaelt den letzten Zustand.
+    function merken(){ return lsGet('fuerte-leiste-merken', '0') === '1'; }
+    setzen(merken() && lsGet('fuerte-leiste-zu', '0') === '1');
     k.addEventListener('click', function(){
       var zu = !bar.classList.contains('eingeklappt');
       lsSet('fuerte-leiste-zu', zu ? '1' : '0');
       setzen(zu);
     });
+    var quer = window.matchMedia('(orientation: landscape) and (max-height: 540px)');
+    function gedreht(){ if (!quer.matches && !merken()) { setzen(false); lsSet('fuerte-leiste-zu', '0'); } }
+    if (quer.addEventListener) quer.addEventListener('change', gedreht); else if (quer.addListener) quer.addListener(gedreht);
   })();
 
   // ---- Sonnenstand (nach dem NOAA-Verfahren, rein astronomisch) ----
@@ -10891,6 +10903,8 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     });
     var weg = document.querySelector('#einst-sheet [data-einst="weg"]');
     if (weg) weg.setAttribute('aria-pressed', wegVerstecken() ? 'true' : 'false');
+    var le = document.querySelector('#einst-sheet [data-einst="leiste"]');
+    if (le) le.setAttribute('aria-pressed', lsGet('fuerte-leiste-merken', '0') === '1' ? 'false' : 'true');
     var sp = document.querySelector('#einst-sheet [data-einst="sparen"]');
     if (sp) sp.setAttribute('aria-pressed', lsGet('fuerte-datensparen', '0') === '1' ? 'true' : 'false');
     var st = document.getElementById('einst-stand');
@@ -10956,6 +10970,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
           lsSet(WEG_KEY, wegVerstecken() ? '0' : '1');
           applySortFilter();
         }
+        if (art2 === 'leiste') lsSet('fuerte-leiste-merken', lsGet('fuerte-leiste-merken', '0') === '1' ? '0' : '1');
         if (art2 === 'sparen') {
           var an = lsGet('fuerte-datensparen', '0') !== '1';
           lsSet('fuerte-datensparen', an ? '1' : '0');
