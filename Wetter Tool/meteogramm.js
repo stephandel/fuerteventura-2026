@@ -752,7 +752,7 @@
       var s = [];
       webcam.shots.forEach(function(sh){
         if (sh.i < 0 || sh.i >= geo.n) return;
-        s.push('<rect class="mg-cam-mark" x="' + (geo.x(sh.i) - 3) + '" y="' + (BAND_TAG + 3) + '" width="6" height="' + (BAND_CAM - 7) + '" rx="1.5"/>');
+        s.push('<rect class="mg-cam-mark" x="' + (geo.x(sh.i) - 2) + '" y="' + (BAND_TAG + 3) + '" width="4" height="' + (BAND_CAM - 7) + '" rx="1"/>');
       });
       if (aktiveKamera() && idxJetzt >= 0 && idxJetzt < geo.n) {
         s.push('<rect class="mg-cam-mark is-live" x="' + (geo.x(idxJetzt) - 3) + '" y="' + (BAND_TAG + 3) + '" width="6" height="' + (BAND_CAM - 7) + '" rx="1.5"/>');
@@ -790,7 +790,7 @@
         el.cam.classList.add('is-leer');
         el.camText.innerHTML = zukunft
           ? 'Für die Zukunft gibt es noch kein Bild – das entsteht erst, wenn die Stunde da ist.'
-          : (webcam.speicher ? 'Für diese Stunde liegt kein Bild vor.'
+          : (webcam.speicher ? 'Für diese Zeit liegt kein Bild vor.'
              : 'Vergangene Stunden erscheinen hier, sobald der Bildspeicher eingerichtet ist. Das Bild der laufenden Stunde siehst du über „Jetzt zentrieren“.');
         return;
       }
@@ -1273,9 +1273,9 @@
       laden({ still: true, behalten: behalten !== false });
     }
 
-    // Die Bilder kommen jede volle Stunde kurz nach Minute 5 herein (so steht
-    // der Auslöser beim Bildspeicher). Kurz danach frischen wir von selbst auf,
-    // damit das neue Bild und die neuen Werte ohne Zutun erscheinen.
+    // Die Bilder kommen jede halbe Stunde kurz nach Minute 5 und 35 herein (so
+    // steht der Auslöser beim Bildspeicher). Kurz danach frischen wir von selbst
+    // auf, damit das neue Bild und die neuen Werte ohne Zutun erscheinen.
     var auffrischUhr = null;
     function naechsteAuffrischung(){
       if (auffrischUhr) clearTimeout(auffrischUhr);
@@ -1283,7 +1283,7 @@
       var ziel = new Date(jetzt.getTime());
       ziel.setSeconds(0, 0);
       ziel.setMinutes(BILD_MINUTE);
-      if (ziel <= jetzt) ziel.setTime(ziel.getTime() + 3600000);
+      while (ziel <= jetzt) ziel.setTime(ziel.getTime() + 30 * 60000);
       auffrischUhr = setTimeout(function(){
         auffrischen(true);
         naechsteAuffrischung();           // fuer den Fall, dass nachLaden nicht durchkommt

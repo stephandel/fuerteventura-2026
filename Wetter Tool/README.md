@@ -41,7 +41,7 @@ Mehr braucht es nicht. Alles Weitere ist wahlfrei.
 | `bildspeicher` | Adresse eines Dienstes, der vergangene Stunden vorhält (siehe unten) | keiner |
 | `zeitzone` | z. B. `'Atlantic/Canary'`. `'auto'` nimmt die Zeitzone des Ortes. | `'auto'` |
 | `tageVorher` / `tageVoraus` | Wie weit das Diagramm reicht | 1 / 8 |
-| `bildMinute` | Minute nach der vollen Stunde, zu der von selbst aufgefrischt wird (passend zum Bildspeicher) | `7` |
+| `bildMinute` | Minute nach der vollen Stunde, zu der von selbst aufgefrischt wird – und 30 Minuten später noch einmal (passend zum Bildspeicher) | `7` |
 | `merkschluessel` | Präfix für die gespeicherte Auswahl (Ort, Modell, Zeilen, Reihenfolge) | `'meteogramm'` |
 
 Rückgabe: `{ neu(), auffrischen(), zeichnen(), zeigeOrt(id), abbauen() }`.
@@ -65,7 +65,7 @@ Auswahl und Reihenfolge merkt sich das Gerät.
 
 ## Wann es sich von selbst auffrischt
 
-- jede volle Stunde kurz nach `bildMinute` – dann liegt das neue Webcam-Bild bereit
+- jede halbe Stunde kurz nach `bildMinute` (bzw. 30 Minuten später) – dann liegt das neue Webcam-Bild bereit
 - sobald die Seite nach mehr als zehn Minuten wieder in den Vordergrund kommt
 - alle fünf Minuten wandert die „Jetzt"-Linie mit und das Live-Kamerabild wird neu geholt
 
@@ -104,7 +104,7 @@ die Fahne nicht.
 
 Ohne `bildspeicher` zeigt der Baustein nur das Kamerabild der **laufenden** Stunde,
 direkt vom Betreiber geholt. Für die Vergangenheit braucht es einen Dienst, der
-stündlich ein Bild wegspeichert und zwei Wege anbietet:
+jede halbe Stunde ein Bild wegspeichert und zwei Wege anbietet:
 
     GET  <bildspeicher>/webcam?ort=<id>
     → { "shots": [ { "t": "2026-09-23T09:00", "url": "/webcam/bild/42" } ] }
@@ -112,7 +112,8 @@ stündlich ein Bild wegspeichert und zwei Wege anbietet:
     GET  <bildspeicher>/webcam/bild/42
     → das Bild (JPEG)
 
-`t` ist die volle Stunde in Ortszeit, `url` darf absolut oder relativ sein.
+`t` ist die Zeit in Ortszeit (volle oder halbe Stunde, z. B. `09:00`, `09:30`), `url` darf absolut oder relativ sein.
+Der Baustein zeigt zum Strich das zeitlich nächste Bild, höchstens 45 Minuten entfernt.
 Ein fertiger Cloudflare-Worker dafür liegt im Nachbarprojekt unter `worker/`.
 
 ## Satellit und Niederschlag

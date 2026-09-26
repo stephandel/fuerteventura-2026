@@ -49,14 +49,15 @@ Keine – alle entschieden (siehe unten).
 
 ## Offene technische Punkte
 
-- **Worker nicht auf dem neuesten Stand.** Geprüft 24.09.: `GET https://fuerte-sync.stephanhandel.workers.dev/webcam/jetzt`
-  (mit Header `Origin: https://stephandel.github.io`) liefert nur `corralejo`, `sotavento`, `cotillo` –
-  **`jandia` (Faro de Jandía) fehlt**, obwohl er in `../worker/fuerte-sync.js` steht. Also neu einspielen:
-  `cat worker/fuerte-sync.js | pbcopy`, Stephan fügt im Cloudflare-Dashboard unter
-  Workers & Pages → fuerte-sync → „Edit code“ ein und klickt „Deploy“. Danach per curl prüfen: vier Orte.
-- **Verdacht Platzhalterbild:** Bei derselben Prüfung meldeten Corralejo und El Cotillo beide genau
-  **5685 Bytes** – echte Fotos wären unterschiedlich groß. Prüfen, ob der Worker bei einem Fehler ein
-  Ersatzbild speichert statt nichts (Liveness-Test im Worker nicht entfernen!).
+- **Webcam-Bilder halbstündlich (26.09.2026):** Worker speichert unter `t = …T14:00` bzw. `…T14:30`
+  (`ortsHalbstunde()`), Cron im Dashboard muss `5,35 * * * *` sein. Das Tool frischt zu `bildMinute` und
+  30 Min. später auf und zeigt das nächstliegende Bild (höchstens 45 Min. entfernt).
+  **Prüfen, ob Stephan den Worker eingespielt und den Cron umgestellt hat:**
+  `curl -H "Origin: https://stephandel.github.io" https://fuerte-sync.stephanhandel.workers.dev/webcam/jetzt`
+  muss vier Orte liefern (auch `jandia`), und `…/webcam?ort=corralejo` muss nach einer Stunde `:30`-Einträge zeigen.
+- **Kein Platzhalterbild (geprüft 26.09.):** Skyline (Corralejo) liefert öffentlich nur eine kleine Vorschau
+  (344 × 193 Pixel, ~5 KB), aber echt und aktuell. Die zwei gleich großen Bilder vom 24.09. kamen vermutlich
+  daher, dass die alte Worker-Fassung auch El Cotillo über Skyline holte. MeteoSurf liefert 640 × 480.
 - **Mondbild-Pfad gilt nur für 2026** (NASA-Datensatz a005587); für 2027 den neuen Datensatz suchen,
   sonst greift das SVG als Rückfall.
 

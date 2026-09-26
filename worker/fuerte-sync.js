@@ -12,8 +12,8 @@
 //   GET  /webcam/bild/7 -> ein gespeichertes Bild (ohne Herkunftsprüfung, damit <img> es laden kann)
 //   GET  /webcam/jetzt  -> von Hand ein Bild je Ort holen (zum Testen)
 //
-// Dazu ein Cron-Auslöser (im Dashboard: Settings -> Trigger Events -> Cron, "5 * * * *"),
-// der jede Stunde das aktuelle Webcam-Bild holt und in D1 ablegt. Es wird kein
+// Dazu ein Cron-Auslöser (im Dashboard: Settings -> Trigger Events -> Cron, "5,35 * * * *"),
+// der jede halbe Stunde das aktuelle Webcam-Bild holt und in D1 ablegt. Es wird kein
 // Zugangsschlüssel gebraucht - die Kameras geben ihr Standbild frei heraus, und
 // die Tabelle legt der Worker beim ersten Zugriff selbst an.
 //
@@ -30,7 +30,7 @@ const LEUTE = ['stephan', 'bilgen'];
 // Webcams je Ort. Beide Quellen liefern ihr Standbild frei, ohne Schlüssel:
 //   skyline = SkylineWebcams, feste Bildadresse, alle paar Sekunden neu
 //   youtube = Vorschaubild eines laufenden Livestreams (nur gültig, solange er läuft)
-// Geprüft am 23.09.2026. Fällt eine Kamera aus, bleibt die Stunde einfach leer.
+// Geprüft am 23.09.2026. Fällt eine Kamera aus, bleibt die halbe Stunde einfach leer.
 const WEBCAMS = {
   corralejo: {
     name: 'Grandes Playas, Corralejo', art: 'skyline',
@@ -142,11 +142,11 @@ async function tabelleSicherstellen(env) {
   tabelleGeprueft = true;
 }
 
-// Volle Stunde in kanarischer Ortszeit als "JJJJ-MM-TTTHH:00"
-function ortsStunde(d) {
-  const f = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Atlantic/Canary', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', hour12: false });
+// Halbe Stunde in kanarischer Ortszeit als "JJJJ-MM-TTTHH:00" oder "JJJJ-MM-TTTHH:30"
+function ortsHalbstunde(d) {
+  const f = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Atlantic/Canary', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false });
   const t = f.formatToParts(d).reduce((o, p) => (o[p.type] = p.value, o), {});
-  return `${t.year}-${t.month}-${t.day}T${t.hour === '24' ? '00' : t.hour}:00`;
+  return `${t.year}-${t.month}-${t.day}T${t.hour === '24' ? '00' : t.hour}:${Number(t.minute) < 30 ? '00' : '30'}`;
 }
 
 // Ein Livestream-Vorschaubild ist nur brauchbar, solange der Stream läuft -
@@ -162,7 +162,7 @@ async function laeuftStream(videoId) {
   } catch (e) { return false; }
 }
 
-// Holt für einen Ort das aktuelle Bild und legt es zur vollen Stunde ab
+// Holt für einen Ort das aktuelle Bild und legt es zur laufenden halben Stunde ab
 async function bildHolen(ortId, env) {
   const cfg = WEBCAMS[ortId];
   if (!cfg) return { ort: ortId, fehler: 'unbekannter Ort' };
@@ -191,7 +191,7 @@ async function bildHolen(ortId, env) {
   if (bytes.byteLength < 2000) return { ort: ortId, fehler: 'Bild zu klein' };
   if (bytes.byteLength > WEBCAM_MAX_BYTES) return { ort: ortId, fehler: 'Bild zu groß' };
 
-  const t = ortsStunde(new Date());
+  const t = ortsHalbstunde(new Date());
   await env.DB.prepare(
     'INSERT OR REPLACE INTO webcam_shots (ort, t, taken_at, mime, bytes, quelle, link) VALUES (?, ?, ?, ?, ?, ?, ?)'
   ).bind(ortId, t, Date.now(), r.headers.get('Content-Type') || 'image/jpeg', bytes, cfg.quelle, cfg.link).run();
@@ -224,7 +224,7 @@ async function bilderListe(ortId, env) {
 }
 
 export default {
-  // Stündlicher Auslöser (Cron)
+  // Halbstündlicher Auslöser (Cron)
   async scheduled(event, env, ctx) {
     if (!env.DB) return;
     ctx.waitUntil(alleBilderHolen(env));
