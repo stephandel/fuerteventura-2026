@@ -108,8 +108,11 @@ async function standLesen(env) {
   const hidden = {};
   const todos = {};
   const pack = {};
+  // Seit 26.09.2026: gemeinsame Auswahl fuer die Kostenrechnung,
+  // slug = 'schluessel=wert' (z. B. 'fuerte-shortlist-selected=renacer-zen')
+  const sel = {};
   for (const z of marken.results) {
-    const ziel = z.kind === 'fav' ? favs : z.kind === 'todo' ? todos : z.kind === 'pack' ? pack : hidden;
+    const ziel = z.kind === 'fav' ? favs : z.kind === 'todo' ? todos : z.kind === 'pack' ? pack : z.kind === 'sel' ? sel : hidden;
     ziel[z.slug] = { by: z.by_who, at: z.at };
   }
 
@@ -119,7 +122,7 @@ async function standLesen(env) {
     notes[z.slug].push({ id: z.id, by: z.by_who, text: z.text, at: z.at });
   }
 
-  return { favs, hidden, todos, pack, notes, stand: Date.now() };
+  return { favs, hidden, todos, pack, sel, notes, stand: Date.now() };
 }
 
 // ---------- Webcam-Bilder ----------
@@ -273,7 +276,7 @@ export default {
         // eine ältere Fassung der Seite, die die Haken noch nicht kennt,
         // diese nicht versehentlich löschen.
         const befehle = [];
-        for (const [art, liste] of [['fav', daten.favs], ['hidden', daten.hidden], ['todo', daten.todos], ['pack', daten.pack]]) {
+        for (const [art, liste] of [['fav', daten.favs], ['hidden', daten.hidden], ['todo', daten.todos], ['pack', daten.pack], ['sel', daten.sel]]) {
           if (!Array.isArray(liste)) continue;
           befehle.push(env.DB.prepare('DELETE FROM marks WHERE kind = ?').bind(art));
           for (const eintrag of liste.slice(0, MAX_MARKEN)) {

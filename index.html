@@ -4850,7 +4850,14 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   var TRIP_START = new Date(2026, 8, 29); // 29.09.2026
 
   function lsGet(k, fb){ try { var v = localStorage.getItem(k); return v === null ? fb : v; } catch(e){ return fb; } }
-  function lsSet(k, v){ try { localStorage.setItem(k, v); } catch(e){} }
+  // Auswahl fuer die Kostenrechnung, die Stephan und Bilgen teilen (seit 26.09.2026).
+  // Wird einer dieser Schluessel geschrieben, geht der Stand an den Server.
+  var AUSWAHL_KEYS = ['fuerte-shortlist-selected', 'fuerte-shortlist-selected-2', 'fuerte-shortlist-selected-3',
+                      'fuerte-split-nights', 'fuerte-split-nights-2', 'fuerte-teile-anzahl'];
+  function lsSet(k, v){
+    try { localStorage.setItem(k, v); } catch(e){}
+    if (AUSWAHL_KEYS.indexOf(k) !== -1 && typeof auswahlGeaendert === 'function') auswahlGeaendert();
+  }
 
   function getSelected(){ return lsGet(SEL_KEY, DEFAULT_ACC); }
   function setSelected(slug){ lsSet(SEL_KEY, slug); }
@@ -7933,8 +7940,63 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       }
       applySortFilter();
       renderShareFlags();
+      auswahlUebernehmen();
     } catch(e){
     } finally { applyingRemote = false; }
+  }
+
+  // ---- Gemeinsame Auswahl (Unterkunft je Teil, Anzahl Teile, Naechte) ----
+  var auswahlZuletztLokal = 0, auswahlTimer = null, auswahlGesaet = false, auswahlServerDa = false;
+  function auswahlGeaendert(){
+    // Beim Seitenaufbau raeumt die Seite ihre Auswahl selbst auf. Das darf
+    // nicht die Auswahl der anderen Person ueberschreiben - erst senden,
+    // wenn der Serverstand einmal da war.
+    if (applyingRemote || !auswahlServerDa) return;
+    auswahlZuletztLokal = Date.now();
+    clearTimeout(auswahlTimer);
+    auswahlTimer = setTimeout(function(){ try { pushShared(); } catch(e){} }, 800);
+  }
+  function auswahlListe(me, jetzt){
+    var alt = shared.sel || {};
+    return AUSWAHL_KEYS.map(function(k){
+      var v = '';
+      try { v = localStorage.getItem(k) || ''; } catch(e){}
+      var slug = k + '=' + v, prev = alt[slug];
+      return { slug: slug, by: prev ? prev.by : me, at: prev ? prev.at : jetzt };
+    });
+  }
+  function auswahlUebernehmen(){
+    if (!shared.selVomServer) return;
+    var eintraege = Object.keys(shared.sel || {});
+    // Liegt auf dem Server noch keine Auswahl, legt dieses Geraet seine ab.
+    if (!eintraege.length) {
+      if (!auswahlGesaet) { auswahlGesaet = true; setTimeout(function(){ try { pushShared(); } catch(e){} }, 0); }
+      return;
+    }
+    // Eigene frische Aenderung nicht vom aelteren Serverstand ueberschreiben lassen
+    if (Date.now() - auswahlZuletztLokal < 6000) return;
+    if (warteliste().some(function(e){ return e.pfad === '/marks'; })) return;
+    var geaendert = false;
+    eintraege.forEach(function(s){
+      var i = s.indexOf('=');
+      if (i < 1) return;
+      var k = s.slice(0, i), v = s.slice(i + 1);
+      if (AUSWAHL_KEYS.indexOf(k) === -1) return;
+      var jetzt = null;
+      try { jetzt = localStorage.getItem(k); } catch(e){}
+      if ((jetzt || '') !== v) {
+        try { if (v === '') localStorage.removeItem(k); else localStorage.setItem(k, v); } catch(e){}
+        geaendert = true;
+      }
+    });
+    if (geaendert) {
+      try { applySelState(); } catch(e){}
+      try { renderSplit(); } catch(e){}
+      try { renderKosten(); } catch(e){}
+      try { renderSelectionSummary(); } catch(e){}
+      try { zeichneTeilKnoepfe(); } catch(e){}
+      try { document.querySelectorAll('#card-grid .card, .kat-grid .card').forEach(preisblockAktualisieren); } catch(e){}
+    }
   }
 
   function pushShared(){
@@ -7959,9 +8021,12 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     todos.forEach(function(e){ shared.todos[e.slug] = { by: e.by, at: e.at }; });
     shared.pack = {};
     pack.forEach(function(e){ shared.pack[e.slug] = { by: e.by, at: e.at }; });
+    var sel = auswahlListe(me, jetzt);
+    shared.sel = {};
+    sel.forEach(function(e){ shared.sel[e.slug] = { by: e.by, at: e.at }; });
     renderShareFlags();
 
-    einreihen({ pfad: '/marks', koerper: { by: me, favs: favs, hidden: hidden, todos: todos, pack: pack } });
+    einreihen({ pfad: '/marks', koerper: { by: me, favs: favs, hidden: hidden, todos: todos, pack: pack, sel: sel } });
     abgleichen();
   }
 
@@ -7986,6 +8051,9 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     shared.todos = d.todos || {};
     shared.packVomServer = !!d.pack;
     shared.pack = d.pack || {};
+    shared.selVomServer = !!d.sel;
+    shared.sel = d.sel || {};
+    auswahlServerDa = true;
     notes = d.notes || {};
     // Noch nicht abgeschickte Notizen wieder dazulegen, sonst
     // verschwinden sie beim naechsten Abgleich vor den Augen.
