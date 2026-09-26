@@ -1034,6 +1034,11 @@ table.price-table tfoot td.num { color: var(--teal); }
 .chip { font-size: 12.5px; font-weight: 600; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface-2); color: var(--ink-dim); cursor: pointer; }
 .chip:hover { border-color: var(--teal); }
 .chip.active { background: var(--teal); border-color: var(--teal); color: var(--teal-ink); }
+/* Schalter: ausgebuchte und ausgeblendete Unterkuenfte ganz verstecken */
+.chip-weg { font-size: 12.5px; font-weight: 600; padding: 6px 12px; border-radius: 999px; border: 1px dashed var(--border); background: var(--surface-2); color: var(--ink-dim); cursor: pointer; font-family: inherit; }
+.chip-weg:hover { border-color: var(--bad); }
+.chip-weg[aria-pressed="true"] { background: var(--bad); border: 1px solid var(--bad); color: #fff; }
+.chip-weg .weg-zahl { font-family: "JetBrains Mono", monospace; font-size: 11.5px; opacity: .85; }
 .empty-msg { text-align: center; color: var(--ink-dim); padding: 40px 20px; }
 /* Kein Flex: sonst werden Text und Klammerzusatz zu zwei Spalten,
    die jede fuer sich umbrechen statt in einem Fluss zu laufen. */
@@ -1642,6 +1647,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
           <button type="button" class="chip" data-filter="ac">❄️ Klimaanlage</button>
           <button type="button" class="chip" data-filter="wholeplace">🏠 Nur ganze Unterkunft</button>
         </div>
+        <button type="button" class="chip-weg" id="weg-toggle" aria-pressed="false" title="Ausgebuchte und von euch ausgeblendete Unterk&#252;nfte ganz aus der Liste nehmen">&#x1f648; Ausgebuchte &amp; Ausgeblendete verstecken <span class="weg-zahl"></span></button>
       </div>
       <div class="legend">
         <span><span class="dot" style="background:var(--good)"></span> erfüllt</span>
@@ -5527,6 +5533,11 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   // ---- favorites & hidden (accommodation cards) ----
   var FAV_KEY = "fuerte-fav-accs";
   var HIDE_KEY = "fuerte-hidden-accs";
+  // Nur auf diesem Geraet gemerkt: ausgebuchte + ausgeblendete ganz verstecken.
+  var WEG_KEY = "fuerte-weg-verstecken";
+  function wegVerstecken(){ try { return localStorage.getItem(WEG_KEY) === '1'; } catch(e){ return false; } }
+  // AUSGEBUCHT steht weiter unten im Skript - beim ersten Aufruf ist es noch leer.
+  function istAusgebucht(slug){ return typeof AUSGEBUCHT !== 'undefined' && !!(AUSGEBUCHT && AUSGEBUCHT[slug]); }
   function getFavs(){ try { return JSON.parse(localStorage.getItem(FAV_KEY) || '[]'); } catch(e){ return []; } }
   function setFavs(arr){ try { localStorage.setItem(FAV_KEY, JSON.stringify(arr)); } catch(e){} }
   function getHiddenAccs(){ try { return JSON.parse(localStorage.getItem(HIDE_KEY) || '[]'); } catch(e){ return []; } }
@@ -5587,7 +5598,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 
     cards.sort(function(a, b){
       var slugA = slugOf(a), slugB = slugOf(b);
-      var hiddenA = hidden.indexOf(slugA) !== -1, hiddenB = hidden.indexOf(slugB) !== -1;
+      var hiddenA = hidden.indexOf(slugA) !== -1 || istAusgebucht(slugA), hiddenB = hidden.indexOf(slugB) !== -1 || istAusgebucht(slugB);
       if (hiddenA !== hiddenB) return hiddenA ? 1 : -1;
       if (!hiddenA) {
         var favA = favs.indexOf(slugA), favB = favs.indexOf(slugB);
@@ -5626,15 +5637,31 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     });
 
     var activeKeys = Object.keys(activeFilters).filter(function(k){ return activeFilters[k]; });
-    var visibleCount = 0;
+    var visibleCount = 0, wegZahl = 0, verstecken = wegVerstecken();
     cards.forEach(function(c){
-      var visible = activeKeys.every(function(k){ return c.dataset[k] === 'true'; });
+      var s = slugOf(c);
+      var weg = hidden.indexOf(s) !== -1 || istAusgebucht(s);
+      if (weg) wegZahl++;
+      var visible = activeKeys.every(function(k){ return c.dataset[k] === 'true'; }) && !(verstecken && weg);
       c.style.display = visible ? '' : 'none';
       if (visible) visibleCount++;
     });
     if (emptyMsg) emptyMsg.style.display = visibleCount === 0 ? 'block' : 'none';
+    var wegBtn = document.getElementById('weg-toggle');
+    if (wegBtn) {
+      wegBtn.setAttribute('aria-pressed', verstecken ? 'true' : 'false');
+      var z = wegBtn.querySelector('.weg-zahl');
+      if (z) z.textContent = '(' + wegZahl + ')';
+    }
+    var katZahl = document.querySelector('.kat-block .kat-zahl');
+    if (katZahl) katZahl.textContent = visibleCount;
   }
   if (sortSelect) sortSelect.addEventListener('change', applySortFilter);
+  var wegToggle = document.getElementById('weg-toggle');
+  if (wegToggle) wegToggle.addEventListener('click', function(){
+    try { localStorage.setItem(WEG_KEY, wegVerstecken() ? '0' : '1'); } catch(e){}
+    applySortFilter();
+  });
   document.querySelectorAll('.chip').forEach(function(chip){
     chip.addEventListener('click', function(){
       var key = chip.getAttribute('data-filter');
@@ -10033,20 +10060,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     huelle.className = 'kat-huelle';
     grid.parentNode.insertBefore(huelle, grid);
 
-    ART_REIHE.forEach(function(art){
-      var passend = karten.filter(function(c){ return accInfo(slugOf(c)).art === art; });
-      if (!passend.length) return;
-      var block = document.createElement('section');
-      block.className = 'kat-block';
-      block.setAttribute('data-art', art);
-      var m = ART_TITEL[art];
-      block.innerHTML = '<div class="kat-kopf"><h3>' + m.t + ' <span class="kat-zahl">' + passend.length + '</span></h3>' +
-                        '<p class="sub">' + m.sub + '</p></div>' +
-                        '<div class="grid kat-grid"></div>';
-      huelle.appendChild(block);
-      var ziel = block.querySelector('.kat-grid');
-      passend.forEach(function(c){ ziel.appendChild(c); });
-    });
+    // Seit 26.09.2026 eine gemeinsame Liste statt vier Kategorien (Stephans
+    // Wunsch). Die Art steht weiter als Kachel auf jeder Karte. Der Block
+    // bleibt ein .kat-block, weil viele Stellen die Karten in .kat-grid suchen.
+    var block = document.createElement('section');
+    block.className = 'kat-block';
+    block.setAttribute('data-art', 'alle');
+    block.innerHTML = '<div class="kat-kopf"><h3>\ud83c\udfe0 Alle Unterk\u00fcnfte <span class="kat-zahl">' + karten.length + '</span></h3>' +
+                      '<p class="sub">Villen, Bahiazul-Villen, Stadtwohnungen und Hotels in einer Liste \u2013 die Art steht auf jeder Karte.</p></div>' +
+                      '<div class="grid kat-grid"></div>';
+    huelle.appendChild(block);
+    var ziel = block.querySelector('.kat-grid');
+    karten.forEach(function(c){ ziel.appendChild(c); });
     grid.style.display = 'none';
   }
 
@@ -10604,5 +10629,6 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   // sitzt - Notizfeld und Hinweise haengen sich sonst darunter.
   bewertungAnwenden();
   ausgebuchtAnwenden();
+  applySortFilter();
 })();
 </script>
