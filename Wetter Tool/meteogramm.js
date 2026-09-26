@@ -901,6 +901,8 @@
     // Bilder des Films vorab holen, damit er nicht ruckelt
     function filmVorladen(){
       if (!KARTE) return;
+      // Datensparmodus der einbettenden Seite: Bilder erst beim Abspielen holen
+      if (document.documentElement.getAttribute('data-datensparen') === '1') return;
       for (var i = 0; i < KARTE.bilder; i++) {
         var im = new Image(); im.src = kartenUrl(filmZeit(i), false);
         if (ansicht === 'regen') { var im2 = new Image(); im2.src = kartenUrl(filmZeit(i), true); }

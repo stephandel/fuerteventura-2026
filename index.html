@@ -3,13 +3,25 @@
 <title>Fuerteventura Reiseplaner</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0f6e76">
+<script>
+// Einstellungen (Zahnrad) vor dem ersten Zeichnen anwenden - sonst blitzt
+// die Seite kurz im falschen Farbschema oder in falscher Schriftgroesse auf.
+(function(){ try {
+  var r = document.documentElement, t = localStorage.getItem('fuerte-thema');
+  if (t === 'hell') r.setAttribute('data-theme', 'light');
+  else if (t === 'dunkel') r.setAttribute('data-theme', 'dark');
+  var g = localStorage.getItem('fuerte-schrift');
+  if (g && g !== 'normal') r.setAttribute('data-schrift', g);
+  if (localStorage.getItem('fuerte-datensparen') === '1') r.setAttribute('data-datensparen', '1');
+} catch(e){} })();
+</script>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Fuerteventura">
 <link rel="stylesheet" href="vendor/leaflet.css">
 <script defer src="vendor/leaflet.js"></script>
 <link rel="stylesheet" href="Wetter%20Tool/meteogramm.css?v=20260925b">
-<script defer src="Wetter%20Tool/meteogramm.js?v=20260925b"></script>
+<script defer src="Wetter%20Tool/meteogramm.js?v=20260926a"></script>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
 <link rel="apple-touch-icon" sizes="167x167" href="images/apple-touch-icon-167.png">
@@ -429,6 +441,38 @@ nav.topnav .navlinks { display: none !important; }
 .nav-search-btn { width: var(--tap); height: var(--tap); border-radius: 22px; background: var(--surface-2); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; flex-shrink: 0; }
 .nav-search-btn:active { background: var(--muted-bg); transform: scale(0.94); }
 .nav-search-btn svg { display: block; }
+
+/* ---- Einstellungen (Zahnrad oben rechts) ----
+   Schriftgroesse: das CSS mischt px und rem, deshalb wird der Inhalt der
+   Seiten per zoom vergroessert - Menueleiste und Reiterleiste bleiben gleich. */
+:root[data-schrift="klein"] .page { zoom: 0.92; }
+:root[data-schrift="gross"] .page { zoom: 1.1; }
+:root[data-schrift="sehr-gross"] .page { zoom: 1.22; }
+.einst-sheet { position: fixed; inset: 0; z-index: 95; background: var(--page); display: none; flex-direction: column; padding-top: env(safe-area-inset-top, 0px); }
+.einst-sheet.open { display: flex; }
+.einst-kopf { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+.einst-kopf h2 { font-size: 20px; }
+.einst-kopf button { min-height: var(--tap); padding: 0 12px; background: none; border: none; color: var(--teal); font-family: inherit; font-size: 16px; font-weight: 600; cursor: pointer; }
+.einst-body { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 4px 16px calc(48px + env(safe-area-inset-bottom, 0px)); }
+.einst-inner { max-width: 560px; margin: 0 auto; }
+.einst-block { padding: 20px 0; border-bottom: 1px solid var(--border); }
+.einst-block:last-child { border-bottom: 0; }
+.einst-block h3 { font-size: 16px; margin: 0 0 4px; }
+.einst-block .einst-text { margin: 0 0 12px; font-size: 13.5px; line-height: 1.5; color: var(--ink-dim); }
+.einst-seg { display: flex; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--surface); }
+.einst-seg button { flex: 1 1 0; min-width: 0; min-height: var(--tap); padding: 6px 4px; border: 0; border-left: 1px solid var(--border); background: none; color: var(--ink-dim); font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.einst-seg button:first-child { border-left: 0; }
+.einst-seg button[aria-pressed="true"] { background: var(--teal); color: var(--teal-ink); }
+.einst-schalter { display: flex; align-items: center; justify-content: space-between; gap: 14px; width: 100%; min-height: var(--tap); padding: 0; background: none; border: 0; color: var(--ink); font-family: inherit; font-size: 15px; font-weight: 600; text-align: left; cursor: pointer; }
+.einst-schalter .knopf { flex-shrink: 0; position: relative; width: 50px; height: 30px; border-radius: 15px; background: var(--muted-bg); border: 1px solid var(--border); transition: background .15s; }
+.einst-schalter .knopf::after { content: ""; position: absolute; top: 2px; left: 2px; width: 24px; height: 24px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.3); transition: transform .15s; }
+.einst-schalter[aria-pressed="true"] .knopf { background: var(--teal); border-color: var(--teal); }
+.einst-schalter[aria-pressed="true"] .knopf::after { transform: translateX(20px); }
+.einst-probe { margin-top: 10px; font-size: 13.5px; color: var(--ink-dim); }
+.einst-reihe { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.einst-block .remind-status { margin-bottom: 4px; }
+.einst-block#app-icon-box { margin-top: 0; }
+.einst-block#app-icon-box h3 + .sub { margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--ink-dim); }
 
 /* Tab-Leiste: schwebende Kapsel, Inhalt scrollt darunter durch */
 .tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; padding: 0 12px max(6px, env(safe-area-inset-bottom, 0px)); pointer-events: none; }
@@ -1426,6 +1470,9 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <div class="nav-search">
       <button type="button" class="nav-search-btn" id="open-search" aria-label="Suchen">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M16.5 16.5 21 21"/></svg>
+      </button>
+      <button type="button" class="nav-search-btn" id="open-einst" aria-label="Einstellungen">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       </button>
     </div>
     <div class="navlinks">
@@ -4160,13 +4207,6 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       </div>
     </div>
 
-        <div class="links-box" id="app-icon-box">
-      <h2>📱 App-Symbol f&#252;r den Home-Bildschirm</h2>
-      <p class="sub">Welches Symbol soll die Seite tragen, wenn sie auf dem Handy wie eine App liegt? Antippen w&#228;hlt aus &#8211; jedes Ger&#228;t kann ein anderes haben. Die Symbole stehen hier in <strong>Originalgr&#246;&#223;e</strong>, also genau so gro&#223;, wie sie sp&#228;ter zwischen den anderen Apps liegen.</p>
-      <div class="icon-wahl" id="icon-wahl"></div>
-      <div class="icon-oeffnen" id="icon-oeffnen"></div>
-      <div class="icon-anleitung" id="icon-anleitung"></div>
-    </div>
 
     <div class="links-box">
       <h2>🚨 Notfall &amp; Praktisches</h2>
@@ -4212,6 +4252,75 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <button type="button" id="search-close">Fertig</button>
   </div>
   <div class="searchsheet-body" id="search-results"></div>
+</div>
+
+<!-- ===== Einstellungen (Zahnrad) ===== -->
+<div class="einst-sheet" id="einst-sheet" role="dialog" aria-modal="true" aria-labelledby="einst-titel">
+  <div class="einst-kopf">
+    <h2 id="einst-titel">Einstellungen</h2>
+    <button type="button" id="einst-zu">Fertig</button>
+  </div>
+  <div class="einst-body" id="einst-body"><div class="einst-inner">
+
+    <div class="einst-block">
+      <h3>Darstellung</h3>
+      <p class="einst-text">&#8222;Wie das Handy&#8220; folgt dem Tag-/Nacht-Modus deines Ger&#228;ts.</p>
+      <div class="einst-seg" data-einst="thema">
+        <button type="button" data-wert="system">Wie das Handy</button><button type="button" data-wert="hell">Hell</button><button type="button" data-wert="dunkel">Dunkel</button>
+      </div>
+    </div>
+
+    <div class="einst-block">
+      <h3>Schriftgr&#246;&#223;e</h3>
+      <p class="einst-text">Vergr&#246;&#223;ert alles auf den Seiten &#8211; Text, Bilder und Kn&#246;pfe gleicherma&#223;en.</p>
+      <div class="einst-seg" data-einst="schrift">
+        <button type="button" data-wert="klein" style="font-size:12px">Klein</button><button type="button" data-wert="normal">Normal</button><button type="button" data-wert="gross" style="font-size:16px">Gro&#223;</button><button type="button" data-wert="sehr-gross" style="font-size:17px">Sehr gro&#223;</button>
+      </div>
+    </div>
+
+    <div class="einst-block">
+      <h3>Wer bist du?</h3>
+      <p class="einst-text">Damit Notizen, Favoriten und abgehakte Aufgaben den richtigen Namen tragen. Ihr beide seht trotzdem immer dasselbe.</p>
+      <div class="einst-seg" data-einst="wer">
+        <button type="button" data-wert="stephan">Stephan</button><button type="button" data-wert="bilgen">Bilgen</button>
+      </div>
+    </div>
+
+    <div class="einst-block">
+      <h3>Unterk&#252;nfte</h3>
+      <button type="button" class="einst-schalter" data-einst="weg" aria-pressed="false"><span>Ausgebuchte und ausgeblendete verstecken</span><span class="knopf" aria-hidden="true"></span></button>
+      <p class="einst-text" style="margin:6px 0 0">Wirkt nur auf diesem Ger&#228;t. Derselbe Schalter steht auch oben auf der Unterk&#252;nfte-Seite.</p>
+    </div>
+
+    <div class="einst-block">
+      <h3>Datensparmodus</h3>
+      <button type="button" class="einst-schalter" data-einst="sparen" aria-pressed="false"><span>Gro&#223;e Bilder erst auf Antippen laden</span><span class="knopf" aria-hidden="true"></span></button>
+      <p class="einst-text" style="margin:6px 0 0">F&#252;r unterwegs mit schwachem Netz oder wenig Datenvolumen: Der Wolken- und Regenfilm im Wetter-Tool wird nicht mehr vorab geholt, sondern erst beim Abspielen, und das echte Mondfoto der NASA bleibt weg (die gezeichnete Mondscheibe bleibt).</p>
+    </div>
+
+    <div class="einst-block">
+      <h3>Erinnerung vor Sonnenuntergang</h3>
+      <p class="einst-text" id="notif-desc">Die Seite kann sich kurz vor Sonnenuntergang melden, damit ihr rechtzeitig am Strand seid.</p>
+      <div class="remind-status" id="notif-status"></div>
+      <div class="einst-reihe"><button type="button" class="btn" id="btn-notif">Benachrichtigungen erlauben</button></div>
+    </div>
+
+    <div class="einst-block">
+      <h3>Stand der Seite</h3>
+      <p class="einst-text" id="einst-stand"></p>
+      <div class="einst-reihe"><button type="button" class="btn btn-outline" id="einst-frisch">&#8635;&#160;Seite frisch laden</button></div>
+      <p class="einst-text" style="margin:10px 0 0">Hilft, wenn eine &#196;nderung noch nicht angekommen ist: Der Zwischenspeicher auf dem Ger&#228;t wird geleert und die Seite neu geholt. Eure gemeinsamen Daten bleiben dabei unber&#252;hrt.</p>
+    </div>
+
+    <div class="einst-block" id="app-icon-box">
+      <h3>&#128241; App-Symbol f&#252;r den Home-Bildschirm</h3>
+      <p class="sub">Welches Symbol soll die Seite tragen, wenn sie auf dem Handy wie eine App liegt? Antippen w&#228;hlt aus &#8211; jedes Ger&#228;t kann ein anderes haben. Die Symbole stehen hier in <strong>Originalgr&#246;&#223;e</strong>, also genau so gro&#223;, wie sie sp&#228;ter zwischen den anderen Apps liegen.</p>
+      <div class="icon-wahl" id="icon-wahl"></div>
+      <div class="icon-oeffnen" id="icon-oeffnen"></div>
+      <div class="icon-anleitung" id="icon-anleitung"></div>
+    </div>
+
+  </div></div>
 </div>
 
 <script>
@@ -4386,13 +4495,14 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       });
       return;
     }
-    if (hash === 'app-icon-box') {
-      LAST_IN_TAB['mehr'] = 'links';
-      showPage('links', {noScrollTop:true});
-      requestAnimationFrame(function(){
-        var el = document.getElementById('app-icon-box');
-        if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
-      });
+    if (hash === 'app-icon-box' || hash === 'einstellungen') {
+      // Die Symbol-Auswahl steht seit 26.09.2026 in den Einstellungen.
+      // Die Seite darunter bleibt, wo sie war; die Adresse bekommt sie zurück.
+      var offen = document.querySelector('.page.active');
+      var zurueck = offen ? offen.id.replace(/^page-/, '') : 'home';
+      if (!offen) showPage('home');
+      try { history.replaceState(null, '', '#' + zurueck); } catch(e){}
+      einstellungenOeffnen(hash === 'app-icon-box' ? 'app-icon-box' : null);
       return;
     }
     if (hash.indexOf('ex-') === 0) {
@@ -4641,6 +4751,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     if (!rahmen || !img) return;
     var jetzt = new Date(), jahr = jetzt.getUTCFullYear();
     if (!MOND_BILDER[jahr]) return;
+    if (document.documentElement.getAttribute('data-datensparen') === '1') return;   // Datensparmodus (Einstellungen)
     var nr = Math.floor((jetzt.getTime() - Date.UTC(jahr, 0, 1)) / 3600000) + 1;   // Stunde des Jahres, ab 1
     img.onload = function(){
       rahmen.hidden = false;
@@ -7776,6 +7887,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   // Aenderungen an der Seite selbst - nicht von Stephan oder Bilgen, sondern
   // an Angebot und Funktion. Stehen gleichberechtigt neben Notizen und Herzen.
   var SEITEN_NEUIGKEITEN = [
+    { at: '2026-09-26T11:00', text: '<b>Neu: Einstellungen \u2013 das Zahnrad oben rechts neben der Lupe.</b> Dort l\u00e4sst sich w\u00e4hlen: Hell oder Dunkel, Schriftgr\u00f6\u00dfe in vier Stufen, wer du bist, ausgebuchte Unterk\u00fcnfte verstecken, ein Datensparmodus f\u00fcr unterwegs, die Erinnerung vor Sonnenuntergang und \u201eSeite frisch laden\u201c, falls eine \u00c4nderung nicht ankommt. Auch die Auswahl des App-Symbols ist von \u201eLinks & Tipps\u201c dorthin umgezogen. <a href="#einstellungen">Einstellungen \u00f6ffnen \u2192</a>' },
     { at: '2026-09-26T10:30', text: '<b>Die Maisonette mit Meerblick ist ausgebucht</b> \u2013 die freien L\u00fccken sind k\u00fcrzer als die Mindestdauer von 4\u00a0N\u00e4chten. Auf der Vergleichsseite sind B1 und B2 deshalb weg; C l\u00e4uft jetzt \u00fcber Oasis Duna, neu ist <b>E: Oasis Duna 7\u00a0N\u00e4chte + Renacer Zen 6\u00a0N\u00e4chte</b>.' },
     { at: '2026-09-26T10:00', text: '<b>Neu: Oasis Duna (Nr.\u00a031)</b> \u2013 Stephans Fund im Ortskern. Renovierte Wohnung mit Gemeinschaftspools und kostenloser Garage, frei 29.09.\u201309.10. Sehr g\u00fcnstig: 7\u00a0N\u00e4chte 584\u00a0\u20ac, 4\u00a0N\u00e4chte 352\u00a0\u20ac. Keine Klimaanlage, nicht erstattungsf\u00e4hig.' },
     { at: '2026-09-25T11:30', text: '<b>Casita Maracuya ist ausgebucht</b> \u2013 Airbnb meldet alle N\u00e4chte als belegt. Sie tr\u00e4gt jetzt einen roten Stempel im Bild, ebenso Der Garten\u00a07, H10 Ocean Dreams und Villa\u00a08.7. Die Vergleichsseite rechnet A1\u2013A3, B1 und B2 deshalb mit der <b>Villa\u00a010.3</b> statt der Casita. Beim Preis-Check aller Angebote ge\u00e4ndert: <b>Maisonette</b> ab 29.09. teurer (13\u00a0N\u00e4chte 1.987\u00a0\u20ac), <b>TAO Caleta Mar</b> 2.209\u00a0\u20ac statt 1.492\u00a0\u20ac, <b>MC Apartments</b> jetzt 02.\u201312.10. f\u00fcr 900\u00a0\u20ac. G\u00fcnstiger: FuerteNomad, MyHome Urban, Secrets Bah\u00eda Real.' },
@@ -8064,6 +8176,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       notes[slug].push({ id: 'offen-' + e.koerper.at, by: e.koerper.by, text: e.koerper.text, at: e.koerper.at, offen: true });
     });
     try { lsSet(STAND_KEY, JSON.stringify({ favs: shared.favs, hidden: shared.hidden, todos: d.todos, pack: d.pack, notes: d.notes || {} })); } catch(e){}
+    lsSet('fuerte-stand-zeit', String(Date.now()));
     applyShared();
     renderAllNotes();
     try { renderAktiv(); } catch(e){}
@@ -10702,6 +10815,139 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   bewertungAnwenden();
   ausgebuchtAnwenden();
   applySortFilter();
+
+  // ============================================================
+  //  Einstellungen (Zahnrad oben rechts, seit 26.09.2026)
+  //  Alles gilt nur auf diesem Geraet - ausser "Wer bist du?", das
+  //  bestimmt, unter welchem Namen Notizen und Haken geteilt werden.
+  //  Farbschema, Schrift und Datensparen setzt schon das kleine Skript
+  //  im <head>, damit beim Laden nichts aufblitzt.
+  // ============================================================
+  function einstThemaSetzen(w){
+    var r = document.documentElement;
+    if (w === 'hell') r.setAttribute('data-theme', 'light');
+    else if (w === 'dunkel') r.setAttribute('data-theme', 'dark');
+    else r.removeAttribute('data-theme');
+  }
+  function einstSchriftSetzen(w){
+    var r = document.documentElement;
+    if (w && w !== 'normal') r.setAttribute('data-schrift', w); else r.removeAttribute('data-schrift');
+    // Karten (Leaflet) und Meteogramm messen ihre Groesse neu
+    setTimeout(function(){ window.dispatchEvent(new Event('resize')); }, 50);
+  }
+  function einstZeit(ms){
+    var d = new Date(ms), jetzt = new Date();
+    var hhmm = ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
+    var min = Math.round((jetzt - d) / 60000);
+    var tag = d.toDateString() === jetzt.toDateString() ? 'heute' : d.getDate() + '.' + (d.getMonth() + 1) + '.';
+    return tag + ' um ' + hhmm + ' Uhr' + (min < 1 ? ' (gerade eben)' : min < 90 ? ' (vor ' + min + ' Min.)' : '');
+  }
+  var einstGeladen = Date.now();
+  function einstZeichnen(){
+    var werte = {
+      thema: lsGet('fuerte-thema', 'system'),
+      schrift: lsGet('fuerte-schrift', 'normal'),
+      wer: whoAmI()
+    };
+    document.querySelectorAll('#einst-sheet .einst-seg').forEach(function(seg){
+      var aktiv = werte[seg.getAttribute('data-einst')];
+      seg.querySelectorAll('button').forEach(function(b){
+        b.setAttribute('aria-pressed', b.getAttribute('data-wert') === aktiv ? 'true' : 'false');
+      });
+    });
+    var weg = document.querySelector('#einst-sheet [data-einst="weg"]');
+    if (weg) weg.setAttribute('aria-pressed', wegVerstecken() ? 'true' : 'false');
+    var sp = document.querySelector('#einst-sheet [data-einst="sparen"]');
+    if (sp) sp.setAttribute('aria-pressed', lsGet('fuerte-datensparen', '0') === '1' ? 'true' : 'false');
+    var st = document.getElementById('einst-stand');
+    if (st) {
+      var z = parseInt(lsGet('fuerte-stand-zeit', ''), 10);
+      var teile = [];
+      teile.push(z ? 'Gemeinsamer Stand mit ' + whoName(otherPerson()) + ' zuletzt abgeglichen: <b>' + einstZeit(z) + '</b>.'
+                   : 'Der gemeinsame Stand wurde auf diesem Ger&#228;t noch nicht abgeglichen.');
+      if (syncState === 'cache') teile.push('Gerade offline.');
+      else if (syncState === 'stale' || syncState === 'error') teile.push('Der gemeinsame Stand ist im Moment nicht erreichbar.');
+      teile.push('Seite geladen ' + einstZeit(einstGeladen) + '.');
+      st.innerHTML = teile.join(' ');
+    }
+    updateNotifUi();
+  }
+  // Der Router kann schon beim Laden "#app-icon-box" aufrufen, bevor der
+  // Rest des Skripts steht - dann erst am Ende oeffnen.
+  var einstBereit, einstWartet;
+  function einstellungenOeffnen(zuAbschnitt){
+    var sh = document.getElementById('einst-sheet');
+    if (!sh) return;
+    if (!einstBereit) { einstWartet = zuAbschnitt || true; return; }
+    einstZeichnen();
+    sh.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    var body = document.getElementById('einst-body');
+    if (body) body.scrollTop = 0;
+    if (zuAbschnitt) requestAnimationFrame(function(){
+      var el = document.getElementById(zuAbschnitt);
+      if (el) el.scrollIntoView({ block: 'start' });
+    });
+  }
+  function einstellungenSchliessen(){
+    var sh = document.getElementById('einst-sheet');
+    if (!sh || !sh.classList.contains('open')) return;
+    sh.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  (function einstVerkabeln(){
+    var sh = document.getElementById('einst-sheet');
+    if (!sh) return;
+    var auf = document.getElementById('open-einst');
+    if (auf) auf.addEventListener('click', function(){ einstellungenOeffnen(); });
+    document.getElementById('einst-zu').addEventListener('click', einstellungenSchliessen);
+    document.addEventListener('keydown', function(e){ if (e.key === 'Escape') einstellungenSchliessen(); });
+    sh.addEventListener('click', function(ev){
+      var b = ev.target.closest('.einst-seg button');
+      if (b) {
+        var art = b.parentNode.getAttribute('data-einst'), w = b.getAttribute('data-wert');
+        if (art === 'thema') { lsSet('fuerte-thema', w); einstThemaSetzen(w); }
+        if (art === 'schrift') { lsSet('fuerte-schrift', w); einstSchriftSetzen(w); }
+        if (art === 'wer') {
+          lsSet(WHO_KEY, w);
+          renderSyncBar(); renderAllNotes(); renderShareFlags();
+        }
+        einstZeichnen();
+        return;
+      }
+      var sch = ev.target.closest('.einst-schalter');
+      if (sch) {
+        var art2 = sch.getAttribute('data-einst');
+        if (art2 === 'weg') {
+          lsSet(WEG_KEY, wegVerstecken() ? '0' : '1');
+          applySortFilter();
+        }
+        if (art2 === 'sparen') {
+          var an = lsGet('fuerte-datensparen', '0') !== '1';
+          lsSet('fuerte-datensparen', an ? '1' : '0');
+          if (an) document.documentElement.setAttribute('data-datensparen', '1');
+          else { document.documentElement.removeAttribute('data-datensparen'); mondFotoLaden(); }
+        }
+        einstZeichnen();
+      }
+    });
+    var frisch = document.getElementById('einst-frisch');
+    if (frisch) frisch.addEventListener('click', function(){
+      frisch.disabled = true;
+      frisch.textContent = 'Wird geladen …';
+      var fertig = function(){ location.reload(); };
+      var schritte = [];
+      if (window.caches && caches.keys) schritte.push(caches.keys().then(function(keys){
+        return Promise.all(keys.map(function(k){ return caches.delete(k); }));
+      }));
+      if (swReg) { try { schritte.push(swReg.update()); } catch(e){} }
+      // Spaetestens nach 3 Sekunden neu laden, auch wenn etwas haengt
+      Promise.all(schritte).then(fertig, fertig);
+      setTimeout(fertig, 3000);
+    });
+    einstBereit = true;
+    if (einstWartet) einstellungenOeffnen(einstWartet === true ? null : einstWartet);
+  })();
 })();
 // ---- Kombi-Rechner auf der Vergleichsseite (seit 26.09.2026) ----
 // Gleiche Herkunft, also direkter Zugriff: Hoehe an den Inhalt anpassen

@@ -138,3 +138,9 @@ ist aus Satellitendaten abgeleitet — gröber als ein Radar, aber flächendecke
 Alles ES5 mit `fetch` und `Promise`, also alles ab etwa 2017. Gezeichnet wird als
 SVG. Die Anzeige läuft über `setTimeout`, nicht `requestAnimationFrame` — sonst
 stünde sie still, solange der Tab im Hintergrund ist.
+
+## Datensparmodus (seit 26.09.2026)
+
+Steht auf der einbettenden Seite `<html data-datensparen="1">`, holt der Baustein die Bilder des
+Wolken-/Regenfilms nicht mehr vorab, sondern erst beim Abspielen (`filmVorladen()`). Die
+Fuerteventura-Seite setzt das Merkmal über den Schalter „Datensparmodus“ im Zahnrad-Menü.
