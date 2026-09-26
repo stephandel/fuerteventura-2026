@@ -197,3 +197,21 @@
 .mg-tipp-i { flex: none; width: 1.3em; text-align: center; }
 .mg-tipp b { font-weight: 700; }
 .mg-tipp-alt { color: var(--mg-text-still); font-size: 12.5px; }
+
+/* ---- Zeitraffer (wahlfrei, cfg.filmLeiste) ----
+   Play/Pause vorn in der Bildleiste; beim Abspielen erscheint unter dem Bild eine
+   schmale Leiste mit Fortschritt, Zeitraum und Tempo. Auswahl wie die übrigen
+   Umschalter: Text mit Strich darunter, keine Kästchen. */
+.mg-filmknopf { min-width: 44px; padding: 0 10px; font-size: 14px; color: var(--mg-text); }
+.mg-filmknopf.is-on { border-color: var(--mg-akzent); color: var(--mg-akzent); background: var(--mg-flaeche); }
+.mg-film { padding: 2px 14px 8px; }
+.mg-film[hidden] { display: none; }
+.mg-film-balken { height: 3px; background: var(--mg-rand); border-radius: 2px; overflow: hidden; margin: 0 0 7px; }
+.mg-film-balken i { display: block; height: 100%; background: var(--mg-akzent); transition: width .25s linear; }
+.mg-film-kopf { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; font-size: 12.5px; color: var(--mg-text-still); }
+.mg-film-kopf b { color: var(--mg-text); }
+.mg-film-ende { border: 0; background: none; color: var(--mg-akzent); font: 700 12.5px/1 var(--mg-serif); padding: 6px 0; cursor: pointer; }
+.mg-film-zeile { display: flex; align-items: baseline; gap: 2px 14px; flex-wrap: wrap; margin-top: 2px; }
+.mg-film-was { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--mg-text-still); min-width: 74px; }
+.mg-film-wahl { border: 0; background: none; color: var(--mg-text-still); font: 600 13px/1 var(--mg-serif); padding: 8px 1px 6px; border-bottom: 2px solid transparent; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.mg-film-wahl.is-on { color: var(--mg-text); border-bottom-color: var(--mg-akzent); }

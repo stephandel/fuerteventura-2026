@@ -205,6 +205,9 @@
     var TAGES_SYMBOL = !!cfg.tagesSymbol;
     var MOND = !!cfg.mond;
     var TIPPS = cfg.tipps || [];
+    // Zeitraffer-Knopf in der Bildleiste statt des ▶ im Satellitenbild; Knöpfe mit „Jetzt“ in der Mitte
+    var FILM_LEISTE = !!cfg.filmLeiste;
+    var KNOEPFE_MITTIG = !!cfg.knoepfeMittig;
 
     // Welche Zeilen stehen zur Verfügung, in welcher Reihenfolge
     var ANGEBOT = (cfg.zeilen && cfg.zeilen.length ? cfg.zeilen : ZEILEN_STANDARD)
@@ -1114,6 +1117,103 @@
       anzeigen();
     }
 
+    // ---------- Zeitraffer (cfg.filmLeiste) ----------
+    // Der Auswahl-Strich wandert selbst durch die letzten Stunden: Datum, Werte, Tipps und
+    // Bild laufen mit - bei der Webcam die gespeicherten Bilder, bei Satellit und Regen die
+    // Aufnahmen von EUMETSAT. Am Ende kurz stehen bleiben, dann von vorn (Schleife).
+    var TEMPO = { ruhig: 900, normal: 550, flott: 300 };
+    var zf = { aktiv: false, laeuft: false, uhr: null, bilder: [], i: 0, halt: 0,
+               spanne: +merkLesen('film-spanne', 2) || 2, tempo: merkLesen('film-tempo', 'normal') };
+    if (!TEMPO[zf.tempo]) zf.tempo = 'normal';
+    function zfSchrittweite(){        // Minuten zwischen zwei Bildern: nie mehr als gut zwei Dutzend Bilder
+      if (ansicht === 'webcam') return zf.spanne <= 12 ? 30 : 60;
+      return zf.spanne <= 2 ? KARTE.schritt : zf.spanne <= 12 ? 30 : 60;
+    }
+    // Die Bildzeitpunkte als Stellen im Diagramm
+    function zfBilder(){
+      var schritt = zfSchrittweite() / 60, ende;
+      if (ansicht === 'webcam') ende = idxJetzt;
+      else ende = idxFuer(echtNachOrtszeit(neuestesBild()));
+      var anfang = ende - zf.spanne, liste = [];
+      // auf volle Schritte legen (z. B. :00 und :30), das letzte Bild ist immer das neueste
+      var erstes = Math.ceil((anfang - 1e-6) / schritt) * schritt;
+      for (var t = erstes; t < ende - 1e-6; t += schritt) liste.push(t);
+      liste.push(ende);
+      zf.bilder = liste.filter(function(i){ return i >= 0; });
+      zfVorladen();
+    }
+    function zfVorladen(){
+      if (document.documentElement.getAttribute('data-datensparen') === '1') return;   // Datensparmodus: erst beim Zeigen
+      zf.bilder.forEach(function(i){
+        if (ansicht === 'webcam') {
+          var best = null, bd = 1e9;
+          webcam.shots.forEach(function(sh){ var d = Math.abs(sh.i - i); if (d < bd) { bd = d; best = sh; } });
+          if (best && bd <= 0.75) { var im = new Image(); im.src = best.url; }
+        } else if (KARTE) {
+          var z = kartenZeit(new Date(daten.t0.getTime() + i * 3600000));
+          var im2 = new Image(); im2.src = kartenUrl(z, false);
+          if (ansicht === 'regen') { var im3 = new Image(); im3.src = kartenUrl(z, true); }
+        }
+      });
+    }
+    function zfSchritt(){
+      if (!zf.bilder.length) return;
+      if (zf.i >= zf.bilder.length) zf.i = 0;
+      zentrieren(zf.bilder[zf.i], false);
+      zfLeiste();
+    }
+    function zfTakt(){
+      if (zf.halt > 0) { zf.halt--; if (!zf.halt) { zf.i = 0; zfSchritt(); } return; }
+      if (zf.i >= zf.bilder.length - 1) { zf.halt = 3; return; }      // letztes Bild kurz stehen lassen
+      zf.i++; zfSchritt();
+    }
+    function zfSpielen(){
+      zf.laeuft = true;
+      if (zf.uhr) clearInterval(zf.uhr);
+      zf.uhr = setInterval(zfTakt, TEMPO[zf.tempo]);
+      ansichtReiterMalen(); zfLeiste();
+    }
+    function zfPause(){
+      zf.laeuft = false;
+      if (zf.uhr) { clearInterval(zf.uhr); zf.uhr = null; }
+      ansichtReiterMalen(); zfLeiste();
+    }
+    function zfSchalten(){
+      if (!daten) return;
+      if (zf.laeuft) { zfPause(); return; }
+      if (!zf.aktiv) { zf.aktiv = true; zfBilder(); zf.i = 0; zf.halt = 0; zfSchritt(); }
+      zfSpielen();
+    }
+    function zfBeenden(zurueckAufJetzt){
+      zfPause();
+      zf.aktiv = false;
+      if (el.film) el.film.hidden = true;
+      ansichtReiterMalen();
+      if (zurueckAufJetzt) zentrieren(idxJetzt, true);
+    }
+    // Die schmale Leiste unter dem Bild: Fortschritt, Zeitraum, Tempo
+    function zfLeiste(){
+      if (!el.film) return;
+      if (!zf.aktiv) { el.film.hidden = true; return; }
+      var n = zf.bilder.length, i = Math.min(zf.i, n - 1);
+      function uhrAn(idx){ var d = new Date(daten.t0.getTime() + idx * 3600000); return pad2(d.getHours()) + ':' + pad2(d.getMinutes()); }
+      var anteil = n > 1 ? i / (n - 1) * 100 : 100;
+      var spannen = [2, 6, 12, 24].map(function(h){
+        return '<button type="button" class="mg-film-wahl' + (h === zf.spanne ? ' is-on' : '') + '" data-spanne="' + h + '">' + h + ' Std.</button>';
+      }).join('');
+      var tempi = ['ruhig', 'normal', 'flott'].map(function(t){
+        return '<button type="button" class="mg-film-wahl' + (t === zf.tempo ? ' is-on' : '') + '" data-tempo="' + t + '">' + t + '</button>';
+      }).join('');
+      el.film.innerHTML =
+        '<div class="mg-film-balken"><i style="width:' + anteil.toFixed(1) + '%"></i></div>' +
+        '<div class="mg-film-kopf"><span><b>' + (zf.laeuft ? 'Zeitraffer' : 'Angehalten') + '</b> · ' + uhrAn(zf.bilder[0]) + ' → ' + uhrAn(zf.bilder[n - 1]) +
+          ' · Bild ' + (i + 1) + ' von ' + n + '</span>' +
+          '<button type="button" class="mg-film-ende" data-ende="1">✕ zurück zu jetzt</button></div>' +
+        '<div class="mg-film-zeile"><span class="mg-film-was">Rückblick</span>' + spannen + '</div>' +
+        '<div class="mg-film-zeile"><span class="mg-film-was">Tempo</span>' + tempi + '</div>';
+      el.film.hidden = false;
+    }
+
     // Bilder des Films vorab holen, damit er nicht ruckelt
     function filmVorladen(){
       if (!KARTE) return;
@@ -1136,6 +1236,7 @@
     function ansichtSetzen(id){
       if (ansicht === id) return;
       filmStopp();
+      if (zf.aktiv) { ansicht = id; merkSchreiben('ansicht', id); kartenAktuell = null; camAktuell = null; zfBilder(); ansichtReiterMalen(); zfSchritt(); return; }
       ansicht = id;
       merkSchreiben('ansicht', id);
       kartenAktuell = null; camAktuell = null;
@@ -1146,7 +1247,9 @@
 
     function ansichtReiterMalen(){
       if (!el.ansichten) return;
-      el.ansichten.innerHTML = ANSICHTEN.map(function(a2){
+      el.ansichten.innerHTML = (FILM_LEISTE ? '<button type="button" class="mg-atab mg-filmknopf' + (zf.laeuft ? ' is-on' : '') + '" data-film="1" aria-label="' +
+          (zf.laeuft ? 'Zeitraffer anhalten' : 'Zeitraffer abspielen') + '">' + (zf.laeuft ? '❚❚' : '▶') + '</button>' : '') +
+        ANSICHTEN.map(function(a2){
         return '<button type="button" class="mg-atab' + (a2.id === ansicht ? ' is-on' : '') + '" data-id="' + a2.id + '">' +
                a2.icon + ' ' + esc(a2.name) + '</button>';
       }).join('');
@@ -1180,18 +1283,20 @@
         (KARTE ? '<div class="mg-karte" id="' + kid('karte') + '" hidden>' +
           '<img class="mg-k-basis" id="' + kid('kbasis') + '" alt="Satellitenbild" decoding="async">' +
           '<img class="mg-k-auflage" id="' + kid('kauflage') + '" alt="" decoding="async" hidden>' +
-          '<button type="button" class="mg-play" id="' + kid('play') + '" aria-label="Film abspielen">▶</button>' +
+          (FILM_LEISTE ? '' : '<button type="button" class="mg-play" id="' + kid('play') + '" aria-label="Film abspielen">▶</button>') +
           '<div class="mg-cam-text" id="' + kid('ktext') + '"></div>' +
         '</div>' : '') +
         '<div class="mg-cam" id="' + kid('cam') + '" hidden><img id="' + kid('camimg') + '" alt="Webcam-Bild" decoding="async" referrerpolicy="no-referrer">' +
           '<div class="mg-camwahl" id="' + kid('camwahl') + '" hidden></div>' +
           '<div class="mg-cam-text" id="' + kid('camtext') + '"></div></div>' +
         // Knöpfe unten, nah am Daumen
+        (FILM_LEISTE ? '<div class="mg-film" id="' + kid('film') + '" hidden></div>' : '') +
         '<div class="mg-knoepfe">' +
+          (KNOEPFE_MITTIG ? '<button type="button" class="mg-btn mg-btn-frisch" id="' + kid('frisch') + '" aria-label="Werte auffrischen" title="Werte neu holen">↻</button>' : '') +
           '<button type="button" class="mg-btn" id="' + kid('zurueck') + '" aria-label="Einen Tag zurück">‹</button>' +
           '<button type="button" class="mg-btn mg-btn-jetzt" id="' + kid('jetzt') + '">Jetzt zentrieren</button>' +
           '<button type="button" class="mg-btn" id="' + kid('vor') + '" aria-label="Einen Tag vor">›</button>' +
-          '<button type="button" class="mg-btn mg-btn-frisch" id="' + kid('frisch') + '" aria-label="Werte auffrischen" title="Werte neu holen">↻</button>' +
+          (KNOEPFE_MITTIG ? '' : '<button type="button" class="mg-btn mg-btn-frisch" id="' + kid('frisch') + '" aria-label="Werte auffrischen" title="Werte neu holen">↻</button>') +
           '<span class="mg-zeilenwahl">' +
             '<button type="button" class="mg-btn" id="' + kid('zbtn') + '" aria-expanded="false" title="Welche Zeilen anzeigen?">☰</button>' +
             '<div class="mg-zeilen-panel" id="' + kid('zpanel') + '" hidden><h4>Welche Zeilen?</h4></div>' +
@@ -1217,7 +1322,7 @@
         el.kText    = document.getElementById(kid('ktext'));
         el.play     = document.getElementById(kid('play'));
         el.karte.style.aspectRatio = kartenSeitenverhaeltnis().toFixed(3);
-        el.play.addEventListener('click', function(ev){ ev.stopPropagation(); filmSchalten(); });
+        if (el.play) el.play.addEventListener('click', function(ev){ ev.stopPropagation(); filmSchalten(); });
         el.kBasis.addEventListener('error', function(){
           el.kText.textContent = 'Für diesen Zeitpunkt gibt es noch kein Satellitenbild.';
         });
@@ -1226,6 +1331,7 @@
         ansichtReiterMalen();
         el.ansichten.addEventListener('click', function(ev){
           var b2 = ev.target.closest('.mg-atab'); if (!b2) return;
+          if (b2.getAttribute('data-film')) { zfSchalten(); return; }
           ansichtSetzen(b2.getAttribute('data-id'));
         });
       }
@@ -1250,12 +1356,28 @@
 
       if (ORTE.length < 2) document.getElementById(kid('orte')).style.display = 'none';
       if (MODELLE.length < 2) document.getElementById(kid('modelle')).style.display = 'none';
-      reiter(kid('orte'), ORTE, function(){ return ort; }, function(id){ ort = id; merkSchreiben('ort', id); laden(); });
+      reiter(kid('orte'), ORTE, function(){ return ort; }, function(id){ if (zf.aktiv) zfBeenden(false); ort = id; merkSchreiben('ort', id); laden(); });
       reiter(kid('modelle'), MODELLE, function(){ return modell; }, function(id){ modell = id; merkSchreiben('modell', id); quelleText(); laden(); });
       zeilenPanel();
       sortierenImDiagramm();
 
       el.scroll.addEventListener('scroll', anzeigen, { passive: true });
+      // Wer selbst ins Diagramm greift, übernimmt - der Zeitraffer hört auf
+      ['pointerdown', 'wheel', 'touchstart'].forEach(function(t){
+        el.scroll.addEventListener(t, function(){ if (zf.aktiv) zfBeenden(false); }, { passive: true });
+      });
+      ['jetzt', 'frisch', 'zurueck', 'vor'].forEach(function(n){
+        document.getElementById(kid(n)).addEventListener('pointerdown', function(){ if (zf.aktiv) zfBeenden(false); });
+      });
+      if (FILM_LEISTE) {
+        el.film = document.getElementById(kid('film'));
+        el.film.addEventListener('click', function(ev){
+          var b = ev.target.closest('button'); if (!b) return;
+          if (b.getAttribute('data-spanne')) { zf.spanne = +b.getAttribute('data-spanne'); merkSchreiben('film-spanne', zf.spanne); zfBilder(); zf.i = 0; zfSchritt(); }
+          if (b.getAttribute('data-tempo')) { zf.tempo = b.getAttribute('data-tempo'); merkSchreiben('film-tempo', zf.tempo); if (zf.laeuft) { zfPause(); zfSpielen(); } else zfLeiste(); }
+          if (b.getAttribute('data-ende')) zfBeenden(true);
+        });
+      }
       el.scroll.addEventListener('click', function(ev){
         if (!geo) return;
         var r = el.scroll.getBoundingClientRect();
@@ -1524,7 +1646,7 @@
     // Stunden vergangen sein - dann gleich auffrischen.
     var zuletztGesehen = Date.now();
     document.addEventListener('visibilitychange', function(){
-      if (document.hidden) { zuletztGesehen = Date.now(); filmStopp(); return; }
+      if (document.hidden) { zuletztGesehen = Date.now(); filmStopp(); if (zf.aktiv) zfPause(); return; }
       var pause = Date.now() - zuletztGesehen;
       if (pause > 2 * 3600000) auffrischen(false);          // lange weg gewesen: wieder bei "jetzt" anfangen
       else if (pause > 10 * 60000) auffrischen(true);       // kurz weg: Stelle behalten, Werte auffrischen
@@ -1540,7 +1662,7 @@
       zeichnen: function(){ zeichnen(false); },
       zeigeOrt: function(id){ if (ORTE.some(function(o){ return o.id === id; })) { ort = id; merkSchreiben('ort', id); laden(); } },
       auffrischen: function(){ auffrischen(true); },
-      abbauen: function(){ clearInterval(uhr); if (auffrischUhr) clearTimeout(auffrischUhr); filmStopp(); wurzel.innerHTML = ''; wurzel.classList.remove('mg'); }
+      abbauen: function(){ clearInterval(uhr); if (auffrischUhr) clearTimeout(auffrischUhr); filmStopp(); if (zf.uhr) clearInterval(zf.uhr); wurzel.innerHTML = ''; wurzel.classList.remove('mg'); }
     };
   }
 

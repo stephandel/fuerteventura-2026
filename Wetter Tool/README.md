@@ -46,6 +46,8 @@ Mehr braucht es nicht. Alles Weitere ist wahlfrei.
 | `tagesSymbol` | `true`: am Tageswechsel und links oben Wetter-Symbol und Hoch/Tief des Tages, z. B. „Mo 28.09. ☀️ 30° / 22°“ (aus den hellen Stunden: Gewitter vor Regen vor Bewölkung) | `false` |
 | `mond` | `true`: dritte Zeile im Tagesfuß der Sonnenzeile mit der Mondphase; bei Neumond, Viertel und Vollmond mit Uhrzeit (Rechnung nach Meeus) | `false` |
 | `tipps` | Liste von Regeln für „was der Tag bringt“ unter dem Diagramm, siehe unten | keine |
+| `filmLeiste` | `true`: Zeitraffer statt des ▶ im Satellitenbild – Play/Pause vorn in der Bildleiste, siehe unten | `false` |
+| `knoepfeMittig` | `true`: ↻ steht links außen (↻ ‹ Jetzt zentrieren › ☰), damit „Jetzt zentrieren“ mittig sitzt | `false` |
 
 Rückgabe: `{ neu(), auffrischen(), zeichnen(), zeigeOrt(id), abbauen() }`.
 
@@ -105,6 +107,17 @@ tipps: [
 `vorher` und `nachher` in Stunden (ebbe). Fenster unter zwei Stunden zählen nicht. Liegt es schon hinter
 „jetzt“, steht „(schon vorbei)“ dahinter. Eine `ebbe`-Regel holt die Meeresdaten auch dann, wenn keine
 Meeres-Zeile sichtbar ist.
+
+## Zeitraffer (wahlfrei, `filmLeiste`)
+
+▶ vorn in der Bildleiste lässt den Auswahl-Strich selbst durch die letzten Stunden wandern: Datum,
+Werte, Tipps und Bild laufen mit – bei der Webcam die gespeicherten Bilder, bei Satellit und Regen die
+EUMETSAT-Aufnahmen. Schleife, am letzten Bild drei Takte Pause. Unter dem Bild erscheint eine Leiste mit
+Fortschritt, **Rückblick** 2 / 6 / 12 / 24 Std. und **Tempo** ruhig / normal / flott (900 / 550 / 300 ms
+je Bild; gemerkt unter `<praefix>-film-spanne` und `-film-tempo`) sowie „✕ zurück zu jetzt“.
+Abstand der Bilder: Satellit 10 Min. bei 2 Std., sonst 30 bzw. 60 Min.; Webcam 30 Min., bei 24 Std. 60 Min.
+– nie mehr als gut zwei Dutzend Bilder. Greift man selbst ins Diagramm oder tippt einen Knopf,
+endet der Zeitraffer; ein Wechsel der Ansicht während des Films lässt ihn weiterlaufen.
 
 ## Farben
 

@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="meteogramm.css?v=20260926e">
+<link rel="stylesheet" href="meteogramm.css?v=20260926f">
 <style>
   /* Farben wie die Fuerteventura-Seite */
   :root { color-scheme: dark; --page:#14181a; --surface:#1b2124; --surface-2:#202729; --border:#303836; --ink:#ede9e0; --ink-dim:#b4ac9c; --teal:#4bc4cb; --ochre:#e0a24f; }
@@ -64,7 +64,7 @@
 <body>
 <div class="seite">
   <h1>Wetterseite – Entwurf</h1>
-  <p class="unter">So sähe die Wetterseite mit den fünf ausgewählten Verbesserungen aus. Die echten Daten laufen, alles ist bedienbar. Oben kannst du auf die jetzige Live-Seite umschalten und vergleichen. Auf der echten Seite hat sich noch nichts geändert.</p>
+  <p class="unter">So sähe die Wetterseite mit den ausgewählten Verbesserungen aus. Die echten Daten laufen, alles ist bedienbar. Oben kannst du auf die jetzige Live-Seite umschalten und vergleichen. Auf der echten Seite hat sich noch nichts geändert.</p>
 
   <div class="zeile" data-gruppe="ansicht"><span class="was">Zeigen</span>
     <button class="wahl" data-wert="neu">Neu (Entwurf)</button><button class="wahl" data-wert="live">Bisher (live)</button></div>
@@ -106,7 +106,7 @@
   </div>
 </div>
 
-<script src="meteogramm.js?v=20260926e"></script>
+<script src="meteogramm.js?v=20260926f"></script>
 <script>
 (function(){
   var PUNKTE = [
@@ -114,9 +114,11 @@
     { id:'p2', n:'②', titel:'Wassertemperatur als Zeile im Diagramm', text:'Eigene Linie, statt der Luftdruck-Zeile. So siehst du, ob das Meer über die Tage wärmer oder kühler wird.' },
     { id:'p3', n:'③', titel:'Wetter-Symbol je Tag im Diagramm', text:'Am Tageswechsel oben z. B. „Mo 28.09. 🌤️ 27° / 21°“. Damit fallen die Liste „Die nächsten 7 Tage“ und das Kachelraster weg.' },
     { id:'p4', n:'④', titel:'Mond im Tagesfuß', text:'Unter der Sonnenzeile eine dritte Zeile: Mondphase jeden Tag, bei Vollmond, Neumond und Halbmond mit genauer Uhrzeit.' },
-    { id:'p5', n:'⑤', titel:'Tipps zum Tag', text:'Unter dem Diagramm, für den Tag unter dem Strich. Hängt vom Ort ab – Corralejo: Strand, Kiten am Flag Beach, Popcorn Beach bei Ebbe. El Cotillo: Strand, Weg zum Leuchtturm bei Ebbe. Sotavento: Strand, Kiten, Lagune am Risco del Paso.' }
+    { id:'p5', n:'⑤', titel:'Tipps zum Tag', text:'Unter dem Diagramm, für den Tag unter dem Strich. Hängt vom Ort ab – Corralejo: Strand, Kiten am Flag Beach, Popcorn Beach bei Ebbe. El Cotillo: Strand, Weg zum Leuchtturm bei Ebbe. Sotavento: Strand, Kiten, Lagune am Risco del Paso.' },
+    { id:'p6', n:'⑥', titel:'Knöpfe: „Jetzt zentrieren“ in der Mitte', text:'Der Auffrischen-Knopf ↻ sitzt jetzt ganz links: ↻ ‹ Jetzt zentrieren › ☰ – je zwei Knöpfe links und rechts.' },
+    { id:'p7', n:'⑦', titel:'Zeitraffer mit Play/Pause', text:'▶ vorn in der Bildleiste. Beim Abspielen wandert der Strich selbst durch die letzten Stunden – Datum, alle Werte, Tipps und Bild laufen mit, bei der Webcam die gespeicherten Bilder, bei Satellit und Regen die Wolkenfilme. In Schleife, am Ende kurz Pause. Unter dem Bild erscheint dann eine Leiste: Rückblick 2, 6, 12 oder 24 Std., Tempo ruhig/normal/flott (merkt sich das Gerät), „✕ zurück zu jetzt“. Wer selbst wischt, übernimmt – der Film hört auf. Während er läuft, kannst du zwischen Webcam, Satellit und Regen wechseln.' }
   ];
-  var wahl = { ansicht:'neu', thema:'dunkel', marken:'an', p2:true, p3:true, p4:true, p5:true };
+  var wahl = { ansicht:'neu', thema:'dunkel', marken:'an', p2:true, p3:true, p4:true, p5:true, p6:true, p7:true };
   try { Object.assign(wahl, JSON.parse(localStorage.getItem('fuerte-wetterseite-entwurf') || '{}')); } catch(e){}
   function merken(){ try { localStorage.setItem('fuerte-wetterseite-entwurf', JSON.stringify(wahl)); } catch(e){} }
 
@@ -187,7 +189,7 @@
         { id:'sotavento', name:'Sotavento',  lat:28.1560, lon:-14.2275, meer:{ lat:28.145,  lon:-14.21   } }
       ],
       zeilen: zeilen, zeilenStandard: standard,
-      tagesSymbol: wahl.p3, mond: wahl.p4, tipps: wahl.p5 ? TIPPS : [],
+      tagesSymbol: wahl.p3, mond: wahl.p4, tipps: wahl.p5 ? TIPPS : [], knoepfeMittig: wahl.p6, filmLeiste: wahl.p7,
       kameras: {
         corralejo: { name:'Grandes Playas, Corralejo', live:'https://cdn.skylinewebcams.com/live6086.jpg', quelle:'SkylineWebcams',
           seite:'https://www.skylinewebcams.com/en/webcam/espana/canarias/corralejo/grandes-playas-corralejo.html' },
