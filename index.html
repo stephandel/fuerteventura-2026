@@ -1632,7 +1632,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   <div class="page-header wrap">
     <div class="eyebrow">29.09.–12.10.2026 · 13 Nächte · 2 Personen</div>
     <h1>Unterkünfte</h1>
-    <p class="sub">Letzter Stand: <strong>25.09.2026</strong> &#8211; 28 von 31 Unterk&#252;nften gepr&#252;ft (Capit&#225;n Aleycar, Oasis Royal und Villa Deluxe Veaco lassen sich nur von Hand pr&#252;fen)</p>
+    <p class="sub">Letzter Stand: <strong>26.09.2026</strong> &#8211; Oasis Duna und Renacer Zen nachgepr&#252;ft, die &#252;brigen am 25.09.: 28 von 31 Unterk&#252;nften gepr&#252;ft (Capit&#225;n Aleycar, Oasis Royal und Villa Deluxe Veaco lassen sich nur von Hand pr&#252;fen)</p>
     <div class="stat-strip stat-strip-kompakt">
       <div class="stat"><span class="n" id="stat-anzahl">–</span><span class="l">Unterkünfte im Vergleich</span></div>
       <div class="stat"><span class="n" id="stat-voll">–</span><span class="l">für alle 13 Nächte frei</span></div>
@@ -5149,18 +5149,18 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     ],
     // Natural Renacer Zen: Airbnb-Preise vom 24.09.2026 + Poolheizung 20 EUR je Nacht
     'renacer-zen': [
-      { von: '2026-10-02', bis: '2026-10-12', preis: 2497 },
+      { von: '2026-10-02', bis: '2026-10-12', preis: 2752 },   // 26.09.2026 nachgeprueft, vorher 2497
       { von: '2026-10-03', bis: '2026-10-12', preis: 2253.60 },
       { von: '2026-10-07', bis: '2026-10-12', preis: 1280.80 },
       // 25.09.2026, + 20 EUR Heizung je Nacht
-      { von: '2026-10-05', bis: '2026-10-12', preis: 1768 },
+      { von: '2026-10-05', bis: '2026-10-12', preis: 1767.20 },
       { von: '2026-10-06', bis: '2026-10-12', preis: 1524 }
     ],
     // Oasis Duna, Airbnb-Preise vom 26.09.2026 (nicht erstattungsfaehig)
     'oasis-duna': [
       { von: '2026-09-29', bis: '2026-10-03', preis: 352 },
       { von: '2026-09-29', bis: '2026-10-05', preis: 506.71 },
-      { von: '2026-09-29', bis: '2026-10-06', preis: 584.07 },
+      { von: '2026-09-29', bis: '2026-10-06', preis: 585 },      // 26.09.2026 nachmittags, vorher 584,07
       { von: '2026-09-29', bis: '2026-10-09', preis: 827 }
     ],
     'villa-paradisus':        [ { von: '2026-09-29', bis: '2026-10-12', preis: 2797 } ],
@@ -8949,14 +8949,14 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   // angewendet, deshalb immer beide Gitter abfragen (#card-grid und .kat-grid).
   // 'unklar' heisst: stand auf dem Portal nicht eindeutig - Symbol bleibt grau.
   var EXCEL_STAND = {
-    'renacer-zen': { ppn: 249.7, gesamt: 2497, frei: ['2026-10-02','2026-10-12'],
+    'renacer-zen': { ppn: 275.2, gesamt: 2752, frei: ['2026-10-02','2026-10-12'],
       krit: { pool:'ja', eigpool:'ja', heizpool:'ja', grill:'ja', ac:'ja', balkon:'ja', kueche:'ja', wlan:'ja', parken:'ja', wholeplace:'ja', freecancel:'nein' },
       adresse: 'C. Pardelas, 7, 35660 Corralejo, Las Palmas',
-      fussnote: '<strong>Preis inklusive Poolheizung:</strong> 2.297\u00a0\u20ac Villa + 200\u00a0\u20ac Heizung (20\u00a0\u20ac je Nacht, von der Gastgeberin best\u00e4tigt). <strong>Erst ab 02.10. frei</strong>, mindestens 5\u00a0N\u00e4chte. Weitere Preise mit Heizung, Abreise 12.10.:<br>' +
+      fussnote: '<strong>Preis inklusive Poolheizung:</strong> 2.552\u00a0\u20ac Villa + 200\u00a0\u20ac Heizung (20\u00a0\u20ac je Nacht, von der Gastgeberin best\u00e4tigt). <strong>Erst ab 02.10. frei</strong>, mindestens 5\u00a0N\u00e4chte. Weitere Preise mit Heizung, Abreise 12.10. (auf Airbnb gepr\u00fcft am 26.09.2026):<br>' +
         '<span style="display:inline-block;margin-top:4px;line-height:1.7">' +
-        '02.10. \u00b7 10\u00a0N\u00e4chte \u00b7 <b>2.497\u00a0\u20ac</b> \u00b7 250\u00a0\u20ac/Nacht<br>' +
+        '02.10. \u00b7 10\u00a0N\u00e4chte \u00b7 <b>2.752\u00a0\u20ac</b> \u00b7 275\u00a0\u20ac/Nacht<br>' +
         '03.10. \u00b7 9\u00a0N\u00e4chte \u00b7 <b>2.253,60\u00a0\u20ac</b> \u00b7 250\u00a0\u20ac/Nacht<br>' +
-        '05.10. \u00b7 7\u00a0N\u00e4chte \u00b7 <b>1.768\u00a0\u20ac</b> \u00b7 253\u00a0\u20ac/Nacht<br>' +
+        '05.10. \u00b7 7\u00a0N\u00e4chte \u00b7 <b>1.767,20\u00a0\u20ac</b> \u00b7 252\u00a0\u20ac/Nacht<br>' +
         '06.10. \u00b7 6\u00a0N\u00e4chte \u00b7 <b>1.524\u00a0\u20ac</b> \u00b7 254\u00a0\u20ac/Nacht<br>' +
         '07.10. \u00b7 5\u00a0N\u00e4chte \u00b7 <b>1.280,80\u00a0\u20ac</b> \u00b7 256\u00a0\u20ac/Nacht</span><br>' +
         '<strong>Nicht erstattungsf\u00e4hig</strong> \u2013 nur 24\u00a0Stunden nach Buchung kostenlos stornierbar.<br>' +
@@ -8986,13 +8986,13 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     'oasis-duna': { ppn: 82.7, gesamt: 827, frei: ['2026-09-29','2026-10-09'],
       krit: { pool:'ja', eigpool:'nein', heizpool:'unklar', grill:'nein', ac:'nein', balkon:'ja', kueche:'ja', wlan:'ja', parken:'ja', wholeplace:'ja', freecancel:'nein' },
       adresse: 'Oasis Duna 3, Avenida Gran Canaria, 35660 Corralejo (Anlage laut OpenStreetMap, Wohnungsnummer nach Buchung)',
-      fussnote: '<strong>Preise vom 26.09.2026</strong> (Airbnb, mit Gastgeber- und Last-Minute-Rabatt, nicht erstattungsf\u00e4hig). Frei 29.09.\u201309.10.:<br>' +
+      fussnote: '<strong>Preise vom 26.09.2026, nachmittags nachgepr\u00fcft</strong> (Airbnb, mit Gastgeber- und Last-Minute-Rabatt, nicht erstattungsf\u00e4hig). Frei 29.09.\u201309.10.:<br>' +
         '<span style="display:inline-block;margin-top:4px;line-height:1.7">' +
         '29.09.\u201303.10. \u00b7 4\u00a0N\u00e4chte \u00b7 <b>352\u00a0\u20ac</b> \u00b7 88\u00a0\u20ac/Nacht<br>' +
         '29.09.\u201305.10. \u00b7 6\u00a0N\u00e4chte \u00b7 <b>506,71\u00a0\u20ac</b> \u00b7 84\u00a0\u20ac/Nacht<br>' +
-        '29.09.\u201306.10. \u00b7 7\u00a0N\u00e4chte \u00b7 <b>584,07\u00a0\u20ac</b> \u00b7 83\u00a0\u20ac/Nacht<br>' +
+        '29.09.\u201306.10. \u00b7 7\u00a0N\u00e4chte \u00b7 <b>585\u00a0\u20ac</b> \u00b7 84\u00a0\u20ac/Nacht<br>' +
         '29.09.\u201309.10. \u00b7 10\u00a0N\u00e4chte \u00b7 <b>827\u00a0\u20ac</b> \u00b7 83\u00a0\u20ac/Nacht</span><br>' +
-        'Passt als Ortsteil vor dem Renacer Zen: 7\u00a0N\u00e4chte hier + 6\u00a0N\u00e4chte Renacer Zen = 2.108\u00a0\u20ac.' },
+        'Passt als Ortsteil vor dem Renacer Zen: 7\u00a0N\u00e4chte hier + 6\u00a0N\u00e4chte Renacer Zen = 2.109\u00a0\u20ac.' },
 
     'lobos-sanddunes': { ppn: 115.75, gesamt: 463, frei: ['2026-10-04','2026-10-08'],
       krit: { pool:'nein', eigpool:'nein', heizpool:'nein', grill:'nein', ac:'nein', balkon:'ja', kueche:'ja', wlan:'ja', parken:'ja', wholeplace:'ja', freecancel:'ja' },
@@ -10658,7 +10658,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       hinweis: 'Panoramafenster und eine Terrasse \u00fcber die ganze Wohnungsl\u00e4nge, mit Blick auf die D\u00fcnen, die Insel Lobos und das Meer. 2\u00a0Schlafzimmer, 3\u00a0Betten, 1\u00a0Bad, bis 5\u00a0G\u00e4ste. Superhost, 4,78/5 aus 87\u00a0Bewertungen, als besonders sauber bewertet; 100\u00a0% der deutschen G\u00e4ste gaben im letzten Jahr 5\u00a0Sterne. Kostenlose Stornierung, Check-in per Schl\u00fcsselbox, kostenloser Parkplatz. <strong>Nur vom 04.10.\u201308.10. frei</strong> \u2013 passt also nur als Mittelteil eines geteilten Aufenthalts. <strong>Kein Pool und keine Klimaanlage</strong> (nur Ventilatoren), und <strong>weder Rauch- noch Kohlenmonoxidmelder</strong>.' },
 
     { slug: 'renacer-zen', name: 'Natural Renacer Zen \u2013 Pool, Whirlpool & Dachterrasse', art: 'Bahiazul', ort: 'Corralejo (Geafond)', portal: 'Airbnb',
-      ppn: 249.7, total: 2497, rating: 9.8, ratingTxt: '4,89/5', bew: 9,
+      ppn: 275.2, total: 2752, rating: 9.8, ratingTxt: '4,89/5', bew: 9,
       lat: 28.7093358, lng: -13.8710096,
       frei: ['2026-10-02','2026-10-12'],
       link: 'https://www.airbnb.de/rooms/1314433743731043516?check_in=2026-10-02&check_out=2026-10-12&adults=2',
