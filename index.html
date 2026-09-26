@@ -7742,6 +7742,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   // Aenderungen an der Seite selbst - nicht von Stephan oder Bilgen, sondern
   // an Angebot und Funktion. Stehen gleichberechtigt neben Notizen und Herzen.
   var SEITEN_NEUIGKEITEN = [
+    { at: '2026-09-26T10:30', text: '<b>Die Maisonette mit Meerblick ist ausgebucht</b> \u2013 die freien L\u00fccken sind k\u00fcrzer als die Mindestdauer von 4\u00a0N\u00e4chten. Auf der Vergleichsseite sind B1 und B2 deshalb weg; C l\u00e4uft jetzt \u00fcber Oasis Duna, neu ist <b>E: Oasis Duna 7\u00a0N\u00e4chte + Renacer Zen 6\u00a0N\u00e4chte</b>.' },
     { at: '2026-09-26T10:00', text: '<b>Neu: Oasis Duna (Nr.\u00a031)</b> \u2013 Stephans Fund im Ortskern. Renovierte Wohnung mit Gemeinschaftspools und kostenloser Garage, frei 29.09.\u201309.10. Sehr g\u00fcnstig: 7\u00a0N\u00e4chte 584\u00a0\u20ac, 4\u00a0N\u00e4chte 352\u00a0\u20ac. Keine Klimaanlage, nicht erstattungsf\u00e4hig.' },
     { at: '2026-09-25T11:30', text: '<b>Casita Maracuya ist ausgebucht</b> \u2013 Airbnb meldet alle N\u00e4chte als belegt. Sie tr\u00e4gt jetzt einen roten Stempel im Bild, ebenso Der Garten\u00a07, H10 Ocean Dreams und Villa\u00a08.7. Die Vergleichsseite rechnet A1\u2013A3, B1 und B2 deshalb mit der <b>Villa\u00a010.3</b> statt der Casita. Beim Preis-Check aller Angebote ge\u00e4ndert: <b>Maisonette</b> ab 29.09. teurer (13\u00a0N\u00e4chte 1.987\u00a0\u20ac), <b>TAO Caleta Mar</b> 2.209\u00a0\u20ac statt 1.492\u00a0\u20ac, <b>MC Apartments</b> jetzt 02.\u201312.10. f\u00fcr 900\u00a0\u20ac. G\u00fcnstiger: FuerteNomad, MyHome Urban, Secrets Bah\u00eda Real.' },
     { at: '2026-09-25T09:30', text: '<b>Der Bahiazul Premier Garden hat die ersten vier N\u00e4chte verloren.</b> Er war gestern noch f\u00fcr alle 13\u00a0N\u00e4chte zu haben und als \u201eLetztes!\u201c markiert \u2013 heute ist <b>nur noch 03.\u201312.10.</b> frei (2.454\u00a0\u20ac mit Poolheizung). Die Variante ohne Umzug f\u00e4llt damit weg; <b>Aufteilung A2 (Casita + Premier Garden) gibt es aber weiter f\u00fcr 2.794\u00a0\u20ac</b> \u2013 und sie ist <b>noch bis morgen, 26.09., kostenlos stornierbar</b>. Ohne Umzug bleiben die Villa lujo tranquila (2.797\u00a0\u20ac, Pool nicht heizbar, \u201enoch 1 verf\u00fcgbar\u201c) und Natural Amanecer Zen (3.477\u00a0\u20ac) \u2013 beide nicht stornierbar. <a href="#vergleich">Zum Vergleich \u2192</a>' },
@@ -8270,10 +8271,10 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       hinweis: 'Fr\u00fchst\u00fcck inklusive und noch bis 26.09. kostenlos stornierbar.' },
     { k: 'A3', teile: [['villa-10-3','2026-09-29','2026-10-03'], ['renacer-zen','2026-10-03','2026-10-12']],
       hinweis: 'Eigene Villa mit Pool und Whirlpool zum niedrigeren Nachtpreis \u2013 aber erst 9\u00a0Bewertungen und nicht erstattungsf\u00e4hig.' },
-    { k: 'B1', teile: [['villa-10-3','2026-09-29','2026-10-03'], ['atalaya-maisonette','2026-10-03','2026-10-07'], ['villa-laura','2026-10-07','2026-10-12']] },
-    { k: 'B2', teile: [['villa-10-3','2026-09-29','2026-10-03'], ['atalaya-maisonette','2026-10-03','2026-10-08'], ['villa-laura','2026-10-08','2026-10-12']] },
-    { k: 'C',  teile: [['atalaya-maisonette','2026-09-29','2026-10-05'], ['villa-laura','2026-10-05','2026-10-12']],
-      hinweis: 'Meerblick von Anfang an, danach Villa Laura.' },
+    { k: 'C',  teile: [['oasis-duna','2026-09-29','2026-10-05'], ['villa-laura','2026-10-05','2026-10-12']],
+      hinweis: 'Erst sechs N\u00e4chte im Ort (Oasis Duna, Gemeinschaftspool), danach Villa Laura.' },
+    { k: 'E',  teile: [['oasis-duna','2026-09-29','2026-10-06'], ['renacer-zen','2026-10-06','2026-10-12']],
+      hinweis: 'Eine Woche im Ort, dann sechs N\u00e4chte eigene Villa mit beheiztem Pool. Beide Teile nicht erstattungsf\u00e4hig.' },
     { k: 'D1', teile: [['villa-paradisus','2026-09-29','2026-10-12']],
       hinweis: '<strong>Kein Umzug</strong> \u2013 und die g\u00fcnstigste Variante ohne Umzug. Haken: <strong>der Pool l\u00e4sst sich gar nicht heizen</strong> (rund 21\u00a0\u00b0C im Becken), Sauberkeit mit 8,6/10 der schw\u00e4chste Wert der Auswahl, nicht stornierbar.' },
     { k: 'D2', teile: [['amanecer-zen','2026-09-29','2026-10-12']],
@@ -8741,7 +8742,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       adresse: 'Calle Abubilla, Geafond, 35660 La Oliva, Las Palmas' },
 
     'atalaya-maisonette': { ppn: 152.85, gesamt: 1987, frei: ['2026-09-29','2026-10-12'],
-      fussnote: '<strong>Stand 25.09.2026:</strong> Mit Anreise 29.09. zeigt Airbnb nur noch den Tarif mit anteiliger Erstattung, alle 13\u00a0N\u00e4chte kosten jetzt <strong>1.987\u00a0\u20ac</strong> (vorher 1.796\u00a0\u20ac). Weitere Preise: 29.09.\u201303.10. 724\u00a0\u20ac \u00b7 29.09.\u201305.10. 1.013\u00a0\u20ac \u00b7 29.09.\u201306.10. 1.088\u00a0\u20ac \u00b7 <strong>ab 03.10. weiter g\u00fcnstig und nicht erstattbar:</strong> 03.\u201307.10. 571\u00a0\u20ac \u00b7 03.\u201308.10. 686\u00a0\u20ac \u00b7 03.\u201312.10. 1.246\u00a0\u20ac.',
+      fussnote: '<strong>Ausgebucht seit 26.09.2026.</strong> Frei sind nur noch 29.09.\u201302.10. (3\u00a0N\u00e4chte) und 10.\u201312.10. (2\u00a0N\u00e4chte), Airbnb verlangt aber mindestens 4\u00a0N\u00e4chte. Die Preise unten sind der letzte Stand. <strong>Stand 25.09.2026:</strong> Mit Anreise 29.09. zeigt Airbnb nur noch den Tarif mit anteiliger Erstattung, alle 13\u00a0N\u00e4chte kosten jetzt <strong>1.987\u00a0\u20ac</strong> (vorher 1.796\u00a0\u20ac). Weitere Preise: 29.09.\u201303.10. 724\u00a0\u20ac \u00b7 29.09.\u201305.10. 1.013\u00a0\u20ac \u00b7 29.09.\u201306.10. 1.088\u00a0\u20ac \u00b7 <strong>ab 03.10. weiter g\u00fcnstig und nicht erstattbar:</strong> 03.\u201307.10. 571\u00a0\u20ac \u00b7 03.\u201308.10. 686\u00a0\u20ac \u00b7 03.\u201312.10. 1.246\u00a0\u20ac.',
       krit: { pool:'nein', eigpool:'nein', heizpool:'nein', grill:'nein', ac:'nein', balkon:'ja', kueche:'ja', wlan:'ja', parken:'ja', wholeplace:'ja', freecancel:'nein' },
       adresse: 'C. la Atalaya, 7, 35660 Corralejo, Las Palmas' },
 
@@ -9384,7 +9385,8 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     'casita-maracuya':      'seit 25.09. \u00b7 alle N\u00e4chte belegt',
     'villa-87':             'seit 24.09. \u00b7 Zeitraum vergeben',
     'der-garten-7-lajares': 'seit 25.09. \u00b7 nur noch 3 N\u00e4chte frei',
-    'h10-ocean-dreams':     'seit 25.09. auf Booking.com'
+    'h10-ocean-dreams':     'seit 25.09. auf Booking.com',
+    'atalaya-maisonette':   'seit 26.09. \u00b7 L\u00fccken zu kurz'
   };
   function ausgebuchtAnwenden(){
     Object.keys(AUSGEBUCHT).forEach(function(slug){
