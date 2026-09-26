@@ -43,6 +43,9 @@ Mehr braucht es nicht. Alles Weitere ist wahlfrei.
 | `tageVorher` / `tageVoraus` | Wie weit das Diagramm reicht | 1 / 8 |
 | `bildMinute` | Minute nach der vollen Stunde, zu der von selbst aufgefrischt wird – und 30 Minuten später noch einmal (passend zum Bildspeicher) | `7` |
 | `merkschluessel` | Präfix für die gespeicherte Auswahl (Ort, Modell, Zeilen, Reihenfolge) | `'meteogramm'` |
+| `tagesSymbol` | `true`: am Tageswechsel und links oben Wetter-Symbol und Hoch/Tief des Tages, z. B. „Mo 28.09. ☀️ 30° / 22°“ (aus den hellen Stunden: Gewitter vor Regen vor Bewölkung) | `false` |
+| `mond` | `true`: dritte Zeile im Tagesfuß der Sonnenzeile mit der Mondphase; bei Neumond, Viertel und Vollmond mit Uhrzeit (Rechnung nach Meeus) | `false` |
+| `tipps` | Liste von Regeln für „was der Tag bringt“ unter dem Diagramm, siehe unten | keine |
 
 Rückgabe: `{ neu(), auffrischen(), zeichnen(), zeigeOrt(id), abbauen() }`.
 
@@ -71,7 +74,7 @@ Auswahl und Reihenfolge merkt sich das Gerät.
 
 ## Verfügbare Zeilen
 
-`sonne` · `temp` · `wind` · `regen` · `uv` · `feuchte` · `wolken` · `druck` · `welle` · `tide`
+`sonne` · `temp` · `wind` · `regen` · `uv` · `feuchte` · `wolken` · `druck` · `welle` · `tide` · `wasser`
 
 Besonderheiten:
 
@@ -80,10 +83,28 @@ Besonderheiten:
 - **wind** — Balken für den Mittelwind, heller Aufsatz für die Böen, darunter Pfeile für die Windrichtung (sie zeigen, wohin der Wind weht).
 - **regen** — Balken in Millimetern, dünne Linie für die Wahrscheinlichkeit.
 - **uv** — Balken in den üblichen Ampelfarben (grün bis violett).
-- **welle**, **tide** — brauchen die Meeres-Abfrage; werden nur geholt, wenn eine der beiden sichtbar ist. Hoch- und Niedrigwasser sind mit Uhrzeit beschriftet.
+- **wasser** — Wassertemperatur als Linie; die Skala umfasst mindestens 3 Grad, damit kleine Schwankungen nicht riesig wirken.
+- **welle**, **tide**, **wasser** — brauchen die Meeres-Abfrage; werden nur geholt, wenn eine der beiden sichtbar ist. Hoch- und Niedrigwasser sind mit Uhrzeit beschriftet.
 
 **UV-Index:** ECMWF und ICON rechnen ihn nicht. Fehlt er, holt der Baustein ihn
 einzeln aus der besten Mischung und schreibt das in die Fußzeile.
+
+## Tipps zum Tag (wahlfrei)
+
+`tipps` ist eine Liste von Regeln. Gerechnet wird für den Tag unter dem Strich und den gewählten Ort:
+
+```js
+tipps: [
+  { art:'strand', icon:'🏖️', titel:'Strand' },                                  // längstes Fenster: trocken, Wind < 25, Wolken < 85 %, ab 20°
+  { art:'wind', icon:'🪁', titel:'Kiten', orte:['sotavento'], von:22, bis:50 },  // Wind zwischen von und bis (km/h)
+  { art:'ebbe', icon:'🏝️', titel:'Lagune', orte:['sotavento'], text:'…' }        // 2 Std. vor bis 1 Std. nach Niedrigwasser, nur bei Tageslicht
+]
+```
+
+`orte` schränkt eine Regel auf bestimmte Orte ein. Weitere Stellschrauben: `windBis` und `abGrad` (strand),
+`vorher` und `nachher` in Stunden (ebbe). Fenster unter zwei Stunden zählen nicht. Liegt es schon hinter
+„jetzt“, steht „(schon vorbei)“ dahinter. Eine `ebbe`-Regel holt die Meeresdaten auch dann, wenn keine
+Meeres-Zeile sichtbar ist.
 
 ## Farben
 

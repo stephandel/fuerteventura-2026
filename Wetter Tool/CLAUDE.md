@@ -22,6 +22,7 @@ keine Pillen, nicht „zu rund“**.
 | `entwurf.html` | Zeigt den Baustein allein, mit Hell/Dunkel-Schalter (früher Gestaltungs-Labor). |
 | `schriftprobe.html` | 18 Schriften für die Zahlen zur Auswahl (Nr. 18 = Arial). |
 | `wetterkopf-probe.html` | Probeseite für den großen Wetterkasten oben auf der Wetterseite: 4 Hintergründe × 5 Aufbauten × 9 Schriften, Simulator für Wetter/Tageszeit. Fotos `../images/wx-*.webp`. |
+| `wetterseite-entwurf.html` | Entwurf der ganzen Wetterseite mit den 5 Punkten vom 26.09. (echte Wassertemperatur, Zeile `wasser`, `tagesSymbol`, `mond`, `tipps`), Umschalter „Bisher (live)“ als iframe. |
 | `../index.html` | Die Fuerteventura-Seite; ruft `Meteogramm.einbauen({...})` mit Orten, Zeilen, Kameras auf. |
 | `../worker/fuerte-sync.js` | Cloudflare-Worker: speichert stündlich Webcam-Bilder (Bildspeicher). |
 
@@ -36,6 +37,12 @@ diesem Ordner wird mit veröffentlicht (Positivliste in `../.gitignore`), also a
    (Tageskurve), Schrift 4 (Inter dünn). Umsetzung dann in `../index.html` (`.wx-hero`, `renderWx…` um Zeile 4690);
    Bild-Logik `fotoFuer()`, Himmel-Zeichner `Himmel`, Kurven `tageskurve()` usw. aus der Probeseite übernehmen.
    Calima: Open-Meteo Air-Quality `current=dust`, ab 100 µg/m³ gilt es als Calima.
+2. **Wetterseite-Entwurf (`wetterseite-entwurf.html`, gebaut 26.09.2026)** – Stephan schaut ihn an. Die
+   Neuerungen stecken schon im Baustein, sind aber nur per Einstellung an (`tagesSymbol`, `mond`, `tipps`,
+   Zeile `wasser`); die Live-Seite nutzt sie noch nicht. Übernehmen heißt in `../index.html`: Optionen im
+   `Meteogramm.einbauen({...})` setzen (Tipps-Liste aus dem Entwurf kopieren), `'druck'` durch `'wasser'`
+   ersetzen, `#wx-days-card` und `#wx-tiles` samt Code entfernen, Wassertemperatur live in den Wetterkasten
+   (Marine `current=sea_surface_temperature`). Versionskennung hochzählen.
 
 ## Entschieden
 

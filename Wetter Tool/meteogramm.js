@@ -78,7 +78,10 @@
     tide:    { titel:'Tide', einheit:'m', art:'linie', feld:'tide', farbe:'#4bc4cb',
                glatt:true, extrema:'tide', meer:true, icon:'🌊',
                fmt:function(v){ return (v > 0 ? '+' : '') + dez(v, 1) + ' m'; },
-               zelle:function(v, v2, d, i, steigt){ return { wert: (v > 0 ? '+' : '') + dez(v, 1), einheit: 'm', zusatz: steigt == null ? '' : (steigt ? 'steigt' : 'fällt') }; } }
+               zelle:function(v, v2, d, i, steigt){ return { wert: (v > 0 ? '+' : '') + dez(v, 1), einheit: 'm', zusatz: steigt == null ? '' : (steigt ? 'steigt' : 'fällt') }; } },
+    wasser:  { titel:'Wassertemperatur', kurz:'Wasser', einheit:'°C', art:'linie', feld:'wasser', farbe:'#3f8fd6',
+               glatt:true, meer:true, icon:'🌡️', fmt:function(v){ return dez(v, 1) + '°'; },
+               zelle:function(v){ return { wert: dez(v, 1), einheit: '°' }; } }
   };
 
   var ZEILEN_STANDARD = ['sonne','temp','wind','regen','uv','feuchte','wolken','welle','tide'];
@@ -95,6 +98,57 @@
   function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
   function uvText(v){ return v < 3 ? 'niedrig' : v < 6 ? 'mäßig' : v < 8 ? 'hoch' : v < 11 ? 'sehr hoch' : 'extrem'; }
   function uvFarbe(v){ return v < 3 ? '#4a9a5e' : v < 6 ? '#d4b63c' : v < 8 ? '#d98032' : v < 11 ? '#c0504a' : '#9b59b6'; }
+
+  // ---------- Mond ----------
+
+  // Genaue Zeitpunkte der Mondphasen nach J. Meeus, "Astronomical Algorithms" (wenige Minuten genau).
+  // Dieselbe Rechnung steht auf der Fuerteventura-Seite (Mond-Kachel).
+  function mondPhaseZeit(k){
+    var r = Math.PI / 180, T = k / 1236.85, art = k - Math.floor(k);
+    var JDE = 2451550.09766 + 29.530588861 * k + 0.00015437 * T * T - 0.00000015 * T * T * T + 0.00000000073 * T * T * T * T;
+    var E = 1 - 0.002516 * T - 0.0000074 * T * T;
+    var M  = (2.5534 + 29.1053567 * k - 0.0000014 * T * T) * r;
+    var Mm = (201.5643 + 385.81693528 * k + 0.0107582 * T * T + 0.00001238 * T * T * T) * r;
+    var F  = (160.7108 + 390.67050284 * k - 0.0016118 * T * T - 0.00000227 * T * T * T) * r;
+    var O  = (124.7746 - 1.56375588 * k + 0.0020672 * T * T) * r;
+    var s = Math.sin, c;
+    if (art === 0 || art === 0.5) {
+      var voll = art === 0.5;
+      c = (voll ? -0.40614 : -0.40720) * s(Mm) + (voll ? 0.17302 : 0.17241) * E * s(M) + (voll ? 0.01614 : 0.01608) * s(2 * Mm)
+        + (voll ? 0.01043 : 0.01039) * s(2 * F) + (voll ? 0.00734 : 0.00739) * E * s(Mm - M) - (voll ? 0.00515 : 0.00514) * E * s(Mm + M)
+        + (voll ? 0.00209 : 0.00208) * E * E * s(2 * M) - 0.00111 * s(Mm - 2 * F) - 0.00057 * s(Mm + 2 * F)
+        + 0.00056 * E * s(2 * Mm + M) - 0.00042 * s(3 * Mm) + 0.00042 * E * s(M + 2 * F) + 0.00038 * E * s(M - 2 * F)
+        - 0.00024 * E * s(2 * Mm - M) - 0.00017 * s(O) - 0.00007 * s(Mm + 2 * M) + 0.00004 * s(2 * Mm - 2 * F)
+        + 0.00004 * s(3 * M) + 0.00003 * s(Mm + M - 2 * F) + 0.00003 * s(2 * Mm + 2 * F) - 0.00003 * s(Mm + M + 2 * F)
+        + 0.00003 * s(Mm - M + 2 * F) - 0.00002 * s(Mm - M - 2 * F) - 0.00002 * s(3 * Mm + M) + 0.00002 * s(4 * Mm);
+    } else {
+      c = -0.62801 * s(Mm) + 0.17172 * E * s(M) - 0.01183 * E * s(Mm + M) + 0.00862 * s(2 * Mm) + 0.00804 * s(2 * F)
+        + 0.00454 * E * s(Mm - M) + 0.00204 * E * E * s(2 * M) - 0.00180 * s(Mm - 2 * F) - 0.00070 * s(Mm + 2 * F)
+        - 0.00040 * s(3 * Mm) - 0.00034 * E * s(2 * Mm - M) + 0.00032 * E * s(M + 2 * F) + 0.00032 * E * s(M - 2 * F)
+        - 0.00028 * E * E * s(Mm + 2 * M) + 0.00027 * E * s(2 * Mm + M) - 0.00017 * s(O) - 0.00005 * s(Mm - M - 2 * F)
+        + 0.00004 * s(2 * Mm + 2 * F) - 0.00004 * s(Mm + M + 2 * F) + 0.00004 * s(Mm - 2 * M) + 0.00003 * s(Mm + M - 2 * F)
+        + 0.00003 * s(3 * M) + 0.00002 * s(2 * Mm - 2 * F) + 0.00002 * s(Mm - M + 2 * F) - 0.00002 * s(3 * Mm + M);
+      var W = 0.00306 - 0.00038 * E * Math.cos(M) + 0.00026 * Math.cos(Mm) - 0.00002 * Math.cos(Mm - M) + 0.00002 * Math.cos(Mm + M) + 0.00002 * Math.cos(2 * F);
+      c += art === 0.25 ? W : -W;
+    }
+    // Planeten-Zusatzglieder
+    var A = [299.77 + 0.107408 * k - 0.009173 * T * T, 251.88 + 0.016321 * k, 251.83 + 26.651886 * k, 349.42 + 36.412478 * k,
+      84.66 + 18.206239 * k, 141.74 + 53.303771 * k, 207.14 + 2.453732 * k, 154.84 + 7.306860 * k, 29.16 + 27.261239 * k,
+      205.66 + 0.121824 * k, 283.87 + 1.844379 * k, 157.64 + 0.070286 * k, 110.41 + 42.216316 * k, 342.51 + 0.041301 * k];
+    var G = [325, 165, 164, 126, 110, 62, 60, 56, 47, 42, 40, 37, 35, 23];
+    for (var i = 0; i < 14; i++) c += G[i] * 0.000001 * s(A[i] * r);
+    // JDE ist Terrestrische Zeit; rund 69 s Unterschied zur Weltzeit
+    return new Date((JDE + c - 2440587.5) * 86400000 - 69000);
+  }
+
+  var MOND_ICON = ['🌑','🌒','🌓','🌔','🌕','🌖','🌗','🌘'];
+  var MOND_NAME = ['Neumond','zunehmende Sichel','erstes Viertel','zunehmender Mond','Vollmond','abnehmender Mond','letztes Viertel','abnehmende Sichel'];
+  var MOND_EREIGNIS = ['Neumond','Erstes Viertel','Vollmond','Letztes Viertel'];
+  // Anteil am Mondmonat: 0 = Neumond, 0,5 = Vollmond
+  function mondBruch(d){
+    var syn = 29.530588853 * 864e5, bek = Date.UTC(2000, 0, 6, 18, 14);
+    return (((d.getTime() - bek) % syn) + syn) % syn / syn;
+  }
 
   // ---------- Der Baustein ----------
 
@@ -147,6 +201,10 @@
                                { id:'regen', name:'Regen', icon:'🌧️' });
     var TAGE_VORHER = cfg.tageVorher != null ? cfg.tageVorher : 1;
     var TAGE_VORAUS = cfg.tageVoraus != null ? cfg.tageVoraus : 8;
+    // Wahlfreie Zusätze (siehe README): Wetter-Symbol je Tag, Mond im Tagesfuß, Tipps zum Tag
+    var TAGES_SYMBOL = !!cfg.tagesSymbol;
+    var MOND = !!cfg.mond;
+    var TIPPS = cfg.tipps || [];
 
     // Welche Zeilen stehen zur Verfügung, in welcher Reihenfolge
     var ANGEBOT = (cfg.zeilen && cfg.zeilen.length ? cfg.zeilen : ZEILEN_STANDARD)
@@ -156,10 +214,10 @@
       : ANGEBOT.slice();
 
     // Maße
-    var BAND_TAG = 22, BAND_CAM = 16, TITEL_H = 22, BAND_UNTEN = 24, TAGESINFO_H = 34;
+    var BAND_TAG = 22, BAND_CAM = 16, TITEL_H = 22, BAND_UNTEN = 24, TAGESINFO_H = MOND ? 50 : 34;
     var ZEILE_H_SCHMAL = 72, ZEILE_H_BREIT = 92, PXH_BREIT = 24;
 
-    var el = {}, daten = null, cache = {}, geo = null, altT0 = null;
+    var el = {}, daten = null, cache = {}, geo = null, altT0 = null, datenNr = 0;
     var pxH = 26, idxJetzt = 0, sammler = 0, camAktuell = null;
     var webcam = { shots: [], speicher: false, ort: null };
     var ort = merkLesen('ort', ORTE[0].id);
@@ -211,7 +269,11 @@
 
     // ---------- Daten holen ----------
 
-    function braucheMeer(){ return sichtbareZeilen().some(function(z){ return z.meer; }); }
+    function tippsFuerOrt(){ return TIPPS.filter(function(t){ return !t.orte || t.orte.indexOf(ort) >= 0; }); }
+    function braucheMeer(){
+      return sichtbareZeilen().some(function(z){ return z.meer; }) ||
+        tippsFuerOrt().some(function(t){ return t.art === 'ebbe'; });
+    }
 
     // opts.still     = ohne "Lade ..."-Text, die Anzeige bleibt stehen
     // opts.behalten  = nach dem Laden wieder an dieselbe Stelle, statt auf "jetzt"
@@ -302,6 +364,7 @@
       }
       if (w.daily) { d.sonnenauf = w.daily.sunrise || []; d.sonnenunter = w.daily.sunset || []; }
       d.tage = tageBauen(d);
+      d.nr = ++datenNr;
       return d;
     }
 
@@ -322,8 +385,54 @@
         if (d.regen_mm[i] != null) e.regen += d.regen_mm[i];
       }
       (d.sonnenauf || []).forEach(function(iso){ if (karte[iso.slice(0,10)]) karte[iso.slice(0,10)].auf = iso.slice(11,16); });
+      // Wetter-Symbol je Tag, nur aus den hellen Stunden: Gewitter vor Regen vor Bewölkung
+      tage.forEach(function(e){
+        var sw = 0, nw = 0, regen = 0, gewitter = false;
+        for (var j = e.von; j <= e.bis; j++) {
+          if (!d.tag[j]) continue;
+          if (d.wolken[j] != null) { sw += d.wolken[j]; nw++; }
+          var c = d.code[j];
+          if (c >= 95) gewitter = true;
+          if (((c >= 51 && c <= 67) || (c >= 80 && c <= 82)) && (d.regen_mm[j] || 0) >= 0.3) regen++;
+        }
+        var w = nw ? sw / nw : null;
+        e.symbol = gewitter ? '⛈️' : regen >= 3 ? '🌧️' : regen ? '🌦️' : w == null ? '' : w < 20 ? '☀️' : w < 45 ? '🌤️' : w < 75 ? '⛅' : '☁️';
+      });
+      if (MOND) mondTage(tage);
       (d.sonnenunter || []).forEach(function(iso){ if (karte[iso.slice(0,10)]) karte[iso.slice(0,10)].unter = iso.slice(11,16); });
       return tage;
+    }
+
+    // Datum und Uhrzeit eines echten Zeitpunkts in der Zeitzone des Ortes
+    function ortsZeit(dUtc){
+      var tz = cfg.zeitzone;
+      if (tz && tz !== 'auto') {
+        try {
+          var p = new Intl.DateTimeFormat('sv-SE', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false })
+            .formatToParts(dUtc).reduce(function(o, q){ o[q.type] = q.value; return o; }, {});
+          return { tag: p.year + '-' + p.month + '-' + p.day, uhr: (p.hour === '24' ? '00' : p.hour) + ':' + p.minute };
+        } catch(e){}
+      }
+      return { tag: dUtc.getFullYear() + '-' + pad2(dUtc.getMonth() + 1) + '-' + pad2(dUtc.getDate()), uhr: pad2(dUtc.getHours()) + ':' + pad2(dUtc.getMinutes()) };
+    }
+    // Je Tag: Mondphase zur Mittagszeit, dazu Neumond, Viertel und Vollmond mit Uhrzeit
+    function mondTage(tage){
+      if (!tage.length) return;
+      var karte = {};
+      tage.forEach(function(e){
+        var f = mondBruch(new Date(e.datum + 'T12:00'));
+        e.mond = { icon: MOND_ICON[Math.round(f * 8) % 8], name: MOND_NAME[Math.round(f * 8) % 8],
+                   licht: Math.round((1 - Math.cos(2 * Math.PI * f)) / 2 * 100) };
+        karte[e.datum] = e;
+      });
+      var a = new Date(tage[0].datum + 'T00:00'), b = new Date(tage[tage.length - 1].datum + 'T23:59');
+      var k = Math.floor(((a.getTime() / 864e5 + 2440587.5) - 2451550.09766) / 29.530588861 * 4) / 4 - 0.5;
+      for (var n = 0; n < 60; n++, k += 0.25) {
+        var z = mondPhaseZeit(k);
+        if (z > b) break;
+        var o = ortsZeit(z), e = karte[o.tag];
+        if (e) { var art = Math.round((k - Math.floor(k)) * 4) % 4; e.mond.ereignis = MOND_EREIGNIS[art]; e.mond.icon = MOND_ICON[art * 2]; e.mond.uhr = o.uhr; }
+      }
     }
 
     function idxFuer(dt){ return (dt.getTime() - daten.t0.getTime()) / 3600000; }
@@ -386,11 +495,14 @@
       if (z.id === 'uv')    { hi = Math.max(8, Math.ceil(hi)); }
       if (z.id === 'druck') { lo = Math.floor(lo) - 1; hi = Math.ceil(hi) + 1; }
       if (z.id === 'tide')  { var a = Math.max(Math.abs(lo), Math.abs(hi), 0.5); a = Math.ceil(a * 2) / 2; lo = -a; hi = a; }
+      // Das Meer ändert seine Temperatur nur langsam - mindestens 3 Grad Spanne, sonst wirkt jede Zehntelschwankung riesig
+      if (z.id === 'wasser') { lo = Math.floor(lo); hi = Math.ceil(hi); while (hi - lo < 3) { lo -= 1; if (hi - lo < 3) hi += 1; } }
       if (hi === lo) hi = lo + 1;
       var ticks = z.ticks;
       if (!ticks) {
         if (z.id === 'temp') { ticks = []; for (var t = lo + 1; t <= hi - 1; t += (hi - lo > 12 ? 4 : 2)) ticks.push(t); }
         else if (z.id === 'tide') ticks = [lo, 0, hi];
+        else if (z.id === 'wasser') { ticks = []; for (var tw = lo + 1; tw <= hi - 1; tw++) ticks.push(tw); }
         else ticks = [lo, (lo + hi) / 2, hi];
       }
       return { lo: lo, hi: hi, ticks: ticks };
@@ -457,6 +569,10 @@
         if (istTag) {
           var dt = new Date(iso);
           var lab = (dt.toDateString() === heuteStr) ? 'Heute' : WOCHENTAG[dt.getDay()] + ' ' + pad2(dt.getDate()) + '.' + pad2(dt.getMonth() + 1) + '.';
+          if (TAGES_SYMBOL) {
+            var tg = daten.tage.filter(function(t){ return t.datum === iso.slice(0, 10); })[0];
+            if (tg && tg.symbol) lab += '   ' + tg.symbol + ' ' + Math.round(tg.tmax) + '° / ' + Math.round(tg.tmin) + '°';
+          }
           s.push('<text class="mg-datum" x="' + (x(i2) + 6) + '" y="15" data-x="' + (x(i2) + 6) + '">' + lab + '</text>');
         }
       }
@@ -565,6 +681,10 @@
           s.push('<text class="mg-tagesinfo-stark" x="' + mitte + '" y="' + (basis + 15) + '" text-anchor="middle">☀ ' + dez(stunden, 1) + ' h</text>');
           var unten = (t.auf && t.unter ? t.auf + ' – ' + t.unter : '') + (t.uvMax != null ? '  ·  UV ' + Math.round(t.uvMax) : '');
           if (unten) s.push('<text class="mg-tagesinfo" x="' + mitte + '" y="' + (basis + 28) + '" text-anchor="middle">' + unten + '</text>');
+          if (MOND && t.mond) {
+            var mt = t.mond.ereignis ? t.mond.icon + ' ' + t.mond.ereignis + ' ' + t.mond.uhr : t.mond.icon + ' ' + t.mond.name + ' · ' + t.mond.licht + ' %';
+            s.push('<text class="mg-tagesinfo' + (t.mond.ereignis ? ' mg-tagesinfo-stark' : '') + '" x="' + mitte + '" y="' + (basis + 43) + '" text-anchor="middle">' + mt + '</text>');
+          }
         });
       }
     }
@@ -617,7 +737,9 @@
         if (!hoch && !tief) continue;
         var nenner = a - 2*b + c, shift = nenner === 0 ? 0 : 0.5 * (a - c) / nenner;
         if (shift > 1 || shift < -1) shift = 0;
-        out.push({ i: i + shift, v: b - 0.25 * (a - c) * shift, hoch: hoch });
+        var neu = { i: i + shift, v: b - 0.25 * (a - c) * shift, hoch: hoch }, vorige = out[out.length - 1];
+        if (vorige && vorige.hoch === hoch && neu.i - vorige.i < 2) { vorige.i = (vorige.i + neu.i) / 2; continue; }
+        out.push(neu);
       }
       return out;
     }
@@ -669,8 +791,15 @@
         datumsLabelsPruefen();
 
         var axd = document.getElementById(kid('ax-datum'));
-        if (axd) axd.textContent = (dtL.toDateString() === jetztDort().toDateString())
-          ? 'Heute' : WOCHENTAG[dtL.getDay()] + ' ' + pad2(dtL.getDate()) + '.' + pad2(dtL.getMonth() + 1) + '.';
+        if (axd) {
+          var axt = (dtL.toDateString() === jetztDort().toDateString())
+            ? 'Heute' : WOCHENTAG[dtL.getDay()] + ' ' + pad2(dtL.getDate()) + '.' + pad2(dtL.getMonth() + 1) + '.';
+          if (TAGES_SYMBOL) {
+            var tgL = daten.tage.filter(function(t){ return t.datum === dtL.getFullYear() + '-' + pad2(dtL.getMonth() + 1) + '-' + pad2(dtL.getDate()); })[0];
+            if (tgL && tgL.symbol) axt += '  ' + tgL.symbol + ' ' + Math.round(tgL.tmax) + '° / ' + Math.round(tgL.tmin) + '°';
+          }
+          axd.textContent = axt;
+        }
 
         var iR = Math.max(0, Math.min(geo.n - 1, Math.round(f)));
         var code = daten.code[iR];
@@ -686,12 +815,99 @@
           var c = z.zelle ? z.zelle(w.v, w.v2, daten, iR, steigt) : { wert: z.fmt(w.v, w.v2), einheit: '' };
           return zelleHtml(z.kurz || z.titel, c, z.farbe);
         });
-        if (daten.wasser[iR] != null) {
+        if (daten.wasser[iR] != null && anZeilen.indexOf('wasser') < 0) {
           zellen.push(zelleHtml('Wasser', { wert: Math.round(daten.wasser[iR]), einheit: '°' }, '#3fa9c9'));
         }
         el.werte.innerHTML = zellen.join('');
+        tippsZeigen(f);
         bildZeigen(f);
       }, 16);
+    }
+
+    // ---------- Tipps zum Tag ----------
+    // Aus den Stundenwerten des Tages unter dem Strich: wann Strand, wann Wind, wann Ebbe.
+    function tippsZeigen(f){
+      if (!el.tipps) return;
+      var liste = tippsFuerOrt();
+      if (!liste.length) { el.tipps.hidden = true; return; }
+      var iR = Math.max(0, Math.min(daten.zeit.length - 1, Math.round(f)));
+      var tagStr = daten.zeit[iR].slice(0, 10), key = ort + '|' + daten.nr + '|' + tagStr + '|' + Math.floor(idxJetzt);
+      if (el.tipps.getAttribute('data-key') === key) return;
+      var tag = daten.tage.filter(function(t){ return t.datum === tagStr; })[0];
+      if (!tag) return;
+      var dt = new Date(tagStr + 'T12:00');
+      var kopf = dt.toDateString() === jetztDort().toDateString() ? 'Heute' : WOCHENTAG[dt.getDay()] + ' ' + pad2(dt.getDate()) + '.' + pad2(dt.getMonth() + 1) + '.';
+      var zeilen = liste.map(function(t){
+        var r = tippRechnen(t, tag);
+        return r ? '<div class="mg-tipp"><span class="mg-tipp-i">' + esc(t.icon || '•') + '</span><span><b>' + esc(t.titel) + '</b> · ' + r + '</span></div>' : '';
+      }).join('');
+      el.tipps.innerHTML = '<div class="mg-tipps-kopf">' + esc(kopf) + ' – was der Tag bringt</div>' + zeilen;
+      el.tipps.setAttribute('data-key', key);
+      el.tipps.hidden = false;
+    }
+    function stundeText(i){ var d = new Date(daten.t0.getTime() + i * 3600000); return pad2(d.getHours()) + ':' + pad2(d.getMinutes()); }
+    function vonBis(a, b){ return parseInt(stundeText(a), 10) + '–' + parseInt(stundeText(b + 1), 10) + ' Uhr'; }
+    // Längster zusammenhängender Abschnitt heller Stunden, in denen alles passt
+    function fenster(tag, passt){
+      var best = null, start = null;
+      for (var i = tag.von; i <= tag.bis + 1; i++) {
+        var ok = i <= tag.bis && daten.tag[i] && passt(i);
+        if (ok && start === null) start = i;
+        if (!ok && start !== null) { if (!best || i - 1 - start > best.b - best.a) best = { a: start, b: i - 1 }; start = null; }
+      }
+      return best && best.b - best.a >= 1 ? best : null;     // mindestens zwei Stunden
+    }
+    function schonVorbei(fe){
+      if (fe.b + 1 <= idxJetzt) return ' <span class="mg-tipp-alt">(schon vorbei)</span>';
+      if (fe.a < idxJetzt) return ' <span class="mg-tipp-alt">(läuft gerade)</span>';
+      return '';
+    }
+    function tippRechnen(t, tag){
+      var W = daten.wind, i;
+      if (t.art === 'strand') {
+        var gruende = { wind: 0, regen: 0, wolken: 0, kuehl: 0 };
+        var fe = fenster(tag, function(j){
+          var r = (daten.regen_mm[j] || 0) >= 0.1 || (daten.regen_pct[j] || 0) >= 35, w = (W[j] || 0) >= (t.windBis || 25);
+          var k = (daten.wolken[j] || 0) >= 85, c = (daten.temp[j] || 0) < (t.abGrad || 20);
+          if (r) gruende.regen++; if (w) gruende.wind++; if (k) gruende.wolken++; if (c) gruende.kuehl++;
+          return !r && !w && !k && !c;
+        });
+        if (!fe) {
+          var g = Object.keys(gruende).sort(function(x, y){ return gruende[y] - gruende[x]; })[0];
+          return 'eher kein Strandwetter – ' + { wind: 'zu windig', regen: 'Regen möglich', wolken: 'viele Wolken', kuehl: 'zu kühl' }[g];
+        }
+        var tmax = -99, ws = 0;
+        for (i = fe.a; i <= fe.b; i++) { tmax = Math.max(tmax, daten.temp[i]); ws += W[i]; }
+        return 'am schönsten ' + vonBis(fe.a, fe.b) + ' · bis ' + Math.round(tmax) + '°, Wind um ' + Math.round(ws / (fe.b - fe.a + 1)) + ' km/h' + schonVorbei(fe);
+      }
+      if (t.art === 'wind') {
+        var von = t.von || 22, bis = t.bis || 50, wmax = 0;
+        for (i = tag.von; i <= tag.bis; i++) if (daten.tag[i] && W[i] > wmax) wmax = W[i];
+        var fw = fenster(tag, function(j){ return W[j] >= von && W[j] <= bis; });
+        if (!fw) return wmax < von ? 'zu wenig Wind (höchstens ' + Math.round(wmax) + ' km/h)' : 'zu stürmisch (bis ' + Math.round(wmax) + ' km/h)';
+        var lo = 999, hi = 0;
+        for (i = fw.a; i <= fw.b; i++) { lo = Math.min(lo, W[i]); hi = Math.max(hi, W[i]); }
+        var mitte = Math.round((fw.a + fw.b) / 2), r2 = daten.windrichtung[mitte];
+        return 'guter Wind ' + vonBis(fw.a, fw.b) + ' · ' + Math.round(lo) + '–' + Math.round(hi) + ' km/h' +
+          (r2 != null ? ' aus ' + HIMMEL[Math.round(r2 / 45) % 8] : '') + schonVorbei(fw);
+      }
+      if (t.art === 'ebbe') {
+        if (!daten.tide.some(function(v){ return v != null; })) return 'Gezeiten gerade nicht abrufbar';
+        var tiefs = tideExtrema(daten.tide).filter(function(e){ return !e.hoch && e.i >= tag.von - 0.5 && e.i < tag.bis + 0.5; });
+        // Gut ist die Zeit von etwa 2 Stunden vor bis 1 Stunde nach Niedrigwasser -
+        // aber nur, soweit es hell ist. Bleibt davon weniger als eine Stunde, zählt es nicht.
+        var vor = t.vorher != null ? t.vorher : 2, nach = t.nachher != null ? t.nachher : 1;
+        var auf = tag.auf ? idxFuerIso(tag.datum + 'T' + tag.auf) : tag.von + 7, unter = tag.unter ? idxFuerIso(tag.datum + 'T' + tag.unter) : tag.von + 19;
+        var nutzbar = tiefs.map(function(e){ return { e: e, a: Math.max(e.i - vor, auf), b: Math.min(e.i + nach, unter) }; })
+          .filter(function(x){ return x.b - x.a >= 1; });
+        if (!nutzbar.length) return 'Niedrigwasser nur im Dunkeln' + (tiefs.length ? ' (' + tiefs.map(function(e){ return stundeText(e.i); }).join(', ') + ' Uhr)' : '');
+        return nutzbar.map(function(x){
+          var alt = x.b <= idxJetzt ? ' <span class="mg-tipp-alt">(schon vorbei)</span>' : '';
+          var dunkel = x.b < x.e.i + nach - 0.01 ? ' <span class="mg-tipp-alt">(dann wird es dunkel)</span>' : '';
+          return 'Niedrigwasser ' + stundeText(x.e.i) + ' Uhr, gut etwa ' + stundeText(x.a) + '–' + stundeText(x.b) + ' Uhr' + dunkel + alt;
+        }).join(' · ') + (t.text ? ' <span class="mg-tipp-alt">' + esc(t.text) + '</span>' : '');
+      }
+      return '';
     }
 
     function zelleHtml(titel, c, farbe){
@@ -707,7 +923,7 @@
       if (!el.svgWrap || !el.scroll) return;
       var links2 = el.scroll.scrollLeft;
       [].forEach.call(el.svgWrap.querySelectorAll('.mg-datum'), function(t){
-        t.style.visibility = (parseFloat(t.getAttribute('data-x')) - links2 < 104) ? 'hidden' : '';
+        t.style.visibility = (parseFloat(t.getAttribute('data-x')) - links2 < (TAGES_SYMBOL ? 190 : 104)) ? 'hidden' : '';
       });
     }
 
@@ -959,6 +1175,7 @@
           '<div class="mg-achse" id="' + kid('achse') + '"></div>' +
           '<div class="mg-cursor" aria-hidden="true"></div>' +
         '</div>' +
+        '<div class="mg-tipps" id="' + kid('tipps') + '" hidden></div>' +
         (ANSICHTEN.length > 1 ? '<div class="mg-ansichten" id="' + kid('ansichten') + '" role="tablist" aria-label="Bildansicht"></div>' : '') +
         (KARTE ? '<div class="mg-karte" id="' + kid('karte') + '" hidden>' +
           '<img class="mg-k-basis" id="' + kid('kbasis') + '" alt="Satellitenbild" decoding="async">' +
@@ -991,6 +1208,7 @@
       el.cam     = document.getElementById(kid('cam'));
       el.quelle  = document.getElementById(kid('quelle'));
       el.lage    = document.getElementById(kid('lage'));
+      el.tipps   = document.getElementById(kid('tipps'));
       el.ansichten = document.getElementById(kid('ansichten'));
       if (KARTE) {
         el.karte    = document.getElementById(kid('karte'));

@@ -186,3 +186,14 @@
   .mg-zeilenwahl { position: static; }
   .mg-zeilen-panel { left: 14px; right: 14px; min-width: 0; max-width: none; }
 }
+
+/* ---- Tipps zum Tag unter dem Diagramm (wahlfrei, cfg.tipps) ----
+   Schlichte Zeilen wie die Werteliste: Symbol, fetter Name, Klartext. */
+.mg-tipps { padding: 10px 14px 4px; border-bottom: 1px solid var(--mg-rand); }
+.mg-tipps[hidden] { display: none; }
+.mg-tipps-kopf { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--mg-text-still); margin: 0 0 4px; }
+.mg-tipp { display: flex; gap: 9px; align-items: baseline; padding: 5px 0; font-size: 13.5px; line-height: 1.45; border-bottom: 1px solid var(--mg-rand); }
+.mg-tipp:last-child { border-bottom: 0; }
+.mg-tipp-i { flex: none; width: 1.3em; text-align: center; }
+.mg-tipp b { font-weight: 700; }
+.mg-tipp-alt { color: var(--mg-text-still); font-size: 12.5px; }
