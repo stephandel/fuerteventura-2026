@@ -380,6 +380,8 @@ input[type=range]::-moz-range-thumb { width: 26px; height: 26px; border: 2px sol
 .lm-pin.fav { background: #d4770f; box-shadow: 0 0 0 3px rgba(212,119,15,0.35), 0 2px 7px rgba(0,0,0,0.35); }
 .lm-pin.sel { background: #33754b; box-shadow: 0 0 0 4px rgba(51,117,75,0.35), 0 2px 7px rgba(0,0,0,0.35); }
 .lm-pin.approx { border-style: dashed; opacity: 0.85; }
+.lm-pin.home { background: #5b6b64; width: 26px; height: 26px; font-size: 13px; opacity: .8; }
+.lm-pin.home.aktiv { background: #1E7D46; width: 32px; height: 32px; font-size: 16px; opacity: 1; box-shadow: 0 0 0 4px rgba(30,125,70,0.35), 0 2px 7px rgba(0,0,0,0.35); }
 .leaflet-popup-content-wrapper { border-radius: 12px; background: var(--surface); color: var(--ink); }
 .leaflet-popup-tip { background: var(--surface); }
 .leaflet-popup-content { margin: 12px 14px; font-size: var(--fs-sub); line-height: 1.45; }
@@ -448,6 +450,15 @@ nav.topnav .navlinks { display: none !important; }
 :root[data-schrift="klein"] .page { zoom: 0.92; }
 :root[data-schrift="gross"] .page { zoom: 1.1; }
 :root[data-schrift="sehr-gross"] .page { zoom: 1.22; }
+.basis-wahl { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: 14px; }
+.basis-wahl:empty { display: none; }
+.bw-label { font-size: 13px; font-weight: 700; color: var(--ink); }
+.bw-seg { display: inline-flex; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--surface); }
+.bw-seg button { min-height: 40px; padding: 0 12px; border: 0; border-left: 1px solid var(--border); background: none; color: var(--ink-dim); font-family: inherit; font-size: 13.5px; font-weight: 600; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.bw-seg button:first-child { border-left: 0; }
+.bw-seg button[aria-pressed="true"] { background: var(--teal); color: var(--teal-ink); }
+.bw-hint { font-size: 12.5px; color: var(--ink-dim); }
+.einst-block .basis-wahl { margin-top: 0; }
 .einst-sheet { position: fixed; inset: 0; z-index: 95; background: var(--page); display: none; flex-direction: column; padding-top: env(safe-area-inset-top, 0px); }
 .einst-sheet.open { display: flex; }
 .einst-kopf { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--border); }
@@ -2409,7 +2420,8 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   <div class="page-header wrap">
     <div class="eyebrow">Vor Ort</div>
     <h1>Ausflüge &amp; Highlights</h1>
-    <p class="sub">Einundzwanzig einzelne Ziele quer über die Insel, jeweils mit Fahrzeit ab Corralejo, realistischem Zeitaufwand, Kosten und einem Tipp aus der Recherche – und auf jeder Karte unter „Praktisch“ Eintritt, Anmeldung, Öffnungszeiten, Ausrüstung und Parken. Mit den Knöpfen unter der Karte filterst du nach Region (Norden / Mitte / Süden) und Art. Dazu elf eigene <a href="#tagestrips">fertige Tagestrips</a>, zwei davon mit der Fähre auf die Nachbarinseln, bei denen du die Abfahrtszeit einstellst und die Seite den ganzen Tag durchrechnet. Märkte, Events &amp; Insider-Tipps stehen auf der <a href="#kalender">Kalender-Seite</a>.</p>
+    <p class="sub">Einundzwanzig einzelne Ziele quer über die Insel, jeweils mit Fahrzeit ab eurer Unterkunft, realistischem Zeitaufwand, Kosten und einem Tipp aus der Recherche – und auf jeder Karte unter „Praktisch“ Eintritt, Anmeldung, Öffnungszeiten, Ausrüstung und Parken. Mit den Knöpfen unter der Karte filterst du nach Region (Norden / Mitte / Süden) und Art. Dazu elf eigene <a href="#tagestrips">fertige Tagestrips</a>, zwei davon mit der Fähre auf die Nachbarinseln, bei denen du die Abfahrtszeit einstellst und die Seite den ganzen Tag durchrechnet. Märkte, Events &amp; Insider-Tipps stehen auf der <a href="#kalender">Kalender-Seite</a>.</p>
+    <div class="basis-wahl" data-basis-wahl></div>
   </div>
   <div class="wrap">
     <section class="livemap-box">
@@ -2418,7 +2430,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
         <div class="livemap-zooms"><button type="button" class="lm-zoom active" data-map="exc" data-view="nord">Norden</button><button type="button" class="lm-zoom" data-map="exc" data-view="all">Ganze Insel</button></div>
       </div>
       <div class="livemap tall" id="map-exc"></div>
-      <div class="lm-legend"><span><i style="background:#b5741f"></i> Einzelziel</span><span><i style="background:#7a4fa3"></i> Tagestrip-Station</span><span><i style="background:#d4770f"></i> Favorit</span></div>
+      <div class="lm-legend"><span><i style="background:#b5741f"></i> Einzelziel</span><span><i style="background:#7a4fa3"></i> Tagestrip-Station</span><span><i style="background:#d4770f"></i> Favorit</span><span><i style="background:#1E7D46"></i> Eure Unterkunft</span></div>
       <p class="livemap-hint">Die Punkte zeigen die einundzwanzig Einzelziele und die Stationen der Tagestrips. Antippen &#246;ffnet Name und Eckdaten, von dort springst du zur Karte in der Liste. Vieles liegt im S&#252;den &#8211; f&#252;r den Norden reicht der Knopf oben.</p>
     </section>
 
@@ -2790,7 +2802,8 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 
     <section class="trip-section" id="tagestrips" style="margin-top:44px">
       <h2 style="font-size:1.6rem">&#128663; Ganze Tagestrips</h2>
-      <p class="sub">Fertige Routen f&#252;r einen kompletten Tag &#8211; jeweils mehrere Ziele, die geografisch zusammenpassen, mit realistischen Fahrzeiten ab Corralejo. Zwei Touren f&#252;hren mit der F&#228;hre auf die Nachbarinseln. Stell unten ein, wann wir losfahren wollen: Die Seite rechnet den ganzen Tagesablauf durch und sagt dir, ob wir es vor Einbruch der Dunkelheit zur&#252;ck schaffen.</p>
+      <p class="sub">Fertige Routen f&#252;r einen kompletten Tag &#8211; jeweils mehrere Ziele, die geografisch zusammenpassen, mit realistischen Fahrzeiten ab eurer Unterkunft. Zwei Touren f&#252;hren mit der F&#228;hre auf die Nachbarinseln. Stell unten ein, wann wir losfahren wollen: Die Seite rechnet den ganzen Tagesablauf durch und sagt dir, ob wir es vor Einbruch der Dunkelheit zur&#252;ck schaffen.</p>
+      <div class="basis-wahl" data-basis-wahl></div>
 
       <div class="trip-intro">
         <div class="trip-controls">
@@ -2953,6 +2966,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <div class="eyebrow">Vor Ort</div>
     <h1>Gastro</h1>
     <p class="sub">Restaurants &amp; Bäckereien rund um Corralejo — <span id="gastro-anzahl-1">53</span> handverlesene Adressen aus einer gemeinsam gepflegten Google-Maps-Liste, sortiert nach Bewertung.</p>
+    <div class="basis-wahl" data-basis-wahl></div>
   </div>
   <div class="wrap">
     <section class="restaurants-section">
@@ -2967,7 +2981,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
         <div class="livemap-zooms"><button type="button" class="lm-zoom active" data-map="food" data-view="nord">Norden</button><button type="button" class="lm-zoom" data-map="food" data-view="all">Ganze Insel</button></div>
       </div>
       <div class="livemap tall" id="map-food"></div>
-      <div class="lm-legend"><span><i style="background:#a03a5c"></i> Lokal</span><span><i style="background:#d4770f"></i> Favorit</span></div>
+      <div class="lm-legend"><span><i style="background:#a03a5c"></i> Lokal</span><span><i style="background:#d4770f"></i> Favorit</span><span><i style="background:#1E7D46"></i> Eure Unterkunft</span></div>
       <p class="livemap-hint">53 Adressen quer &#252;ber die Insel. Die Ballung im Norden ist Corralejo, die zweite Gruppe ganz unten ist Morro Jable und Jand&#237;a. Antippen zeigt Bewertung und Preisklasse.</p>
     </section>
 
@@ -2976,7 +2990,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
           <select id="rc-sort-select">
             <option value="rating-desc">Bewertung: beste zuerst</option>
             <option value="reviews-desc">Meiste Bewertungen zuerst</option>
-            <option value="dist-asc">Nähe zu Corralejo</option>
+            <option value="dist-asc">Nähe zur Unterkunft</option>
             <option value="az">A–Z</option>
           </select>
         </label>
@@ -4303,6 +4317,12 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       <div class="einst-seg" data-einst="wer">
         <button type="button" data-wert="stephan">Stephan</button><button type="button" data-wert="bilgen">Bilgen</button>
       </div>
+    </div>
+
+    <div class="einst-block">
+      <h3>Entfernungen ab</h3>
+      <p class="einst-text">Von welcher Unterkunft aus Ausflüge, Tagestrips und Restaurants gerechnet werden. &#8222;Automatisch&#8220; nimmt bis zum 06.10. die Oasis Duna, danach das Renacer Zen.</p>
+      <div class="basis-wahl" data-basis-wahl></div>
     </div>
 
     <div class="einst-block">
@@ -7386,6 +7406,19 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       });
       mk.addTo(m.layer);
     });
+    // Eure beiden Unterkuenfte auf den Karten von Ausfluegen und Gastro;
+    // die, von der aus gerade gerechnet wird, ist gross und gruen.
+    if (kind !== 'acc' && BASEN) {
+      var aktiv = basisAktiv();
+      [['oasis', 28.7298, -13.8694, 'C. Maxorata 2 \u00b7 29.09.\u201306.10.'],
+       ['renacer', 28.7093358, -13.8710096, 'C. Pardelas 7 \u00b7 06.\u201312.10.']].forEach(function(h){
+        var an = h[0] === aktiv;
+        var mk = L.marker([h[1], h[2]], {icon: lmIcon('home', '\uD83C\uDFE0', an ? ' aktiv' : ''), title: BASEN[h[0]].name, zIndexOffset: an ? 1000 : 500});
+        mk.bindPopup('<span class="lm-pop-t">' + BASEN[h[0]].name + '</span><span class="lm-pop-s">' + h[3] +
+                     (an ? ' \u00b7 Entfernungen gelten ab hier' : '') + '</span>');
+        mk.addTo(m.layer);
+      });
+    }
   }
 
   document.addEventListener('click', function(e){
@@ -7935,6 +7968,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   // Aenderungen an der Seite selbst - nicht von Stephan oder Bilgen, sondern
   // an Angebot und Funktion. Stehen gleichberechtigt neben Notizen und Herzen.
   var SEITEN_NEUIGKEITEN = [
+    { at: '2026-09-26T17:00', text: '<b>Alle Entfernungen gelten jetzt ab eurer Unterkunft.</b> Ausfl\u00fcge, Tagestrips (Hin- und R\u00fcckfahrt) und alle 52 Restaurants rechnen ab Oasis Duna oder Renacer Zen statt ab dem Ortszentrum \u2013 von der Villa aus sind es z.\u00a0B. 10 statt 6 Minuten zum Hafen. \u201eAutomatisch\u201c nimmt bis zum 06.10. die Oasis Duna, danach das Renacer Zen. Umschalten geht oben auf den Seiten und im Zahnrad-Men\u00fc; auf den Karten stehen beide H\u00e4user als \uD83C\uDFE0. <a href="#ausfluege">Zu den Ausfl\u00fcgen \u2192</a>' },
     { at: '2026-09-26T16:00', text: '<b>Die Unterkunft ist gebucht!</b> Erst <b>Oasis Duna</b> im Ortskern (29.09.\u201306.10., 584,07\u00a0\u20ac), dann die Villa <b>Natural Renacer Zen</b> mit Pool (06.\u201312.10., 1.560\u00a0\u20ac). Beide Karten tragen jetzt ein gr\u00fcnes Schild, alle anderen Unterk\u00fcnfte sind ausgeblendet. Noch offen: Ausweisdaten an Nad schicken und bei Yolanda kl\u00e4ren, ob die Poolheizung (120\u00a0\u20ac) dazukommt. <a href="#kosten">Zu den Kosten \u2192</a>' },
     { at: '2026-09-26T11:00', text: '<b>Neu: Einstellungen \u2013 das Zahnrad oben rechts neben der Lupe.</b> Dort l\u00e4sst sich w\u00e4hlen: Hell oder Dunkel, Schriftgr\u00f6\u00dfe in vier Stufen, wer du bist, ausgebuchte Unterk\u00fcnfte verstecken, ein Datensparmodus f\u00fcr unterwegs, die Erinnerung vor Sonnenuntergang und \u201eSeite frisch laden\u201c, falls eine \u00c4nderung nicht ankommt. Auch die Auswahl des App-Symbols ist von \u201eLinks & Tipps\u201c dorthin umgezogen. <a href="#einstellungen">Einstellungen \u00f6ffnen \u2192</a>' },
     { at: '2026-09-26T10:30', text: '<b>Die Maisonette mit Meerblick ist ausgebucht</b> \u2013 die freien L\u00fccken sind k\u00fcrzer als die Mindestdauer von 4\u00a0N\u00e4chten. Auf der Vergleichsseite sind B1 und B2 deshalb weg; C l\u00e4uft jetzt \u00fcber Oasis Duna, neu ist <b>E: Oasis Duna 7\u00a0N\u00e4chte + Renacer Zen 6\u00a0N\u00e4chte</b>.' },
@@ -10886,6 +10920,135 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   ausgebuchtAnwenden();
   gebuchtAnwenden();
   applySortFilter();
+
+  // ============================================================
+  //  Ausgangspunkt fuer Entfernungen (seit 26.09.2026)
+  //  Fahrzeiten und Strecken auf Ausfluegen, Tagestrips und Gastro
+  //  gelten ab der gebuchten Unterkunft. ENTF: je Ziel [km, Min.] ab
+  //  Zentrum, Oasis Duna, Renacer Zen (OSRM-Tabelle, 26.09.2026).
+  //  Handgesetzte Fahrzeiten bleiben die Grundlage - verschoben wird
+  //  nur um den Unterschied zum Zentrum.
+  // ============================================================
+  var BASIS_KEY = 'fuerte-basis';
+  var BASEN = {
+    oasis:   { i: 1, name: 'Oasis Duna',  von: 'von der Oasis Duna', zu: 'zur Oasis Duna' },
+    renacer: { i: 2, name: 'Renacer Zen', von: 'vom Renacer Zen',    zu: 'zum Renacer Zen' }
+  };
+  var ENTF = {"ex:grandes-playas-d-nen-von-corralejo":[[1.9,5],[1.3,3],[3.0,6]],"ex:lajares-kunsthandwerkermarkt":[[9.3,26],[10.1,28],[13.0,32]],"ex:markt-am-aqua-water-park-corralejo":[[1.8,4],[1.2,3],[3.0,6]],"ex:el-cotillo-lagunen-sonnenuntergang":[[23.7,30],[23.2,29],[22.1,27]],"ex:betancuria":[[60.0,55],[59.5,55],[58.4,53]],"ex:ajuy-schwarzer-strand-h-hlen":[[80.2,71],[79.7,70],[78.6,69]],"ex:tindaya":[[29.3,41],[28.8,40],[27.7,38]],"ex:la-oliva-casa-de-los-coroneles":[[16.2,20],[15.7,19],[14.6,17]],"ex:surfen-kitesurfen-in-lajares-el-cotillo":[[19.6,21],[19.1,21],[18.0,19]],"ex:faro-de-jand-a-playas-de-sotavento":[[112.8,99],[112.3,98],[111.2,96]],"ex:cofete-villa-winter":[[124.0,121],[123.5,120],[122.4,118]],"ex:la-pared":[[91.1,91],[90.7,90],[89.5,88]],"ex:caleta-de-fuste-hafenpromenade":[[43.7,43],[43.2,42],[42.1,40]],"ex:antigua-windm-hlenmuseum":[[47.3,62],[46.8,61],[45.7,59]],"ex:p-jara-kirche-dorfplatz":[[68.6,69],[68.1,69],[67.0,67]],"ex:puerto-del-rosario-skulpturenroute-hafen":[[30.9,29],[30.4,29],[29.3,27]],"ex:playas-de-sotavento-risco-del-paso":[[102.3,98],[101.8,98],[100.7,96]],"ex:costa-calma-whale-watching":[[95.8,85],[95.3,84],[94.1,82]],"ex:faro-de-la-entallada":[[72.6,124],[72.1,124],[71.0,122]],"ex:e-mountainbike-nordschleife":[[9.4,18],[10.2,20],[13.1,25]],"rc:h2o-juice-bar":[[0.8,2],[1.6,4],[4.5,9]],"rc:coco-banana":[[0.1,0],[0.7,2],[3.6,6]],"rc:vrebac-gelato":[[31.5,30],[31.0,30],[29.9,28]],"rc:lumos":[[1.1,3],[1.9,5],[4.8,9]],"rc:imperfecto-gastrobar":[[0.8,2],[1.6,4],[4.5,9]],"rc:restaurante-el-lugar":[[3.2,6],[2.2,5],[0.6,1]],"rc:nuestro-estilo-empanadas-lajares":[[11.8,13],[11.3,12],[10.2,10]],"rc:la-herencia-del-gallego":[[115.6,105],[115.1,104],[114.0,102]],"rc:o-m":[[12.3,14],[11.9,14],[10.7,12]],"rc:santa-ana-del-cotillo":[[19.8,22],[19.3,21],[18.2,19]],"rc:kuma-lajares":[[12.0,14],[11.6,13],[10.4,11]],"rc:restaurante-5-sentidos-arroces-y-tapas":[[32.0,30],[31.6,29],[30.4,28]],"rc:el-invernadero-restaurante":[[36.4,33],[35.9,32],[34.8,30]],"rc:camello-bandido":[[12.1,14],[11.6,13],[10.5,11]],"rc:chirate-restaurante":[[82.1,74],[81.6,73],[80.5,71]],"rc:nature-by-kuba":[[43.7,43],[43.2,42],[42.1,40]],"rc:3-calici":[[1.6,4],[0.8,2],[2.9,5]],"rc:vala-food-open-club":[[11.6,13],[11.1,12],[10.0,10]],"rc:nuestro-estilo-empanadas":[[0.6,1],[1.2,3],[4.1,7]],"rc:dulcis-in-fundo":[[0.8,2],[1.6,4],[4.5,8]],"rc:caf-del-mar-ajuy":[[80.2,71],[79.8,70],[78.6,68]],"rc:restaurante-casa-marcos":[[13.2,16],[12.7,15],[11.6,13]],"rc:casa-manolo":[[0.5,1],[1.3,3],[4.2,8]],"rc:caprichos-del-mar":[[1.1,3],[1.9,5],[4.8,10]],"rc:pez-gordo-fuerteventura":[[20.0,22],[19.5,22],[18.4,20]],"rc:casa-de-comidas-valtarajal":[[60.0,55],[59.5,54],[58.4,53]],"rc:restaurante-la-bah-a-de-puerto-lajas":[[27.0,24],[26.5,24],[25.4,22]],"rc:domenoteca-wine-bar-and-food":[[0.9,2],[1.8,4],[4.7,9]],"rc:restaurante-des-rtico":[[114.8,103],[114.3,102],[113.2,100]],"rc:gioli-gourmet-club":[[85.4,75],[84.9,74],[83.8,72]],"rc:the-ugly-duckling":[[3.2,6],[2.2,4],[0.7,1]],"rc:restaurante-mamacita":[[0.9,2],[1.7,4],[4.6,9]],"rc:sucr":[[0.1,0],[0.9,2],[3.8,7]],"rc:buddha-restaurant-lounge":[[3.6,7],[3.1,6],[0.9,2]],"rc:saladar-bistrot-restaurant":[[112.6,99],[112.1,98],[111.0,96]],"rc:restaurante-la-jaira":[[30.9,30],[30.4,29],[29.3,27]],"rc:restaurante-marab":[[108.9,95],[108.4,94],[107.3,92]],"rc:arepas-llaneras-venezolanas":[[30.9,30],[30.4,29],[29.3,27]],"rc:d-vales-bay":[[1.0,3],[1.8,5],[4.7,9]],"rc:la-casa-de-las-paellas":[[19.8,22],[19.4,21],[18.2,19]],"rc:restaurante-salvaje":[[115.0,103],[114.5,102],[113.4,101]],"rc:el-pellizco-by-rigoberto-almeida":[[95.7,85],[95.2,84],[94.1,82]],"rc:restaurante-casa-isaitas":[[70.9,63],[70.4,62],[69.3,60]],"rc:la-catrina-mexican-food":[[30.0,28],[29.5,28],[28.4,26]],"rc:avenida-restaurant":[[0.9,2],[1.7,4],[4.6,9]],"rc:la-pulperia-tapas-bar":[[0.9,3],[1.8,4],[4.7,9]],"rc:azzurro-chill-out-restaurant":[[21.5,25],[21.0,25],[19.9,23]],"rc:casa-naturaleza":[[66.2,61],[65.7,60],[64.6,58]],"rc:sabor-a-espa-a":[[0.1,0],[0.8,2],[3.7,6]],"rc:caretta-beach-la-pared":[[91.7,83],[91.2,82],[90.0,80]],"rc:the-roof-chill-out":[[0.9,2],[1.8,4],[4.7,9]],"rc:caf-la-ola":[[1.5,4],[2.3,5],[5.2,10]],"pt:hafen":[[1.8,4],[2.6,6],[5.5,10]],"pt:estancos":[[35.1,32],[34.6,32],[33.5,30]],"pt:puerto":[[30.9,29],[30.4,29],[29.3,27]],"pt:morrojable":[[116.4,106],[115.9,105],[114.8,104]],"pt:velosa":[[55.0,50],[54.5,49],[53.4,47]],"pt:ajuy":[[80.2,71],[79.7,70],[78.6,69]],"pt:lajares":[[11.8,13],[11.3,12],[10.2,10]],"pt:toston":[[24.4,31],[23.9,30],[22.8,29]],"pt:laoliva":[[16.2,20],[15.7,19],[14.6,17]],"pt:risco":[[102.3,98],[101.8,98],[100.7,96]],"pt:costacalma":[[95.8,85],[95.3,84],[94.1,82]],"pt:caleta":[[43.7,43],[43.2,42],[42.1,40]]};
+  function basisWahl(){ var w = lsGet(BASIS_KEY, 'auto'); return (w === 'oasis' || w === 'renacer') ? w : 'auto'; }
+  // Automatisch: bis zum Auschecken bei Oasis Duna (06.10., 11 Uhr), danach Renacer Zen
+  function basisAktiv(){
+    var w = basisWahl();
+    if (w !== 'auto') return w;
+    return Date.now() >= new Date(2026, 9, 6, 11, 0).getTime() ? 'renacer' : 'oasis';
+  }
+  function entfDelta(key, b){ var e = ENTF[key]; return e ? e[BASEN[b].i][1] - e[0][1] : 0; }
+  function kmText(km){ return km.toFixed(1).replace('.', ','); }
+
+  function basisExAnwenden(b){
+    document.querySelectorAll('#excursion-grid .ex-card').forEach(function(card){
+      var id = card.getAttribute('data-id');
+      if (!card.hasAttribute('data-drive-orig')) card.setAttribute('data-drive-orig', card.getAttribute('data-drive'));
+      var orig = parseInt(card.getAttribute('data-drive-orig'), 10);
+      var chip = card.querySelector('.ex-chip');
+      if (id === 'isla-de-lobos') {
+        var zumHafen = ENTF['pt:hafen'][BASEN[b].i][1];
+        card.setAttribute('data-drive', zumHafen + 15);
+        if (chip) chip.textContent = '\uD83D\uDE97 ' + zumHafen + ' Min. zum Hafen + 15 Min. F\u00e4hre';
+        return;
+      }
+      if (!ENTF['ex:' + id] || !chip || chip.textContent.indexOf('\uD83D\uDE97') !== 0) return;
+      var neu = Math.max(2, orig + entfDelta('ex:' + id, b));
+      card.setAttribute('data-drive', neu);
+      chip.textContent = '\uD83D\uDE97 ' + neu + ' Min.';
+    });
+  }
+
+  function basisRcAnwenden(b){
+    var B = BASEN[b];
+    document.querySelectorAll('.rc-card').forEach(function(card){
+      var e = ENTF['rc:' + card.getAttribute('data-id')];
+      var p = card.querySelector('.rc-dist');
+      if (!e || !p) return;
+      var km = e[B.i][0], min = e[B.i][1];
+      card.setAttribute('data-km', km);
+      p.textContent = km < 2
+        ? '\uD83D\uDEB6 ' + kmText(km) + ' km ' + B.von + ' \u00b7 ca. ' + Math.max(2, Math.round(km * 13)) + ' Min. zu Fu\u00df'
+        : '\uD83D\uDE97 ' + kmText(km) + ' km \u00b7 ' + min + ' Min. ' + B.von;
+    });
+  }
+
+  // Erste und letzte Autofahrt jedes Tagestrips: Wohin fuehrt sie bzw. woher kommt sie?
+  var TRIP_ENDEN = {
+    'trip-vegan':       { rueck: 'pt:puerto' },          // startet mit Fruehstueck im Ort
+    'trip-lanzarote':   { hin: 'pt:hafen', rueck: 'pt:hafen' },
+    'trip-grancanaria': { hin: 'pt:morrojable', rueck: 'pt:morrojable' },
+    'trip-sueden':      { hin: 'pt:morrojable', rueck: 'pt:morrojable' },
+    'trip-lobos':       { hin: 'pt:hafen', rueck: 'pt:hafen' },
+    'trip-westen':      { hin: 'pt:velosa', rueck: 'pt:ajuy' },
+    'trip-norden':      { hin: 'pt:lajares', rueck: 'pt:toston' },
+    'trip-vulkane':     { hin: 'pt:laoliva', rueck: 'pt:lajares' },
+    'trip-sotavento':   { hin: 'pt:risco', rueck: 'pt:costacalma' },
+    'trip-stadt':       { hin: 'pt:puerto', rueck: 'pt:caleta' }
+  };
+  var TRIPS_ORIG = null;
+  function basisTripsAnwenden(b){
+    if (typeof TRIPS === 'undefined') return;
+    if (!TRIPS_ORIG) TRIPS_ORIG = TRIPS.map(function(t){ return JSON.stringify(t.stops); });
+    var B = BASEN[b];
+    function anpassen(s, key){
+      if (!s || !key) return;
+      s.min = Math.max(3, s.min + entfDelta(key, b));
+      s.label = s.label
+        .replace(/^Corralejo \u2192 /, B.name + ' \u2192 ')
+        .replace(/ \u2192 Corralejo$/, ' \u2192 ' + B.name)
+        .replace(/^R\u00fcckfahrt nach Corralejo$/, 'R\u00fcckfahrt ' + B.zu);
+    }
+    TRIPS.forEach(function(t, n){
+      var stops = JSON.parse(TRIPS_ORIG[n]);
+      var ende = TRIP_ENDEN[t.id];
+      if (ende) {
+        var fahrten = stops.filter(function(s){ return s.t === 'drive'; });
+        if (ende.hin) anpassen(fahrten[0], ende.hin);
+        if (ende.rueck) anpassen(fahrten[fahrten.length - 1], ende.rueck);
+      }
+      t.stops = stops;
+    });
+  }
+
+  function basisWahlZeichnen(){
+    var w = basisWahl(), b = basisAktiv();
+    var html = '<span class="bw-label">\uD83D\uDCCD Entfernungen ab</span>' +
+      '<div class="bw-seg" role="group" aria-label="Entfernungen ab">' +
+      [['auto', 'Automatisch'], ['oasis', 'Oasis Duna'], ['renacer', 'Renacer Zen']].map(function(o){
+        return '<button type="button" data-basis="' + o[0] + '" aria-pressed="' + (w === o[0]) + '">' + o[1] + '</button>';
+      }).join('') + '</div>' +
+      '<span class="bw-hint">' + (w === 'auto'
+        ? 'Gerade: <b>' + BASEN[b].name + '</b> \u00b7 bis 06.10. Oasis Duna, danach Renacer Zen'
+        : 'Fest eingestellt \u2013 gilt nur auf diesem Ger\u00e4t') + '</span>';
+    document.querySelectorAll('[data-basis-wahl]').forEach(function(el){ el.innerHTML = html; });
+  }
+
+  function basisAnwenden(){
+    var b = basisAktiv();
+    basisExAnwenden(b);
+    basisRcAnwenden(b);
+    basisTripsAnwenden(b);
+    ['ex-sort-select', 'rc-sort-select'].forEach(function(id){
+      var el = document.getElementById(id);
+      if (el) el.dispatchEvent(new Event('change'));
+    });
+    if (typeof renderTrips === 'function') renderTrips();
+    ['exc', 'food'].forEach(function(k){ if (LM[k]) refreshMap(k); });
+    basisWahlZeichnen();
+  }
+  document.addEventListener('click', function(ev){
+    var btn = ev.target.closest ? ev.target.closest('[data-basis]') : null;
+    if (!btn) return;
+    lsSet(BASIS_KEY, btn.getAttribute('data-basis'));
+    basisAnwenden();
+  });
+  basisAnwenden();
 
   // ============================================================
   //  Einstellungen (Zahnrad oben rechts, seit 26.09.2026)
