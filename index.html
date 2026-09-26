@@ -475,17 +475,33 @@ nav.topnav .navlinks { display: none !important; }
 .einst-block#app-icon-box h3 + .sub { margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--ink-dim); }
 
 /* Tab-Leiste: schwebende Kapsel, Inhalt scrollt darunter durch */
-.tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; padding: 0 12px max(6px, env(safe-area-inset-bottom, 0px)); pointer-events: none; }
+.tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; padding: 0 12px max(6px, calc(env(safe-area-inset-bottom, 0px) - 20px)); pointer-events: none; }
 .tabbar-fade { height: 24px; background: linear-gradient(180deg, rgba(233,235,230,0) 0%, var(--page) 100%); margin: 0 -12px; }
 .tabbar-inner { pointer-events: auto; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); background: var(--glass); backdrop-filter: blur(22px) saturate(1.7); -webkit-backdrop-filter: blur(22px) saturate(1.7); border: 1px solid var(--glass-bd); border-radius: 26px; padding: 5px; box-shadow: 0 8px 30px rgba(20,20,15,0.16), 0 1px 2px rgba(20,20,15,0.08); }
-.tab-btn { min-height: 52px; border-radius: 21px; background: transparent; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; position: relative; padding: 4px 2px; font-family: inherit; -webkit-tap-highlight-color: transparent; }
-.tab-btn svg { display: block; width: 24px; height: 24px; }
+.tab-btn { min-height: 60px; border-radius: 21px; background: transparent; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; position: relative; padding: 4px 2px; font-family: inherit; -webkit-tap-highlight-color: transparent; }
+.tab-btn svg { display: block; width: 26px; height: 26px; }
 .tab-btn .tab-label { font-size: var(--fs-micro); font-weight: 500; color: var(--ink-dim); letter-spacing: -0.1px; line-height: 1.2; }
 .tab-btn .tab-ico { stroke: var(--ink-dim); stroke-width: 1.7; }
 .tab-btn.active { background: var(--tab-active-bg); }
 .tab-btn.active .tab-label { color: var(--teal); font-weight: 700; }
 .tab-btn.active .tab-ico { stroke: var(--teal); stroke-width: 2.2; }
 .tab-btn:active { transform: scale(0.95); }
+/* Querformat auf dem Handy: rechts ein Pfeil, der die Leiste an den linken
+   Rand einklappt, damit sie Fotos und Karten im Vollbild nicht verdeckt. */
+.tab-klapp { display: none; }
+@media (orientation: landscape) and (max-height: 540px) {
+  .tabbar { padding-left: max(12px, env(safe-area-inset-left, 0px)); padding-right: max(12px, env(safe-area-inset-right, 0px)); }
+  .tab-btn { min-height: 50px; }
+  .tab-klapp { display: flex; align-items: center; justify-content: center; min-height: 50px; padding: 0; border: 0; background: transparent; color: var(--teal); cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .tab-klapp span { display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 50%; background: var(--tab-active-bg); border: 1.5px solid var(--teal); }
+  .tab-klapp svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: 3.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .tab-klapp:active span { transform: scale(0.9); }
+  .tabbar-inner { grid-template-columns: repeat(5, minmax(0, 1fr)) 54px; }
+  .tabbar.eingeklappt .tabbar-inner { grid-template-columns: 54px; }
+  .tabbar.eingeklappt .tabbar-fade { display: none; }
+  .tabbar.eingeklappt .tabbar-inner { display: inline-grid; }
+  .tabbar.eingeklappt .tab-btn { display: none; }
+}
 .tab-badge { position: absolute; top: 2px; right: 10px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: var(--bad); color: #fff; font-family: "JetBrains Mono", monospace; font-size: 10.5px; font-weight: 700; display: none; align-items: center; justify-content: center; }
 .tab-badge.show { display: flex; }
 :root { --glass: rgba(248,248,244,0.84); --glass-bd: rgba(28,26,23,0.10); --tab-active-bg: rgba(15,110,118,0.12); }
@@ -4242,6 +4258,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       <svg viewBox="0 0 24 24" fill="none" class="tab-ico"><circle cx="5.5" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="18.5" cy="12" r="1.6" fill="currentColor" stroke="none"/></svg>
       <span class="tab-label">Mehr</span><span class="tab-badge" id="tabbadge-mehr"></span>
     </button>
+    <button type="button" class="tab-klapp" id="tab-klapp" aria-label="Leiste einklappen"><span></span></button>
   </div>
 </nav>
 
@@ -4539,6 +4556,23 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 
   window.addEventListener('hashchange', function(){ go(location.hash); });
   go(location.hash);
+
+  // Leiste im Querformat einklappen (nur dort ist der Pfeil sichtbar)
+  (function(){
+    var bar = document.getElementById('tabbar'), k = document.getElementById('tab-klapp');
+    if (!bar || !k) return;
+    function setzen(zu){
+      bar.classList.toggle('eingeklappt', zu);
+      k.firstChild.innerHTML = '<svg viewBox="0 0 24 24"><path d="' + (zu ? 'M9 5l7 7-7 7' : 'M15 5l-7 7 7 7') + '"/></svg>';
+      k.setAttribute('aria-label', zu ? 'Leiste ausklappen' : 'Leiste einklappen');
+    }
+    setzen(lsGet('fuerte-leiste-zu', '0') === '1');
+    k.addEventListener('click', function(){
+      var zu = !bar.classList.contains('eingeklappt');
+      lsSet('fuerte-leiste-zu', zu ? '1' : '0');
+      setzen(zu);
+    });
+  })();
 
   // ---- Sonnenstand (nach dem NOAA-Verfahren, rein astronomisch) ----
   // Braucht kein Internet und rechnet für jedes Datum — die Wetter-API
