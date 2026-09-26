@@ -52,9 +52,8 @@ Keine – alle entschieden (siehe unten).
 - **Webcam-Bilder halbstündlich (26.09.2026):** Worker speichert unter `t = …T14:00` bzw. `…T14:30`
   (`ortsHalbstunde()`), Cron im Dashboard muss `5,35 * * * *` sein. Das Tool frischt zu `bildMinute` und
   30 Min. später auf und zeigt das nächstliegende Bild (höchstens 45 Min. entfernt).
-  **Prüfen, ob Stephan den Worker eingespielt und den Cron umgestellt hat:**
-  `curl -H "Origin: https://stephandel.github.io" https://fuerte-sync.stephanhandel.workers.dev/webcam/jetzt`
-  muss vier Orte liefern (auch `jandia`), und `…/webcam?ort=corralejo` muss nach einer Stunde `:30`-Einträge zeigen.
+  **Eingespielt am 26.09.2026** (Code von Stephan, Cron `5,35 * * * *` per Browser gesetzt); `/webcam/jetzt`
+  lieferte danach vier Orte mit `t = …T09:30`. Prüfen: `…/webcam?ort=corralejo` zeigt `:00`- und `:30`-Einträge.
 - **Kein Platzhalterbild (geprüft 26.09.):** Skyline (Corralejo) liefert öffentlich nur eine kleine Vorschau
   (344 × 193 Pixel, ~5 KB), aber echt und aktuell. Die zwei gleich großen Bilder vom 24.09. kamen vermutlich
   daher, dass die alte Worker-Fassung auch El Cotillo über Skyline holte. MeteoSurf liefert 640 × 480.
