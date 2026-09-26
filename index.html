@@ -725,6 +725,8 @@ body { font-size: var(--fs-body); }
 .card.ist-weg .card-media img { filter: grayscale(.85) brightness(.75); }
 .weg-stempel { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; z-index: 4; }
 .weg-stempel span { background: #C62828; color: #fff; font-weight: 800; font-size: clamp(24px, 6vw, 36px); letter-spacing: .08em; text-transform: uppercase; line-height: 1.05; text-align: center; padding: 10px 24px 12px; border: 3px solid #fff; border-radius: 12px; transform: rotate(-9deg); box-shadow: 0 8px 28px rgba(0,0,0,.4); }
+.gebucht-stempel { position: absolute; top: 56px; left: 12px; z-index: 4; pointer-events: none; background: #1E7D46; color: #fff; font-weight: 800; font-size: 14px; letter-spacing: .06em; text-transform: uppercase; padding: 6px 12px; border-radius: 999px; box-shadow: 0 4px 14px rgba(0,0,0,.35); }
+.gebucht-stempel small { font-weight: 600; letter-spacing: .01em; text-transform: none; margin-left: 6px; }
 .weg-stempel small { display: block; margin-top: 6px; font-size: 13px; font-weight: 700; letter-spacing: .02em; text-transform: none; }
 .card.ist-weg .select-btn { opacity: .45; pointer-events: none; }
 .card.ist-weg h3 { text-decoration: line-through; text-decoration-color: #C62828; text-decoration-thickness: 2px; }
@@ -2140,7 +2142,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   <div class="page-header wrap">
     <div class="eyebrow">Kostenrechner</div>
     <h1>Was wird es kosten?</h1>
-    <p class="sub">Flug und Mietwagen sind gebucht. Die Unterkunft wählen wir auf der Seite „Unterkünfte“ aus — die Rechnung aktualisiert sich automatisch. Wenn wir den Aufenthalt auf zwei oder drei Unterkünfte aufteilen (Knöpfe 1 / 2 / 3 oben auf der Seite „Unterkünfte“), erscheint hier jeder Teil einzeln.</p>
+    <p class="sub">Flug, Mietwagen und beide Unterkünfte sind gebucht (Oasis Duna 29.09.–06.10., Renacer Zen 06.–12.10.). Die Poolheizung der Villa (120&nbsp;€) ist noch offen. Wenn wir den Aufenthalt auf zwei oder drei Unterkünfte aufteilen (Knöpfe 1 / 2 / 3 oben auf der Seite „Unterkünfte“), erscheint hier jeder Teil einzeln.</p>
   </div>
   <div class="wrap">
     <section class="flight-booked">
@@ -5154,13 +5156,13 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       { von: '2026-10-07', bis: '2026-10-12', preis: 1280.80 },
       // 25.09.2026, + 20 EUR Heizung je Nacht
       { von: '2026-10-05', bis: '2026-10-12', preis: 1767.20 },
-      { von: '2026-10-06', bis: '2026-10-12', preis: 1524 }
+      { von: '2026-10-06', bis: '2026-10-12', preis: 1560 }   // GEBUCHT 26.09.2026, erstattungsfaehiger Tarif, Poolheizung noch offen
     ],
     // Oasis Duna, Airbnb-Preise vom 26.09.2026 (nicht erstattungsfaehig)
     'oasis-duna': [
       { von: '2026-09-29', bis: '2026-10-03', preis: 352 },
       { von: '2026-09-29', bis: '2026-10-05', preis: 506.71 },
-      { von: '2026-09-29', bis: '2026-10-06', preis: 585 },      // 26.09.2026 nachmittags, vorher 584,07
+      { von: '2026-09-29', bis: '2026-10-06', preis: 584.07 },   // GEBUCHT 26.09.2026, echter Rechnungsbetrag
       { von: '2026-09-29', bis: '2026-10-09', preis: 827 }
     ],
     'villa-paradisus':        [ { von: '2026-09-29', bis: '2026-10-12', preis: 2797 } ],
@@ -5601,7 +5603,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       rows.push({
         label: partLabel + a.listing.name,
         sub: a.listing.portal + " · " + fmtShort(a.from) + "–" + fmtShort(a.from + a.nights) +
-             ", " + a.nights + " Nächte, 2 Pers." + (a.estimated ? " · geschätzt aus " + fmtEuro0(a.listing.ppn) + " €/Nacht" : ""),
+             ", " + a.nights + " Nächte, 2 Pers." + (typeof GEBUCHT !== 'undefined' && GEBUCHT[a.slug] ? " · ✓ gebucht und bezahlt" : "") + (a.estimated ? " · geschätzt aus " + fmtEuro0(a.listing.ppn) + " €/Nacht" : ""),
         total: a.cost,
         approx: a.estimated
       });
@@ -5641,7 +5643,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       '<td class="num" data-label="pro Person">' + (complete && anyEst ? '≈ ' : '') + fmtEuro(c.total/2) + ' €</td></tr></tfoot></table>';
     html += '<p class="dim" style="margin-top:14px;font-size:12.5px">Flug ist ein fixer, gebuchter Wert (inkl. Menüwahl). Mietwagen oben und Unterkunft auf der Seite „Unterkünfte“ können wir jederzeit ändern — die Rechnung aktualisiert sich automatisch.' +
       (c.split ? ' Bei geteiltem Aufenthalt sind die Unterkunfts-Zeilen mit „≈“ Schätzungen: der Preis pro Nacht mal Anzahl Nächte. Kurze Aufenthalte kosten auf den Portalen oft etwas mehr pro Nacht.' : '') +
-      ' Unterkunftspreise zuletzt geprüft am 20.09.2026.</p>';
+      ' Die Unterkunftspreise sind die echten Rechnungsbeträge der Buchungen vom 26.09.2026.</p>';
     body.innerHTML = html;
   }
 
@@ -6914,7 +6916,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     // --- jetzt ---
     {id:'t-unterkunft', g:'jetzt', due:'2026-09-20', star:true,
      text:'Unterkunft buchen',
-     note:'Das ist der größte offene Posten. Preise und Verfügbarkeit ändern sich hier schnell — Preise, Verfügbarkeit und Ausstattung sind am 17.09. mit einer neuen Erhebung abgeglichen worden. <a href="#unterkuenfte">Zu den 24 Optionen →</a>'},
+     note:'<strong>Erledigt am 26.09.2026:</strong> Oasis Duna 29.09.–06.10. (584,07 €) und Natural Renacer Zen 06.–12.10. (1.560 €). Noch offen: Ausweisdaten an Nad schicken und bei Yolanda die Poolheizung klären. <a href="#unterkuenfte">Zu den Unterkünften →</a>'},
     {id:'t-mietwagen-unterlagen', g:'kurz', due:'2026-09-28',
      text:'Mietwagen: Unterlagen für die Übernahme bereitlegen',
      note:'Der Seat Ibiza ist bei Autoreisen.com gebucht und bestätigt (198 €, ohne Kaution, Abholung am Flughafen um 16:00 Uhr). Zur Übernahme mitbringen: <strong>Ausweis, Führerschein, Kreditkarte auf den Namen des Fahrers und die Reservierungsnummer</strong> aus der Bestätigungsmail. <a href="#kosten">Zur Kostenübersicht →</a>'},
@@ -7933,6 +7935,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   // Aenderungen an der Seite selbst - nicht von Stephan oder Bilgen, sondern
   // an Angebot und Funktion. Stehen gleichberechtigt neben Notizen und Herzen.
   var SEITEN_NEUIGKEITEN = [
+    { at: '2026-09-26T16:00', text: '<b>Die Unterkunft ist gebucht!</b> Erst <b>Oasis Duna</b> im Ortskern (29.09.\u201306.10., 584,07\u00a0\u20ac), dann die Villa <b>Natural Renacer Zen</b> mit Pool (06.\u201312.10., 1.560\u00a0\u20ac). Beide Karten tragen jetzt ein gr\u00fcnes Schild, alle anderen Unterk\u00fcnfte sind ausgeblendet. Noch offen: Ausweisdaten an Nad schicken und bei Yolanda kl\u00e4ren, ob die Poolheizung (120\u00a0\u20ac) dazukommt. <a href="#kosten">Zu den Kosten \u2192</a>' },
     { at: '2026-09-26T11:00', text: '<b>Neu: Einstellungen \u2013 das Zahnrad oben rechts neben der Lupe.</b> Dort l\u00e4sst sich w\u00e4hlen: Hell oder Dunkel, Schriftgr\u00f6\u00dfe in vier Stufen, wer du bist, ausgebuchte Unterk\u00fcnfte verstecken, ein Datensparmodus f\u00fcr unterwegs, die Erinnerung vor Sonnenuntergang und \u201eSeite frisch laden\u201c, falls eine \u00c4nderung nicht ankommt. Auch die Auswahl des App-Symbols ist von \u201eLinks & Tipps\u201c dorthin umgezogen. <a href="#einstellungen">Einstellungen \u00f6ffnen \u2192</a>' },
     { at: '2026-09-26T10:30', text: '<b>Die Maisonette mit Meerblick ist ausgebucht</b> \u2013 die freien L\u00fccken sind k\u00fcrzer als die Mindestdauer von 4\u00a0N\u00e4chten. Auf der Vergleichsseite sind B1 und B2 deshalb weg; C l\u00e4uft jetzt \u00fcber Oasis Duna, neu ist <b>E: Oasis Duna 7\u00a0N\u00e4chte + Renacer Zen 6\u00a0N\u00e4chte</b>.' },
     { at: '2026-09-26T10:00', text: '<b>Neu: Oasis Duna (Nr.\u00a031)</b> \u2013 Stephans Fund im Ortskern. Renovierte Wohnung mit Gemeinschaftspools und kostenloser Garage, frei 29.09.\u201309.10. Sehr g\u00fcnstig: 7\u00a0N\u00e4chte 584\u00a0\u20ac, 4\u00a0N\u00e4chte 352\u00a0\u20ac. Keine Klimaanlage, nicht erstattungsf\u00e4hig.' },
@@ -8952,7 +8955,8 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     'renacer-zen': { ppn: 275.2, gesamt: 2752, frei: ['2026-10-02','2026-10-12'],
       krit: { pool:'ja', eigpool:'ja', heizpool:'ja', grill:'ja', ac:'ja', balkon:'ja', kueche:'ja', wlan:'ja', parken:'ja', wholeplace:'ja', freecancel:'nein' },
       adresse: 'C. Pardelas, 7, 35660 Corralejo, Las Palmas',
-      fussnote: '<strong>Preis inklusive Poolheizung:</strong> 2.552\u00a0\u20ac Villa + 200\u00a0\u20ac Heizung (20\u00a0\u20ac je Nacht, von der Gastgeberin best\u00e4tigt). <strong>Erst ab 02.10. frei</strong>, mindestens 5\u00a0N\u00e4chte. Weitere Preise mit Heizung, Abreise 12.10. (auf Airbnb gepr\u00fcft am 26.09.2026):<br>' +
+      fussnote: '<strong>\u2705 Gebucht am 26.09.2026:</strong> 06.\u201312.10. (6\u00a0N\u00e4chte), <b>1.560\u00a0\u20ac</b> im erstattungsf\u00e4higen Tarif: Bei Absage vor 29.09., 15:00 gibt es einen Teil zur\u00fcck. Adresse: C. Pardelas\u00a07, Corralejo. Check-in ab 15:00, Check-out bis 11:00. Gastgeberin Yolanda. <b>Offen:</b> Die Poolheizung (20\u00a0\u20ac je Nacht, also 120\u00a0\u20ac) ist in den 1.560\u00a0\u20ac nicht enthalten \u2013 bei Yolanda nachfragen.<br>' +
+        '<strong>Preis inklusive Poolheizung:</strong> 2.552\u00a0\u20ac Villa + 200\u00a0\u20ac Heizung (20\u00a0\u20ac je Nacht, von der Gastgeberin best\u00e4tigt). <strong>Erst ab 02.10. frei</strong>, mindestens 5\u00a0N\u00e4chte. Weitere Preise mit Heizung, Abreise 12.10. (auf Airbnb gepr\u00fcft am 26.09.2026):<br>' +
         '<span style="display:inline-block;margin-top:4px;line-height:1.7">' +
         '02.10. \u00b7 10\u00a0N\u00e4chte \u00b7 <b>2.752\u00a0\u20ac</b> \u00b7 275\u00a0\u20ac/Nacht<br>' +
         '03.10. \u00b7 9\u00a0N\u00e4chte \u00b7 <b>2.253,60\u00a0\u20ac</b> \u00b7 250\u00a0\u20ac/Nacht<br>' +
@@ -8985,8 +8989,9 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 
     'oasis-duna': { ppn: 82.7, gesamt: 827, frei: ['2026-09-29','2026-10-09'],
       krit: { pool:'ja', eigpool:'nein', heizpool:'unklar', grill:'nein', ac:'nein', balkon:'ja', kueche:'ja', wlan:'ja', parken:'ja', wholeplace:'ja', freecancel:'nein' },
-      adresse: 'Oasis Duna 3, Avenida Gran Canaria, 35660 Corralejo (Anlage laut OpenStreetMap, Wohnungsnummer nach Buchung)',
-      fussnote: '<strong>Preise vom 26.09.2026, nachmittags nachgepr\u00fcft</strong> (Airbnb, mit Gastgeber- und Last-Minute-Rabatt, nicht erstattungsf\u00e4hig). Frei 29.09.\u201309.10.:<br>' +
+      adresse: 'C. Maxorata, 2, 35660 Corralejo, Las Palmas (laut Buchung)',
+      fussnote: '<strong>\u2705 Gebucht am 26.09.2026:</strong> 29.09.\u201306.10. (7\u00a0N\u00e4chte), <b>584,07\u00a0\u20ac</b>, nicht erstattungsf\u00e4hig. Adresse: C. Maxorata\u00a02, Corralejo. Check-in ab 15:00 per Code-Schl\u00fcsselkasten (Nad meldet sich einen Tag vorher), Check-out bis 11:00. Gastgeberin Nad, WhatsApp +34\u00a0674\u00a0730\u00a0598.<br>' +
+        '<strong>Preise vom 26.09.2026, nachmittags nachgepr\u00fcft</strong> (Airbnb, mit Gastgeber- und Last-Minute-Rabatt, nicht erstattungsf\u00e4hig). Frei 29.09.\u201309.10.:<br>' +
         '<span style="display:inline-block;margin-top:4px;line-height:1.7">' +
         '29.09.\u201303.10. \u00b7 4\u00a0N\u00e4chte \u00b7 <b>352\u00a0\u20ac</b> \u00b7 88\u00a0\u20ac/Nacht<br>' +
         '29.09.\u201305.10. \u00b7 6\u00a0N\u00e4chte \u00b7 <b>506,71\u00a0\u20ac</b> \u00b7 84\u00a0\u20ac/Nacht<br>' +
@@ -9645,6 +9650,25 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     'h10-ocean-dreams':     'seit 25.09. auf Booking.com',
     'atalaya-maisonette':   'seit 26.09. \u00b7 L\u00fccken zu kurz'
   };
+  // Gebuchte Unterkuenfte (seit 26.09.2026): gruenes Schild im Bild,
+  // in der Kostenrechnung steht dann "gebucht".
+  var GEBUCHT = {
+    'oasis-duna':  '29.09.\u201306.10.',
+    'renacer-zen': '06.\u201312.10.'
+  };
+  function gebuchtAnwenden(){
+    Object.keys(GEBUCHT).forEach(function(slug){
+      var card = document.getElementById('c-' + slug);
+      if (!card) return;
+      var media = card.querySelector('.card-media');
+      if (!media || media.querySelector('.gebucht-stempel')) return;
+      var st = document.createElement('div');
+      st.className = 'gebucht-stempel';
+      st.innerHTML = '\u2713 Gebucht<small>' + GEBUCHT[slug] + '</small>';
+      media.appendChild(st);
+    });
+  }
+
   function ausgebuchtAnwenden(){
     Object.keys(AUSGEBUCHT).forEach(function(slug){
       var card = document.getElementById('c-' + slug);
@@ -10755,7 +10779,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 
     { slug: 'oasis-duna', name: 'Oasis Duna \u2013 Sonne und Salz, mit Pool', art: 'Stadtwohnung', ort: 'Corralejo (Ortskern)', portal: 'Airbnb',
       ppn: 82.7, total: 827, rating: 9.7, ratingTxt: '4,83/5', bew: 18,
-      lat: 28.7295, lng: -13.8676,
+      lat: 28.7298, lng: -13.8694,   // Calle Maxorata laut OpenStreetMap
       frei: ['2026-09-29','2026-10-09'],
       link: 'https://www.airbnb.de/rooms/1547926269001812467?check_in=2026-09-29&check_out=2026-10-06&adults=2',
       bilder: ['https://a0.muscache.com/im/pictures/hosting/Hosting-1547926269001812467/original/f54b1802-0e6b-4f11-a7fc-2a8fb6e065fc.jpeg?im_w=720',
@@ -10860,6 +10884,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   // sitzt - Notizfeld und Hinweise haengen sich sonst darunter.
   bewertungAnwenden();
   ausgebuchtAnwenden();
+  gebuchtAnwenden();
   applySortFilter();
 
   // ============================================================
