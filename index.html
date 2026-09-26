@@ -2331,10 +2331,12 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 <section class="page" id="page-vergleich">
   <div class="page-header wrap">
     <div class="eyebrow">Planen</div>
-    <h1>Villen-Vergleich</h1>
-    <p class="sub">Zwei Villen der Anlage sind f&#252;r alle 13 N&#228;chte frei &#8211; Villa lujo tranquila und Natural Amanecer Zen; bei allen &#252;brigen besteht eine Variante aus zwei oder drei Teilen. Hier stehen die Aufteilungen nebeneinander, dazu die Rabattstaffel der Villa Laura und die Villen des Bahiazul-Resorts einzeln. Alle Betr&#228;ge f&#252;r zwei Personen, <strong>Poolheizung eingerechnet</strong>; bei der Villa Laura erl&#228;sst sie uns die Gastgeberin. Die Zahlen kommen aus derselben Preistabelle wie die <a href="#unterkuenfte">Unterk&#252;nfte-Seite</a>, sind also immer auf demselben Stand.</p>
+    <h1>Kombi-Rechner</h1>
+    <p class="sub">Welche Kombination buchen wir? Erst ein paar N&#228;chte im Ort, dann eine Villa. Tippt Kombinationen an, um sie in den Vergleich zu holen, und tippt sie wieder an, um sie herauszunehmen. Im Vergleich w&#228;hlt ihr eine aus, darunter stehen die kompletten Urlaubskosten. Alle Preise sind Endpreise mit Poolheizung.</p>
   </div>
-  <div class="wrap" id="vergleich-inhalt"></div>
+  <div class="wrap">
+    <iframe id="kombi-frame" src="kombi-rechner.html" title="Kombi-Rechner" loading="eager" style="width:100%;border:0;display:block;min-height:600px;background:transparent" scrolling="no"></iframe>
+  </div>
 </section>
 
 <!-- ============ AUSFLÜGE ============ -->
@@ -10700,5 +10702,37 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   bewertungAnwenden();
   ausgebuchtAnwenden();
   applySortFilter();
+})();
+// ---- Kombi-Rechner auf der Vergleichsseite (seit 26.09.2026) ----
+// Gleiche Herkunft, also direkter Zugriff: Hoehe an den Inhalt anpassen
+// und das Farbschema der Website (data-theme) weiterreichen.
+(function(){
+  var f = document.getElementById('kombi-frame');
+  if (!f) return;
+  function thema(){
+    try {
+      var t = document.documentElement.getAttribute('data-theme');
+      var r = f.contentDocument.documentElement;
+      if (t) r.setAttribute('data-theme', t); else r.removeAttribute('data-theme');
+    } catch(e){}
+  }
+  function hoehe(){
+    try {
+      var h = Math.ceil(f.contentDocument.body.getBoundingClientRect().height) + 8;
+      if (h && Math.abs(h - f.offsetHeight) > 2) f.style.height = h + 'px';
+    } catch(e){}
+  }
+  var beobachtet = null;
+  function start(){
+    thema(); hoehe();
+    try {
+      var body = f.contentDocument.body;
+      if (body && beobachtet !== body) { beobachtet = body; new ResizeObserver(hoehe).observe(body); }
+    } catch(e){ setInterval(hoehe, 1000); }
+  }
+  f.addEventListener('load', start);
+  // Der Rahmen ist oft schon fertig geladen, bevor dieses Skript laeuft
+  try { if (f.contentDocument && f.contentDocument.readyState === 'complete' && f.contentDocument.body) start(); } catch(e){}
+  new MutationObserver(thema).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 })();
 </script>

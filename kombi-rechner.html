@@ -1,0 +1,550 @@
+<!doctype html>
+<html lang="de">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kombi-Rechner Corralejo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+:root{
+  --bg:#F3F6F5; --surface:#FFFFFF; --sunk:#E8EEEC; --ink:#122B2A; --muted:#566B69; --line:#D3DDDA;
+  --accent:#0B7A77; --accent-ink:#FFFFFF; --accent-soft:#D6EEEC;
+  --warn:#9A5B00; --warn-bg:#FFF1D6; --bad:#A1322E; --bad-bg:#FBE3E1; --good:#1D7A43; --good-bg:#DDF2E4;
+  --c-OD:#D08A2E; --c-BO:#3C98AE; --c-UC:#7C8E2E; --c-VL:#2463B0; --c-RZ:#4E8B55; --c-AZ:#C4527A; --c-V103:#6E5BB0; --c-PG:#8C6A2F;
+  --seg-ink:#FFFFFF;
+  --shadow:0 1px 2px rgba(18,43,42,.06),0 6px 20px rgba(18,43,42,.06);
+  --display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --body:"Source Sans 3","Segoe UI",system-ui,-apple-system,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0E1716; --surface:#15211F; --sunk:#1C2A28; --ink:#E4EEEC; --muted:#9AB0AD; --line:#2A3A38;
+    --accent:#3CC2BC; --accent-ink:#06201F; --accent-soft:#16403D;
+    --warn:#F2B35A; --warn-bg:#3A2A10; --bad:#F08A84; --bad-bg:#3A1917; --good:#6CD096; --good-bg:#12321F;
+    --c-OD:#D99A45; --c-BO:#58B3C8; --c-UC:#9DB045; --c-VL:#4C86CF; --c-RZ:#63A56A; --c-AZ:#D46B92; --c-V103:#8A78CC; --c-PG:#A8864A;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.25);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0E1716; --surface:#15211F; --sunk:#1C2A28; --ink:#E4EEEC; --muted:#9AB0AD; --line:#2A3A38;
+  --accent:#3CC2BC; --accent-ink:#06201F; --accent-soft:#16403D;
+  --warn:#F2B35A; --warn-bg:#3A2A10; --bad:#F08A84; --bad-bg:#3A1917; --good:#6CD096; --good-bg:#12321F;
+  --c-OD:#D99A45; --c-BO:#58B3C8; --c-UC:#9DB045; --c-VL:#4C86CF; --c-RZ:#63A56A; --c-AZ:#D46B92; --c-V103:#8A78CC; --c-PG:#A8864A;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.25);
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;padding:0 16px 120px}
+.wrap{max-width:1040px;margin:0 auto;padding-block:28px 0;display:flex;flex-direction:column;gap:28px}
+h1,h2,h3{font-family:var(--display);font-weight:700;text-wrap:balance;margin:0;letter-spacing:-.01em}
+h1{font-size:clamp(28px,5vw,40px);line-height:1.1}
+h2{font-size:22px}
+h3{font-size:17px}
+p{margin:0}
+.num{font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)}
+.small{font-size:14px}
+.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+header{display:flex;flex-direction:column;gap:10px}
+header p{max-width:66ch;color:var(--muted)}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,.row:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* Hinweisbox */
+.notice{background:var(--accent-soft);color:var(--ink);border-radius:12px;padding:14px 16px;display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:start}
+.notice b{color:var(--accent)}
+.notice .dot{width:10px;height:10px;border-radius:50%;background:var(--accent);margin-top:7px}
+
+/* Steuerleiste */
+.controls{display:flex;flex-wrap:wrap;gap:18px 28px;align-items:flex-end}
+.ctl{display:flex;flex-direction:column;gap:6px}
+.seg{display:inline-flex;flex-wrap:wrap;background:var(--sunk);border-radius:10px;padding:3px;gap:2px}
+.seg button{border:0;background:transparent;padding:7px 12px;border-radius:8px;font-size:15px;font-weight:600;color:var(--muted);display:inline-flex;gap:6px;align-items:center}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+.seg button .sw{width:9px;height:9px;border-radius:3px}
+.seg button .tag{font-size:12px;font-weight:600;color:var(--muted)}
+.seg button.gone{text-decoration:line-through;text-decoration-color:var(--bad)}
+
+/* Legende */
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
+
+/* Liste */
+.list{display:flex;flex-direction:column;gap:8px}
+.groupHead{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-top:10px}
+.axis,.row{display:grid;grid-template-columns:34px minmax(0,1fr) 190px;gap:14px;align-items:center}
+.axis{padding:0 14px;font-size:12px;color:var(--muted)}
+.axis .days{display:grid;grid-template-columns:repeat(13,1fr)}
+.axis .days span{text-align:center;border-left:1px solid var(--line);line-height:1.2}
+.axis .days span:first-child{border-left:0}
+.axis .days small{display:block;font-size:10px;opacity:.8}
+.row{background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;cursor:pointer;transition:border-color .15s,box-shadow .15s}
+.row:hover{border-color:color-mix(in srgb,var(--accent) 45%,var(--line))}
+.row.sel{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.row.pick{box-shadow:0 0 0 3px var(--accent-soft),inset 5px 0 0 var(--accent)}
+.check{width:26px;height:26px;border-radius:8px;border:2px solid var(--line);display:grid;place-items:center;background:var(--surface)}
+.row.sel .check{background:var(--accent);border-color:var(--accent)}
+.check svg{width:16px;height:16px;opacity:0}
+.row.sel .check svg{opacity:1}
+.mid{display:flex;flex-direction:column;gap:8px;min-width:0}
+.title{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:baseline}
+.title .code{font-family:var(--display);font-weight:700;font-size:15px;color:var(--muted)}
+.title .name{font-weight:700}
+.badges{display:flex;flex-wrap:wrap;gap:6px}
+.badge{font-size:12.5px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--sunk);color:var(--muted);white-space:nowrap}
+.badge.good{background:var(--good-bg);color:var(--good)}
+.badge.warn{background:var(--warn-bg);color:var(--warn)}
+.badge.bad{background:var(--bad-bg);color:var(--bad)}
+.badge.acc{background:var(--accent-soft);color:var(--accent)}
+.strip{display:grid;grid-template-columns:repeat(13,1fr);height:30px;border-radius:8px;overflow:hidden;gap:2px}
+.strip .s{color:var(--seg-ink);font-size:12.5px;font-weight:700;display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden;padding:0 4px;text-overflow:ellipsis}
+.strip .s.gone{background-image:repeating-linear-gradient(135deg,transparent 0 6px,rgba(255,255,255,.35) 6px 9px)}
+.pick-villa{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px;color:var(--muted)}
+.pick-villa button{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:2px 10px;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:6px}
+.pick-villa button[aria-pressed="true"]{border-color:var(--ink);color:var(--ink)}
+.pick-villa button .sw{width:8px;height:8px;border-radius:50%}
+.price{text-align:right;display:flex;flex-direction:column;gap:2px}
+.price .big{font-family:var(--display);font-size:28px;font-weight:700;line-height:1}
+.price .big small{font-family:var(--body);font-size:14px;font-weight:600;color:var(--muted)}
+.price .sub{font-size:14px;color:var(--muted)}
+.price .bar{height:5px;border-radius:3px;background:var(--sunk);margin-top:6px;overflow:hidden}
+.price .bar i{display:block;height:100%;background:var(--accent);border-radius:3px}
+
+/* Vergleich */
+.compare{display:flex;flex-direction:column;gap:14px}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.ccard{background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.ccard.pick{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.ccard .top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.ccard .x{border:0;background:var(--sunk);border-radius:8px;width:30px;height:30px;font-size:18px;line-height:1;color:var(--muted);flex:none}
+.ccard .big{font-family:var(--display);font-size:32px;font-weight:700;line-height:1}
+.ccard .big small{font-family:var(--body);font-size:15px;color:var(--muted);font-weight:600}
+.kv{display:grid;grid-template-columns:1fr auto;gap:4px 12px;font-size:15px}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;text-align:right;font-weight:600}
+.delta{font-size:14px;font-weight:700}
+.delta.zero{color:var(--good)}
+.delta.plus{color:var(--muted)}
+.segs{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;font-size:14.5px}
+.segs li{display:grid;grid-template-columns:10px 1fr auto;gap:8px;align-items:start}
+.segs li i{width:10px;height:10px;border-radius:3px;margin-top:6px}
+.segs .meta{color:var(--muted);font-size:13.5px}
+.btn{border:1.5px solid var(--accent);background:transparent;color:var(--accent);border-radius:10px;padding:9px 14px;font-weight:700}
+.btn.on{background:var(--accent);color:var(--accent-ink)}
+.empty{background:var(--surface);border:1.5px dashed var(--line);border-radius:14px;padding:20px;color:var(--muted)}
+
+/* Urlaubskosten */
+.total{background:var(--surface);border-radius:18px;padding:22px;box-shadow:var(--shadow);display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:24px}
+.total .lines{display:flex;flex-direction:column}
+.total .line{display:grid;grid-template-columns:1fr auto;gap:12px;padding:9px 0;border-bottom:1px solid var(--line);font-size:15.5px}
+.total .line .l small{display:block;color:var(--muted);font-size:13px}
+.total .line .v{font-weight:600;text-align:right}
+.total .line.sum{border-bottom:0;font-weight:700;font-size:17px}
+.total .hero{display:flex;flex-direction:column;gap:14px;justify-content:center;background:var(--accent-soft);border-radius:14px;padding:20px}
+.total .hero .big{font-family:var(--display);font-size:clamp(34px,6vw,46px);font-weight:700;line-height:1}
+.total .hero .row3{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.total .hero .row3 div{background:var(--surface);border-radius:10px;padding:10px 12px}
+.total .hero .row3 b{display:block;font-family:var(--display);font-size:21px}
+.toggle{display:inline-flex;gap:8px;align-items:center;font-size:14.5px;color:var(--muted);cursor:pointer}
+.toggle input{width:18px;height:18px;accent-color:var(--accent)}
+
+/* Unterkünfte-Steckbriefe */
+.facts{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.fact{background:var(--surface);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:4px;font-size:14px;border-top:4px solid var(--c)}
+.fact h3{font-size:15.5px}
+.fact .muted{font-size:13.5px}
+
+/* Leiste unten */
+.tray{position:fixed;left:0;right:0;bottom:0;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(8px);border-top:1px solid var(--line);z-index:5}
+.tray .in{max-width:1040px;margin:0 auto;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.tray .pickinfo{display:flex;flex-direction:column;line-height:1.25}
+.tray .pickinfo b{font-family:var(--display);font-size:19px}
+.tray .go{background:var(--accent);color:var(--accent-ink);border:0;border-radius:10px;padding:10px 16px;font-weight:700}
+
+footer{font-size:13.5px;color:var(--muted);display:flex;flex-direction:column;gap:6px;max-width:75ch}
+
+@media (max-width:720px){
+  .axis{display:none}
+  .row{grid-template-columns:30px minmax(0,1fr);grid-template-areas:"c m" "p p";row-gap:10px}
+  .row .check{grid-area:c;align-self:start}
+  .row .mid{grid-area:m}
+  .row .price{grid-area:p;text-align:left;flex-direction:row;flex-wrap:wrap;align-items:baseline;gap:4px 14px;padding-left:44px}
+  .row .price .bar{display:none}
+  .strip .s{font-size:11px;padding:0 2px}
+  .total{grid-template-columns:1fr}
+  .tray .in{flex-wrap:nowrap}
+  .tray .pickinfo b{font-size:15.5px}
+  .tray .go{padding:9px 12px;flex:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+/* Eingebettet in die Vergleichsseite der Website */
+html.eingebettet body{padding:0 0 8px;background:transparent}
+html.eingebettet .wrap{padding-block:0;max-width:none}
+html.eingebettet header,html.eingebettet .tray{display:none}
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Corralejo · 29.09.–12.10.2026 · 13 Nächte · 2 Personen</span>
+    <h1>Welche Kombination buchen wir?</h1>
+    <p>Tippe Kombinationen an, um sie in den Vergleich zu holen, und tippe sie wieder an, um sie herauszunehmen. Im Vergleich wählst du eine aus, darunter stehen dann die kompletten Urlaubskosten. Alle Preise sind Endpreise mit Poolheizung, im Browser nachgeschlagen am 25./26.09.2026.</p>
+  </header>
+
+  <div class="notice" role="note">
+    <span class="dot" aria-hidden="true"></span>
+    <p><b>Neu aufgestellt am 26.09.:</b> Casita Maracuya und die Maisonette sind ausgebucht. Jede Kombination beginnt jetzt mit ein paar Nächten im Ort und endet in einer Villa. Welche Wohnung im Ort, wählst du direkt hier drunter. Vorbelegt ist <b>Oasis Duna</b>, die günstigste und eure aktuelle Auswahl.</p>
+  </div>
+
+  <div class="controls">
+    <div class="ctl">
+      <span class="eyebrow">Wohnung im Ort (ab 29.09.)</span>
+      <div class="seg" id="t1seg" role="group" aria-label="Wohnung im Ort"></div>
+    </div>
+    <div class="ctl">
+      <span class="eyebrow">Zeigen</span>
+      <div class="seg" id="filterseg" role="group" aria-label="Filter">
+        <button data-f="alle" aria-pressed="true">Alle 8</button>
+        <button data-f="VL" aria-pressed="false">Mit Villa Laura</button>
+        <button data-f="BV" aria-pressed="false">Mit anderen Bahiazul-Villen</button>
+      </div>
+    </div>
+    <div class="ctl">
+      <span class="eyebrow">Reihenfolge</span>
+      <div class="seg" id="sortseg" role="group" aria-label="Sortierung">
+        <button data-s="nr" aria-pressed="true">Nach Gruppe</button>
+        <button data-s="preis" aria-pressed="false">Günstigste zuerst</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="legend" id="legend"></div>
+
+  <section class="list" id="list" aria-label="Kombinationen"></section>
+
+  <section class="compare" id="vergleich">
+    <div class="groupHead"><h2>Vergleich</h2><span class="muted small" id="cmpHint"></span></div>
+    <div class="cgrid" id="cgrid"></div>
+  </section>
+
+  <section class="compare" id="kosten">
+    <div class="groupHead"><h2>Urlaubskosten gesamt</h2><span class="muted small" id="costFor"></span></div>
+    <div class="total" id="total"></div>
+  </section>
+
+  <section class="compare" aria-label="Unterkünfte im Überblick">
+    <h2>Die Unterkünfte kurz</h2>
+    <div class="facts" id="facts"></div>
+  </section>
+
+  <footer>
+    <p>So ist gerechnet: Preis je Nacht = Unterkunftspreis ÷ 13 Nächte. Je Person = Gesamt ÷ 2. Wo zwei Unterkünfte aufeinander folgen, ist jede als eigene Buchung mit ihrem echten Portalpreis gerechnet, nicht hochgerechnet.</p>
+    <p>Wohnungen im Ort: Oasis Duna am 26.09., La Bocayna und Urban Chill am 25.09. auf Airbnb abgefragt, jeweils für 4, 6 und 7 Nächte ab 29.09. Villen am 25.09. Premier Garden am 25.09. auf bahiazul.com bestätigt, kostenlos stornierbar nur noch bis 26.09.</p>
+    <p>Villa Laura: Preise nach der Staffel der Gastgeberin, der 4-Nächte-Preis (1.260 €) ist auf Airbnb bestätigt. Ausführliche Dossiers zu Oasis Duna und Renacer Zen stehen auf der Unterkünfte-Seite der Website.</p>
+    <p>Preise ändern sich täglich. Vor dem Buchen im Portal gegenprüfen.</p>
+  </footer>
+</div>
+
+<div class="tray" id="tray">
+  <div class="in">
+    <div class="pickinfo"><span class="muted small" id="trayLabel">Ausgewählt</span><b class="num" id="trayVal">–</b></div>
+    <button class="go" id="trayGo">Zum Vergleich</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  // In der Website (iframe) eingebettet? Dann Kopf und Leiste ausblenden.
+  try { if (window.self !== window.top) document.documentElement.classList.add('eingebettet'); } catch(e){ document.documentElement.classList.add('eingebettet'); }
+  var N = 13, PERS = 2, TAGE = 14;
+  var START = new Date(2026, 8, 29);
+
+  // Unterkünfte
+  var ACC = {
+    OD:   {name:'Oasis Duna', short:'Oasis Duna', code:'OD', pool:false,
+           rating:'4,83 ★ · 18 Bewertungen', storno:'nicht erstattbar', stornoOk:false,
+           info:'Ortskern, ca. 5 Min. zur Hauptstraße. 3 Gemeinschaftspools mit Poolbar, eigene Terrasse, Parkplatz. 40 m², 1 Schlafzimmer, keine Klimaanlage (Deckenventilator). Frei bis 09.10.'},
+    BO:   {name:'La Bocayna', short:'La Bocayna', code:'BO', pool:false,
+           rating:'4,88 ★ · 32 Bewertungen', storno:'anteilige Erstattung vor Anreise', stornoOk:false,
+           info:'Nur 390 m zum Hafen, Blick auf Hafen und Bucht, kostenloser Parkplatz. Kein Pool, keine Klimaanlage.'},
+    UC:   {name:'Urban Chill', short:'Urban Chill', code:'UC', pool:false,
+           rating:'4,76 ★ · 41 Bewertungen', storno:'anteilige Erstattung vor Anreise', stornoOk:false,
+           info:'Im Ort, ca. 300 m zur Hauptstraße. Eigener kleiner Pool, aber unbeheizt, Grill, 2 Schlafzimmer. Keine Klimaanlage, nur Straßenparken.'},
+    VL:   {name:'Villa Laura', short:'Villa Laura', code:'VL', pool:true,
+           rating:'noch keine Bewertung', storno:'nicht erstattbar', stornoOk:false,
+           info:'Bahiazul-Resort. Beheizter Salzwasserpool + Whirlpool, Heizung geschenkt. Einzige mit allen 10 Kriterien.'},
+    RZ:   {name:'Natural Renacer Zen', short:'Renacer Zen', code:'RZ', pool:true,
+           rating:'4,89 ★ · 9 Bewertungen', storno:'nicht erstattbar', stornoOk:false,
+           info:'Neben dem Bahiazul-Resort, eigene Villa mit Pool. Heizung 20 €/Nacht eingerechnet. Frei ab 02.10.'},
+    AZ:   {name:'Natural Amanecer Zen', short:'Amanecer Zen', code:'AZ', pool:true,
+           rating:'4,83 ★ · 12 Bewertungen', storno:'nicht erstattbar', stornoOk:false,
+           info:'Schwester-Villa vom Renacer Zen, dieselbe Gastgeberin. Heizung 20 €/Nacht eingerechnet. Alle 13 Nächte frei.'},
+    V103: {name:'Villa 10.3', short:'Villa 10.3', code:'10.3', pool:true,
+           rating:'4,85 ★ · 60 Bewertungen', storno:'kostenlos stornierbar bis 27.09.', stornoOk:true,
+           info:'Bahiazul-Resort, 3 Schlafzimmer, Pool + Jacuzzi, Klimaanlage. Heizung 22 €/Nacht eingerechnet. Nur 29.09.–03.10. frei.'},
+    PG:   {name:'Bahiazul Premier Garden', short:'Premier Garden', code:'PG', pool:true,
+           rating:'offizielle Resort-Villa', storno:'kostenlos stornierbar nur noch bis 26.09.', stornoOk:true,
+           info:'Direkt beim Resort gebucht, Frühstück inklusive. Heizung 31 €/Nacht eingerechnet. Nur 03.–12.10. frei.'}
+  };
+
+  // Preise je Zeitfenster: Schlüssel = "ab Nacht-Nr. - Anzahl Nächte" (Nacht 0 = 29.09.)
+  var P = {
+    OD:   {'0-4':352,'0-6':506.71,'0-7':584.07},
+    BO:   {'0-4':457,'0-6':645,'0-7':740},
+    UC:   {'0-4':896,'0-6':1283,'0-7':1477},
+    V103: {'0-4':732},
+    AZ:   {'0-4':980,'0-13':3477,'4-9':2266,'6-7':1800,'7-6':1557,'8-5':1314,'9-4':1060},
+    VL:   {'4-9':2542.56,'6-7':1969.32,'7-6':1862.70,'8-5':1561.29,'9-4':1259.88},
+    RZ:   {'4-9':2253.60,'6-7':1768,'7-6':1524,'8-5':1280.80},
+    PG:   {'4-9':2454}
+  };
+
+  var ORT_OPTIONS = ['OD','BO','UC'];
+
+  // Kombinationen. seg: [Unterkunft oder 'ORT' (gewaehlte Wohnung im Ort) oder 'BV' (waehlbare Villa), ab Nacht, Naechte]
+  var KOMBIS = [
+    {id:'1',  grp:'VL', segs:[['ORT',0,4],['VL',4,9]]},
+    {id:'2',  grp:'VL', segs:[['ORT',0,6],['VL',6,7]]},
+    {id:'3',  grp:'VL', segs:[['ORT',0,7],['VL',7,6]]},
+    {id:'B1', grp:'BV', segs:[['ORT',0,4],['BV',4,9]], opts:['RZ','AZ','PG']},
+    {id:'B2', grp:'BV', segs:[['ORT',0,6],['BV',6,7]], opts:['RZ','AZ']},
+    {id:'B3', grp:'BV', segs:[['ORT',0,7],['BV',7,6]], opts:['RZ','AZ']},
+    {id:'B4', grp:'BV', segs:[['AZ',0,13]], note:'Ohne Ort, ganzer Urlaub in einer Villa'},
+    {id:'B5', grp:'BV', segs:[['V103',0,4],['BV',4,9]], opts:['RZ','AZ','PG'], note:'Ohne Ort, zwei Villen'}
+  ];
+
+  var FIX = [
+    {l:'Condor-Flüge Frankfurt ↔ Fuerteventura', s:'gebucht', v:999.92},
+    {l:'Mietwagen Seat Ibiza, 13 Tage', s:'gebucht, ohne Kaution', v:198}
+  ];
+  var EXTRA = [
+    {l:'Essen (Supermarkt + Restaurants)', lo:500, hi:700},
+    {l:'Ausflüge & Eintritte', lo:200, hi:300},
+    {l:'Tanken Mietwagen', lo:60, hi:75},
+    {l:'Diesel zum Flughafen Frankfurt', lo:25, hi:25},
+    {l:'Trinkgeld, Kleinigkeiten', lo:20, hi:30}
+  ];
+
+  // Zustand
+  var S = {ort:'OD', filter:'alle', sort:'nr', sel:['B3','B1','3'], pick:'B3', villa:{}, extras:true};
+  try { var saved = JSON.parse(localStorage.getItem('fuerte-kombi-v2') || 'null'); if (saved) for (var k in saved) S[k] = saved[k]; } catch(e){}
+  function save(){ try { localStorage.setItem('fuerte-kombi-v2', JSON.stringify(S)); } catch(e){} }
+
+  // Hilfen
+  var fmt0 = new Intl.NumberFormat('de-DE',{maximumFractionDigits:0});
+  var fmt2 = new Intl.NumberFormat('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2});
+  function eur(v){ return fmt0.format(Math.round(v)) + ' €'; }
+  function eur2(v){ return fmt2.format(v) + ' €'; }
+  var WT = ['So','Mo','Di','Mi','Do','Fr','Sa'];
+  function day(i){ var d = new Date(START); d.setDate(d.getDate()+i); return d; }
+  function dstr(i){ var d = day(i); return ('0'+d.getDate()).slice(-2)+'.'+('0'+(d.getMonth()+1)).slice(-2)+'.'; }
+  function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+
+  function villaOf(k){ return S.villa[k.id] && k.opts.indexOf(S.villa[k.id]) >= 0 ? S.villa[k.id] : k.opts[0]; }
+
+  // Eine Kombination konkret ausrechnen
+  function calc(k){
+    var raw = k.segs.map(function(s){
+      var a = s[0] === 'ORT' ? S.ort : s[0] === 'BV' ? villaOf(k) : s[0];
+      var p = P[a][s[1]+'-'+s[2]];
+      return {a:a, from:s[1], n:s[2], price:p, t1:s[0]==='ORT'};
+    });
+    // gleiche Unterkunft direkt hintereinander: im Streifen zusammenfassen, kein Umzug
+    var segs = [];
+    raw.forEach(function(r){
+      var last = segs[segs.length-1];
+      if (last && last.a === r.a) { last.n += r.n; last.price += r.price; last.parts++; }
+      else segs.push({a:r.a, from:r.from, n:r.n, price:r.price, parts:1, t1:r.t1});
+    });
+    var total = raw.reduce(function(s,r){return s+r.price;},0);
+    var pool = segs.reduce(function(s,g){return s + (ACC[g.a].pool ? g.n : 0);},0);
+    var gone = segs.some(function(g){return ACC[g.a].gone;});
+    var storno = segs.filter(function(g){return ACC[g.a].stornoOk;}).map(function(g){return ACC[g.a].short;});
+    return {k:k, segs:segs, total:total, ppn:total/N, pp:total/PERS, moves:segs.length-1, pool:pool, gone:gone, storno:storno};
+  }
+
+  function allCalc(){ return KOMBIS.map(calc); }
+
+  // --- Legende + Steuerung ---
+  function renderT1(){
+    var el = document.getElementById('t1seg');
+    el.innerHTML = ORT_OPTIONS.map(function(a){
+      var tag = eur(P[a]['0-7'] / 7) + '/N';
+      return '<button data-t1="'+a+'" aria-pressed="'+(S.ort===a)+'">'+
+        '<span class="sw" style="background:var(--c-'+a+')"></span>'+esc(ACC[a].short)+' <span class="tag num">'+tag+'</span></button>';
+    }).join('');
+  }
+  function renderLegend(){
+    document.getElementById('legend').innerHTML = ['OD','BO','UC','VL','RZ','AZ','PG','V103'].map(function(a){
+      return '<span><i style="background:var(--c-'+a+')"></i>'+esc(ACC[a].name)+(ACC[a].pool?' · beheizter Pool':'')+'</span>';
+    }).join('');
+  }
+  function renderFacts(){
+    document.getElementById('facts').innerHTML = ['OD','BO','UC','RZ','AZ','VL','PG','V103'].map(function(a){
+      var x = ACC[a];
+      return '<div class="fact" style="--c:var(--c-'+a+')"><h3>'+esc(x.name)+'</h3>'+
+        '<span>'+esc(x.rating)+'</span><span class="'+(x.stornoOk?'':'muted')+'">'+(x.stornoOk?'✓ ':'')+esc(x.storno)+'</span>'+
+        '<span class="muted">'+esc(x.info)+'</span></div>';
+    }).join('');
+  }
+
+  // --- Liste ---
+  function stripHTML(c){
+    return '<div class="strip" aria-hidden="true">' + c.segs.map(function(g){
+      var label = g.n >= 4 ? ACC[g.a].short + ' · ' + g.n : g.n + '';
+      return '<div class="s'+(ACC[g.a].gone?' gone':'')+'" style="grid-column:span '+g.n+';background:var(--c-'+g.a+')" title="'+esc(ACC[g.a].name)+' '+dstr(g.from)+'–'+dstr(g.from+g.n)+'">'+esc(label)+'</div>';
+    }).join('') + '</div>';
+  }
+  function axisHTML(){
+    var h = '<div class="axis" aria-hidden="true"><span></span><div class="days">';
+    for (var i=0;i<N;i++){ var d = day(i); h += '<span>'+d.getDate()+'.<small>'+WT[d.getDay()]+'</small></span>'; }
+    return h + '</div><span style="text-align:right">Preis je Nacht</span></div>';
+  }
+  function badgesHTML(c, best){
+    var b = [];
+    if (c.k.id === best.cheap) b.push('<span class="badge good">Günstigste</span>');
+    if (c.k.id === best.cheapVL) b.push('<span class="badge good">Günstigste mit Villa Laura</span>');
+    b.push('<span class="badge'+(c.moves===0?' good':'')+'">'+(c.moves===0?'kein Umzug':c.moves===1?'1 Umzug':c.moves+' Umzüge')+'</span>');
+    b.push('<span class="badge'+(c.pool>=9?' acc':'')+'">Beheizter Pool '+c.pool+' von 13 Nächten</span>');
+    if (c.storno.length) b.push('<span class="badge acc">'+esc(c.storno.join(' + '))+' stornierbar</span>');
+    if (c.gone) b.push('<span class="badge bad">Casita ausgebucht</span>');
+    return '<div class="badges">'+b.join('')+'</div>';
+  }
+  function villaPickHTML(k){
+    if (!k.opts || k.opts.length < 2) return '';
+    var v = villaOf(k);
+    return '<div class="pick-villa">Villa: ' + k.opts.map(function(a){
+      return '<button data-villa="'+a+'" data-k="'+k.id+'" aria-pressed="'+(v===a)+'"><span class="sw" style="background:var(--c-'+a+')"></span>'+esc(ACC[a].short)+'</button>';
+    }).join('') + '</div>';
+  }
+  function kName(c){
+    var parts = c.segs.map(function(g){ return ACC[g.a].code + ' ' + g.n + ' N'; });
+    return parts.join(' + ');
+  }
+  function bestOf(cs){
+    var ok = cs.filter(function(c){return !c.gone;});
+    var min = function(arr){ return arr.reduce(function(m,c){return !m||c.total<m.total?c:m;},null); };
+    var ch = min(ok), vl = min(ok.filter(function(c){return c.segs.some(function(g){return g.a==='VL';});}));
+    return {cheap: ch && ch.k.id, cheapVL: vl && vl.k.id, max: Math.max.apply(null, cs.map(function(c){return c.total;}))};
+  }
+
+  function renderList(){
+    var cs = allCalc(), best = bestOf(cs);
+    var shown = cs.filter(function(c){ return S.filter==='alle' || c.k.grp===S.filter; });
+    if (S.sort === 'preis') shown.sort(function(a,b){return a.total-b.total;});
+    var html = '';
+    var groups = S.sort === 'preis' ? [['',shown]] : [
+      ['Ort + Villa Laura', shown.filter(function(c){return c.k.grp==='VL';})],
+      ['Ort + andere Bahiazul-Villa, und zum Vergleich ohne Ort', shown.filter(function(c){return c.k.grp==='BV';})]
+    ];
+    groups.forEach(function(g){
+      if (!g[1].length) return;
+      if (g[0]) html += '<div class="groupHead"><h2>'+esc(g[0])+'</h2></div>';
+      html += axisHTML();
+      g[1].forEach(function(c){
+        var sel = S.sel.indexOf(c.k.id) >= 0;
+        html += '<div class="row'+(sel?' sel':'')+(S.pick===c.k.id&&sel?' pick':'')+'" role="checkbox" tabindex="0" aria-checked="'+sel+'" data-id="'+c.k.id+'">'+
+          '<span class="check"><svg viewBox="0 0 16 16" fill="none" stroke="var(--accent-ink)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3.2 3L13 5"/></svg></span>'+
+          '<div class="mid"><div class="title"><span class="code">'+esc(c.k.id)+'</span><span class="name">'+esc(kName(c))+'</span>'+
+          (c.k.note?'<span class="muted small">'+esc(c.k.note)+'</span>':'')+'</div>'+
+          stripHTML(c) + villaPickHTML(c.k) + badgesHTML(c,best) + '</div>'+
+          '<div class="price"><span class="big num">'+eur(c.ppn)+'<small> /Nacht</small></span>'+
+          '<span class="sub num">'+eur(c.pp)+' je Person</span><span class="sub num">'+eur(c.total)+' gesamt</span>'+
+          '<span class="bar"><i style="width:'+(c.total/best.max*100).toFixed(1)+'%"></i></span></div>'+
+        '</div>';
+      });
+    });
+    document.getElementById('list').innerHTML = html;
+  }
+
+  // --- Vergleich ---
+  function renderCompare(){
+    var cs = allCalc().filter(function(c){return S.sel.indexOf(c.k.id)>=0;}).sort(function(a,b){return a.total-b.total;});
+    var el = document.getElementById('cgrid');
+    document.getElementById('cmpHint').textContent = cs.length ? cs.length+' ausgewählt, günstigste zuerst' : '';
+    if (!cs.length){ el.innerHTML = '<div class="empty">Noch nichts ausgewählt. Tippe oben auf eine Kombination.</div>'; return; }
+    if (S.sel.indexOf(S.pick) < 0) S.pick = cs[0].k.id;
+    var min = cs[0].total;
+    el.innerHTML = cs.map(function(c){
+      var d = c.total - min, pick = S.pick === c.k.id;
+      return '<article class="ccard'+(pick?' pick':'')+'">'+
+        '<div class="top"><div><span class="eyebrow">Kombination '+esc(c.k.id)+'</span><h3>'+esc(kName(c))+'</h3></div>'+
+        '<button class="x" data-rm="'+c.k.id+'" aria-label="Kombination '+esc(c.k.id)+' aus dem Vergleich nehmen">×</button></div>'+
+        '<div><span class="big num">'+eur(c.ppn)+'<small> /Nacht</small></span><div class="delta num '+(d<0.5?'zero':'plus')+'">'+(d<0.5?'günstigste im Vergleich':'+ '+eur(d)+' gesamt · + '+eur(d/N)+' je Nacht')+'</div></div>'+
+        stripHTML(c)+
+        '<dl class="kv num"><dt>Gesamt</dt><dd>'+eur2(c.total)+'</dd><dt>Je Person</dt><dd>'+eur2(c.pp)+'</dd>'+
+        '<dt>Je Person und Nacht</dt><dd>'+eur(c.ppn/PERS)+'</dd><dt>Umzüge</dt><dd>'+c.moves+'</dd><dt>Nächte mit beheiztem Pool</dt><dd>'+c.pool+' von 13</dd></dl>'+
+        '<ul class="segs">'+c.segs.map(function(g){
+          return '<li><i style="background:var(--c-'+g.a+')"></i><div>'+esc(ACC[g.a].name)+(ACC[g.a].gone?' <b style="color:var(--bad)">ausgebucht</b>':'')+
+            '<div class="meta">'+dstr(g.from)+'–'+dstr(g.from+g.n)+' · '+g.n+' N · '+esc(ACC[g.a].storno)+(g.parts>1?' · als 2 Buchungen gerechnet':'')+'</div></div>'+
+            '<span class="num">'+eur(g.price)+'</span></li>';
+        }).join('')+'</ul>'+
+        '<button class="btn'+(pick?' on':'')+'" data-pick="'+c.k.id+'" aria-pressed="'+pick+'">'+(pick?'✓ Diese ist gewählt':'Diese nehmen')+'</button>'+
+      '</article>';
+    }).join('');
+  }
+
+  // --- Urlaubskosten ---
+  function renderTotal(){
+    var c = allCalc().filter(function(x){return x.k.id===S.pick && S.sel.indexOf(x.k.id)>=0;})[0];
+    var el = document.getElementById('total');
+    if (!c){ document.getElementById('costFor').textContent=''; el.innerHTML = '<div class="empty">Wähle im Vergleich eine Kombination mit „Diese nehmen“.</div>'; return; }
+    document.getElementById('costFor').textContent = 'für Kombination ' + c.k.id + ': ' + kName(c);
+    var fix = FIX.reduce(function(s,f){return s+f.v;},0);
+    var lo = EXTRA.reduce(function(s,e){return s+e.lo;},0), hi = EXTRA.reduce(function(s,e){return s+e.hi;},0), mid = (lo+hi)/2;
+    var sum = c.total + fix + (S.extras ? mid : 0);
+    var lines = '<div class="line"><span class="l">Unterkunft<small>'+esc(kName(c))+'</small></span><span class="v num">'+eur2(c.total)+'</span></div>';
+    FIX.forEach(function(f){ lines += '<div class="line"><span class="l">'+esc(f.l)+'<small>'+esc(f.s)+'</small></span><span class="v num">'+eur2(f.v)+'</span></div>'; });
+    lines += '<div class="line"><span class="l">Nebenkosten vor Ort (geschätzt)<small>'+EXTRA.map(function(e){return esc(e.l);}).join(', ')+' · Parken Frankfurt kostenlos</small></span>'+
+      '<span class="v num">'+(S.extras ? 'ca. '+eur(mid) : '<span class="muted">nicht eingerechnet</span>')+'<small class="muted" style="display:block;font-weight:400">'+eur(lo)+'–'+eur(hi)+'</small></span></div>';
+    lines += '<div class="line sum"><span>Gesamt</span><span class="num">'+(S.extras?'ca. ':'')+eur(sum)+'</span></div>';
+    el.innerHTML = '<div class="lines">'+lines+
+      '<label class="toggle" style="margin-top:10px"><input type="checkbox" id="extrasToggle"'+(S.extras?' checked':'')+'> Geschätzte Nebenkosten einrechnen</label></div>'+
+      '<div class="hero"><span class="eyebrow">Ganzer Urlaub, 2 Personen</span><span class="big num">'+(S.extras?'ca. ':'')+eur(sum)+'</span>'+
+      '<div class="row3 num"><div><span class="muted small">je Person</span><b>'+eur(sum/PERS)+'</b></div>'+
+      '<div><span class="muted small">je Urlaubstag (14)</span><b>'+eur(sum/TAGE)+'</b></div>'+
+      '<div><span class="muted small">je Person und Tag</span><b>'+eur(sum/PERS/TAGE)+'</b></div>'+
+      '<div><span class="muted small">davon schon bezahlt</span><b>'+eur(fix)+'</b></div></div></div>';
+  }
+
+  function renderTray(){
+    var c = allCalc().filter(function(x){return x.k.id===S.pick && S.sel.indexOf(x.k.id)>=0;})[0];
+    document.getElementById('trayLabel').textContent = S.sel.length + ' im Vergleich' + (c ? ' · gewählt: ' + c.k.id : '');
+    document.getElementById('trayVal').textContent = c ? eur(c.ppn) + ' /Nacht · ' + eur(c.total) + ' Unterkunft' : 'Noch keine gewählt';
+  }
+
+  function renderSegs(){
+    document.querySelectorAll('#filterseg button').forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.f===S.filter); });
+    document.querySelectorAll('#sortseg button').forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.s===S.sort); });
+  }
+
+  function render(){ renderT1(); renderSegs(); renderList(); renderCompare(); renderTotal(); renderTray(); save(); }
+
+  // --- Bedienung ---
+  function toggleSel(id){
+    var i = S.sel.indexOf(id);
+    if (i >= 0) S.sel.splice(i,1); else { S.sel.push(id); if (S.sel.length === 1) S.pick = id; }
+    render();
+  }
+  document.addEventListener('click', function(e){
+    var t = e.target.closest('button,.row,input'); if (!t) return;
+    if (t.dataset.t1){ S.ort = t.dataset.t1; render(); return; }
+    if (t.dataset.f){ S.filter = t.dataset.f; render(); return; }
+    if (t.dataset.s){ S.sort = t.dataset.s; render(); return; }
+    if (t.dataset.villa){ S.villa[t.dataset.k] = t.dataset.villa; render(); return; }
+    if (t.dataset.rm){ toggleSel(t.dataset.rm); return; }
+    if (t.dataset.pick){ S.pick = t.dataset.pick; render(); document.getElementById('kosten').scrollIntoView({behavior:'smooth',block:'start'}); return; }
+    if (t.id === 'extrasToggle'){ S.extras = t.checked; render(); return; }
+    if (t.id === 'trayGo'){ document.getElementById('vergleich').scrollIntoView({behavior:'smooth',block:'start'}); return; }
+    if (t.classList.contains('row')) toggleSel(t.dataset.id);
+  });
+  document.addEventListener('keydown', function(e){
+    var r = e.target.closest && e.target.closest('.row');
+    if (r && e.target === r && (e.key === ' ' || e.key === 'Enter')) { e.preventDefault(); toggleSel(r.dataset.id); }
+  });
+
+  renderLegend(); renderFacts(); render();
+})();
+</script>
