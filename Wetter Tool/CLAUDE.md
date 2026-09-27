@@ -45,7 +45,8 @@ Keine – alle entschieden (siehe unten).
   Sicherung: `../_sicherungen/index_vor-wetterkopf_2026-09-27.html`.
   **Nachtrag:** Stephan meinte eigentlich die Startseite. Jetzt gibt es zwei Kästen mit `class="wkopf"`, die
   `WETTERKOPF.malen()` beide füllt (je eigener `Himmel`): **Startseite** `#home-weather.home-kopf` mit Kurve,
-  darunter wie bisher Sonnenzeiten, Gezeiten und Tage (`renderHomeSun`, das alte `sneak-now` entfällt dort);
+  darunter nur noch die Tagesleiste und der Sonnenuntergangs-Hinweis (`renderHomeSun`; `sneak-now` sowie die
+  Kästchen Sonnenzeiten/Hoch-/Niedrigwasser `sneak-sun` entfallen dort – Stephan: „sonst zu riesig“);
   **Wetterseite** `#wx-hero.ohne-kurve` ohne Linien (Stephans Wunsch – die Kurven stehen im Wetter-Tool).
   Sicherung davor: `../_sicherungen/index_vor-startseiten-wetter_2026-09-27.html`.
 

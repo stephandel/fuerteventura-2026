@@ -5175,7 +5175,8 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       html += '<p class="sub">Live-Wetter gerade nicht erreichbar — die Sonnenzeiten unten rechnet die Seite selbst aus.</p>';
     }
 
-    html += '<div class="sneak-sun">' +
+    // Im neuen Wetterkasten ohne Sonnenzeit- und Gezeiten-Kästchen (Stephans Wunsch 27.09.: sonst zu groß)
+    if (!document.querySelector('#home-weather.wkopf')) html += '<div class="sneak-sun">' +
       '<span class="sun-chip"><span class="sc-l">Sonnenaufgang</span><span class="sc-v">' + fmtCanary(s.sunrise) + '</span></span>' +
       '<span class="sun-chip golden"><span class="sc-l">Goldene Stunde</span><span class="sc-v">' + fmtCanary(s.goldenStart) + '</span></span>' +
       '<span class="sun-chip"><span class="sc-l">Sonnenuntergang</span><span class="sc-v">' + fmtCanary(s.sunset) + '</span></span>' +
