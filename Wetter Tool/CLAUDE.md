@@ -5,7 +5,7 @@ findet unten alles, um nahtlos weiterzumachen. Die Bedienung und Einstellungen d
 `README.md`, ausführlichere Hintergründe im Gedächtnis des Projekts (Notizen `fuerte-meteogramm`,
 `fuerte-webcams`, `fuerte-satellitenbilder`, `fuerte-mondbild`, `fuerte-offene-punkte`).
 
-Stand: **25.09.2026**
+Stand: **27.09.2026**
 
 ## Für wen
 
@@ -37,14 +37,16 @@ diesem Ordner wird mit veröffentlicht (Positivliste in `../.gitignore`), also a
    (Tageskurve), Schrift 4 (Inter dünn). Umsetzung dann in `../index.html` (`.wx-hero`, `renderWx…` um Zeile 4690);
    Bild-Logik `fotoFuer()`, Himmel-Zeichner `Himmel`, Kurven `tageskurve()` usw. aus der Probeseite übernehmen.
    Calima: Open-Meteo Air-Quality `current=dust`, ab 100 µg/m³ gilt es als Calima.
-2. **Wetterseite-Entwurf (`wetterseite-entwurf.html`, gebaut 26.09.2026)** – Stephan schaut ihn an. Die
-   Neuerungen stecken schon im Baustein, sind aber nur per Einstellung an (`tagesSymbol`, `mond`, `tipps`,
-   Zeile `wasser`, seit dem Nachtrag auch `knoepfeMittig` und `filmLeiste` = Zeitraffer); die Live-Seite nutzt sie noch nicht. Übernehmen heißt in `../index.html`: Optionen im
-   `Meteogramm.einbauen({...})` setzen (Tipps-Liste aus dem Entwurf kopieren), `'druck'` durch `'wasser'`
-   ersetzen, `#wx-days-card` und `#wx-tiles` samt Code entfernen, Wassertemperatur live in den Wetterkasten
-   (Marine `current=sea_surface_temperature`). Versionskennung hochzählen.
 
 ## Entschieden
+
+- **Wetterseite verschlankt (27.09.2026, live):** Entwurf `wetterseite-entwurf.html` 1:1 übernommen. In
+  `../index.html`: `#wx-days-card` und `#wx-tiles` samt `renderWxDays`/`renderWxTiles`, Mond-Kachel
+  (NASA-Foto, Meeus-Rechnung) und deren CSS entfernt; Wassertemperatur live im Wetterkasten
+  (`wasserTemperatur()`, Marine `current=sea_surface_temperature`). Wetter-Tool mit `tagesSymbol`, `mond`,
+  `knoepfeMittig`, `filmLeiste`, `tipps` und Zeile `wasser` statt `druck`; wer schon eine Zeilenauswahl
+  gespeichert hatte, bekommt `wasser` einmalig dazu (`fuerte-mg-wasser-neu`). Sicherung:
+  `../_sicherungen/index_vor-wetterseite-schlank_2026-09-27.html`. Der Entwurf bleibt als Spielwiese.
 
 - **Aufbau (25.09.2026, fest im Baustein):** Bild unten, Werte „am Strich“, Knöpfe unten,
   Datumsfahne haftet beim Scrollen. Reihenfolge im Baustein: Reiter → Fahne (`.mg-readout`, sticky)
@@ -55,9 +57,9 @@ diesem Ordner wird mit veröffentlicht (Positivliste in `../.gitignore`), also a
 - **Schrift für die Zahlen (25.09.2026):** Arial (Nr. 18 der Schriftprobe), gesetzt über `--mg-mono`
   in `meteogramm.css`. Kein Download nötig; der JetBrains-Mono-Link in `../index.html` bleibt, weil
   die Seite ihn an anderen Stellen nutzt.
-- **Mond-Kachel (25.09.2026, in `../index.html`):** im hellen Modus kräftiger (Foto abgedunkelt,
-  Deckkraft 0,85). Darunter steht der nächste Voll- oder Neumond mit genauer Uhrzeit in Ortszeit
-  (`naechsteMondphase()`, Rechnung nach Meeus, geprüft gegen die US-Sternwarte USNO: auf die Minute gleich).
+- **Mond (seit 27.09.2026 im Wetter-Tool):** Die Mond-Kachel ist entfallen. Mondphase und Uhrzeit von
+  Neumond/Viertel/Vollmond stehen im Tagesfuß der Sonnenzeile (`mond: true`, Rechnung nach Meeus in
+  `meteogramm.js`, geprüft gegen die US-Sternwarte USNO: auf die Minute gleich).
 
 ## Offene technische Punkte
 
@@ -69,8 +71,6 @@ diesem Ordner wird mit veröffentlicht (Positivliste in `../.gitignore`), also a
 - **Kein Platzhalterbild (geprüft 26.09.):** Skyline (Corralejo) liefert öffentlich nur eine kleine Vorschau
   (344 × 193 Pixel, ~5 KB), aber echt und aktuell. Die zwei gleich großen Bilder vom 24.09. kamen vermutlich
   daher, dass die alte Worker-Fassung auch El Cotillo über Skyline holte. MeteoSurf liefert 640 × 480.
-- **Mondbild-Pfad gilt nur für 2026** (NASA-Datensatz a005587); für 2027 den neuen Datensatz suchen,
-  sonst greift das SVG als Rückfall.
 
 ## Regeln, die sich bewährt haben
 

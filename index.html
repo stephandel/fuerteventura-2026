@@ -20,8 +20,8 @@
 <meta name="apple-mobile-web-app-title" content="Fuerteventura">
 <link rel="stylesheet" href="vendor/leaflet.css">
 <script defer src="vendor/leaflet.js"></script>
-<link rel="stylesheet" href="Wetter%20Tool/meteogramm.css?v=20260926a">
-<script defer src="Wetter%20Tool/meteogramm.js?v=20260926a"></script>
+<link rel="stylesheet" href="Wetter%20Tool/meteogramm.css?v=20260927a">
+<script defer src="Wetter%20Tool/meteogramm.js?v=20260927a"></script>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
 <link rel="apple-touch-icon" sizes="167x167" href="images/apple-touch-icon-167.png">
@@ -269,62 +269,8 @@ details[open] summary::before { content: "− "; }
 .wx-cond { font-size: var(--fs-body); font-weight: 600; }
 .wx-hilo { font-family: "JetBrains Mono", monospace; font-size: var(--fs-sub); opacity: 0.92; margin-top: 2px; }
 .wx-stamp { font-size: var(--fs-cap); opacity: 0.72; margin-top: 10px; }
-
-.wx-card { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 14px 0 12px; margin-bottom: 14px; box-shadow: var(--shadow); overflow: hidden; }
-.wx-card > h3 { font-size: var(--fs-micro); text-transform: uppercase; letter-spacing: 0.09em; color: var(--ink-dim); font-weight: 700; padding: 0 16px 10px; display: flex; align-items: center; gap: 7px; border-bottom: 1px solid var(--border); margin-bottom: 10px; }
-
-/* Tagesliste mit Temperaturbalken */
-.wx-days { padding: 0 16px; }
-.wx-day { display: grid; grid-template-columns: 62px 30px 34px 1fr 34px; align-items: center; gap: 10px; min-height: var(--tap); border-bottom: 1px solid var(--border); }
-.wx-day:last-child { border-bottom: none; }
-.wx-day .wd-n { font-size: var(--fs-sub); font-weight: 600; }
-.wx-day .wd-i { font-size: 1.25rem; text-align: center; }
-.wx-day .wd-lo, .wx-day .wd-hi { font-family: "JetBrains Mono", monospace; font-size: var(--fs-sub); text-align: right; }
-.wx-day .wd-lo { color: var(--ink-dim); }
-.wx-day .wd-hi { font-weight: 700; }
-.wx-bar { position: relative; height: 5px; border-radius: 3px; background: var(--muted-bg); overflow: visible; }
-.wx-bar i { position: absolute; top: 0; bottom: 0; border-radius: 3px; background: linear-gradient(90deg, #4a9fd4 0%, #d8bc63 55%, #e08050 100%); }
-.wx-bar b { position: absolute; top: 50%; width: 8px; height: 8px; margin-top: -4px; margin-left: -4px; border-radius: 50%; background: #fff; border: 2px solid var(--ink); box-shadow: 0 0 0 1px rgba(255,255,255,0.6); }
-
-/* Detailkacheln */
-.wx-tiles { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; margin-bottom: 14px; }
-.wx-tile { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 13px 14px 14px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 5px; min-height: 118px; }
-.wx-tile .wt-h { font-size: var(--fs-micro); text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-dim); font-weight: 700; display: flex; align-items: center; gap: 6px; }
-.wx-tile .wt-v { font-family: "JetBrains Mono", monospace; font-size: 1.6rem; font-weight: 700; line-height: 1.1; }
-.wx-tile .wt-s { font-size: var(--fs-foot); color: var(--ink-dim); line-height: 1.4; margin-top: auto; }
-.uv-scale { height: 5px; border-radius: 3px; background: linear-gradient(90deg,#33754b 0%,#c9b037 33%,#d98032 58%,#a74535 80%,#8b5cb8 100%); position: relative; margin: 5px 0 2px; }
-.uv-scale b { position: absolute; top: 50%; width: 9px; height: 9px; margin-top: -4.5px; margin-left: -4.5px; border-radius: 50%; background: #fff; border: 2px solid var(--ink); }
-.sun-arc { position: relative; height: 44px; margin-top: 2px; }
-.sun-arc svg { display: block; width: 100%; height: 100%; overflow: visible; }
-.wind-dial { display: flex; align-items: center; gap: 10px; }
-.wind-dial svg { flex-shrink: 0; }
-/* Mond-Kachel: der Mond liegt grau hinter dem Text, rechts angeschnitten */
-.wx-tile.wt-mond { position: relative; overflow: hidden; }
-.wx-tile.wt-mond > .wt-h, .wx-tile.wt-mond > .wt-v, .wx-tile.wt-mond > .wt-s { position: relative; z-index: 1; }
-.mond-bild { position: absolute; right: -34px; top: 50%; transform: translateY(-50%); pointer-events: none; opacity: 0.5; }
-/* Das Foto läuft nach links weich aus, damit der Text darüber lesbar bleibt;
-   das Bild wird etwas größer als der Rahmen gezogen, so verschwindet der
-   schwarze Rand des NASA-Bildes. Im hellen Modus abgedunkelt, sonst verschwindet
-   der helle Mond auf dem hellen Grund. */
-.mond-foto-rahmen { position: absolute; right: -40px; top: 50%; width: 140px; height: 140px; transform: translateY(-50%); border-radius: 50%; overflow: hidden; pointer-events: none; opacity: 0.85;
-  -webkit-mask-image: linear-gradient(to right, rgba(0,0,0,0) 8%, rgba(0,0,0,0.55) 40%, #000 70%); mask-image: linear-gradient(to right, rgba(0,0,0,0) 8%, rgba(0,0,0,0.55) 40%, #000 70%); }
-.mond-foto-rahmen[hidden] { display: none; }
-.mond-foto { width: 114%; height: 114%; margin: -7%; display: block; filter: grayscale(1) brightness(0.72) contrast(1.15); }
-:root[data-theme="dark"] .mond-foto { filter: grayscale(1) contrast(0.9); }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .mond-foto { filter: grayscale(1) contrast(0.9); } }
-/* Text bekommt einen Hof in der Kachelfarbe - lesbar auch dort, wo er den Mond überlappt */
-.wx-tile.wt-mond > .wt-v, .wx-tile.wt-mond > .wt-s, .wx-tile.wt-mond > .wt-h { text-shadow: 0 0 6px var(--surface), 0 0 3px var(--surface), 0 0 1px var(--surface); }
-:root[data-theme="dark"] .mond-foto-rahmen { opacity: 0.6; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .mond-foto-rahmen { opacity: 0.6; } }
-.mond-dunkel { fill: #2b3034; }
-.mond-hell { fill: #b9bec3; }
-.mond-krater { fill: #000; opacity: 0.12; }
-:root[data-theme="dark"] .mond-bild, :root:not([data-theme="light"]) .mond-bild { opacity: 0.5; }
-:root[data-theme="dark"] .mond-dunkel { fill: #3a4046; }
-:root[data-theme="dark"] .mond-hell { fill: #cfd4d8; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .mond-dunkel { fill: #3a4046; } :root:not([data-theme="light"]) .mond-hell { fill: #cfd4d8; } }
-@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) .mond-bild { opacity: 0.8; } }
-:root[data-theme="light"] .mond-bild { opacity: 0.8; }
+.wx-hero .wx-wasser { color: #bff3f5; }
+.wx-hero .wx-wasser:empty { display: none; }
 
 /* Restliche Trefferflächen */
 .pack-list input[type=checkbox], .pack-item input[type=checkbox] { width: 26px !important; height: 26px !important; flex-shrink: 0; accent-color: var(--good); }
@@ -2248,18 +2194,13 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
         <div class="wx-temp" id="wx-temp">&#8211;</div>
         <div class="wx-cond" id="wx-cond">Lade aktuelle Werte&#8230;</div>
         <div class="wx-hilo" id="wx-hilo"></div>
+        <div class="wx-hilo wx-wasser" id="wx-wasser"></div>
         <div class="wx-stamp" id="wx-stamp"></div>
       </div>
     </div>
 
     <div id="meteogramm"><p class="sub" style="padding:14px">Lade Wetterverlauf&#8230;</p></div>
 
-    <div class="wx-card" id="wx-days-card">
-      <h3>&#128197; Die n&#228;chsten 7 Tage</h3>
-      <div class="wx-days" id="wx-days"></div>
-    </div>
-
-    <div class="wx-tiles" id="wx-tiles"></div>
 
     <details class="tide-box" style="margin-bottom:24px">
       <summary style="cursor:pointer;font-size:var(--fs-h3);font-weight:700;letter-spacing:-0.015em;min-height:var(--tap);display:flex;align-items:center;gap:8px">&#127777;&#65039; Klimawerte f&#252;r Oktober</summary>
@@ -4340,7 +4281,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <div class="einst-block">
       <h3>Datensparmodus</h3>
       <button type="button" class="einst-schalter" data-einst="sparen" aria-pressed="false"><span>Gro&#223;e Bilder erst auf Antippen laden</span><span class="knopf" aria-hidden="true"></span></button>
-      <p class="einst-text" style="margin:6px 0 0">F&#252;r unterwegs mit schwachem Netz oder wenig Datenvolumen: Der Wolken- und Regenfilm im Wetter-Tool wird nicht mehr vorab geholt, sondern erst beim Abspielen, und das echte Mondfoto der NASA bleibt weg (die gezeichnete Mondscheibe bleibt).</p>
+      <p class="einst-text" style="margin:6px 0 0">F&#252;r unterwegs mit schwachem Netz oder wenig Datenvolumen: Der Wolken- und Regenfilm im Wetter-Tool wird nicht mehr vorab geholt, sondern erst beim Abspielen.</p>
     </div>
 
     <div class="einst-block">
@@ -4692,10 +4633,8 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     if (!d) return;
     var c = d.current;
 
-    // --- Wetterseite: Kopf, Stunden, Tage, Kacheln ---
+    // --- Wetterseite: Kopf (Tage, Mond und Einzelwerte stehen im Wetter-Tool) ---
     renderWxHero(d);
-    renderWxDays(d);
-    renderWxTiles(d);
 
     renderHomeSun(d);
   }
@@ -4718,6 +4657,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       Math.round(d.daily.temperature_2m_min[0]) + '°  ·  gefühlt ' + Math.round(c.apparent_temperature) + '°';
     var st = document.getElementById('wx-stamp');
     if (st) st.textContent = 'Open-Meteo · Stand ' + c.time.slice(11, 16) + ' Uhr Ortszeit';
+    wasserTemperatur();
     // Himmelsfarbe nach Tageszeit
     var hero = document.getElementById('wx-hero');
     if (hero) {
@@ -4730,193 +4670,17 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     }
   }
 
-  function renderWxDays(d){
-    var box = document.getElementById('wx-days');
-    if (!box || !d || !d.daily) return;
-    var D = d.daily;
-    var lo = Math.min.apply(null, D.temperature_2m_min);
-    var hi = Math.max.apply(null, D.temperature_2m_max);
-    var span = Math.max(1, hi - lo);
-    var nowT = d.current ? d.current.temperature_2m : null;
-
-    box.innerHTML = D.time.map(function(day, i){
-      var dt = new Date(day + 'T00:00:00');
-      var name = i === 0 ? 'Heute' : WEEKDAY_SHORT[dt.getDay()] + '.';
-      var l = D.temperature_2m_min[i], h = D.temperature_2m_max[i];
-      var left = (l - lo) / span * 100, width = Math.max(6, (h - l) / span * 100);
-      var dot = '';
-      if (i === 0 && nowT !== null) {
-        var pos = Math.min(100, Math.max(0, (nowT - lo) / span * 100));
-        dot = '<b style="left:' + pos + '%"></b>';
-      }
-      var rain = D.precipitation_probability_max[i];
-      return '<div class="wx-day">' +
-        '<span class="wd-n">' + name + (rain >= 25 ? ' <span style="color:var(--teal);font-size:var(--fs-micro)">💧' + rain + '%</span>' : '') + '</span>' +
-        '<span class="wd-i">' + (WMO_ICON[D.weather_code[i]] || '🌤️') + '</span>' +
-        '<span class="wd-lo">' + Math.round(l) + '°</span>' +
-        '<span class="wx-bar"><i style="left:' + left + '%;width:' + width + '%"></i>' + dot + '</span>' +
-        '<span class="wd-hi">' + Math.round(h) + '°</span>' +
-      '</div>';
-    }).join('');
-  }
-
-  function renderWxTiles(d){
-    var box = document.getElementById('wx-tiles');
-    if (!box || !d || !d.current) return;
-    var c = d.current, D = d.daily;
-    var s = sunFor(new Date());
-    var uv = c.uv_index, uvMax = D ? D.uv_index_max[0] : uv;
-    var uvTxt = uv < 3 ? 'niedrig' : uv < 6 ? 'mäßig' : uv < 8 ? 'hoch' : uv < 11 ? 'sehr hoch' : 'extrem';
-    var uvPos = Math.min(100, uv / 12 * 100);
-
-    // Sonnenbogen: wo steht die Sonne zwischen Auf- und Untergang
-    var arc = '';
-    if (s.sunrise && s.sunset) {
-      var now = Date.now();
-      var frac = Math.min(1, Math.max(0, (now - s.sunrise) / (s.sunset - s.sunrise)));
-      var ax = 4 + frac * 92, ay = 34 - Math.sin(frac * Math.PI) * 26;
-      arc = '<div class="sun-arc"><svg viewBox="0 0 100 40" preserveAspectRatio="none">' +
-        '<path d="M4 34 Q 50 -6 96 34" fill="none" stroke="var(--border)" stroke-width="1.6" stroke-dasharray="3 3"/>' +
-        '<circle cx="' + ax.toFixed(1) + '" cy="' + ay.toFixed(1) + '" r="3.6" fill="var(--ochre)"/>' +
-        '</svg></div>';
-    }
-    var deg = c.wind_direction_10m || 0;
-    var dirs = ['N','NO','O','SO','S','SW','W','NW'];
-    var dirTxt = dirs[Math.round(deg / 45) % 8];
-
-    var tiles = [
-      { h: '🔆 UV-Index', v: (Math.round(uv * 10) / 10), extra: '<div class="uv-scale"><b style="left:' + uvPos + '%"></b></div>',
-        s: uvTxt.charAt(0).toUpperCase() + uvTxt.slice(1) + ' · Tageshöchstwert ' + Math.round(uvMax) },
-      { h: '🌇 Sonnenuntergang', v: fmtCanary(s.sunset), extra: arc, s: 'Aufgang war ' + fmtCanary(s.sunrise) },
-      { h: '🌬️ Wind', v: Math.round(c.wind_speed_10m), extra: '<div class="wind-dial"><svg width="30" height="30" viewBox="0 0 32 32"><circle cx="16" cy="16" r="13" fill="none" stroke="var(--border)" stroke-width="1.6"/><g transform="rotate(' + (deg + 180) + ' 16 16)"><path d="M16 5 L20 20 L16 17 L12 20 Z" fill="var(--teal)"/></g></svg><span style="font-size:var(--fs-foot);color:var(--ink-dim)">aus ' + dirTxt + '</span></div>',
-        s: 'km/h · Böen an der Küste stärker' },
-      { h: '💧 Regen heute', v: (D ? D.precipitation_probability_max[0] : 0) + '%', s: 'Wahrscheinlichkeit im Tagesverlauf' },
-      { h: '🌡️ Gefühlt', v: Math.round(c.apparent_temperature) + '°', s: 'bei ' + Math.round(c.temperature_2m) + '° gemessen' },
-      { h: '💦 Luftfeuchte', v: c.relative_humidity_2m + '%', s: 'Küstenlage, meist moderat' },
-      { h: '🌊 Wassertemperatur', v: '22–23°', s: 'Oktober-Mittel · <a href="https://www.meerestemperatur.de/europa/fuerteventura/corralejo/" target="_blank" rel="noopener">Tageswert prüfen ↗</a>' },
-      { h: '🌑 Mond', v: moonPhaseName(new Date()), klasse: 'wt-mond',
-        hinter: moonSvg(moonPhaseFraction(new Date()), 132) + '<span class="mond-foto-rahmen" id="mond-foto-rahmen" hidden><img class="mond-foto" id="mond-foto" alt=""></span>',
-        s: Math.round((1 - Math.cos(2 * Math.PI * moonPhaseFraction(new Date()))) / 2 * 100) + ' % beleuchtet<br>' + mondphaseText(naechsteMondphase(new Date())) }
-    ];
-    box.innerHTML = tiles.map(function(t){
-      return '<div class="wx-tile' + (t.klasse ? ' ' + t.klasse : '') + '">' + (t.hinter || '') + '<div class="wt-h">' + t.h + '</div>' +
-        '<div class="wt-v">' + t.v + '</div>' + (t.extra || '') +
-        '<div class="wt-s">' + t.s + '</div></div>';
-    }).join('');
-    mondFotoLaden();
-  }
-
-  // Echtes Mondbild von der NASA: für jede Stunde des Jahres ein aus Daten der
-  // Mondsonde LRO gerechnetes Bild, frei nutzbar (NASA/GSFC Scientific
-  // Visualization Studio, "Dial-A-Moon"). Die Schnittstelle dort lässt fremde
-  // Seiten nicht zu, das Bildmuster ist aber öffentlich: Bild Nr. = Stunde des
-  // Jahres in Weltzeit. Der Pfad gilt für 2026; für ein anderes Jahr die neue
-  // Kennung unter svs.gsfc.nasa.gov ("Moon Phase and Libration") nachtragen.
-  // Lädt das Bild nicht, bleibt die gezeichnete Scheibe stehen.
-  var MOND_BILDER = { 2026: 'https://svs.gsfc.nasa.gov/vis/a000000/a005500/a005587/frames/730x730_1x1_30p/moon.' };
-  function mondFotoLaden(){
-    var rahmen = document.getElementById('mond-foto-rahmen'), img = document.getElementById('mond-foto');
-    if (!rahmen || !img) return;
-    var jetzt = new Date(), jahr = jetzt.getUTCFullYear();
-    if (!MOND_BILDER[jahr]) return;
-    if (document.documentElement.getAttribute('data-datensparen') === '1') return;   // Datensparmodus (Einstellungen)
-    var nr = Math.floor((jetzt.getTime() - Date.UTC(jahr, 0, 1)) / 3600000) + 1;   // Stunde des Jahres, ab 1
-    img.onload = function(){
-      rahmen.hidden = false;
-      var svg = rahmen.parentNode.querySelector('.mond-bild');
-      if (svg) svg.style.display = 'none';
-    };
-    img.onerror = function(){ rahmen.hidden = true; };
-    img.src = MOND_BILDER[jahr] + ('0000' + nr).slice(-4) + '.jpg';
-  }
-
-  // Genaue Zeitpunkte der Mondphasen nach J. Meeus, "Astronomical Algorithms", Kap. 49
-  // (Genauigkeit wenige Minuten). art: 0 = Neumond, 0.25 = erstes Viertel, 0.5 = Vollmond, 0.75 = letztes Viertel
-  function mondPhaseZeit(k){
-    var r = Math.PI / 180, T = k / 1236.85, art = k - Math.floor(k);
-    var JDE = 2451550.09766 + 29.530588861 * k + 0.00015437 * T * T - 0.00000015 * T * T * T + 0.00000000073 * T * T * T * T;
-    var E = 1 - 0.002516 * T - 0.0000074 * T * T;
-    var M  = (2.5534 + 29.1053567 * k - 0.0000014 * T * T) * r;
-    var Mm = (201.5643 + 385.81693528 * k + 0.0107582 * T * T + 0.00001238 * T * T * T) * r;
-    var F  = (160.7108 + 390.67050284 * k - 0.0016118 * T * T - 0.00000227 * T * T * T) * r;
-    var O  = (124.7746 - 1.56375588 * k + 0.0020672 * T * T) * r;
-    var s = Math.sin, c;
-    if (art === 0 || art === 0.5) {
-      var voll = art === 0.5;
-      c = (voll ? -0.40614 : -0.40720) * s(Mm) + (voll ? 0.17302 : 0.17241) * E * s(M) + (voll ? 0.01614 : 0.01608) * s(2 * Mm)
-        + (voll ? 0.01043 : 0.01039) * s(2 * F) + (voll ? 0.00734 : 0.00739) * E * s(Mm - M) - (voll ? 0.00515 : 0.00514) * E * s(Mm + M)
-        + (voll ? 0.00209 : 0.00208) * E * E * s(2 * M) - 0.00111 * s(Mm - 2 * F) - 0.00057 * s(Mm + 2 * F)
-        + 0.00056 * E * s(2 * Mm + M) - 0.00042 * s(3 * Mm) + 0.00042 * E * s(M + 2 * F) + 0.00038 * E * s(M - 2 * F)
-        - 0.00024 * E * s(2 * Mm - M) - 0.00017 * s(O) - 0.00007 * s(Mm + 2 * M) + 0.00004 * s(2 * Mm - 2 * F)
-        + 0.00004 * s(3 * M) + 0.00003 * s(Mm + M - 2 * F) + 0.00003 * s(2 * Mm + 2 * F) - 0.00003 * s(Mm + M + 2 * F)
-        + 0.00003 * s(Mm - M + 2 * F) - 0.00002 * s(Mm - M - 2 * F) - 0.00002 * s(3 * Mm + M) + 0.00002 * s(4 * Mm);
-    } else {
-      c = -0.62801 * s(Mm) + 0.17172 * E * s(M) - 0.01183 * E * s(Mm + M) + 0.00862 * s(2 * Mm) + 0.00804 * s(2 * F)
-        + 0.00454 * E * s(Mm - M) + 0.00204 * E * E * s(2 * M) - 0.00180 * s(Mm - 2 * F) - 0.00070 * s(Mm + 2 * F)
-        - 0.00040 * s(3 * Mm) - 0.00034 * E * s(2 * Mm - M) + 0.00032 * E * s(M + 2 * F) + 0.00032 * E * s(M - 2 * F)
-        - 0.00028 * E * E * s(Mm + 2 * M) + 0.00027 * E * s(2 * Mm + M) - 0.00017 * s(O) - 0.00005 * s(Mm - M - 2 * F)
-        + 0.00004 * s(2 * Mm + 2 * F) - 0.00004 * s(Mm + M + 2 * F) + 0.00004 * s(Mm - 2 * M) + 0.00003 * s(Mm + M - 2 * F)
-        + 0.00003 * s(3 * M) + 0.00002 * s(2 * Mm - 2 * F) + 0.00002 * s(Mm - M + 2 * F) - 0.00002 * s(3 * Mm + M);
-      var W = 0.00306 - 0.00038 * E * Math.cos(M) + 0.00026 * Math.cos(Mm) - 0.00002 * Math.cos(Mm - M) + 0.00002 * Math.cos(Mm + M) + 0.00002 * Math.cos(2 * F);
-      c += art === 0.25 ? W : -W;
-    }
-    // Planeten-Zusatzglieder
-    var A = [299.77 + 0.107408 * k - 0.009173 * T * T, 251.88 + 0.016321 * k, 251.83 + 26.651886 * k, 349.42 + 36.412478 * k,
-      84.66 + 18.206239 * k, 141.74 + 53.303771 * k, 207.14 + 2.453732 * k, 154.84 + 7.306860 * k, 29.16 + 27.261239 * k,
-      205.66 + 0.121824 * k, 283.87 + 1.844379 * k, 157.64 + 0.070286 * k, 110.41 + 42.216316 * k, 342.51 + 0.041301 * k];
-    var G = [325, 165, 164, 126, 110, 62, 60, 56, 47, 42, 40, 37, 35, 23];
-    for (var i = 0; i < 14; i++) c += G[i] * 0.000001 * s(A[i] * r);
-    // JDE ist Terrestrische Zeit; rund 69 s Unterschied zur Weltzeit
-    return new Date((JDE + c - 2440587.5) * 86400000 - 69000);
-  }
-  // Nächster Voll- oder Neumond ab jetzt: { name, zeit }
-  function naechsteMondphase(ab){
-    var k = Math.floor(((ab.getTime() / 86400000 + 2440587.5) - 2451550.09766) / 29.530588861 * 2) / 2 - 0.5;
-    for (var n = 0; n < 6; n++, k += 0.5) {
-      var z = mondPhaseZeit(k);
-      if (z > ab) return { name: (k - Math.floor(k)) === 0.5 ? 'Vollmond' : 'Neumond', zeit: z };
-    }
-  }
-  // "Vollmond am 26.09. um 17:49 Uhr" - in Ortszeit der Kanaren
-  function mondphaseText(p){
-    var opt = { timeZone: 'Atlantic/Canary' }, tag;
-    try { tag = p.zeit.toLocaleDateString('de-DE', Object.assign({ day: '2-digit', month: '2-digit' }, opt)); }
-    catch(e){ tag = p.zeit.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' }); }
-    return p.name + ' am ' + tag + ' um ' + fmtCanary(p.zeit) + ' Uhr';
-  }
-
-  // Grobe Mondphase — reicht für die Anzeige, kein Ersatz für ein Ephemeriden-Programm
-  // Phase als Bruchteil des Mondmonats: 0 = Neumond, 0,5 = Vollmond, 1 = wieder Neumond
-  function moonPhaseFraction(date){
-    var known = Date.UTC(2000, 0, 6, 18, 14);        // bekannter Neumond
-    var syn = 29.530588853 * 86400000;
-    return ((date.getTime() - known) % syn + syn) % syn / syn;
-  }
-  function moonPhaseName(date){
-    var names = ['Neumond','Zunehmende Sichel','Erstes Viertel','Zunehmender Mond','Vollmond','Abnehmender Mond','Letztes Viertel','Abnehmende Sichel'];
-    return names[Math.floor(moonPhaseFraction(date) * 8 + 0.5) % 8];
-  }
-  // Der Mond, wie er gerade am Himmel steht - in Grau, als Hintergrund der Kachel.
-  // Beleuchtete Seite: zunehmend rechts, abnehmend links (Nordhalbkugel).
-  function moonSvg(p, size){
-    var r = size / 2 - 1, cx = size / 2, cy = size / 2;
-    var t = Math.cos(2 * Math.PI * p);               // > 0 Sichel, < 0 mehr als halb voll
-    var rx = Math.max(0.01, Math.abs(t)) * r;        // Woelbung der Schattengrenze
-    var waxing = p < 0.5;
-    var outerSweep = waxing ? 1 : 0;
-    var innerSweep = waxing ? (t > 0 ? 0 : 1) : (t > 0 ? 1 : 0);   // Woelbung zur hellen Seite hin bei Sichel
-    var lit = 'M' + cx + ' ' + (cy - r) + ' A' + r + ' ' + r + ' 0 0 ' + outerSweep + ' ' + cx + ' ' + (cy + r) +
-              ' A' + rx.toFixed(2) + ' ' + r + ' 0 0 ' + innerSweep + ' ' + cx + ' ' + (cy - r) + ' Z';
-    return '<svg class="mond-bild" width="' + size + '" height="' + size + '" viewBox="0 0 ' + size + ' ' + size + '" aria-hidden="true">' +
-      '<defs><clipPath id="mond-clip"><circle cx="' + cx + '" cy="' + cy + '" r="' + r + '"/></clipPath></defs>' +
-      '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" class="mond-dunkel"/>' +
-      '<path d="' + lit + '" class="mond-hell"/>' +
-      '<g clip-path="url(#mond-clip)" class="mond-krater">' +
-        '<circle cx="' + (cx - r * 0.35) + '" cy="' + (cy - r * 0.3) + '" r="' + (r * 0.16) + '"/>' +
-        '<circle cx="' + (cx + r * 0.25) + '" cy="' + (cy + r * 0.35) + '" r="' + (r * 0.22) + '"/>' +
-        '<circle cx="' + (cx + r * 0.4) + '" cy="' + (cy - r * 0.45) + '" r="' + (r * 0.1) + '"/>' +
-        '<circle cx="' + (cx - r * 0.1) + '" cy="' + (cy + r * 0.05) + '" r="' + (r * 0.09) + '"/>' +
-      '</g></svg>';
+  // Gemessene Wassertemperatur vor Corralejo (Open-Meteo Marine), höchstens alle 30 Minuten neu
+  var wasserStand = { at: 0, wert: null };
+  function wasserTemperatur(){
+    var box = document.getElementById('wx-wasser');
+    if (!box) return;
+    function zeigen(){ box.textContent = wasserStand.wert == null ? '' : 'Wasser ' + wasserStand.wert.toFixed(1).replace('.', ',') + '°'; }
+    if (Date.now() - wasserStand.at < 30 * 60000) { zeigen(); return; }
+    fetch('https://marine-api.open-meteo.com/v1/marine?latitude=28.729694&longitude=-13.86715&current=sea_surface_temperature&timezone=Atlantic%2FCanary')
+      .then(function(r){ return r.json(); })
+      .then(function(m){ wasserStand = { at: Date.now(), wert: m && m.current ? m.current.sea_surface_temperature : null }; zeigen(); })
+      .catch(function(){});
   }
 
   // --- Startseiten-Sneak-Peek ---
@@ -7977,6 +7741,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   // Aenderungen an der Seite selbst - nicht von Stephan oder Bilgen, sondern
   // an Angebot und Funktion. Stehen gleichberechtigt neben Notizen und Herzen.
   var SEITEN_NEUIGKEITEN = [
+    { at: '2026-09-27T09:00', text: '<b>Die Wetterseite ist aufger\u00e4umt.</b> Die Liste \u201eDie n\u00e4chsten 7 Tage\u201c und die Kacheln sind weg \u2013 alles steht jetzt im Wetter-Tool: Wetter-Symbol mit Hoch und Tief je Tag, die <b>echte Wassertemperatur</b> (oben im Kasten und als eigene Linie), der Mond mit Uhrzeit von Vollmond und Neumond, und unter dem Diagramm <b>Tipps zum Tag</b>: wann Strandwetter ist, wann Kitewind, wann Ebbe f\u00fcr Popcorn Beach, den Weg zum Leuchtturm in El Cotillo und die Lagune am Risco del Paso. Neu ist auch der <b>Zeitraffer</b>: \u25b6 vorn neben Webcam, Satellit und Regen spielt die letzten Stunden ab. <a href="#wetter">Zum Wetter \u2192</a>' },
     { at: '2026-09-26T17:00', text: '<b>Alle Entfernungen gelten jetzt ab eurer Unterkunft.</b> Ausfl\u00fcge, Tagestrips (Hin- und R\u00fcckfahrt) und alle 52 Restaurants rechnen ab Oasis Duna oder Renacer Zen statt ab dem Ortszentrum \u2013 von der Villa aus sind es z.\u00a0B. 10 statt 6 Minuten zum Hafen. \u201eAutomatisch\u201c nimmt bis zum 06.10. die Oasis Duna, danach das Renacer Zen. Umschalten geht oben auf den Seiten und im Zahnrad-Men\u00fc; auf den Karten stehen beide H\u00e4user als \uD83C\uDFE0. <a href="#ausfluege">Zu den Ausfl\u00fcgen \u2192</a>' },
     { at: '2026-09-26T16:00', text: '<b>Die Unterkunft ist gebucht!</b> Erst <b>Oasis Duna</b> im Ortskern (29.09.\u201306.10., 584,07\u00a0\u20ac), dann die Villa <b>Natural Renacer Zen</b> mit Pool (06.\u201312.10., 1.560\u00a0\u20ac). Beide Karten tragen jetzt ein gr\u00fcnes Schild, alle anderen Unterk\u00fcnfte sind ausgeblendet. Noch offen: Ausweisdaten an Nad schicken und bei Yolanda kl\u00e4ren, ob die Poolheizung (120\u00a0\u20ac) dazukommt. <a href="#kosten">Zu den Kosten \u2192</a>' },
     { at: '2026-09-26T11:00', text: '<b>Neu: Einstellungen \u2013 das Zahnrad oben rechts neben der Lupe.</b> Dort l\u00e4sst sich w\u00e4hlen: Hell oder Dunkel, Schriftgr\u00f6\u00dfe in vier Stufen, wer du bist, ausgebuchte Unterk\u00fcnfte verstecken, ein Datensparmodus f\u00fcr unterwegs, die Erinnerung vor Sonnenuntergang und \u201eSeite frisch laden\u201c, falls eine \u00c4nderung nicht ankommt. Auch die Auswahl des App-Symbols ist von \u201eLinks & Tipps\u201c dorthin umgezogen. <a href="#einstellungen">Einstellungen \u00f6ffnen \u2192</a>' },
@@ -8883,6 +8648,11 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       var mgZiel = document.getElementById('meteogramm'), nav = document.querySelector('nav.topnav');
       function fahnenAbstand(){ if (nav) mgZiel.style.setProperty('--mg-haft-oben', nav.offsetHeight + 'px'); }
       fahnenAbstand(); window.addEventListener('resize', fahnenAbstand);
+      try {
+        var zw = localStorage.getItem('fuerte-mg-zeilen');
+        if (zw && zw.indexOf('wasser') < 0 && !localStorage.getItem('fuerte-mg-wasser-neu')) localStorage.setItem('fuerte-mg-zeilen', zw + ',wasser');
+        localStorage.setItem('fuerte-mg-wasser-neu', '1');
+      } catch(e){}
       window.FUERTE_MG = window.Meteogramm.einbauen({
         ziel: '#meteogramm',
         zeitzone: 'Atlantic/Canary',
@@ -8893,8 +8663,22 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
           { id: 'cotillo',   name: 'El Cotillo', lat: 28.6855, lon: -14.0110, meer: { lat: 28.69,   lon: -14.03   } },
           { id: 'sotavento', name: 'Sotavento',  lat: 28.1560, lon: -14.2275, meer: { lat: 28.145,  lon: -14.21   } }
         ],
-        zeilen: ['sonne','temp','wind','regen','uv','feuchte','wolken','welle','tide','druck'],
-        zeilenStandard: ['sonne','temp','wind','regen','uv','welle','tide'],
+        zeilen: ['sonne','temp','wind','regen','uv','feuchte','wolken','welle','tide','wasser'],
+        zeilenStandard: ['sonne','temp','wind','regen','uv','welle','tide','wasser'],
+        tagesSymbol: true,        // Wetter-Symbol, Hoch und Tief je Tag im Diagramm (ersetzt die 7-Tage-Liste)
+        mond: true,               // Mondphase im Tagesfuß der Sonnenzeile
+        knoepfeMittig: true,      // ↻ ‹ Jetzt zentrieren › ☰
+        filmLeiste: true,         // Zeitraffer mit Play/Pause in der Bildleiste
+        // Tipps zum Tag – Orte und Regeln aus unseren Ausflugstexten (Flag Beach, Popcorn Beach,
+        // Leuchtturm El Cotillo, Lagune Risco del Paso: bei Hochwasser ist dort Meer)
+        tipps: [
+          { art: 'strand', icon: '🏖️', titel: 'Strand' },
+          { art: 'wind',   icon: '🪁', titel: 'Kiten am Flag Beach', orte: ['corralejo'], von: 22, bis: 50 },
+          { art: 'ebbe',   icon: '🍿', titel: 'Popcorn Beach', orte: ['corralejo'], text: '– bei Hochwasser ist dort Meer' },
+          { art: 'ebbe',   icon: '🗼', titel: 'Weg zum Leuchtturm', orte: ['cotillo'], text: '– bei Hochwasser ist dort Meer' },
+          { art: 'wind',   icon: '🪁', titel: 'Kiten', orte: ['sotavento'], von: 22, bis: 50 },
+          { art: 'ebbe',   icon: '🏝️', titel: 'Lagune Risco del Paso', orte: ['sotavento'], text: '– Ankunft auf ablaufendes Wasser legen' }
+        ],
         kameras: {
         corralejo: {
           name: 'Grandes Playas, Corralejo',
@@ -11172,7 +10956,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
           var an = lsGet('fuerte-datensparen', '0') !== '1';
           lsSet('fuerte-datensparen', an ? '1' : '0');
           if (an) document.documentElement.setAttribute('data-datensparen', '1');
-          else { document.documentElement.removeAttribute('data-datensparen'); mondFotoLaden(); }
+          else document.documentElement.removeAttribute('data-datensparen');
         }
         einstZeichnen();
       }
