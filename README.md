@@ -23,7 +23,7 @@ landen online. Alles andere in diesem Ordner bleibt lokal.
 | `index.html` | **Die aktuelle App.** Einzige Datei, die gepflegt wird. |
 | `worker/` | Code des Cloudflare Workers (`fuerte-sync.js`) und Tabellenschema (`schema.sql`). Wird im Cloudflare-Dashboard eingefügt, nicht per Kommandozeile. |
 | `manifest.json`, `sw.js`, `favicon.ico` | PWA-Dateien (Home-Bildschirm-Symbol, Offline-Cache). |
-| `manifest-*.json` | Alternative App-Symbol-Varianten aus der Auswahlrunde. Nur `manifest.json` ist aktiv. |
+| `manifest-varianten/` | Die 13 alternativen App-Symbole zur Auswahl in den Einstellungen. Standard ist `manifest.json` im Hauptordner. |
 | `images/` | Bilder der App. |
 | `Unterkuenfte_Fuerteventura.xlsx` | Arbeitsliste der Unterkünfte (Preise, Verfügbarkeit, Nummerierung). |
 | `dossiers/` | PDF-Dossiers zu den engeren Unterkunfts-Favoriten. |

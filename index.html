@@ -9006,7 +9006,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     if (!ok) id = 'klassik';
     document.querySelectorAll('link[rel="apple-touch-icon"]').forEach(function(l){ l.href = 'images/icon-' + id + '-180.png'; });
     var man = document.querySelector('link[rel="manifest"]');
-    if (man) man.href = id === 'klassik' ? 'manifest.json' : 'manifest-' + id + '.json';
+    if (man) man.href = id === 'klassik' ? 'manifest.json' : 'manifest-varianten/manifest-' + id + '.json';
     return id;
   }
   // Zum Hinzufuegen auf den Home-Bildschirm muss die Seite im echten Browser

@@ -3,7 +3,8 @@
 !index.html
 !README.md
 !manifest.json
-!manifest-*.json
+!manifest-varianten/
+!manifest-varianten/*.json
 !sw.js
 !Wetter Tool/
 !Wetter Tool/**
