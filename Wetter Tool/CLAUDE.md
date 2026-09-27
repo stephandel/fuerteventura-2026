@@ -32,13 +32,17 @@ diesem Ordner wird mit veröffentlicht (Positivliste in `../.gitignore`), also a
 
 ## Offene Entscheidungen von Stephan
 
-1. **Wetterkopf (`wetterkopf-probe.html`, gebaut 26.09.2026)** – Stephan nennt „Hintergrund A–D · Aufbau 1–5 ·
-   Schrift 1–9 · Ecken“ (steht unten auf der Seite). Empfehlung: Hintergrund D (Foto + Bewegung), Aufbau 2
-   (Tageskurve), Schrift 4 (Inter dünn). Umsetzung dann in `../index.html` (`.wx-hero`, `renderWx…` um Zeile 4690);
-   Bild-Logik `fotoFuer()`, Himmel-Zeichner `Himmel`, Kurven `tageskurve()` usw. aus der Probeseite übernehmen.
-   Calima: Open-Meteo Air-Quality `current=dust`, ab 100 µg/m³ gilt es als Calima.
+Keine – alle entschieden (siehe unten).
 
 ## Entschieden
+
+- **Wetterkasten oben (27.09.2026, live):** Stephans Wahl aus `wetterkopf-probe.html`: Hintergrund D (Foto je
+  Wetterlage + ziehende Wolken/Regen/Wetterleuchten/Calima-Dunst als Canvas), Aufbau 2 (Tageskurve Temperatur +
+  Tide), Schrift 4 (Inter 200), Ecken sanft (12 px). In `../index.html` als gekapselter Block `WETTERKOPF`
+  (Code aus der Probeseite übernommen: `fotoFuer`, `Himmel` im Überlagerungsmodus, `tageskurve`);
+  `renderWxHero(d)` reicht nur noch die Daten weiter. Tide, Wassertemperatur und Saharastaub holt der Kasten
+  selbst (Marine + Air-Quality, alle 30 Min.). Fotos `../images/wx-*.webp` + `strand-tuerkis.webp`.
+  Sicherung: `../_sicherungen/index_vor-wetterkopf_2026-09-27.html`.
 
 - **Wetterseite verschlankt (27.09.2026, live):** Entwurf `wetterseite-entwurf.html` 1:1 übernommen. In
   `../index.html`: `#wx-days-card` und `#wx-tiles` samt `renderWxDays`/`renderWxTiles`, Mond-Kachel
