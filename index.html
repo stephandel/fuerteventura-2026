@@ -283,6 +283,15 @@ details[open] summary::before { content: "− "; }
 .wx-legende { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 11px; opacity: .85; margin-top: 4px; }
 .wx-legende i { display: inline-block; width: 14px; height: 2px; vertical-align: middle; margin-right: 5px; border-radius: 1px; }
 .wx-stamp { font-size: 10.5px; opacity: 0.65; margin-top: 6px; }
+/* Derselbe Kasten auf der Startseite, darunter Sonnenzeiten, Gezeiten und die Tage */
+.home-kopf { margin-top: 18px; }
+.wx-hero.ohne-kurve { min-height: 210px; }
+.wx-hero.ohne-kurve .wx-kurve, .wx-hero.ohne-kurve .wx-legende { display: none; }
+.wx-hero.ohne-kurve .wx-stamp { margin-top: 18px; }
+.home-kopf .sneak-head { padding: 0 0 10px; }
+.home-kopf .sneak-head h2 { font-size: 1.1rem; }
+.home-kopf .sneak-body { padding: 4px 0 0; }
+.home-kopf .sneak-body .sub:empty { display: none; }
 
 /* Restliche Trefferflächen */
 .pack-list input[type=checkbox], .pack-item input[type=checkbox] { width: 26px !important; height: 26px !important; flex-shrink: 0; accent-color: var(--good); }
@@ -1497,13 +1506,27 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   <div class="home-body wrap">
 
 
-    <div class="sneak-weather" id="home-weather">
-      <div class="sneak-head">
-        <h2>&#127774; Gerade in Corralejo</h2>
-        <a class="sneak-more" href="#wetter">Wetter, Gezeiten &amp; Webcams &#8594;</a>
-      </div>
-      <div class="sneak-body" id="home-weather-body">
-        <p class="sub" id="home-weather-status">Lade aktuelle Werte&#8230;</p>
+    <div class="wx-hero wkopf home-kopf" id="home-weather">
+      <div class="wx-bg"><img src="images/strand-tuerkis.webp" alt="" decoding="async"><canvas aria-hidden="true"></canvas></div>
+      <div class="wx-veil"></div>
+      <div class="wx-hero-in">
+        <div class="sneak-head">
+          <h2>Gerade in Corralejo</h2>
+          <a class="sneak-more" href="#wetter">Wetter, Gezeiten &amp; Webcams &#8594;</a>
+        </div>
+        <div class="wx-oben">
+          <div>
+            <div class="wx-temp">&#8211;</div>
+            <div class="wx-cond">Lade aktuelle Werte&#8230;</div>
+          </div>
+          <div class="wx-rechts"></div>
+        </div>
+        <div class="wx-kurve"></div>
+        <div class="wx-legende"></div>
+        <div class="sneak-body" id="home-weather-body">
+          <p class="sub" id="home-weather-status"></p>
+        </div>
+        <div class="wx-stamp"></div>
       </div>
     </div>
 
@@ -2198,21 +2221,21 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     <h1>Wetter</h1>
   </div>
   <div class="wrap">
-    <div class="wx-hero" id="wx-hero">
-      <div class="wx-bg"><img id="wx-foto" src="images/strand-tuerkis.webp" alt="" decoding="async"><canvas id="wx-himmel" aria-hidden="true"></canvas></div>
+    <div class="wx-hero wkopf ohne-kurve" id="wx-hero">
+      <div class="wx-bg"><img src="images/strand-tuerkis.webp" alt="" decoding="async"><canvas aria-hidden="true"></canvas></div>
       <div class="wx-veil"></div>
       <div class="wx-hero-in">
         <div class="wx-oben">
           <div>
             <div class="wx-place">Corralejo</div>
-            <div class="wx-temp" id="wx-temp">&#8211;</div>
-            <div class="wx-cond" id="wx-cond">Lade aktuelle Werte&#8230;</div>
+            <div class="wx-temp">&#8211;</div>
+            <div class="wx-cond">Lade aktuelle Werte&#8230;</div>
           </div>
-          <div class="wx-rechts" id="wx-rechts"></div>
+          <div class="wx-rechts"></div>
         </div>
-        <div class="wx-kurve" id="wx-kurve"></div>
-        <div class="wx-legende" id="wx-legende"></div>
-        <div class="wx-stamp" id="wx-stamp"></div>
+        <div class="wx-kurve"></div>
+        <div class="wx-legende"></div>
+        <div class="wx-stamp"></div>
       </div>
     </div>
 
@@ -4650,7 +4673,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     if (!d) return;
     var c = d.current;
 
-    // --- Wetterseite: Kopf (Tage, Mond und Einzelwerte stehen im Wetter-Tool) ---
+    // --- Wetterkästen (Wetterseite oben und Startseite) ---
     renderWxHero(d);
 
     renderHomeSun(d);
@@ -5033,7 +5056,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   }
 
 
-    var kopf = { d: null, extra: null, extraAt: 0, H: null, bild: null, sichtbar: true };
+    var kopf = { d: null, extra: null, extraAt: 0 };
 
     function stunden(str, heute){        // "2026-09-27T09:45" -> Stunden seit heute 0 Uhr
       var d = Date.UTC(+str.slice(0,4), +str.slice(5,7) - 1, +str.slice(8,10)), h = Date.UTC(+heute.slice(0,4), +heute.slice(5,7) - 1, +heute.slice(8,10));
@@ -5073,47 +5096,52 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
         malen();
       });
     }
+    // Malt jeden Kasten mit class="wkopf" (Wetterseite oben und Startseite); jeder hat seinen eigenen Himmel
     function malen(){
-      var hero = document.getElementById('wx-hero');
-      if (!hero || !kopf.d || !kopf.d.current || !kopf.d.hourly) return;
-      var L = lageBauen(), ex = naechstesExtrem(L);
-      var datei = fotoFuer(L), foto = document.getElementById('wx-foto');
-      if (foto && kopf.bild !== datei) { foto.src = BILD + datei; kopf.bild = datei; }
-      document.getElementById('wx-temp').textContent = Math.round(L.temp) + '°';
-      document.getElementById('wx-cond').innerHTML = '<span class="ic">' + L.icon + '</span>' + L.text;
-      document.getElementById('wx-rechts').innerHTML = 'Hoch <b>' + Math.round(L.hoch) + '°</b><br>Tief <b>' + Math.round(L.tief) + '°</b><br>gefühlt <b>' + Math.round(L.gefuehlt) + '°</b>' +
-        (L.wasser != null ? '<br><span class="wasser">Wasser <b>' + L.wasser.toFixed(1).replace('.', ',') + '°</b></span>' : '');
-      var kurve = document.getElementById('wx-kurve'), W = kurve.clientWidth;
-      if (W > 100) kurve.innerHTML = tageskurve(L, W);
-      document.getElementById('wx-legende').innerHTML = '<span><i style="background:' + ORANGE + '"></i>Temperatur</span>' +
-        (L.tide.length ? '<span><i style="background:' + TUERKIS + '"></i>Tide' + (ex ? ' · ' + (ex.hoch ? 'Hochwasser' : 'Niedrigwasser') + ' ' + uhr(ex.h) : '') + '</span>' : '');
-      document.getElementById('wx-stamp').textContent = 'Open-Meteo · Stand ' + kopf.d.current.time.slice(11, 16) + ' Uhr Ortszeit';
-      var cv = document.getElementById('wx-himmel');
-      if (cv) {
-        if (!kopf.H) kopf.H = new Himmel(cv, { ueber: true });
-        kopf.H.setze(L); kopf.H.gemalt = false;
-      }
+      if (!kopf.d || !kopf.d.current || !kopf.d.hourly) return;
+      var L = lageBauen(), ex = naechstesExtrem(L), datei = fotoFuer(L);
+      [].forEach.call(document.querySelectorAll('.wkopf'), function(box){
+        var q = function(k){ return box.querySelector(k); };
+        var foto = q('.wx-bg img');
+        if (foto && box.getAttribute('data-bild') !== datei) { foto.src = BILD + datei; box.setAttribute('data-bild', datei); }
+        q('.wx-temp').textContent = Math.round(L.temp) + '°';
+        q('.wx-cond').innerHTML = '<span class="ic">' + L.icon + '</span>' + L.text;
+        q('.wx-rechts').innerHTML = 'Hoch <b>' + Math.round(L.hoch) + '°</b><br>Tief <b>' + Math.round(L.tief) + '°</b><br>gefühlt <b>' + Math.round(L.gefuehlt) + '°</b>' +
+          (L.wasser != null ? '<br><span class="wasser">Wasser <b>' + L.wasser.toFixed(1).replace('.', ',') + '°</b></span>' : '');
+        // Auf der Wetterseite ohne Linien – die Kurven stehen dort im großen Wetter-Tool darunter
+        var ohne = box.classList.contains('ohne-kurve'), kurve = q('.wx-kurve'), W = kurve.clientWidth;
+        if (!ohne && W > 100) kurve.innerHTML = tageskurve(L, W);
+        if (!ohne) q('.wx-legende').innerHTML = '<span><i style="background:' + ORANGE + '"></i>Temperatur</span>' +
+          (L.tide.length ? '<span><i style="background:' + TUERKIS + '"></i>Tide' + (ex ? ' · ' + (ex.hoch ? 'Hochwasser' : 'Niedrigwasser') + ' ' + uhr(ex.h) : '') + '</span>' : '');
+        q('.wx-stamp').textContent = 'Open-Meteo · Stand ' + kopf.d.current.time.slice(11, 16) + ' Uhr Ortszeit';
+        var cv = q('.wx-bg canvas');
+        if (cv) {
+          if (!box._himmel) { box._himmel = new Himmel(cv, { ueber: true }); box._sichtbar = true; himmelBeobachten(box); }
+          box._himmel.setze(L); box._himmel.gemalt = false;
+        }
+      });
     }
+    // Gezeichnet wird nur, solange ein Kasten zu sehen ist
+    var beobachter = 'IntersectionObserver' in window ? new IntersectionObserver(function(es){ es.forEach(function(e){ e.target._sichtbar = e.isIntersecting; }); }) : null;
+    function himmelBeobachten(box){ if (beobachter) beobachter.observe(box); }
     // Eine Uhr für den Himmel; gezeichnet wird nur, solange der Kasten zu sehen ist
     function ruhig(){ try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch(e){ return false; } }
     var zuletzt = 0;
     function takt(ts){
       var dt = Math.min(0.1, (ts - zuletzt) / 1000 || 0.016); zuletzt = ts;
-      var H = kopf.H;
-      if (H && kopf.sichtbar && !document.hidden && H.c.clientWidth > 0) {
+      if (!document.hidden) [].forEach.call(document.querySelectorAll('.wkopf'), function(box){
+        var H = box._himmel;
+        if (!H || box._sichtbar === false || H.c.clientWidth === 0) return;
         if (H.w !== H.c.clientWidth) H.setze(H.L);                  // Seite erst jetzt sichtbar oder gedreht
         if (ruhig()) { if (!H.gemalt) { H.opt.still = true; H.schritt(0); H.gemalt = true; } }
         else H.schritt(dt);
-      }
+      });
       requestAnimationFrame(takt);
     }
     requestAnimationFrame(takt);
-    if ('IntersectionObserver' in window) {
-      var hero0 = document.getElementById('wx-hero');
-      if (hero0) new IntersectionObserver(function(es){ kopf.sichtbar = es[0].isIntersecting; }).observe(hero0);
-    }
     var groesse = null;
     window.addEventListener('resize', function(){ clearTimeout(groesse); groesse = setTimeout(malen, 250); });
+    window.addEventListener('hashchange', function(){ setTimeout(malen, 60); });
 
     return {
       daten: function(d){ kopf.d = d; malen(); extraLaden(); }
@@ -5129,7 +5157,9 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     var s = sunFor(now);
     var html = '';
 
-    if (d && d.current) {
+    if (d && d.current && document.querySelector('#home-weather.wkopf')) {
+      // Temperatur, Lage und Kurve zeigt der Wetterkasten selbst (WETTERKOPF)
+    } else if (d && d.current) {
       var c = d.current;
       var icon = WMO_ICON[c.weather_code] || (c.is_day ? '☀️' : '🌙');
       html += '<div class="sneak-now">' +
@@ -8179,7 +8209,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
   // Aenderungen an der Seite selbst - nicht von Stephan oder Bilgen, sondern
   // an Angebot und Funktion. Stehen gleichberechtigt neben Notizen und Herzen.
   var SEITEN_NEUIGKEITEN = [
-    { at: '2026-09-27T10:00', text: '<b>Neuer Wetterkasten oben auf der Wetterseite.</b> Das Bild passt jetzt zum Wetter und zur Tageszeit \u2013 Strand bei Sonne, Palmen im Abendlicht, Sternennacht, Regen- oder Gewitterwolken, gelber Dunst bei Calima. Dar\u00fcber ziehen Wolken mit dem echten Wind, bei Regen fallen Tropfen. Darunter der Temperaturverlauf von heute und die Gezeiten mit Hoch- und Niedrigwasser, rechts die Wassertemperatur. <a href="#wetter">Zum Wetter \u2192</a>' },
+    { at: '2026-09-27T10:00', text: '<b>Neuer Wetterkasten auf der Startseite und oben auf der Wetterseite.</b> Das Bild passt jetzt zum Wetter und zur Tageszeit \u2013 Strand bei Sonne, Palmen im Abendlicht, Sternennacht, Regen- oder Gewitterwolken, gelber Dunst bei Calima. Dar\u00fcber ziehen Wolken mit dem echten Wind, bei Regen fallen Tropfen. Rechts die Wassertemperatur, auf der Startseite dazu der Temperaturverlauf von heute und die Gezeiten als Linien. <a href="#wetter">Zum Wetter \u2192</a>' },
     { at: '2026-09-27T09:00', text: '<b>Die Wetterseite ist aufger\u00e4umt.</b> Die Liste \u201eDie n\u00e4chsten 7 Tage\u201c und die Kacheln sind weg \u2013 alles steht jetzt im Wetter-Tool: Wetter-Symbol mit Hoch und Tief je Tag, die <b>echte Wassertemperatur</b> (oben im Kasten und als eigene Linie), der Mond mit Uhrzeit von Vollmond und Neumond, und unter dem Diagramm <b>Tipps zum Tag</b>: wann Strandwetter ist, wann Kitewind, wann Ebbe f\u00fcr Popcorn Beach, den Weg zum Leuchtturm in El Cotillo und die Lagune am Risco del Paso. Neu ist auch der <b>Zeitraffer</b>: \u25b6 vorn neben Webcam, Satellit und Regen spielt die letzten Stunden ab. <a href="#wetter">Zum Wetter \u2192</a>' },
     { at: '2026-09-26T17:00', text: '<b>Alle Entfernungen gelten jetzt ab eurer Unterkunft.</b> Ausfl\u00fcge, Tagestrips (Hin- und R\u00fcckfahrt) und alle 52 Restaurants rechnen ab Oasis Duna oder Renacer Zen statt ab dem Ortszentrum \u2013 von der Villa aus sind es z.\u00a0B. 10 statt 6 Minuten zum Hafen. \u201eAutomatisch\u201c nimmt bis zum 06.10. die Oasis Duna, danach das Renacer Zen. Umschalten geht oben auf den Seiten und im Zahnrad-Men\u00fc; auf den Karten stehen beide H\u00e4user als \uD83C\uDFE0. <a href="#ausfluege">Zu den Ausfl\u00fcgen \u2192</a>' },
     { at: '2026-09-26T16:00', text: '<b>Die Unterkunft ist gebucht!</b> Erst <b>Oasis Duna</b> im Ortskern (29.09.\u201306.10., 584,07\u00a0\u20ac), dann die Villa <b>Natural Renacer Zen</b> mit Pool (06.\u201312.10., 1.560\u00a0\u20ac). Beide Karten tragen jetzt ein gr\u00fcnes Schild, alle anderen Unterk\u00fcnfte sind ausgeblendet. Noch offen: Ausweisdaten an Nad schicken und bei Yolanda kl\u00e4ren, ob die Poolheizung (120\u00a0\u20ac) dazukommt. <a href="#kosten">Zu den Kosten \u2192</a>' },

@@ -43,6 +43,11 @@ Keine – alle entschieden (siehe unten).
   `renderWxHero(d)` reicht nur noch die Daten weiter. Tide, Wassertemperatur und Saharastaub holt der Kasten
   selbst (Marine + Air-Quality, alle 30 Min.). Fotos `../images/wx-*.webp` + `strand-tuerkis.webp`.
   Sicherung: `../_sicherungen/index_vor-wetterkopf_2026-09-27.html`.
+  **Nachtrag:** Stephan meinte eigentlich die Startseite. Jetzt gibt es zwei Kästen mit `class="wkopf"`, die
+  `WETTERKOPF.malen()` beide füllt (je eigener `Himmel`): **Startseite** `#home-weather.home-kopf` mit Kurve,
+  darunter wie bisher Sonnenzeiten, Gezeiten und Tage (`renderHomeSun`, das alte `sneak-now` entfällt dort);
+  **Wetterseite** `#wx-hero.ohne-kurve` ohne Linien (Stephans Wunsch – die Kurven stehen im Wetter-Tool).
+  Sicherung davor: `../_sicherungen/index_vor-startseiten-wetter_2026-09-27.html`.
 
 - **Wetterseite verschlankt (27.09.2026, live):** Entwurf `wetterseite-entwurf.html` 1:1 übernommen. In
   `../index.html`: `#wx-days-card` und `#wx-tiles` samt `renderWxDays`/`renderWxTiles`, Mond-Kachel
