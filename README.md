@@ -27,14 +27,14 @@ landen online. Alles andere in diesem Ordner bleibt lokal.
 | `images/` | Bilder der App. |
 | `Unterkuenfte_Fuerteventura.xlsx` | Arbeitsliste der Unterkünfte (Preise, Verfügbarkeit, Nummerierung). |
 | `dossiers/` | PDF-Dossiers zu den engeren Unterkunfts-Favoriten. |
-| `fuerteventura-reise-2026.md`, `fuerteventura-quellen.md`, `Recherche Quellen Fuerteventura.md`, `Fuerteventura_Quellen_Linkverzeichnis_2026.md` | Recherche-Notizen und Quellen. |
+| `Recherche/` | Recherche-Notizen, Quellen und die Restaurant-Excel. |
 | `Wetter Tool/` | Meteogramm-Baustein (Wetterdiagramme mit gemeinsamer Zeitachse), eigene README drin. |
 | `_sicherungen/` | Sicherungskopien vor größeren Änderungen (Excel-Stände, Worker-Stand). |
 | `_generator-quelle/` | Python-Skript und Fotos, mit denen die Villa-Unterseiten erzeugt wurden. |
-| `fuerteventura-reiseplaner.html`, `Fuerteventura Urlaubsplaner.html` | Ältere Stände vom 28.08., überholt durch `index.html`. |
-| `*.png` im Hauptordner | Screenshots aus dem Testen (Mobile-Ansichten, Karten, Kosten). Können weg. |
 
 ## Andere Reisen in diesem Ordner
+
+Liegen gesammelt in `Andere Reisen/`:
 
 - `nizza-2026/` – Nizza & Côte d'Azur, 3.–7.09.2026, gleicher Aufbau wie die Fuerte-App (Test der Übertragbarkeit).
 - `Nizza Reiseführer/` – Restaurant-Recherche dazu.
