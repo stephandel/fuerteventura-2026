@@ -36,6 +36,7 @@ Keine – alle entschieden (siehe unten).
 
 ## Entschieden
 
+- **Zoom & Linien (28.09.2026, live):** Knopfpaar − 🔍 + in der Knopfleiste, Stufen 2 / 1 / ½ / ¼ / ⅛ (gemerkt im Browser, `zoom`); beim Herauszoomen werden Beschriftungen ausgedünnt. Tide: gepunktete Linie über die Hochwasser-Spitzen (`huelle`). Tide und Wasser: waagerechte Linie auf Höhe des gewählten Werts plus Zahl an der Achse (`wertlinie`). Auf Handys ≤480 px heißt der Knopf nur „Jetzt“.
 - **Reihenfolge (28.09.2026, live):** Knopfleiste (↻ ‹ Jetzt zentrieren › ☰) direkt unter dem Diagramm, darunter Webcam/Satellit/Regen, ganz unten „Was der Tag bringt“. Das ☰-Menü klappt deshalb nach unten auf.
 - **Wetterkasten oben (27.09.2026, live):** Stephans Wahl aus `wetterkopf-probe.html`: Hintergrund D (Foto je
   Wetterlage + ziehende Wolken/Regen/Wetterleuchten/Calima-Dunst als Canvas), Aufbau 2 (Tageskurve Temperatur +

@@ -73,6 +73,14 @@
 /* Knöpfe als Leiste unter Diagramm und Bild - auf dem Handy nah am Daumen */
 .mg-knoepfe { position: relative; display: flex; justify-content: center; gap: 6px; padding: 10px 14px 4px; }
 .mg-btn-jetzt { flex: 0 1 220px; }
+/* Zoom: − 🔍 + als zusammenhängendes Paar */
+.mg-zoom { display: flex; align-items: center; gap: 0; }
+.mg-zoom .mg-btn { min-width: 34px; padding: 0 8px; font-size: 17px; }
+.mg-zoom .mg-btn:first-child { border-radius: 11px 0 0 11px; }
+.mg-zoom .mg-btn:last-child { border-radius: 0 11px 11px 0; }
+.mg-zoom-lupe { display: flex; align-items: center; justify-content: center; min-height: 40px; padding: 0 3px; font-size: 12px; border-top: 1px solid var(--mg-rand); border-bottom: 1px solid var(--mg-rand); background: var(--mg-flaeche2); }
+.mg-btn:disabled { opacity: 0.35; cursor: default; }
+@media (max-width: 480px) { .mg-knoepfe { gap: 4px; padding-left: 8px; padding-right: 8px; } .mg-knoepfe .mg-btn { padding: 0 8px; } .mg-jz { display: none; } }
 .mg-btn { min-height: 40px; min-width: 40px; padding: 0 12px; border-radius: 11px; border: 1px solid var(--mg-rand); background: var(--mg-flaeche2); color: var(--mg-text); font: 600 13.5px/1 var(--mg-serif); cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .mg-btn:active { transform: scale(0.97); }
 .mg-btn-jetzt { border-color: var(--mg-akzent); color: var(--mg-akzent); }
@@ -146,6 +154,8 @@
 .mg-ax-titel small { font-weight: 600; letter-spacing: 0; }
 .mg-ax-punkt { width: 8px; height: 8px; border-radius: 50%; flex: none; }
 .mg-ax-tick { position: absolute; right: 8px; font-family: var(--mg-mono); font-size: 11px; color: var(--mg-text-still); line-height: 14px; }
+.mg-ax-wert { position: absolute; right: 3px; font-family: var(--mg-mono); font-size: 11px; font-weight: 700; line-height: 14px; padding: 1px 3px; border-radius: 4px; background: var(--mg-flaeche); box-shadow: 0 0 0 1px currentColor; z-index: 1; }
+.mg-ax-wert[hidden] { display: none; }
 .mg-ax-datum { position: absolute; left: 0; padding: 0 10px 0 8px; display: flex; align-items: center; background: var(--mg-flaeche); font-size: 12px; font-weight: 700; color: var(--mg-text); white-space: nowrap; border-radius: 0 6px 6px 0; }
 .mg-cursor { position: absolute; top: 0; bottom: 0; left: 50%; width: 0; border-left: 2px solid var(--mg-text); opacity: 0.85; pointer-events: none; }
 .mg-cursor::before { content: ""; position: absolute; top: 0; left: -6px; border: 5px solid transparent; border-top: 7px solid var(--mg-text); }
@@ -158,6 +168,8 @@
 .mg-svg .mg-tagesband { fill: var(--mg-flaeche2); }
 .mg-svg .mg-nacht { fill: rgba(10,16,30,0.28); }
 .mg-svg .mg-grid { stroke: var(--mg-rand); stroke-width: 1; }
+.mg-svg .mg-huelle { fill: none; stroke-width: 1.2; stroke-dasharray: 1.5 3.5; stroke-linecap: round; opacity: 0.8; }
+.mg-svg .mg-wertlinie { stroke-width: 1; stroke-dasharray: 2 3; opacity: 0.9; }
 .mg-svg .mg-tag { stroke: var(--mg-text-still); stroke-width: 1; opacity: 0.6; }
 .mg-svg .mg-balken { opacity: 0.9; }
 .mg-svg .mg-balken2 { opacity: 0.32; }

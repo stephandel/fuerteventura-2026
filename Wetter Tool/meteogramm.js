@@ -76,11 +76,11 @@
                min:0, meer:true, icon:'🌊', fmt:function(v){ return dez(v, 1) + ' m'; },
                zelle:function(v){ return { wert: dez(v, 1), einheit: 'm' }; } },
     tide:    { titel:'Tide', einheit:'m', art:'linie', feld:'tide', farbe:'#4bc4cb',
-               glatt:true, extrema:'tide', meer:true, icon:'🌊',
+               glatt:true, extrema:'tide', huelle:true, wertlinie:true, meer:true, icon:'🌊',
                fmt:function(v){ return (v > 0 ? '+' : '') + dez(v, 1) + ' m'; },
                zelle:function(v, v2, d, i, steigt){ return { wert: (v > 0 ? '+' : '') + dez(v, 1), einheit: 'm', zusatz: steigt == null ? '' : (steigt ? 'steigt' : 'fällt') }; } },
     wasser:  { titel:'Wassertemperatur', kurz:'Wasser', einheit:'°C', art:'linie', feld:'wasser', farbe:'#3f8fd6',
-               glatt:true, meer:true, icon:'🌡️', fmt:function(v){ return dez(v, 1) + '°'; },
+               glatt:true, wertlinie:true, meer:true, icon:'🌡️', fmt:function(v){ return dez(v, 1) + '°'; },
                zelle:function(v){ return { wert: dez(v, 1), einheit: '°' }; } }
   };
 
@@ -222,6 +222,11 @@
 
     var el = {}, daten = null, cache = {}, geo = null, altT0 = null, datenNr = 0;
     var pxH = 26, idxJetzt = 0, sammler = 0, camAktuell = null;
+    // Zoom: 1 = normal (gut ein Tag im Bild), kleiner = mehr Tage auf einmal
+    var ZOOMS = [2, 1, 0.5, 0.25, 0.125];
+    var zoom = parseFloat(merkLesen('zoom', '1'));
+    if (ZOOMS.indexOf(zoom) < 0) zoom = 1;
+    var datumPlatz = 104;
     var webcam = { shots: [], speicher: false, ort: null };
     var ort = merkLesen('ort', ORTE[0].id);
     var ansicht = merkLesen('ansicht', 'webcam');
@@ -516,7 +521,8 @@
       var W = el.scroll.clientWidth;
       if (W < 40) return;                        // gerade nicht sichtbar
       var schmal = W < 560;
-      pxH = schmal ? Math.max(18, Math.min(40, Math.floor(W / 26))) : PXH_BREIT;
+      pxH = (schmal ? Math.max(18, Math.min(40, Math.floor(W / 26))) : PXH_BREIT) * zoom;
+      var tagB = 24 * pxH;                       // so viele Pixel breit ist ein Tag
       var zeileH = schmal ? ZEILE_H_SCHMAL : ZEILE_H_BREIT;
 
       var ZEILEN = sichtbareZeilen();
@@ -563,16 +569,19 @@
 
       // Senkrechte: alle 6 Stunden fein, Tagesgrenzen kräftig, oben Datum, unten Uhrzeit
       var heuteStr = jetztDort().toDateString();
+      var stdSchritt = pxH >= 9 ? 6 : pxH >= 4.5 ? 12 : 24;
+      var mitSymbol = TAGES_SYMBOL && tagB >= 170, kurzDatum = tagB < 64;
+      datumPlatz = mitSymbol ? 190 : kurzDatum ? 44 : 70;
       for (var i2 = 0; i2 < n; i2++) {
         var iso = daten.zeit[i2], hh = parseInt(iso.slice(11, 13), 10);
-        if (hh % 6 !== 0) continue;
+        if (hh % stdSchritt !== 0) continue;
         var istTag = hh === 0;
         s.push('<line class="' + (istTag ? 'mg-tag' : 'mg-grid') + '" x1="' + x(i2) + '" y1="' + BAND_TAG + '" x2="' + x(i2) + '" y2="' + plotUnten + '"/>');
-        s.push('<text class="mg-std" x="' + x(i2) + '" y="' + (hoehe - 7) + '" text-anchor="middle">' + iso.slice(11, 16) + '</text>');
+        if (stdSchritt < 24) s.push('<text class="mg-std" x="' + x(i2) + '" y="' + (hoehe - 7) + '" text-anchor="middle">' + iso.slice(11, 16) + '</text>');
         if (istTag) {
           var dt = new Date(iso);
-          var lab = (dt.toDateString() === heuteStr) ? 'Heute' : WOCHENTAG[dt.getDay()] + ' ' + pad2(dt.getDate()) + '.' + pad2(dt.getMonth() + 1) + '.';
-          if (TAGES_SYMBOL) {
+          var lab = (dt.toDateString() === heuteStr) ? 'Heute' : WOCHENTAG[dt.getDay()] + ' ' + pad2(dt.getDate()) + '.' + (kurzDatum ? '' : pad2(dt.getMonth() + 1) + '.');
+          if (mitSymbol) {
             var tg = daten.tage.filter(function(t){ return t.datum === iso.slice(0, 10); })[0];
             if (tg && tg.symbol) lab += '   ' + tg.symbol + ' ' + Math.round(tg.tmax) + '° / ' + Math.round(tg.tmin) + '°';
           }
@@ -606,6 +615,7 @@
           var txt = (g.z.id === 'welle' || g.z.id === 'tide' || g.z.id === 'regen' || (g.z.id === 'wasser' && t % 1)) ? dez(t, 1) : Math.round(t);
           a.push('<div class="mg-ax-tick" style="top:' + ty + 'px">' + txt + '</div>');
         });
+        if (g.z.wertlinie) a.push('<div class="mg-ax-wert" id="' + kid('wlw-' + g.z.id) + '" style="color:' + g.z.farbe + '" hidden></div>');
       });
       a.push('<div class="mg-ax-datum" id="' + kid('ax-datum') + '" style="top:0;height:' + BAND_TAG + 'px"></div>');
       el.achse.innerHTML = a.join('');
@@ -614,6 +624,7 @@
       webcamMarken();
       if (zentrierJetzt) zentrieren(idxJetzt, false); else anzeigen();
       datumsLabelsPruefen();
+      zoomKnoepfe();
     }
 
     function zeichneZeile(s, g, x, n, pxH){
@@ -645,7 +656,7 @@
 
       // Windpfeile: zeigen, wohin der Wind weht
       if (z.pfeile && daten[z.pfeile]) {
-        var R = daten[z.pfeile], schritt = pxH < 22 ? 3 : 2;
+        var R = daten[z.pfeile], schritt = Math.max(2, Math.ceil(16 / pxH));
         for (var q = 0; q < n; q += schritt) {
           if (R[q] == null) continue;
           var py = g.y0 + g.h - 7, px = x(q);
@@ -655,7 +666,7 @@
       }
 
       // Sonnenauf- und -untergang in das Titelband der Sonnenzeile
-      if (z.id === 'sonne') {
+      if (z.id === 'sonne' && 24 * pxH >= 110) {
         (daten.sonnenauf || []).forEach(function(iso){ var xi = idxFuerIso(iso); if (xi >= 0 && xi < n) s.push('<text class="mg-sonne" x="' + x(xi) + '" y="' + (g.yt + 15) + '" text-anchor="middle">↑ ' + iso.slice(11, 16) + '</text>'); });
         (daten.sonnenunter || []).forEach(function(iso){ var xi = idxFuerIso(iso); if (xi >= 0 && xi < n) s.push('<text class="mg-sonne" x="' + x(xi) + '" y="' + (g.yt + 15) + '" text-anchor="middle">↓ ' + iso.slice(11, 16) + '</text>'); });
       }
@@ -663,25 +674,35 @@
       if (z.extrema === 'tag') {
         tagesExtrema(F).forEach(function(e){
           s.push('<circle cx="' + x(e.i) + '" cy="' + g.yv(e.v) + '" r="3" fill="' + z.farbe + '"/>');
-          s.push('<text class="mg-mark" x="' + x(e.i) + '" y="' + (e.hoch ? g.yv(e.v) - 7 : g.yv(e.v) + 14) + '" text-anchor="middle">' + (e.hoch ? '↑ ' : '↓ ') + Math.round(e.v) + '°</text>');
+          if (24 * pxH >= 60) s.push('<text class="mg-mark" x="' + x(e.i) + '" y="' + (e.hoch ? g.yv(e.v) - 7 : g.yv(e.v) + 14) + '" text-anchor="middle">' + (e.hoch ? '↑ ' : '↓ ') + Math.round(e.v) + '°</text>');
         });
       }
       if (z.extrema === 'tide') {
-        tideExtrema(F).forEach(function(e){
-          s.push('<circle cx="' + x(e.i) + '" cy="' + g.yv(e.v) + '" r="3.5" fill="' + z.farbe + '"/>');
+        var ex = tideExtrema(F);
+        // Gepunktete Linie über die Hochwasser-Spitzen: zeigt, ob die Flut stärker (Springflut) oder schwächer wird
+        if (z.huelle) {
+          var spitzen = ex.filter(function(e){ return e.hoch; }).map(function(e){ return [x(e.i), g.yv(e.v) - 4]; });
+          if (spitzen.length > 1) s.push('<path class="mg-huelle" d="' + pfadAus(spitzen, true) + '" stroke="' + z.farbe + '"/>');
+        }
+        ex.forEach(function(e){
+          s.push('<circle cx="' + x(e.i) + '" cy="' + g.yv(e.v) + '" r="' + (pxH < 5 ? 2.5 : 3.5) + '" fill="' + z.farbe + '"/>');
           var dt = new Date(daten.t0.getTime() + e.i * 3600000);
-          s.push('<text class="mg-mark" x="' + x(e.i) + '" y="' + (e.hoch ? g.yv(e.v) - 8 : g.yv(e.v) + 15) + '" text-anchor="middle">' + pad2(dt.getHours()) + ':' + pad2(dt.getMinutes()) + '</text>');
+          if (pxH >= 7) s.push('<text class="mg-mark" x="' + x(e.i) + '" y="' + (e.hoch ? g.yv(e.v) - 8 : g.yv(e.v) + 15) + '" text-anchor="middle">' + pad2(dt.getHours()) + ':' + pad2(dt.getMinutes()) + '</text>');
         });
       }
 
+      // Waagerechte Linie auf Höhe des gewählten Werts (Lage wird beim Wischen nachgeführt)
+      if (z.wertlinie) s.push('<line class="mg-wertlinie" id="' + kid('wl-' + z.id) + '" x1="' + x(0) + '" x2="' + x(n - 1) + '" y1="0" y2="0" stroke="' + z.farbe + '" visibility="hidden"/>');
+
       // Tages-Fußzeile unter der Sonnenzeile
-      if (z.tagesinfo && g.extra) {
+      if (z.tagesinfo && g.extra && 24 * pxH >= 60) {
         var basis = g.y0 + g.h;
         daten.tage.forEach(function(t){
           var mitte = x((t.von + t.bis) / 2);
           if (t.bis - t.von < 6) return;                 // angeschnittene Tage weglassen
           var stunden = t.sonneMin / 60;
           s.push('<text class="mg-tagesinfo-stark" x="' + mitte + '" y="' + (basis + 15) + '" text-anchor="middle">☀ ' + dez(stunden, 1) + ' h</text>');
+          if (24 * pxH < 150) return;              // herausgezoomt: nur die Sonnenstunden
           var unten = (t.auf && t.unter ? t.auf + ' – ' + t.unter : '') + (t.uvMax != null ? '  ·  UV ' + Math.round(t.uvMax) : '');
           if (unten) s.push('<text class="mg-tagesinfo" x="' + mitte + '" y="' + (basis + 28) + '" text-anchor="middle">' + unten + '</text>');
           if (MOND && t.mond) {
@@ -822,9 +843,43 @@
           zellen.push(zelleHtml('Wasser', { wert: Math.round(daten.wasser[iR]), einheit: '°' }, '#3fa9c9'));
         }
         el.werte.innerHTML = zellen.join('');
+        wertlinienSetzen(f);
         tippsZeigen(f);
         bildZeigen(f);
       }, 16);
+    }
+
+    function wertlinienSetzen(f){
+      geo.zeilen.forEach(function(g){
+        if (!g.z.wertlinie) return;
+        var linie = document.getElementById(kid('wl-' + g.z.id)), marke = document.getElementById(kid('wlw-' + g.z.id));
+        if (!linie || !marke) return;
+        var w = wertBei(g.z, f);
+        if (w.v == null) { linie.setAttribute('visibility', 'hidden'); marke.hidden = true; return; }
+        var yy = g.yv(Math.max(g.s.lo, Math.min(g.s.hi, w.v)));
+        linie.setAttribute('y1', yy); linie.setAttribute('y2', yy); linie.setAttribute('visibility', 'visible');
+        marke.textContent = g.z.id === 'tide' ? dez(w.v, 2) : dez(w.v, 1);
+        marke.style.top = Math.max(g.y0 - 2, Math.min(g.y0 + g.h - 12, yy - 8)) + 'px';
+        marke.hidden = false;
+      });
+    }
+
+    function zoomen(richtung){
+      var k = ZOOMS.indexOf(zoom) + richtung;
+      if (k < 0 || k >= ZOOMS.length) return;
+      // Nicht weiter herauszoomen, wenn schon alles ins Bild passt
+      if (richtung > 0 && geo && (geo.n - 1) * pxH < el.scroll.clientWidth * 0.8) return;
+      var mitte = idxAusScroll();
+      zoom = ZOOMS[k]; merkSchreiben('zoom', String(zoom));
+      zeichnen(false);
+      zentrieren(mitte, false);
+      zoomKnoepfe();
+    }
+    function zoomKnoepfe(){
+      var k = ZOOMS.indexOf(zoom);
+      var rein = document.getElementById(kid('zoomrein')), raus = document.getElementById(kid('zoomraus'));
+      if (rein) rein.disabled = k <= 0;
+      if (raus) raus.disabled = k >= ZOOMS.length - 1 || (geo && (geo.n - 1) * pxH < el.scroll.clientWidth * 0.8);
     }
 
     // ---------- Tipps zum Tag ----------
@@ -926,7 +981,7 @@
       if (!el.svgWrap || !el.scroll) return;
       var links2 = el.scroll.scrollLeft;
       [].forEach.call(el.svgWrap.querySelectorAll('.mg-datum'), function(t){
-        t.style.visibility = (parseFloat(t.getAttribute('data-x')) - links2 < (TAGES_SYMBOL ? 190 : 104)) ? 'hidden' : '';
+        t.style.visibility = (parseFloat(t.getAttribute('data-x')) - links2 < Math.max(datumPlatz, TAGES_SYMBOL ? 190 : 104)) ? 'hidden' : '';
       });
     }
 
@@ -1282,9 +1337,14 @@
         '<div class="mg-knoepfe">' +
           (KNOEPFE_MITTIG ? '<button type="button" class="mg-btn mg-btn-frisch" id="' + kid('frisch') + '" aria-label="Werte auffrischen" title="Werte neu holen">↻</button>' : '') +
           '<button type="button" class="mg-btn" id="' + kid('zurueck') + '" aria-label="Einen Tag zurück">‹</button>' +
-          '<button type="button" class="mg-btn mg-btn-jetzt" id="' + kid('jetzt') + '">Jetzt zentrieren</button>' +
+          '<button type="button" class="mg-btn mg-btn-jetzt" id="' + kid('jetzt') + '">Jetzt<span class="mg-jz"> zentrieren</span></button>' +
           '<button type="button" class="mg-btn" id="' + kid('vor') + '" aria-label="Einen Tag vor">›</button>' +
           (KNOEPFE_MITTIG ? '' : '<button type="button" class="mg-btn mg-btn-frisch" id="' + kid('frisch') + '" aria-label="Werte auffrischen" title="Werte neu holen">↻</button>') +
+          '<span class="mg-zoom">' +
+            '<button type="button" class="mg-btn" id="' + kid('zoomraus') + '" aria-label="Herauszoomen: mehr Tage zeigen" title="Mehr Tage zeigen">−</button>' +
+            '<span class="mg-zoom-lupe" aria-hidden="true">🔍</span>' +
+            '<button type="button" class="mg-btn" id="' + kid('zoomrein') + '" aria-label="Hineinzoomen: weniger Stunden zeigen" title="Genauer zeigen">+</button>' +
+          '</span>' +
           '<span class="mg-zeilenwahl">' +
             '<button type="button" class="mg-btn" id="' + kid('zbtn') + '" aria-expanded="false" title="Welche Zeilen anzeigen?">☰</button>' +
             '<div class="mg-zeilen-panel" id="' + kid('zpanel') + '" hidden><h4>Welche Zeilen?</h4></div>' +
@@ -1390,6 +1450,8 @@
       document.getElementById(kid('frisch')).addEventListener('click', function(){ auffrischen(true); });
       document.getElementById(kid('zurueck')).addEventListener('click', function(){ zentrieren(idxAusScroll() - 24, true); });
       document.getElementById(kid('vor')).addEventListener('click', function(){ zentrieren(idxAusScroll() + 24, true); });
+      document.getElementById(kid('zoomraus')).addEventListener('click', function(){ zoomen(1); });
+      document.getElementById(kid('zoomrein')).addEventListener('click', function(){ zoomen(-1); });
 
       var letzteBreite = 0;
       if (global.ResizeObserver) {
