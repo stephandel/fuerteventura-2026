@@ -36,6 +36,7 @@ Keine – alle entschieden (siehe unten).
 
 ## Entschieden
 
+- **Reihenfolge (28.09.2026, live):** Knopfleiste (↻ ‹ Jetzt zentrieren › ☰) direkt unter dem Diagramm, darunter Webcam/Satellit/Regen, ganz unten „Was der Tag bringt“. Das ☰-Menü klappt deshalb nach unten auf.
 - **Wetterkasten oben (27.09.2026, live):** Stephans Wahl aus `wetterkopf-probe.html`: Hintergrund D (Foto je
   Wetterlage + ziehende Wolken/Regen/Wetterleuchten/Calima-Dunst als Canvas), Aufbau 2 (Tageskurve Temperatur +
   Tide), Schrift 4 (Inter 200), Ecken sanft (12 px). In `../index.html` als gekapselter Block `WETTERKOPF`
