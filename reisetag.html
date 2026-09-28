@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Reisetag – Fuerteventura 2026</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap">
+<style>
+  html, body { padding: env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px); }
+
+  :root {
+    --bg: #f3efe5; --surface: #fbf9f3; --surface2: #ebe5d6; --border: #d6cfbe;
+    --ink: #17232b; --dim: #667279; --accent: #12858e; --accent-soft: rgba(18,133,142,.13);
+    --warm: #b8672c; --warn: #c4402c; --ok: #2f8f5b;
+    --sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { color-scheme: dark; --bg: #0f1a21; --surface: #16242c; --surface2: #1d2e38; --border: #2b3f4a; --ink: #edf1f2; --dim: #9aabb2; --accent: #3fcbd3; --accent-soft: rgba(63,203,211,.16); --warm: #e39a62; --warn: #f07a66; --ok: #5fc48c; }
+  }
+  :root[data-theme="dark"] { color-scheme: dark; --bg: #0f1a21; --surface: #16242c; --surface2: #1d2e38; --border: #2b3f4a; --ink: #edf1f2; --dim: #9aabb2; --accent: #3fcbd3; --accent-soft: rgba(63,203,211,.16); --warm: #e39a62; --warn: #f07a66; --ok: #5fc48c; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 500 15px/1.5 var(--sans); font-variant-numeric: tabular-nums; }
+  .wrap { max-width: 680px; margin: 0 auto; padding-inline: 16px; padding-block: 20px 60px; display: grid; gap: 22px; }
+  h1 { margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -.02em; line-height: 1.15; text-wrap: balance; }
+  h2 { margin: 0; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); font-weight: 800; }
+  p { margin: 0; }
+  a { color: var(--accent); }
+  .kopf { display: grid; gap: 8px; }
+  .kopf p { color: var(--dim); }
+  .eck { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  @media (max-width: 480px) { .eck { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .eck div { display: grid; gap: 2px; padding: 10px 12px; border-radius: 10px; background: var(--surface); border: 1px solid var(--border); }
+  .eck small { font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); font-weight: 700; }
+  .eck b { font-size: 20px; font-weight: 800; line-height: 1.1; }
+  .eck span { font-size: 12px; color: var(--dim); }
+  .hinweis { padding: 12px 14px; border-radius: 10px; background: var(--accent-soft); font-size: 14px; }
+  .hinweis b { font-weight: 700; }
+  .hinweis.warn { background: rgba(196,64,44,.12); }
+  section { display: grid; gap: 10px; }
+  .tl { display: grid; gap: 0; }
+  .schritt { display: grid; grid-template-columns: 58px 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .schritt:last-child { border-bottom: 0; }
+  .schritt .zeit { font-weight: 800; font-size: 15px; line-height: 1.3; }
+  .schritt .zeit small { display: block; font-weight: 600; font-size: 11px; color: var(--dim); }
+  .schritt .was { display: grid; gap: 5px; min-width: 0; }
+  .schritt .was b { font-weight: 700; }
+  .schritt .was p { font-size: 14px; color: var(--ink); }
+  .schritt .was p.d { color: var(--dim); font-size: 13px; }
+  .schritt.wichtig .zeit { color: var(--accent); }
+  .schritt .tag { display: inline-block; padding: 2px 8px; border-radius: 6px; background: var(--surface2); font-size: 11.5px; font-weight: 700; color: var(--dim); }
+  .schritt .tag.ort { background: var(--accent-soft); color: var(--accent); }
+  .liste { display: grid; gap: 6px; }
+  .liste label { display: grid; grid-template-columns: 24px 1fr; gap: 10px; align-items: start; padding: 9px 12px; border-radius: 10px; background: var(--surface); border: 1px solid var(--border); cursor: pointer; }
+  .liste label input { width: 20px; height: 20px; margin: 1px 0 0; accent-color: var(--accent); }
+  .liste label span { font-size: 14px; }
+  .liste label span small { display: block; color: var(--dim); font-size: 12.5px; }
+  .liste label:has(input:checked) { opacity: .55; }
+  .liste label:has(input:checked) span { text-decoration: line-through; }
+  .zaehler { font-size: 12.5px; color: var(--dim); }
+  .wetter { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  @media (max-width: 480px) { .wetter { grid-template-columns: 1fr; } }
+  .wetter div { padding: 12px 14px; border-radius: 10px; background: var(--surface); border: 1px solid var(--border); font-size: 14px; display: grid; gap: 3px; }
+  .wetter b { font-weight: 800; }
+  .kontakt { display: grid; gap: 6px; }
+  .kontakt div { display: flex; justify-content: space-between; gap: 10px; padding: 9px 12px; border-radius: 10px; background: var(--surface); border: 1px solid var(--border); font-size: 14px; flex-wrap: wrap; }
+  .kontakt div b { font-weight: 700; }
+  .kontakt div span { user-select: all; -webkit-user-select: all; }
+  .fuss { color: var(--dim); font-size: 12.5px; display: grid; gap: 4px; }
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <p><a href="index.html" style="font-weight:700;text-decoration:none">← Zurück zur Startseite</a></p>
+  <header class="kopf">
+    <h2>Dienstag, 29. September 2026</h2>
+    <h1>Reisetag: von zu Hause bis zur Wohnung in Corralejo</h1>
+    <p>Alle Uhrzeiten bis zur Landung in deutscher Zeit, danach in Ortszeit. Fuerteventura ist <b>eine Stunde hinter</b> Deutschland – das Handy stellt sich selbst um.</p>
+    <div class="eck">
+      <div><small>Abflug FRA</small><b>12:10</b><span>Condor DE 1402</span></div>
+      <div><small>Landung FUE</small><b>15:45</b><span>Ortszeit · 4 h 35</span></div>
+      <div><small>Mietwagen</small><b>16:00</b><span>Autoreisen · Seat Ibiza</span></div>
+      <div><small>Wohnung ab</small><b>15:00</b><span>Oasis Duna, Tür A216</span></div>
+    </div>
+  </header>
+
+  <section>
+    <h2>Heute noch · Montag 28.09.</h2>
+    <p class="zaehler" id="z-heute"></p>
+    <div class="liste" data-liste="heute">
+      <label><input type="checkbox" data-id="h-checkin"><span><b>Ab 12:10 Uhr: Online-Check-in bei Condor</b><small>Bordkarten aufs Handy (Condor-App oder Wallet) und zusätzlich als Screenshot. Sitzplätze prüfen.</small></span></label>
+      <label><input type="checkbox" data-id="h-nad"><span><b>Nachricht von Nad mit dem Code für den Schlüsselkasten</b><small>Sie meldet sich laut Buchung einen Tag vorher, also heute. Bis heute Abend nichts da? Kurz über Airbnb oder WhatsApp nachfragen.</small></span></label>
+      <label><input type="checkbox" data-id="h-belege"><span><b>Alle Bestätigungen offline aufs Handy</b><small>Condor-Buchung, SmartWay-Mail, Autoreisen-Bestätigung mit Reservierungsnummer, Airbnb Oasis Duna, Lobos-Genehmigung. Als PDF oder Screenshot, nicht nur im Postfach.</small></span></label>
+      <label><input type="checkbox" data-id="h-mietwagen"><span><b>Mietwagen-Unterlagen in eine Hülle</b><small>Ausweis, Führerschein, Kreditkarte auf den Namen des Fahrers, Reservierungsnummer. Keine Kaution nötig, die Karte wird trotzdem verlangt.</small></span></label>
+      <label><input type="checkbox" data-id="h-koffer"><span><b>Koffer wiegen: max. 20 kg pro Person</b><small>Handgepäck max. 8 kg. Powerbank und Ladekabel ins Handgepäck, Flüssigkeiten bis 100 ml in einen Beutel. Kein Adapter nötig.</small></span></label>
+      <label><input type="checkbox" data-id="h-sonne"><span><b>Sonnencreme LSF 50 und Aloe-Gel griffbereit</b><small>Morgen Nachmittag UV 7,5 bei 29 Grad – die ersten Stunden am Meer sind die gefährlichsten.</small></span></label>
+      <label><input type="checkbox" data-id="h-geld"><span><b>Etwas Bargeld</b><small>Für Marktstände, kleine Bars, die Lobos-Fähre.</small></span></label>
+      <label><input type="checkbox" data-id="h-handy"><span><b>Handy: Speicher frei, Fotos gesichert, Offline-Karte geladen</b><small>Offline-Karte ist laut Aufgabenliste schon erledigt.</small></span></label>
+      <label><input type="checkbox" data-id="h-wohnung"><span><b>Wohnung reisefertig</b><small>Müll raus, Kühlschrank leeren, Pflanzen und Post geregelt, Heizung runter, Fenster zu.</small></span></label>
+      <label><input type="checkbox" data-id="h-wecker"><span><b>Wecker stellen, Autoschlüssel und Ausweise an die Tür legen</b></span></label>
+    </div>
+  </section>
+
+  <section>
+    <h2>Morgen früh · bis wir sitzen</h2>
+    <div class="tl">
+      <div class="schritt"><div class="zeit">07:30<small>zu Hause</small></div><div class="was"><b>Aufstehen, in Ruhe frühstücken</b><p class="d">Letzter Blick in die Wohnung. Ausweise, Führerschein, Kreditkarte, Handy, Ladekabel: alles am Mann.</p></div></div>
+      <div class="schritt wichtig"><div class="zeit">09:15<small>Abfahrt</small></div><div class="was"><b>Los zum Flughafen Frankfurt</b><p>Rund 75 km, 40 bis 55 Minuten. Der Puffer ist knapp – bei Stau auf dem Weg direkt zur SmartWay-Kontrolle denken, das Gepäck geht auch kurz davor noch weg.</p><p class="d">Wetter in Frankfurt: trocken, 15 Grad, leicht bewölkt – gute Fahrt.</p></div></div>
+      <div class="schritt"><div class="zeit">10:10<small>THE SQUAIRE</small></div><div class="was"><b>Parken bei THE SQUAIRE</b><p>Am Fernbahnhof, direkt bei Terminal 1. Parkplatz ist bestätigt. Von dort etwa 15 Minuten zu Fuß ins Terminal.</p><p class="d">Parkdeck und Stellplatz fotografieren – in 13 Tagen weiß das keiner mehr.</p></div></div>
+      <div class="schritt"><div class="zeit">10:30<small>Terminal 1</small></div><div class="was"><b>Gepäck bei Condor abgeben</b><p>Bordkarten sind schon auf dem Handy, also nur zur Gepäckabgabe. Den Condor-Bereich in Terminal 1 zeigen die Anzeigetafeln.</p><p class="d">Bis zur SmartWay-Kontrolle bleibt nur eine Viertelstunde – Wasserflasche schon vorher leeren. Nicht durch die normale Sicherheitskontrolle gehen!</p></div></div>
+      <div class="schritt wichtig"><div class="zeit">10:45<small>bis 11:00</small></div><div class="was"><b>SmartWay-Sicherheitskontrolle</b><span class="tag">Terminal 1 · Kontrollstelle Gates B1–B63</span><p>Bordkarte vorzeigen, das Zeitfenster ist gebucht. Bestätigungsmail griffbereit. Laptop und Flüssigkeiten raus, wie immer.</p></div></div>
+      <div class="schritt"><div class="zeit">11:05<small>hinter der Kontrolle</small></div><div class="was"><b>Gate suchen, Wasser auffüllen</b><p>Das Gate steht auf der Anzeige und in der Condor-App. Es liegt im B-Bereich, dafür ist die Kontrollstelle gewählt.</p></div></div>
+      <div class="schritt"><div class="zeit">11:30<small>Boarding</small></div><div class="was"><b>Einsteigen</b><p class="d">Condor beginnt etwa 40 Minuten vor Abflug. Bordkarte und Ausweis in der Hand.</p></div></div>
+      <div class="schritt wichtig"><div class="zeit">12:10<small>Abflug</small></div><div class="was"><b>DE 1402 nach Fuerteventura, 4 h 35</b><p>Essen ist bestellt: Stephan Pasta Bolognese, Bilgen rotes Thai-Curry. Ab jetzt läuft die Uhr eine Stunde zurück.</p><p class="d">Zeit für die Ausflugsliste – nichts entscheiden, nur Lust machen.</p></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Nachmittag · Ortszeit, eine Stunde früher</h2>
+    <div class="tl">
+      <div class="schritt wichtig"><div class="zeit">15:45<small>Landung FUE</small></div><div class="was"><b>Ankunft Fuerteventura</b><p>Keine Passkontrolle (EU). Handys an: Nachricht von Nad prüfen, ob der Code da ist. Dann zum Gepäckband.</p></div></div>
+      <div class="schritt wichtig"><div class="zeit">16:00<small>Ankunftshalle</small></div><div class="was"><b>Autoreisen: Seat Ibiza abholen</b><span class="tag">Ausweis · Führerschein · Kreditkarte · Reservierungsnummer</span><p>Die Mietwagenschalter sind in der Ankunftshalle ausgeschildert („Rent a car“). Keine Kaution, Vollkasko ohne Selbstbeteiligung ist drin.</p><p class="d">Beim Auto: einmal rundherum Fotos und ein kurzes Video, Kratzer im Vertrag vermerken lassen, Tankanzeige fotografieren (voll übernehmen, voll zurück). Nicht gedeckt: Reifen, Felgen, Schlüssel, Falschbetankung.</p></div></div>
+      <div class="schritt"><div class="zeit">16:30<small>Abfahrt</small></div><div class="was"><b>Nach Corralejo: 36 km, etwa 45 Minuten</b><p>Vom Flughafen auf die FV-2 Richtung Puerto del Rosario, dann die FV-1 nach Norden bis Corralejo. Eine Straße, kaum zu verfehlen.</p><p class="d">Wetter bei Ankunft: 29 Grad, klar, nur 12 km/h Wind – für Fuerteventura fast Windstille. Böen bis 30.</p></div></div>
+      <div class="schritt wichtig"><div class="zeit">17:15<small>Corralejo</small></div><div class="was"><b>Oasis Duna, Calle Maxorata 2, Tür A216</b><span class="tag ort">Check-in ab 15:00 · Code-Schlüsselkasten</span><p>Im Süden des Ortskerns nahe Calle Gran Canaria. Parken kostenlos vor der Anlage, manchmal voll – dann eine Straße weiter. Code eingeben, Schlüssel raus, rein.</p><p class="d">Erste fünf Minuten: Wohnung einmal filmen (Zustand), WLAN verbinden, Wasser aufdrehen, Schlüsselkasten wieder schließen. Gastgeberin Nad, WhatsApp +34 674 730 598.</p></div></div>
+      <div class="schritt"><div class="zeit">17:45<small>Einkauf</small></div><div class="was"><b>Das Nötigste für Frühstück und Wasser</b><p>Supermärkte gibt es im Ort (Mercadona, HiperDino, Lidl an der Ortseinfahrt); die Anlage hat einen kleinen Laden für den Notfall. Google Maps mit der Offline-Karte zeigt den nächsten.</p></div></div>
+      <div class="schritt"><div class="zeit">18:45<small>zu Fuß</small></div><div class="was"><b>Erster Gang ins Zentrum, ans Wasser</b><p>Sonnenuntergang um <b>19:43</b>. Das Wasser läuft ab (Niedrigwasser 21:00), der Strand ist abends breit.</p><p class="d">Abendessen: die Gastro-Seite rechnet alle Lokale in Kilometern ab der Oasis Duna. Die guten Läden sind abends voll, lieber früh hingehen.</p></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Wetter morgen</h2>
+    <div class="wetter">
+      <div><b>Frankfurt, morgens</b><span>15 Grad, trocken, leicht bewölkt. Kein Regen.</span></div>
+      <div><b>Corralejo, 15 bis 19 Uhr</b><span>29 Grad, klar, Wind 12 bis 16 km/h (Böen 30), UV 7,5. Sonne 07:47 bis 19:43.</span></div>
+      <div><b>Gezeiten Corralejo</b><span>Hochwasser 15:00 · Niedrigwasser 21:00 · nächstes Hochwasser gegen 03:00.</span></div>
+      <div><b>Abend</b><span>25 Grad um 21 Uhr, Wind lässt nach. Draußen essen geht.</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Nummern und Links</h2>
+    <div class="kontakt">
+      <div><b>Nad (Oasis Duna), WhatsApp</b><span>+34 674 730 598</span></div>
+      <div><b>Notruf Spanien</b><span>112</span></div>
+      <div><b>Condor: Buchung, Check-in</b><a href="https://www.condor.com/tcibe/de/mybooking/login" target="_blank" rel="noopener">condor.com ↗</a></div>
+      <div><b>Autoreisen: Reservierung</b><a href="https://www.autoreisen.com/de/kunden/meine-reservierung" target="_blank" rel="noopener">autoreisen.com ↗</a></div>
+      <div><b>Reiseseite mit Wetter, Gastro, Ausflügen</b><a href="index.html">Zur Startseite →</a></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Noch offen, aber nicht für morgen</h2>
+    <div class="hinweis"><b>Renacer Zen:</b> Die Storno-Frist läuft morgen um 15:00 Uhr ab – mitten im Flug. Nur wichtig, falls ihr die Villa doch nicht wollt; dann heute entscheiden. <b>Poolheizung</b> (120 €) bei Yolanda klären, das geht entspannt von der Insel aus. <b>Restaurants vormerken</b> und die <b>Packliste</b> sind auf der Seite noch nicht abgehakt.</div>
+  </section>
+
+  <footer class="fuss">
+    <div>Stand: Montag 28.09.2026, morgens. Wetter und Gezeiten von Open-Meteo, Fahrzeit vom Flughafen nach OSRM (36 km, 45–55 min), Aufgabenstand von eurer Reiseseite.</div>
+    <div>Haken auf dieser Seite bleiben nur auf diesem Gerät gespeichert.</div>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var ids = [];
+  document.querySelectorAll('.liste input').forEach(function(cb){
+    ids.push(cb.getAttribute('data-id'));
+    try { cb.checked = localStorage.getItem('reisetag-' + cb.getAttribute('data-id')) === '1'; } catch(e){}
+    cb.addEventListener('change', function(){
+      try { localStorage.setItem('reisetag-' + cb.getAttribute('data-id'), cb.checked ? '1' : '0'); } catch(e){}
+      zaehlen();
+    });
+  });
+  function zaehlen(){
+    var alle = document.querySelectorAll('.liste input'), an = 0;
+    alle.forEach(function(cb){ if (cb.checked) an++; });
+    var z = document.getElementById('z-heute');
+    z.textContent = an === alle.length ? 'Alles erledigt – gute Reise.' : an + ' von ' + alle.length + ' erledigt';
+  }
+  zaehlen();
+})();
+</script>
+
+</body>
+</html>

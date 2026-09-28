@@ -134,6 +134,12 @@ body { padding-bottom: env(safe-area-inset-bottom, 0px); }
 .hero-card .eyebrow { color: var(--teal); }
 .hero-card h1 { color: var(--ink); font-size: clamp(2rem, 5vw, 3.1rem); letter-spacing: -0.028em; }
 .hero-card .sub { color: var(--ink-dim); }
+/* Reisetag-Karte im Kopf der Startseite (28.09.2026) */
+.reisetag-card { display: flex; flex-direction: column; gap: 4px; margin-top: 18px; padding: 14px 16px; border-radius: 14px; background: var(--teal); color: #fff; text-decoration: none; box-shadow: var(--shadow); }
+.reisetag-card .rt-eyebrow { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; font-weight: 700; opacity: .9; }
+.reisetag-card strong { font-size: 15px; line-height: 1.35; font-weight: 700; }
+.reisetag-card .rt-more { font-size: 13px; font-weight: 600; opacity: .95; }
+.reisetag-card:active { transform: scale(.99); }
 .countdown { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 24px; }
 .cd-box { background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 12px 6px; min-width: 0; text-align: center; }
 .cd-box .cd-n { font-family: "JetBrains Mono", monospace; font-size: clamp(1.15rem, 5.2vw, 1.6rem); font-weight: 700; display: block; color: var(--ink); line-height: 1.15; }
@@ -1500,6 +1506,11 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
           <div class="cd-box"><span class="cd-n" id="cd-m">–</span><span class="cd-l">Min.</span></div>
           <div class="cd-box"><span class="cd-n" id="cd-s">–</span><span class="cd-l">Sek.</span></div>
         </div>
+        <a class="reisetag-card" href="reisetag.html">
+          <span class="rt-eyebrow">Dienstag, 29.09. · Reisetag</span>
+          <strong>Der Plan bis zur Wohnung: Abfahrt 09:15, SmartWay 10:45, Flug 12:10, Mietwagen 16:00, Oasis Duna Tür A216</strong>
+          <span class="rt-more">Zum Zeitplan mit Checkliste →</span>
+        </a>
       </div>
     </div>
   </div>
@@ -7653,7 +7664,7 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     // die, von der aus gerade gerechnet wird, ist gross und gruen.
     if (kind !== 'acc' && BASEN) {
       var aktiv = basisAktiv();
-      [['oasis', 28.7298, -13.8694, 'C. Maxorata 2 \u00b7 29.09.\u201306.10.'],
+      [['oasis', 28.7298, -13.8694, 'C. Maxorata 2, T\u00fcr A216 \u00b7 29.09.\u201306.10.'],
        ['renacer', 28.7093358, -13.8710096, 'C. Pardelas 7 \u00b7 06.\u201312.10.']].forEach(function(h){
         var an = h[0] === aktiv;
         var mk = L.marker([h[1], h[2]], {icon: lmIcon('home', '\uD83C\uDFE0', an ? ' aktiv' : ''), title: BASEN[h[0]].name, zIndexOffset: an ? 1000 : 500});
@@ -9287,8 +9298,8 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 
     'oasis-duna': { ppn: 82.7, gesamt: 827, frei: ['2026-09-29','2026-10-09'],
       krit: { pool:'ja', eigpool:'nein', heizpool:'unklar', grill:'nein', ac:'nein', balkon:'ja', kueche:'ja', wlan:'ja', parken:'ja', wholeplace:'ja', freecancel:'nein' },
-      adresse: 'C. Maxorata, 2, 35660 Corralejo, Las Palmas (laut Buchung)',
-      fussnote: '<strong>\u2705 Gebucht am 26.09.2026:</strong> 29.09.\u201306.10. (7\u00a0N\u00e4chte), <b>584,07\u00a0\u20ac</b>, nicht erstattungsf\u00e4hig. Adresse: C. Maxorata\u00a02, Corralejo. Check-in ab 15:00 per Code-Schl\u00fcsselkasten (Nad meldet sich einen Tag vorher), Check-out bis 11:00. Gastgeberin Nad, WhatsApp +34\u00a0674\u00a0730\u00a0598.<br>' +
+      adresse: 'C. Maxorata 2, Tür A216, 35660 Corralejo, Las Palmas (laut Buchung)',
+      fussnote: '<strong>\u2705 Gebucht am 26.09.2026:</strong> 29.09.\u201306.10. (7\u00a0N\u00e4chte), <b>584,07\u00a0\u20ac</b>, nicht erstattungsf\u00e4hig. Adresse: C. Maxorata\u00a02, T\u00fcr A216, Corralejo. Check-in ab 15:00 per Code-Schl\u00fcsselkasten (Nad meldet sich einen Tag vorher), Check-out bis 11:00. Gastgeberin Nad, WhatsApp +34\u00a0674\u00a0730\u00a0598.<br>' +
         '<strong>Preise vom 26.09.2026, nachmittags nachgepr\u00fcft</strong> (Airbnb, mit Gastgeber- und Last-Minute-Rabatt, nicht erstattungsf\u00e4hig). Frei 29.09.\u201309.10.:<br>' +
         '<span style="display:inline-block;margin-top:4px;line-height:1.7">' +
         '29.09.\u201303.10. \u00b7 4\u00a0N\u00e4chte \u00b7 <b>352\u00a0\u20ac</b> \u00b7 88\u00a0\u20ac/Nacht<br>' +
