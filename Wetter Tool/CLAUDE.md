@@ -5,7 +5,7 @@ findet unten alles, um nahtlos weiterzumachen. Die Bedienung und Einstellungen d
 `README.md`, ausführlichere Hintergründe im Gedächtnis des Projekts (Notizen `fuerte-meteogramm`,
 `fuerte-webcams`, `fuerte-satellitenbilder`, `fuerte-mondbild`, `fuerte-offene-punkte`).
 
-Stand: **27.09.2026**
+Stand: **28.09.2026**
 
 ## Für wen
 
@@ -29,6 +29,28 @@ keine Pillen, nicht „zu rund“**.
 Live: https://stephandel.github.io/fuerteventura-2026/Wetter%20Tool/entwurf.html und
 `…/schriftprobe.html`. Veröffentlichen = `git push` im Oberordner (GitHub Pages). Achtung: Alles in
 diesem Ordner wird mit veröffentlicht (Positivliste in `../.gitignore`), also auch diese Datei.
+
+## Konzepte vom 28.09.2026 (Ordner `konzepte/`) – hier geht es weiter
+
+Stephan hat zwei Konzept-Seiten als Claude-Artifacts bekommen und will daran **weiterarbeiten**:
+
+- **„Passat“ – Claudes Entwurf der perfekten Fuerteventura-Wetter-App** (ohne Vorgaben):
+  Artifact https://claude.ai/artifact/Pc7yBycS2fhAy8U2hcirpw · Quelle `konzepte/passat.html`
+  (Fotos über `../../images/`). Bausteine: Jetzt-Bild mit Foto je Tageszeit, „Was heute geht“
+  (Strand/Wasser/Wind/Abend mit Zeitfenstern), Strand-Kompass (Inselkarte mit Note je Ort),
+  Stundenverlauf mit Wochenkarte, 7 Tage, Tide-Uhr/Sonne/Mond, Windrose, Calima, Webcams.
+  Beispieldaten. Schrift Fraunces + Plus Jakarta Sans, Sand/Nachtmeer, Türkis, Vulkan-Ocker.
+- **Knopfleiste-Baukasten** (Knöpfe unter dem Diagramm): Artifact
+  https://claude.ai/artifact/MZhaXet8yzKrUzycegFCVL · Quelle `konzepte/knopfleiste-baukasten.html`.
+  Presets „So ist es heute“, „Claudes Vorschlag“ (Jetzt mittig, nur Rand, Türkis, Lupe halbdurchsichtig
+  rechts unten im Diagramm + Zwei-Finger-Zoom, Extras) und „Claude pur“ (7-Tage-Übersichtskarte statt
+  Pfeilen). Stephans Auswahl landet per „Auswahl speichern“ in der Artifact-Datenbank
+  (`ArtifactData` get, collection `konzept`, doc `knopfleiste`). Noch nicht entschieden.
+
+Weiterarbeiten: Artifact per `read` mit der URL holen, ändern, mit `url` republishen; die Kopie in
+`konzepte/` mitziehen (Seitengerüst `<!doctype html>` bleibt nur in der Repo-Kopie).
+Fallstrick aus dem Bau: Scroll-Bereiche in Grid-Eltern brauchen `min-width: 0`, sonst wächst das
+Diagramm endlos in die Breite.
 
 ## Offene Entscheidungen von Stephan
 

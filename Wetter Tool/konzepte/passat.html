@@ -1,0 +1,837 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Passat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,500&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap">
+<style>
+  :root {
+    --bg: #efe8d8;          /* Sand */
+    --surface: #f8f4ea;
+    --surface2: #e9e1cf;
+    --border: #d5cbb6;
+    --ink: #10202a;         /* Nachtmeer */
+    --dim: #5f6d73;
+    --accent: #128f98;      /* Türkis, auf Sand abgedunkelt */
+    --accent-soft: rgba(18,143,152,.14);
+    --warm: #b9682f;        /* Vulkan-Ocker */
+    --warn: #c8432f;
+    --shadow: 0 1px 2px rgba(16,32,42,.08), 0 10px 30px -18px rgba(16,32,42,.35);
+    --display: "Fraunces", Georgia, "Times New Roman", serif;
+    --sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+    --r: 14px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #0b1620; --surface: #122029; --surface2: #182a35; --border: #263a46;
+      --ink: #ecf1f2; --dim: #97a9b0; --accent: #3fd0d8; --accent-soft: rgba(63,208,216,.16); --warm: #e0955e; --warn: #f0705d;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 30px -18px rgba(0,0,0,.7);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #0b1620; --surface: #122029; --surface2: #182a35; --border: #263a46;
+    --ink: #ecf1f2; --dim: #97a9b0; --accent: #3fd0d8; --accent-soft: rgba(63,208,216,.16); --warm: #e0955e; --warn: #f0705d;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 30px -18px rgba(0,0,0,.7);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 500 15px/1.5 var(--sans); font-variant-numeric: tabular-nums; }
+  button { font: inherit; color: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  h1, h2, h3 { font-family: var(--display); font-weight: 500; letter-spacing: -.01em; text-wrap: balance; margin: 0; }
+  svg.i { width: 1.15em; height: 1.15em; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; vertical-align: -.2em; flex: none; }
+  .eyebrow { font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); font-weight: 700; }
+  .wrap { max-width: 760px; margin: 0 auto; padding-inline: 16px; }
+  section.block { padding-block: 34px 6px; display: grid; gap: 14px; }
+  section.block > * { min-width: 0; }   /* Raster-Kinder dürfen nicht mit ihrem Inhalt wachsen (Scroll-Bereiche!) */
+  .mg-chart { min-width: 0; overflow: hidden; }
+  .mg-scroll { width: 100%; }
+  section.block > header { display: grid; gap: 4px; }
+  section.block h2 { font-size: 26px; }
+  section.block h2 em { font-style: italic; font-weight: 300; color: var(--accent); }
+  section.block > header p { margin: 0; color: var(--dim); max-width: 60ch; }
+
+  /* ---- Kopfleiste ---- */
+  .top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
+  .top .wrap { display: flex; align-items: center; gap: 12px; min-height: 52px; }
+  .marke { font-family: var(--display); font-size: 22px; font-weight: 600; letter-spacing: -.02em; }
+  .marke i { font-style: italic; font-weight: 300; color: var(--accent); }
+  .reise { font-size: 12px; color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .orte { margin-left: auto; display: inline-flex; gap: 2px; padding: 3px; background: var(--surface2); border-radius: 10px; }
+  .orte button { border: 0; background: transparent; padding: 5px 9px; border-radius: 8px; font-size: 12.5px; font-weight: 600; color: var(--dim); white-space: nowrap; }
+  .orte button.is-on { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.15); }
+  @media (max-width: 560px) { .reise { display: none; } .orte button { padding: 5px 7px; font-size: 12px; } }
+
+  /* ---- Held: Jetzt ---- */
+  .held { position: relative; min-height: 420px; color: #fff; overflow: hidden; background: #123; }
+  .held img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: opacity .6s; }
+  .held img.hinten { opacity: 0; }
+  .held .schleier { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(8,16,24,.15) 0%, rgba(8,16,24,.05) 35%, rgba(8,16,24,.72) 100%); }
+  .held .wrap { position: relative; display: grid; gap: 14px; padding-block: 26px 22px; min-height: 420px; align-content: end; }
+  .held .ort { font-size: 13.5px; font-weight: 600; opacity: .92; display: flex; align-items: center; gap: 8px; }
+  .held .ort .punkt { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px rgba(63,208,216,.25); }
+  .grad { display: flex; align-items: flex-start; gap: 18px; flex-wrap: wrap; }
+  .grad .zahl { font-family: var(--display); font-weight: 300; font-size: 112px; line-height: .9; letter-spacing: -.04em; font-variation-settings: "opsz" 144; }
+  .grad .zahl sup { font-size: 40px; vertical-align: top; margin-left: 2px; font-weight: 300; }
+  .grad .lage { display: grid; gap: 4px; padding-top: 10px; }
+  .grad .lage b { font-family: var(--display); font-size: 24px; font-weight: 500; line-height: 1.15; }
+  .grad .lage span { font-size: 14px; opacity: .85; }
+  .fakten { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
+  @media (max-width: 640px) { .fakten { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .fakt { display: grid; gap: 1px; padding: 9px 10px; border-radius: 10px; background: rgba(255,255,255,.12); backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,.14); min-width: 0; }
+  .fakt small { font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; opacity: .8; }
+  .fakt b { font-size: 17px; font-weight: 700; line-height: 1.2; white-space: nowrap; display: flex; align-items: center; gap: 5px; }
+  .fakt b .i { width: 1em; height: 1em; }
+  .fakt span { font-size: 12px; opacity: .8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sonnenbogen { position: relative; height: 54px; }
+  .sonnenbogen svg { width: 100%; height: 100%; display: block; overflow: visible; }
+  .sonnenbogen .zeiten { position: absolute; left: 0; right: 0; bottom: -2px; display: flex; justify-content: space-between; font-size: 12px; opacity: .85; }
+  .tageszeit { display: inline-flex; gap: 2px; padding: 3px; background: rgba(255,255,255,.14); border-radius: 9px; justify-self: start; }
+  .tageszeit button { border: 0; background: transparent; padding: 4px 9px; border-radius: 7px; font-size: 12px; font-weight: 600; color: #fff; opacity: .8; }
+  .tageszeit button.is-on { background: rgba(255,255,255,.9); color: #10202a; opacity: 1; }
+  .held .hinweis { font-size: 11.5px; opacity: .7; }
+
+  /* ---- Was heute geht ---- */
+  .karten { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  @media (max-width: 560px) { .karten { grid-template-columns: minmax(0, 1fr); } }
+  .karte { display: grid; gap: 10px; padding: 16px; border-radius: var(--r); background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow); }
+  .karte .kk { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .karte h3 { font-size: 20px; display: flex; align-items: center; gap: 8px; }
+  .karte h3 .i { color: var(--accent); }
+  .note { display: inline-flex; gap: 3px; }
+  .note i { width: 7px; height: 7px; border-radius: 50%; background: var(--border); }
+  .note i.an { background: var(--accent); }
+  .karte p { margin: 0; font-size: 14px; color: var(--ink); }
+  .karte p b { font-weight: 700; }
+  .fenster { display: grid; gap: 4px; }
+  .fenster .leiste { position: relative; height: 10px; border-radius: 5px; background: var(--surface2); overflow: hidden; }
+  .fenster .leiste i { position: absolute; top: 0; bottom: 0; background: var(--accent); border-radius: 5px; }
+  .fenster .leiste i.mittel { background: color-mix(in srgb, var(--accent) 45%, var(--surface2)); }
+  .fenster .leiste .jetzt { position: absolute; top: -2px; bottom: -2px; width: 2px; background: var(--ink); }
+  .fenster small { display: flex; justify-content: space-between; font-size: 11px; color: var(--dim); }
+  .karte .wo { font-size: 13px; color: var(--dim); display: flex; gap: 6px; align-items: center; }
+  .karte .wo b { color: var(--ink); }
+
+  /* ---- Strand-Kompass ---- */
+  .kompass { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: 16px; align-items: start; }
+  @media (max-width: 560px) { .kompass { grid-template-columns: minmax(0, 1fr); } }
+  .insel { position: relative; padding: 12px; border-radius: var(--r); background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow); }
+  .insel svg { width: 100%; height: auto; display: block; }
+  .insel .land { fill: var(--surface2); stroke: var(--border); stroke-width: 1.5; }
+  .insel .spot { cursor: pointer; }
+  .insel .spot circle.p { stroke: var(--surface); stroke-width: 2; }
+  .insel .spot text { font: 600 10px var(--sans); fill: var(--ink); paint-order: stroke; stroke: var(--surface); stroke-width: 3px; }
+  .insel .spot.is-on circle.p { stroke: var(--ink); stroke-width: 2.5; }
+  .insel .spot.is-on circle.ring { display: block; }
+  .insel .spot circle.ring { display: none; fill: none; stroke: var(--ink); stroke-width: 1; opacity: .5; }
+  .insel .legende { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; font-size: 11.5px; color: var(--dim); }
+  .insel .legende i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 4px; vertical-align: -1px; }
+  .spotliste { display: grid; gap: 6px; }
+  .spotzeile { display: grid; grid-template-columns: 22px 1fr auto; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 10px; background: var(--surface); border: 1px solid var(--border); text-align: left; }
+  .spotzeile.is-on { border-color: var(--ink); }
+  .spotzeile .n { display: grid; }
+  .spotzeile .n b { font-weight: 700; font-size: 14px; }
+  .spotzeile .n span { font-size: 12px; color: var(--dim); }
+  .spotzeile .w { font-size: 12.5px; color: var(--dim); text-align: right; white-space: nowrap; }
+  .spotzeile .w b { color: var(--ink); font-size: 14px; }
+  .spotzeile .punkt { width: 12px; height: 12px; border-radius: 50%; }
+  .spotdetail { padding: 12px 14px; border-radius: 10px; background: var(--accent-soft); font-size: 13.5px; }
+  .spotdetail b { font-weight: 700; }
+
+  /* ---- Stundenverlauf ---- */
+  .mg { --bh: 40px; position: relative; border-radius: var(--r); background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow); }
+  .mg-fahne { position: sticky; top: calc(52px + env(safe-area-inset-top, 0px)); z-index: 6; display: grid; justify-items: center; padding: 12px 12px 8px; background: var(--surface); border-radius: var(--r) var(--r) 0 0; }
+  .mg-zeit { display: inline-flex; align-items: baseline; gap: 8px; padding: 5px 12px; border-radius: 8px; background: var(--ink); color: var(--surface); font-weight: 700; font-size: 15px; }
+  .mg-zeit small { font-weight: 600; font-size: 12px; opacity: .72; }
+  .mg-fahne::after { content: ""; width: 2px; height: 8px; background: var(--ink); opacity: .85; }
+  .mg-werte { position: relative; padding: 0 12px; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+  .mg-wert { display: grid; gap: 0; padding: 6px 4px; text-align: center; min-width: 0; }
+  .mg-wert small { font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mg-wert b { font-size: 15px; font-weight: 700; white-space: nowrap; }
+  .mg-wert b i { font-style: normal; font-size: .75em; color: var(--dim); font-weight: 600; margin-left: 1px; }
+  .mg-wert span { font-size: 11px; color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mg-chart { position: relative; margin-top: 4px; }
+  .mg-scroll { overflow-x: auto; overflow-y: hidden; touch-action: pan-x; scrollbar-width: none; }
+  .mg-scroll::-webkit-scrollbar { display: none; }
+  .mg-scroll svg { display: block; }
+  .mg-mittel { position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; margin-left: -1px; background: var(--ink); opacity: .85; pointer-events: none; }
+  .mg-zeilenname { position: absolute; left: 8px; padding: 1px 6px; border-radius: 4px; background: color-mix(in srgb, var(--surface) 82%, transparent); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--dim); pointer-events: none; }
+  .mg-randpfeil { position: absolute; top: 45%; transform: translateY(-50%); display: none; align-items: center; gap: 2px; padding: 7px 7px; border: 1px solid var(--border); background: color-mix(in srgb, var(--surface) 70%, transparent); backdrop-filter: blur(4px); font-size: 12px; font-weight: 600; color: var(--accent); }
+  .mg-randpfeil.links { left: 0; border-left: 0; border-radius: 0 10px 10px 0; }
+  .mg-randpfeil.rechts { right: 0; border-right: 0; border-radius: 10px 0 0 10px; }
+  .mg-randpfeil.is-da { display: inline-flex; }
+  .mg-ecke { position: absolute; right: 8px; bottom: 24px; display: inline-flex; align-items: center; border: 1px solid var(--border); border-radius: 10px; background: color-mix(in srgb, var(--surface) 50%, transparent); backdrop-filter: blur(3px); overflow: hidden; }
+  .mg-ecke button { min-height: 30px; min-width: 30px; padding: 0 7px; border: 0; background: transparent; display: inline-flex; align-items: center; justify-content: center; }
+  .mg-ecke button:disabled { opacity: .35; }
+  .mg-ecke .lupe { display: inline-flex; align-items: center; padding: 0 4px; color: var(--dim); font-size: 12px; border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
+  .mg-zoomhinweis { position: absolute; left: 50%; top: 45%; transform: translate(-50%, -50%); padding: 6px 12px; border-radius: 8px; background: var(--ink); color: var(--surface); font: 600 13px/1 var(--sans); opacity: 0; pointer-events: none; transition: opacity .25s; }
+  .mg-zoomhinweis.is-da { opacity: .92; }
+  .mg-nav { padding: 10px 12px 12px; display: grid; gap: 6px; }
+  .mg-karte { position: relative; height: 42px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--surface2); touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none; }
+  .mg-karte:active { cursor: grabbing; }
+  .mg-karte svg { display: block; width: 100%; height: 100%; }
+  .mg-fenster { position: absolute; top: 0; bottom: 0; border: 1.5px solid var(--ink); border-radius: 5px; background: color-mix(in srgb, var(--ink) 9%, transparent); pointer-events: none; }
+  .mg-tage { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 3px; }
+  .mg-tage button { min-height: 32px; min-width: 0; padding: 0 2px; border: 1px solid transparent; border-radius: 9px; background: transparent; color: var(--dim); font-size: 12.5px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
+  .mg-tage button.is-hier { color: var(--ink); font-weight: 700; text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 2px; }
+  .mg-tage button.b-jetzt { border-color: var(--accent); color: var(--accent); }
+  .mg-tage button.b-jetzt:disabled { opacity: .45; }
+  .mg-tage button .rel { font-size: 10.5px; opacity: .8; }
+  .mg-foot { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 0 12px 10px; font-size: 11.5px; color: var(--dim); }
+  .mg-foot button { border: 1px solid var(--border); background: transparent; border-radius: 8px; min-height: 26px; padding: 0 7px; display: inline-flex; align-items: center; gap: 4px; font-size: 12px; }
+  @media (prefers-reduced-motion: reduce) { .mg-zoomhinweis { transition: none; } .held img { transition: none; } }
+
+  /* ---- 7 Tage ---- */
+  .woche { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(118px, 1fr); gap: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 4px; margin-inline: -16px; padding-inline: 16px; scroll-snap-type: x proximity; }
+  .woche::-webkit-scrollbar { display: none; }
+  .tag { display: grid; gap: 6px; padding: 12px 12px 10px; border-radius: var(--r); background: var(--surface); border: 1px solid var(--border); text-align: left; scroll-snap-align: start; min-width: 0; }
+  .tag.is-heute { border-color: var(--accent); }
+  .tag .tn { display: flex; justify-content: space-between; align-items: baseline; }
+  .tag .tn b { font-weight: 700; }
+  .tag .tn span { font-size: 11.5px; color: var(--dim); }
+  .tag .ti { color: var(--accent); }
+  .tag .ti .i { width: 28px; height: 28px; stroke-width: 1.5; }
+  .tag .tt { font-family: var(--display); font-size: 24px; font-weight: 500; line-height: 1; }
+  .tag .tt small { font-size: 14px; color: var(--dim); font-family: var(--sans); font-weight: 600; margin-left: 4px; }
+  .tag .tw { font-size: 12px; color: var(--dim); display: flex; align-items: center; gap: 4px; }
+  .tag svg.spark { width: 100%; height: 26px; display: block; color: var(--ink); }
+
+  /* ---- Tide, Sonne, Mond ---- */
+  .drei { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  @media (max-width: 640px) { .drei { grid-template-columns: minmax(0, 1fr); } }
+  .kachel { display: grid; gap: 10px; padding: 16px; border-radius: var(--r); background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow); }
+  .kachel h3 { font-size: 19px; }
+  .kachel .gross { font-family: var(--display); font-size: 30px; font-weight: 500; line-height: 1.05; }
+  .kachel .gross small { font-family: var(--sans); font-size: 13px; color: var(--dim); font-weight: 600; }
+  .kachel ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 5px; font-size: 13.5px; }
+  .kachel li { display: flex; justify-content: space-between; gap: 10px; padding-bottom: 5px; border-bottom: 1px solid var(--border); }
+  .kachel li:last-child { border-bottom: 0; }
+  .kachel li span:first-child { color: var(--dim); }
+  .kachel li b { font-weight: 700; }
+  .kachel svg.figur { width: 100%; height: auto; display: block; }
+  .tideuhr { justify-self: center; width: min(100%, 190px); }
+  .rose { justify-self: center; width: min(100%, 190px); }
+
+  /* ---- Luft ---- */
+  .luft { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  @media (max-width: 560px) { .luft { grid-template-columns: minmax(0, 1fr); } }
+  .messer { display: grid; gap: 6px; padding: 14px 16px; border-radius: var(--r); background: var(--surface); border: 1px solid var(--border); }
+  .messer small { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
+  .messer b { font-family: var(--display); font-size: 28px; font-weight: 500; line-height: 1; }
+  .messer b i { font-family: var(--sans); font-style: normal; font-size: 13px; color: var(--dim); font-weight: 600; margin-left: 4px; }
+  .messer .balken { height: 6px; border-radius: 3px; background: linear-gradient(90deg, var(--accent), var(--warm) 60%, var(--warn)); position: relative; }
+  .messer .balken i { position: absolute; top: -4px; width: 14px; height: 14px; border-radius: 50%; background: var(--surface); border: 2.5px solid var(--ink); margin-left: -7px; }
+  .messer span { font-size: 12.5px; color: var(--dim); }
+
+  /* ---- Webcams ---- */
+  .cams { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .cam { position: relative; aspect-ratio: 16 / 10; border-radius: 12px; overflow: hidden; background: var(--surface2); border: 1px solid var(--border); max-width: 100%; }
+  .cam img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .cam .bz { position: absolute; left: 0; right: 0; bottom: 0; padding: 8px 10px; background: linear-gradient(0deg, rgba(8,16,24,.75), transparent); color: #fff; font-size: 12.5px; display: flex; justify-content: space-between; }
+  .cam .bz b { font-weight: 700; }
+
+  footer.fuss { padding-block: 40px 30px; color: var(--dim); font-size: 12.5px; display: grid; gap: 6px; }
+  footer.fuss b { color: var(--ink); }
+</style>
+</head>
+<body>
+
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-sonne" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+    <symbol id="i-wolkesonne" viewBox="0 0 24 24"><path d="M7 17.5h9a3.5 3.5 0 0 0 .5-6.96A5 5 0 0 0 7.2 11.6 3 3 0 0 0 7 17.5z"/><path d="M15 5.5a3.5 3.5 0 0 1 4.6 4.1M17.5 2v1.5M21.5 5h-1.5M20.3 2.7l-1 1"/></symbol>
+    <symbol id="i-wolke" viewBox="0 0 24 24"><path d="M7 18h10a4 4 0 0 0 .6-7.95A6 6 0 0 0 6.2 11.6 3.2 3.2 0 0 0 7 18z"/></symbol>
+    <symbol id="i-wind" viewBox="0 0 24 24"><path d="M3 8h11a2.5 2.5 0 1 0-2.5-2.5M3 12h16a2.5 2.5 0 1 1-2.5 2.5M3 16h9a2 2 0 1 1-2 2"/></symbol>
+    <symbol id="i-welle" viewBox="0 0 24 24"><path d="M2 12c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2M2 17c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2"/></symbol>
+    <symbol id="i-tropfen" viewBox="0 0 24 24"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/></symbol>
+    <symbol id="i-pfeil" viewBox="0 0 24 24"><path d="M12 3v18M6 9l6-6 6 6"/></symbol>
+    <symbol id="i-mond" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></symbol>
+    <symbol id="i-strand" viewBox="0 0 24 24"><path d="M3 20h18M5 20c0-4 3-7 7-7s7 3 7 7"/><path d="M13 13 9 4a6 6 0 0 1 10 5l-6 4z"/></symbol>
+    <symbol id="i-kite" viewBox="0 0 24 24"><path d="M4 4c6 0 12 3 16 8-5 1-10 4-13 9C7 15 6 9 4 4z"/><path d="M7 21l4-9"/></symbol>
+    <symbol id="i-abend" viewBox="0 0 24 24"><path d="M3 17h18M6 17a6 6 0 0 1 12 0"/><path d="M12 5v2M4.5 9.5l1.4 1.4M19.5 9.5l-1.4 1.4M2 21h20"/></symbol>
+    <symbol id="i-frisch" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.35-5.65"/><path d="M20 4v5h-5"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+    <symbol id="i-chevl" viewBox="0 0 24 24"><path d="M14.5 6l-6 6 6 6"/></symbol>
+    <symbol id="i-chevr" viewBox="0 0 24 24"><path d="M9.5 6l6 6-6 6"/></symbol>
+    <symbol id="i-lupe" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.3-4.3"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 6v12M6 12h12"/></symbol>
+    <symbol id="i-minus" viewBox="0 0 24 24"><path d="M6 12h12"/></symbol>
+    <symbol id="i-ziel" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="1.8" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-uv" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/></symbol>
+    <symbol id="i-thermo" viewBox="0 0 24 24"><path d="M10 14.5V5a2 2 0 1 1 4 0v9.5a3.5 3.5 0 1 1-4 0z"/></symbol>
+    <symbol id="i-wander" viewBox="0 0 24 24"><path d="M13 4a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM8 22l3-8 3 3v5M9 12l2-4 3 1 3 3M18 7v15"/></symbol>
+  </defs>
+</svg>
+
+<header class="top">
+  <div class="wrap">
+    <div class="marke">Pass<i>at</i></div>
+    <div class="reise" id="reise">Tag 1 von 13 · Oasis Duna, Corralejo</div>
+    <div class="orte" id="orte" role="tablist" aria-label="Ort"></div>
+  </div>
+</header>
+
+<section class="held" id="held" aria-label="Jetzt">
+  <img id="heldbild" src="../../images/strand-tuerkis.webp" alt="" class="vorn">
+  <img id="heldbild2" src="../../images/wx-abend.webp" alt="" class="hinten">
+  <div class="schleier"></div>
+  <div class="wrap">
+    <div class="ort"><span class="punkt"></span><span id="heldort">Corralejo · Di 29.09. · 14:00</span></div>
+    <div class="grad">
+      <div class="zahl"><span id="heldtemp">24</span><sup>°</sup></div>
+      <div class="lage"><b id="heldlage">Heiter, Passatwolken über dem Norden</b><span id="heldsub">Gefühlt 25° · kaum Regen die ganze Woche</span></div>
+    </div>
+    <div class="fakten" id="fakten"></div>
+    <div class="sonnenbogen"><svg id="bogen" viewBox="0 0 600 54" preserveAspectRatio="none"></svg><div class="zeiten"><span>↑ 07:44</span><span id="bogenmitte">Goldene Stunde ab 18:50</span><span>↓ 19:38</span></div></div>
+    <div class="tageszeit" id="tageszeit" aria-label="Vorschau-Tageszeit">
+      <button type="button" data-tz="morgen">Morgen</button><button type="button" data-tz="mittag" class="is-on">Mittag</button><button type="button" data-tz="abend">Abend</button><button type="button" data-tz="nacht">Nacht</button>
+    </div>
+    <div class="hinweis">Prototyp mit Beispieldaten – Foto, Farben und Zahlen folgen in der echten App der Uhrzeit und dem Wetter.</div>
+  </div>
+</section>
+
+<div class="wrap">
+
+  <section class="block" id="heute">
+    <header><div class="eyebrow">Was heute geht</div><h2>Die Insel liest das Wetter <em>für dich</em></h2><p>Nicht „24 Grad, 28 km/h“ – sondern: wohin, wann, und worauf achten. Jede Karte kommt aus den Stundenwerten und den Eigenheiten der Orte.</p></header>
+    <div class="karten" id="karten"></div>
+  </section>
+
+  <section class="block" id="kompass">
+    <header><div class="eyebrow">Strand-Kompass</div><h2>Wo ist es <em>gerade</em> am schönsten?</h2><p>Fuerteventura hat viele Wetter: Der Norden bekommt die Passatwolken, der Süden die Sonne, die Westküste die Wellen. Der Kompass rechnet Wind, Wolken, Tide und Windschatten je Ort zusammen.</p></header>
+    <div class="kompass">
+      <div class="insel">
+        <svg id="insel" viewBox="0 0 220 420" aria-label="Schematische Karte von Fuerteventura"></svg>
+        <div class="legende"><span><i style="background:var(--accent)"></i>Strandwetter</span><span><i style="background:var(--warm)"></i>windig oder wolkig</span><span><i style="background:var(--border)"></i>heute nicht</span><span>Karte schematisch</span></div>
+      </div>
+      <div class="spotliste" id="spotliste"></div>
+    </div>
+  </section>
+
+  <section class="block" id="stunden">
+    <header><div class="eyebrow">Stundenverlauf</div><h2>Die Woche <em>im Detail</em></h2><p>Wischen, tippen, mit zwei Fingern zoomen. Die kleine Wochenkarte unten zeigt, wo du bist; „Jetzt“ bringt dich zurück. Der Strich in der Mitte liest die Werte ab.</p></header>
+    <div class="mg" id="mg">
+      <div class="mg-fahne"><span class="mg-zeit"><span id="mzeit">Di 29.09. · 14:00</span><small id="mrel">jetzt</small></span></div>
+      <div class="mg-werte" id="mwerte"></div>
+      <div class="mg-chart">
+        <div class="mg-scroll" id="mscroll"><svg id="msvg" xmlns="http://www.w3.org/2000/svg" width="10" height="300"></svg></div>
+        <div class="mg-mittel"></div>
+        <div id="mnamen"></div>
+        <button class="mg-randpfeil links" type="button" data-act="jetzt" aria-label="Zurück zu jetzt"><svg class="i"><use href="#i-chevl"/></svg><svg class="i"><use href="#i-ziel"/></svg></button>
+        <button class="mg-randpfeil rechts" type="button" data-act="jetzt" aria-label="Zurück zu jetzt"><svg class="i"><use href="#i-ziel"/></svg><svg class="i"><use href="#i-chevr"/></svg></button>
+        <div class="mg-ecke"><button type="button" data-act="zoomraus" aria-label="Mehr Tage zeigen"><svg class="i"><use href="#i-minus"/></svg></button><span class="lupe"><svg class="i"><use href="#i-lupe"/></svg></span><button type="button" data-act="zoomrein" aria-label="Genauer zeigen"><svg class="i"><use href="#i-plus"/></svg></button></div>
+        <div class="mg-zoomhinweis" id="mzoomhinweis">1 Tag im Bild</div>
+      </div>
+      <div class="mg-nav">
+        <div class="mg-karte" id="mkarte" aria-label="Wochenkarte: ziehen blättert"><svg id="mkartesvg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"></svg><div class="mg-fenster" id="mfenster"></div></div>
+        <div class="mg-tage" id="mtage"></div>
+      </div>
+      <div class="mg-foot"><span>ECMWF · Open-Meteo Marine · Beispieldaten</span><span>zuletzt 14:02 &nbsp;<button type="button" data-act="frisch" aria-label="Auffrischen"><svg class="i"><use href="#i-frisch"/></svg></button></span></div>
+    </div>
+  </section>
+
+  <section class="block" id="woche">
+    <header><div class="eyebrow">7 Tage</div><h2>Die Woche <em>auf einen Blick</em></h2><p>Punkte = Strandwetter-Note. Tipp auf einen Tag, und der Stundenverlauf springt dorthin.</p></header>
+    <div class="woche" id="wochenkarten"></div>
+  </section>
+
+  <section class="block" id="meer">
+    <header><div class="eyebrow">Meer, Sonne, Mond</div><h2>Was den Tag <em>taktet</em></h2><p>Auf Fuerteventura entscheidet die Tide über Lagunen und Strandbreite, die Sonne über die Fotos, der Mond über den Abend am Strand.</p></header>
+    <div class="drei">
+      <div class="kachel"><h3>Tide</h3><svg class="figur tideuhr" id="tideuhr" viewBox="0 0 200 200"></svg><ul id="tideliste"></ul></div>
+      <div class="kachel"><h3>Sonne</h3><div class="gross">11 h 54 min <small>Tageslicht</small></div><ul><li><span>Aufgang</span><b>07:44</b></li><li><span>Goldene Stunde</span><b>18:50 – 19:38</b></li><li><span>Untergang</span><b>19:38</b></li><li><span>Blaue Stunde</span><b>bis 20:05</b></li><li><span>UV-Höchstwert</span><b>8 um 13:30</b></li></ul></div>
+      <div class="kachel"><h3>Mond</h3><svg class="figur" id="mond" viewBox="0 0 200 120" style="max-width:190px;justify-self:center"></svg><ul><li><span>Phase</span><b>abnehmend, 82 %</b></li><li><span>Aufgang</span><b>20:41</b></li><li><span>Untergang</span><b>10:12</b></li><li><span>Vollmond war</span><b>Sa 26.09.</b></li></ul></div>
+    </div>
+  </section>
+
+  <section class="block" id="wind">
+    <header><div class="eyebrow">Wind</div><h2>Der Passat <em>hat einen Rhythmus</em></h2><p>Nordost, morgens sanft, nachmittags kräftig. Wer das kennt, plant den Strandtag danach.</p></header>
+    <div class="drei">
+      <div class="kachel"><h3>Jetzt</h3><svg class="figur rose" id="rose" viewBox="0 0 200 200"></svg><ul><li><span>Wind</span><b id="windw">28 km/h · NE</b></li><li><span>Böen</span><b id="windb">41 km/h</b></li><li><span>Stärke</span><b>5 Bft, frische Brise</b></li></ul></div>
+      <div class="kachel"><h3>Heute</h3><svg class="figur" id="windtag" viewBox="0 0 300 120"></svg><ul><li><span>Ruhigste Zeit</span><b>07 – 11 Uhr</b></li><li><span>Spitze</span><b>16 Uhr, Böen 44</b></li></ul></div>
+      <div class="kachel"><h3>Windschatten</h3><ul><li><span>El Cotillo Lagunen</span><b>14 km/h</b></li><li><span>Playa Chica</span><b>17 km/h</b></li><li><span>Ajuy</span><b>19 km/h</b></li><li><span>Flag Beach</span><b>34 km/h · Kiter</b></li><li><span>Sotavento</span><b>38 km/h · Kiter</b></li></ul></div>
+    </div>
+  </section>
+
+  <section class="block" id="luft">
+    <header><div class="eyebrow">Luft &amp; Calima</div><h2>Klar oder <em>staubig?</em></h2><p>Wenn der Wind auf Ost dreht, kommt Saharastaub: Sicht trüb, Himmel gelb, Temperaturen hoch. Die App warnt einen Tag vorher.</p></header>
+    <div class="luft" id="luftkacheln"></div>
+  </section>
+
+  <section class="block" id="webcams">
+    <header><div class="eyebrow">Webcams</div><h2>Ein Blick, <em>bevor du fährst</em></h2><p>Halbstündliche Bilder der vier Kameras, mit Zeitraffer der letzten Stunden. Hier als Beispielbilder.</p></header>
+    <div class="cams">
+      <div class="cam"><img src="../../images/duenen-corralejo-weit.webp" alt="Dünen von Corralejo"><div class="bz"><b>Corralejo</b><span>13:30</span></div></div>
+      <div class="cam"><img src="../../images/lobos-vom-strand.webp" alt="Blick auf Lobos"><div class="bz"><b>El Cotillo Hafen</b><span>13:30</span></div></div>
+      <div class="cam"><img src="../../images/playas-de-sotavento-risco-del-paso.webp" alt="Sotavento"><div class="bz"><b>Sotavento</b><span>13:30</span></div></div>
+      <div class="cam"><img src="../../images/surfen-amp-kitesurfen-in-lajares-el-cotillo.webp" alt="Surfen bei Lajares"><div class="bz"><b>Faro Jandía</b><span>13:00</span></div></div>
+    </div>
+  </section>
+
+  <footer class="fuss">
+    <div><b>Passat</b> – Konzept für die perfekte Fuerteventura-Wetter-App, 28.09.2026. Alle Zahlen sind Beispieldaten in echter Größenordnung.</div>
+    <div>In der echten App: Open-Meteo (ECMWF, ICON), Marine-Daten (Tide, Wassertemperatur, Wellen), Air-Quality (Saharastaub), Sonnen- und Mondzeiten nach Meeus, Webcams Skyline, René Egli, MeteoSurf.</div>
+    <div>Für Stephan &amp; Bilgen · 29.09.–12.10.2026</div>
+  </footer>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  // ---------- Beispieldaten: eine Woche stündlich ----------
+  var N = 168, IDX_JETZT = 14;                        // Di 29.09. 00:00 + 14 h
+  var TAGE = ['Di 29.09.', 'Mi 30.09.', 'Do 01.10.', 'Fr 02.10.', 'Sa 03.10.', 'So 04.10.', 'Mo 05.10.'];
+  var TAGK = ['Di', 'Mi', 'Do', 'Fr', 'Sa', 'So', 'Mo'];
+  var AUF = 7.73, UNTER = 19.63;
+  var D = { temp: [], fuehl: [], wind: [], boe: [], dir: [], wolken: [], regen: [], tide: [], uv: [] };
+  var TAGESLAGE = [ { w: 35, r: 0 }, { w: 55, r: 0 }, { w: 20, r: 0 }, { w: 15, r: 0 }, { w: 70, r: .4 }, { w: 40, r: 0 }, { w: 10, r: 0 } ];
+  var TAGESWIND = [ 26, 22, 30, 34, 18, 24, 28 ];
+  for (var i = 0; i < N; i++) {
+    var d = Math.floor(i / 24), h = i % 24, L = TAGESLAGE[d];
+    var tagesgang = Math.sin((h - 9) / 24 * 2 * Math.PI);
+    var t = 22.6 + 2.6 * tagesgang - L.w / 60 + (d === 5 ? 1.5 : 0);
+    D.temp.push(t);
+    var wnd = TAGESWIND[d] * (0.62 + 0.38 * Math.max(0, Math.sin((h - 7) / 24 * Math.PI))) + 2 * Math.sin(i / 5);
+    D.wind.push(wnd); D.boe.push(wnd * 1.45 + 2);
+    D.dir.push(40 + 12 * Math.sin(i / 17) + (d === 5 ? 60 : 0));
+    var wk = Math.max(0, Math.min(100, L.w + 25 * Math.sin((h - 5) / 24 * 2 * Math.PI) + 10 * Math.sin(i / 3.3)));
+    D.wolken.push(wk);
+    D.regen.push(L.r && h >= 4 && h <= 9 ? L.r * (0.5 + 0.5 * Math.sin((h - 4) / 5 * Math.PI)) : 0);
+    D.fuehl.push(t + (wnd > 25 ? -0.6 : 0.8) + (wk < 30 && h > 10 && h < 17 ? 0.8 : 0));
+    D.tide.push(1.35 + 1.05 * Math.cos((i - 16.67) / 12.42 * 2 * Math.PI));
+    var sonne = Math.max(0, Math.sin((h - AUF) / (UNTER - AUF) * Math.PI));
+    D.uv.push(h > AUF && h < UNTER ? 9 * sonne * (1 - wk / 220) : 0);
+  }
+  function dez(v, n){ return v.toFixed(n).replace('.', ','); }
+  function uhr(x){ var hh = Math.floor(x), mm = Math.round((x - hh) * 60); if (mm === 60) { hh++; mm = 0; } return (hh < 10 ? '0' : '') + hh + ':' + (mm < 10 ? '0' : '') + mm; }
+  function himmelsrichtung(g){ return ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'][Math.round(((g % 360) + 360) % 360 / 45) % 8]; }
+  function wertBei(F, f){ var i0 = Math.max(0, Math.min(N - 2, Math.floor(f))), t = f - i0; return F[i0] + (F[i0 + 1] - F[i0]) * t; }
+
+  // Tide-Extreme (Hoch-/Niedrigwasser) aus der Kurve
+  var EXTREME = [];
+  for (var e = 1; e < N - 1; e++) {
+    if (D.tide[e] > D.tide[e - 1] && D.tide[e] >= D.tide[e + 1]) EXTREME.push({ i: e, art: 'HW' });
+    if (D.tide[e] < D.tide[e - 1] && D.tide[e] <= D.tide[e + 1]) EXTREME.push({ i: e, art: 'NW' });
+  }
+  EXTREME.forEach(function(x){ // Scheitel genauer: parabolisch zwischen den Nachbarn
+    var a = D.tide[x.i - 1], b = D.tide[x.i], c = D.tide[x.i + 1], o = (a - c) / (2 * (a - 2 * b + c));
+    x.f = x.i + (isFinite(o) ? o : 0); x.v = b - (a - c) * o / 4;
+  });
+
+  // ---------- Orte ----------
+  var ORTE = [
+    { id: 'corralejo', name: 'Corralejo', dt: 0, dw: 0, dk: 0 },
+    { id: 'cotillo', name: 'El Cotillo', dt: -0.3, dw: -9, dk: -12 },
+    { id: 'costacalma', name: 'Costa Calma', dt: 1.4, dw: 8, dk: -25 },
+    { id: 'morro', name: 'Morro Jable', dt: 2.0, dw: 2, dk: -32 }
+  ];
+  var ort = ORTE[0];
+  var SPOTS = [
+    { n: 'Corralejo · Grandes Playas', x: 128, y: 40, wind: 1.0, wolke: 1.0, tide: 'egal', text: 'Dünenstrand, breit bei jedem Wasserstand.' },
+    { n: 'El Cotillo · Lagunen', x: 88, y: 62, wind: 0.5, wolke: 0.85, tide: 'NW', text: 'Bei Niedrigwasser Kinderbadewannen, windgeschützt hinter der Mauer.' },
+    { n: 'Lobos', x: 150, y: 22, wind: 0.8, wolke: 1.0, tide: 'egal', text: 'Fähre ab 10 Uhr, Lagune bei Hochwasser tiefblau.' },
+    { n: 'Caleta de Fuste', x: 170, y: 165, wind: 0.6, wolke: 0.7, tide: 'HW', text: 'Ruhige Bucht, bei Hochwasser am schönsten.' },
+    { n: 'Ajuy', x: 96, y: 218, wind: 0.7, wolke: 0.6, tide: 'NW', text: 'Schwarzer Sand, Höhlen nur bei Niedrigwasser.' },
+    { n: 'Costa Calma', x: 150, y: 298, wind: 1.1, wolke: 0.45, tide: 'egal', text: 'Sonnenseite. Windschutz-Kuhlen am Strand.' },
+    { n: 'Sotavento', x: 137, y: 325, wind: 1.3, wolke: 0.4, tide: 'NW', text: 'Die Lagune bildet sich zwei Stunden um Niedrigwasser.' },
+    { n: 'Morro Jable', x: 100, y: 358, wind: 0.9, wolke: 0.35, tide: 'egal', text: 'Fast immer Sonne, Promenade, Leuchtturm.' },
+    { n: 'Cofete', x: 68, y: 342, wind: 1.2, wolke: 0.5, tide: 'egal', text: 'Wild, Strömung, nur zum Schauen und Staunen.' }
+  ];
+  function spotNote(s, idx){
+    var w = wertBei(D.wind, idx) * s.wind, k = wertBei(D.wolken, idx) * s.wolke, r = wertBei(D.regen, idx);
+    var note = 5;
+    if (w > 18) note--; if (w > 28) note--; if (k > 35) note--; if (k > 65) note--; if (r > 0.1) note -= 2;
+    var tideOk = true;
+    if (s.tide !== 'egal') {
+      var naechst = EXTREME.filter(function(x){ return x.art === s.tide && Math.abs(x.f - idx) < 2.2; });
+      tideOk = naechst.length > 0; if (!tideOk) note -= 0.5;
+    }
+    return { note: Math.max(1, Math.min(5, Math.round(note))), wind: w, wolken: k, tideOk: tideOk };
+  }
+
+  // ---------- Kopf: Orte ----------
+  var orteEl = document.getElementById('orte');
+  orteEl.innerHTML = ORTE.map(function(o){ return '<button type="button" role="tab" data-ort="' + o.id + '" class="' + (o === ort ? 'is-on' : '') + '">' + o.name + '</button>'; }).join('');
+  orteEl.addEventListener('click', function(ev){
+    var b = ev.target.closest('button'); if (!b) return;
+    ort = ORTE.filter(function(o){ return o.id === b.getAttribute('data-ort'); })[0];
+    orteEl.querySelectorAll('button').forEach(function(x){ x.classList.toggle('is-on', x === b); });
+    heldMalen(); kartenMalen(); inselMalen(); zeichnen(); anzeigen(); wocheMalen();
+  });
+
+  // ---------- Held ----------
+  var TZ = { morgen: { idx: 7.6, foto: '../../images/wx-morgen.webp', lage: 'Klarer Morgen, der Passat schläft noch', sub: 'Beste Zeit für Lagunen und lange Strandläufe' },
+             mittag: { idx: 14, foto: '../../images/strand-tuerkis.webp', lage: 'Heiter, Passatwolken über dem Norden', sub: 'Gefühlt 25° · kaum Regen die ganze Woche' },
+             abend:  { idx: 19.2, foto: '../../images/wx-abend.webp', lage: 'Sonnenuntergang in 20 Minuten', sub: 'Klarer Horizont – Richtung El Cotillo fahren' },
+             nacht:  { idx: 23, foto: '../../images/wx-nachtklar.webp', lage: 'Klare Nacht, 19°', sub: 'Mond geht 20:41 auf · Sterne über den Dünen' } };
+  var tz = 'mittag';
+  document.getElementById('tageszeit').addEventListener('click', function(ev){
+    var b = ev.target.closest('button'); if (!b) return;
+    tz = b.getAttribute('data-tz');
+    document.querySelectorAll('#tageszeit button').forEach(function(x){ x.classList.toggle('is-on', x === b); });
+    heldMalen();
+  });
+  var bildVorn = true;
+  function heldMalen(){
+    var z = TZ[tz], idx = z.idx, t = wertBei(D.temp, idx) + ort.dt, f = wertBei(D.fuehl, idx) + ort.dt;
+    var w = wertBei(D.wind, idx) + ort.dw, b = wertBei(D.boe, idx) + ort.dw, dir = wertBei(D.dir, idx);
+    var uv = wertBei(D.uv, idx), tide = wertBei(D.tide, idx), steigt = wertBei(D.tide, idx + 0.5) > tide;
+    var naechst = EXTREME.filter(function(x){ return x.f > idx; })[0];
+    document.getElementById('heldort').textContent = ort.name + ' · Di 29.09. · ' + uhr(idx);
+    document.getElementById('heldtemp').textContent = Math.round(t);
+    document.getElementById('heldlage').textContent = z.lage + (ort.dk < -20 && tz !== 'nacht' ? ' – im Süden wolkenlos' : '');
+    document.getElementById('heldsub').textContent = tz === 'mittag' ? 'Gefühlt ' + Math.round(f) + '° · kaum Regen die ganze Woche' : z.sub;
+    var vorn = document.getElementById('heldbild'), hinten = document.getElementById('heldbild2');
+    var neu = bildVorn ? hinten : vorn, alt = bildVorn ? vorn : hinten;
+    if (neu.getAttribute('src') !== z.foto) neu.setAttribute('src', z.foto);
+    neu.classList.remove('hinten'); alt.classList.add('hinten'); bildVorn = !bildVorn;
+    document.getElementById('fakten').innerHTML =
+      fakt('Wind', '<svg class="i" style="transform:rotate(' + (dir + 180) + 'deg)"><use href="#i-pfeil"/></svg>' + Math.round(w) + ' km/h', himmelsrichtung(dir) + ' · Böen ' + Math.round(b)) +
+      fakt('Wasser', dez(23.4 + ort.dt * 0.3, 1) + ' °C', 'Wellen ' + (ort.id === 'cotillo' ? '1,6 m West' : '0,5 m ruhig')) +
+      fakt('UV', Math.round(uv) + (uv >= 8 ? ' sehr hoch' : uv >= 6 ? ' hoch' : uv > 0 ? ' mäßig' : ' –'), uv >= 6 ? 'Creme alle 2 h' : uv > 0 ? 'Vormittag mild' : 'Nacht') +
+      fakt('Tide', dez(tide, 2) + ' m ' + (steigt ? '↑' : '↓'), naechst ? naechst.art + ' ' + uhr(naechst.f % 24) : '') +
+      fakt('Wolken', Math.round(wertBei(D.wolken, idx) + ort.dk) + ' %', ort.dk < -20 ? 'Süden klar' : 'Nordküste') +
+      fakt('Sonne', tz === 'nacht' || tz === 'abend' ? '↑ 07:44' : '↓ 19:38', tz === 'abend' ? 'Goldene Stunde' : 'Goldene ab 18:50');
+    bogenMalen(idx);
+  }
+  function fakt(l, b, s){ return '<div class="fakt"><small>' + l + '</small><b>' + b + '</b><span>' + s + '</span></div>'; }
+  function bogenMalen(idx){
+    var svg = document.getElementById('bogen'), Wb = 600, Hb = 54;
+    var x = function(h){ return (h - AUF) / (UNTER - AUF) * Wb; };
+    var p = 'M0 ' + (Hb - 6) + ' Q ' + (Wb / 2) + ' ' + (-Hb) + ' ' + Wb + ' ' + (Hb - 6);
+    var s = '<path d="' + p + '" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="1.5" stroke-dasharray="3 4"/>';
+    s += '<line x1="0" x2="' + Wb + '" y1="' + (Hb - 6) + '" y2="' + (Hb - 6) + '" stroke="rgba(255,255,255,.35)"/>';
+    var gold = x(18.83); s += '<rect x="' + gold + '" y="' + (Hb - 12) + '" width="' + (Wb - gold) + '" height="6" fill="rgba(255,200,120,.5)"/>';
+    var u = (idx - AUF) / (UNTER - AUF);
+    if (u > 0 && u < 1) {
+      var px = u * Wb, py = (1 - u) * (1 - u) * (Hb - 6) + 2 * (1 - u) * u * (-Hb) + u * u * (Hb - 6);
+      s += '<circle cx="' + px + '" cy="' + py + '" r="6" fill="#fff"/><circle cx="' + px + '" cy="' + py + '" r="11" fill="rgba(255,255,255,.25)"/>';
+    } else {
+      var mx = u <= 0 ? 20 : Wb - 20;
+      s += '<circle cx="' + mx + '" cy="' + (Hb - 16) + '" r="5" fill="none" stroke="#fff" stroke-width="1.5"/>';
+    }
+    svg.innerHTML = s;
+  }
+
+  // ---------- Was heute geht ----------
+  function fensterHtml(von, bis, von2, bis2){
+    var l = function(h){ return (h - 6) / 16 * 100; };
+    var s = '<div class="fenster"><div class="leiste">';
+    s += '<i style="left:' + l(von) + '%;width:' + (l(bis) - l(von)) + '%"></i>';
+    if (von2 != null) s += '<i class="mittel" style="left:' + l(von2) + '%;width:' + (l(bis2) - l(von2)) + '%"></i>';
+    s += '<span class="jetzt" style="left:' + l(14) + '%"></span></div><small><span>6</span><span>10</span><span>14</span><span>18</span><span>22</span></small></div>';
+    return s;
+  }
+  function noteHtml(n){ var s = '<span class="note" aria-label="Note ' + n + ' von 5">'; for (var i = 1; i <= 5; i++) s += '<i class="' + (i <= n ? 'an' : '') + '"></i>'; return s + '</span>'; }
+  function kartenMalen(){
+    var nw = EXTREME.filter(function(x){ return x.art === 'NW' && x.f >= 6 && x.f <= 22; })[0];
+    var nwZeit = nw ? uhr(nw.f) : '11:55';
+    var lagVon = nw ? nw.f - 1.3 : 10.6, lagBis = nw ? nw.f + 1.3 : 13.2;
+    var sued = ort.dk < -20;
+    var k = '';
+    k += '<div class="karte"><div class="kk"><h3><svg class="i"><use href="#i-strand"/></svg>Strand</h3>' + noteHtml(sued ? 5 : 4) + '</div>' +
+         '<p>Bis <b>' + uhr(lagBis) + '</b> El Cotillo: Lagunen bei Niedrigwasser (' + nwZeit + '), nur <b>14 km/h</b> hinter der Mauer. Ab 15 Uhr frischt der Passat auf – dann ' + (sued ? 'bleibt Costa Calma sonnig.' : 'Playa del Moro in den Kuhlen.') + '</p>' +
+         fensterHtml(lagVon, lagBis, 15, 18) + '<div class="wo">Bester Ort <b>El Cotillo Lagunen</b> · 24 km · 28 min</div></div>';
+    k += '<div class="karte"><div class="kk"><h3><svg class="i"><use href="#i-welle"/></svg>Wasser</h3>' + noteHtml(4) + '</div>' +
+         '<p>Baden <b>23 °C</b>, Ostküste ruhig (0,5 m). Westküste <b>1,6 m</b> Dünung – El Cotillo Piedra Playa nur für Surfer. Sotavento-Lagune füllt sich <b>' + uhr(Math.max(6, (nw ? nw.f : 12) - 2)) + '–' + uhr((nw ? nw.f : 12) + 2) + '</b>.</p>' +
+         fensterHtml((nw ? nw.f : 12) - 2, (nw ? nw.f : 12) + 2) + '<div class="wo">Schnorcheln <b>Playa Chica</b> · ruhig bis 14 Uhr</div></div>';
+    k += '<div class="karte"><div class="kk"><h3><svg class="i"><use href="#i-kite"/></svg>Wind</h3>' + noteHtml(3) + '</div>' +
+         '<p>Nordost-Passat, morgens <b>15</b>, ab 15 Uhr <b>30+ km/h</b>, Böen 44. Kiter an der Flag Beach ab 14 Uhr. Sonnenschirm: eingraben oder lassen.</p>' +
+         fensterHtml(14, 19) + '<div class="wo">Zuschauen <b>Flag Beach</b> · Windschatten <b>El Cotillo</b></div></div>';
+    k += '<div class="karte"><div class="kk"><h3><svg class="i"><use href="#i-abend"/></svg>Abend</h3>' + noteHtml(5) + '</div>' +
+         '<p>Untergang <b>19:38</b>, Horizont klar, Wind lässt nach. Beste Bühne: El Cotillo Leuchtturm oder Dünen mit Blick auf Lobos. Mond kommt 20:41 – Abendessen draußen.</p>' +
+         fensterHtml(18.8, 20.1) + '<div class="wo">Tipp <b>Faro del Tostón</b> · 19:10 losfahren</div></div>';
+    document.getElementById('karten').innerHTML = k;
+  }
+
+  // ---------- Strand-Kompass ----------
+  var INSEL = 'M126 12 C140 10 150 22 152 34 C158 60 164 90 168 124 C172 150 176 180 172 214 C168 244 162 270 156 292 C152 306 148 314 140 320 C124 326 112 338 98 352 C84 366 62 380 44 392 C38 396 30 392 34 384 C44 372 60 360 70 346 C82 332 100 322 116 316 C124 312 128 302 126 290 C120 262 108 236 102 210 C96 186 94 160 90 134 C86 108 82 84 88 60 C92 44 106 18 126 12 Z';
+  var spotAktiv = 1;
+  function farbeNote(n){ return n >= 4 ? 'var(--accent)' : n >= 3 ? 'var(--warm)' : 'var(--border)'; }
+  function inselMalen(){
+    var idx = IDX_JETZT;
+    var s = '<path class="land" d="' + INSEL + '"/>';
+    s += '<circle cx="152" cy="20" r="6" class="land"/>';
+    s += '<text x="12" y="410" font-size="10" fill="var(--dim)" font-family="var(--sans)">N ↑</text>';
+    SPOTS.forEach(function(sp, k){
+      var b = spotNote(sp, idx);
+      s += '<g class="spot ' + (k === spotAktiv ? 'is-on' : '') + '" data-k="' + k + '"><circle class="ring" cx="' + sp.x + '" cy="' + sp.y + '" r="11"/>' +
+           '<circle class="p" cx="' + sp.x + '" cy="' + sp.y + '" r="6.5" fill="' + farbeNote(b.note) + '"/>' +
+           '<text x="' + (sp.x + (sp.x > 140 ? -10 : 10)) + '" y="' + (sp.y + 4) + '" text-anchor="' + (sp.x > 140 ? 'end' : 'start') + '">' + sp.n.split(' · ')[0] + '</text></g>';
+    });
+    document.getElementById('insel').innerHTML = s;
+    var liste = SPOTS.map(function(sp, k){ return { sp: sp, k: k, b: spotNote(sp, idx) }; }).sort(function(a, b){ return b.b.note - a.b.note; }).slice(0, 5);
+    var l = liste.map(function(x){
+      return '<button type="button" class="spotzeile ' + (x.k === spotAktiv ? 'is-on' : '') + '" data-k="' + x.k + '"><span class="punkt" style="background:' + farbeNote(x.b.note) + '"></span>' +
+        '<span class="n"><b>' + x.sp.n + '</b><span>' + x.sp.text + '</span></span><span class="w"><b>' + x.b.note + '/5</b><br>' + Math.round(x.b.wind) + ' km/h · ' + Math.round(x.b.wolken) + ' %</span></button>';
+    }).join('');
+    var a = SPOTS[spotAktiv], ab = spotNote(a, idx);
+    l += '<div class="spotdetail"><b>' + a.n + ':</b> Note ' + ab.note + '/5 · Wind ' + Math.round(ab.wind) + ' km/h · Wolken ' + Math.round(ab.wolken) + ' % · ' +
+         (a.tide === 'egal' ? 'Tide egal' : (ab.tideOk ? 'Tide passt gerade (' + (a.tide === 'NW' ? 'Niedrig' : 'Hoch') + 'wasser)' : 'besser um ' + (a.tide === 'NW' ? 'Niedrig' : 'Hoch') + 'wasser')) + '. ' + a.text + '</div>';
+    document.getElementById('spotliste').innerHTML = l;
+  }
+  document.getElementById('insel').addEventListener('click', function(ev){ var g = ev.target.closest('.spot'); if (!g) return; spotAktiv = +g.getAttribute('data-k'); inselMalen(); });
+  document.getElementById('spotliste').addEventListener('click', function(ev){ var b = ev.target.closest('.spotzeile'); if (!b) return; spotAktiv = +b.getAttribute('data-k'); inselMalen(); });
+
+  // ---------- Stundenverlauf ----------
+  var mg = document.getElementById('mg'), scroller = document.getElementById('mscroll'), svg = document.getElementById('msvg');
+  var STUFEN = [ { h: 48, name: '2 Tage' }, { h: 24, name: '1 Tag' }, { h: 12, name: '12 h' }, { h: 6, name: '6 h' } ];
+  var stufe = 1, stundenImBild = 24, pxH = 15, W = 360, padL = 180;
+  var ZEILEN = [ { id: 'temp', name: 'Temperatur', h: 64 }, { id: 'wind', name: 'Wind & Böen', h: 56 }, { id: 'wolken', name: 'Wolken & Regen', h: 40 }, { id: 'tide', name: 'Tide', h: 56 }, { id: 'uv', name: 'UV', h: 34 } ];
+  function idxAusScroll(){ return scroller.scrollLeft / pxH; }
+  function zentrieren(idx, weich){
+    idx = Math.max(0, Math.min(N - 1, idx));
+    try { scroller.scrollTo({ left: idx * pxH, behavior: weich && !document.hidden ? 'smooth' : 'auto' }); } catch(e){ scroller.scrollLeft = idx * pxH; }
+    anzeigen();
+  }
+  function xVon(i){ return padL + i * pxH; }
+  function zeichnen(){
+    W = scroller.clientWidth || 360; padL = W / 2; pxH = W / stundenImBild;
+    var breite = padL * 2 + (N - 1) * pxH, y = 16, s = '', namen = '';
+    var H = 16 + ZEILEN.reduce(function(a, z){ return a + z.h + 10; }, 0) + 22;
+    // Nächte und Tage
+    for (var d = 0; d < 7; d++) {
+      var a = d * 24 + Math.floor(UNTER), b = Math.min(N - 1, d * 24 + 24 + Math.ceil(AUF));
+      s += '<rect x="' + xVon(a) + '" y="0" width="' + ((b - a) * pxH) + '" height="' + (H - 22) + '" fill="currentColor" opacity="0.06"/>';
+      var x = xVon(d * 24);
+      s += '<line x1="' + x + '" x2="' + x + '" y1="0" y2="' + (H - 22) + '" stroke="currentColor" stroke-opacity="0.3"/>';
+      s += '<text x="' + (x + 5) + '" y="12" font-size="10.5" font-weight="700" fill="currentColor" opacity="0.75" font-family="Plus Jakarta Sans, sans-serif">' + (pxH * 24 > 130 ? TAGE[d] : TAGK[d]) + '</text>';
+    }
+    var schritt = pxH * 3 >= 30 ? 3 : pxH * 6 >= 30 ? 6 : pxH * 12 >= 30 ? 12 : 0;
+    if (schritt) for (var h = 0; h < N; h += schritt) {
+      if (h % 24 === 0) continue;
+      var xh = xVon(h);
+      s += '<line x1="' + xh + '" x2="' + xh + '" y1="' + (H - 30) + '" y2="' + (H - 22) + '" stroke="currentColor" stroke-opacity="0.35"/>';
+      s += '<text x="' + xh + '" y="' + (H - 9) + '" text-anchor="middle" font-size="9.5" fill="currentColor" opacity="0.6" font-family="Plus Jakarta Sans, sans-serif">' + (h % 24) + '</text>';
+    }
+    var geo = {};
+    ZEILEN.forEach(function(z){
+      var y0 = y, hh = z.h; geo[z.id] = { y0: y0, h: hh };
+      namen += '<span class="mg-zeilenname" style="top:' + (y0 - 2) + 'px">' + z.name + '</span>';
+      s += '<line x1="' + padL + '" x2="' + (breite - padL) + '" y1="' + (y0 + hh) + '" y2="' + (y0 + hh) + '" stroke="currentColor" stroke-opacity="0.2"/>';
+      if (z.id === 'temp') {
+        var tmin = 17, tmax = 28, p = '', q = '';
+        for (var i = 0; i < N; i++) { p += (i ? ' L' : 'M') + xVon(i).toFixed(1) + ' ' + (y0 + hh - (D.temp[i] + ort.dt - tmin) / (tmax - tmin) * hh).toFixed(1); q += (i ? ' L' : 'M') + xVon(i).toFixed(1) + ' ' + (y0 + hh - (D.fuehl[i] + ort.dt - tmin) / (tmax - tmin) * hh).toFixed(1); }
+        s += '<path d="' + q + '" fill="none" stroke="currentColor" stroke-width="1.2" stroke-dasharray="3 3" stroke-opacity="0.45"/>';
+        s += '<path d="' + p + '" fill="none" stroke="var(--warm)" stroke-width="2"/>';
+        for (var d3 = 0; d3 < 7; d3++) { var mx = 0, mi = -1; for (var j = d3 * 24; j < d3 * 24 + 24; j++) if (D.temp[j] > mx) { mx = D.temp[j]; mi = j; } if (pxH * 24 > 90) s += '<text x="' + xVon(mi) + '" y="' + (y0 + hh - (mx + ort.dt - tmin) / (tmax - tmin) * hh - 6) + '" text-anchor="middle" font-size="10" font-weight="700" fill="var(--warm)" font-family="Plus Jakarta Sans, sans-serif">' + Math.round(mx + ort.dt) + '°</text>'; }
+      }
+      if (z.id === 'wind') {
+        var wmax = 55;
+        for (var i2 = 0; i2 < N; i2++) {
+          var xw = xVon(i2) - pxH * 0.35, bw = Math.max(1.5, pxH * 0.7);
+          s += '<rect x="' + xw + '" y="' + (y0 + hh - (D.boe[i2] + ort.dw) / wmax * hh) + '" width="' + bw + '" height="' + ((D.boe[i2] + ort.dw) / wmax * hh) + '" fill="currentColor" opacity="0.18"/>';
+          s += '<rect x="' + xw + '" y="' + (y0 + hh - (D.wind[i2] + ort.dw) / wmax * hh) + '" width="' + bw + '" height="' + ((D.wind[i2] + ort.dw) / wmax * hh) + '" fill="var(--accent)" opacity="0.8"/>';
+          if (pxH >= 10 && i2 % 3 === 0) s += '<g transform="translate(' + xVon(i2) + ' ' + (y0 + 8) + ') rotate(' + (D.dir[i2] + 180) + ')"><path d="M0 4 L0 -4 M-3 -1 L0 -4 L3 -1" fill="none" stroke="currentColor" stroke-width="1.3" stroke-opacity="0.7"/></g>';
+        }
+      }
+      if (z.id === 'wolken') {
+        for (var i3 = 0; i3 < N; i3++) {
+          s += '<rect x="' + (xVon(i3) - pxH / 2) + '" y="' + y0 + '" width="' + (pxH + 0.5) + '" height="' + hh + '" fill="currentColor" opacity="' + (D.wolken[i3] + ort.dk) / 100 * 0.45 + '"/>';
+          if (D.regen[i3] > 0) s += '<rect x="' + (xVon(i3) - pxH * 0.3) + '" y="' + (y0 + hh - D.regen[i3] / 1.2 * hh) + '" width="' + Math.max(1.5, pxH * 0.6) + '" height="' + (D.regen[i3] / 1.2 * hh) + '" fill="var(--accent)"/>';
+        }
+      }
+      if (z.id === 'tide') {
+        var qq = 'M' + xVon(0).toFixed(1) + ' ' + (y0 + hh), pp = '';
+        for (var i4 = 0; i4 < N; i4++) { var yy = (y0 + hh - (D.tide[i4] - 0.1) / 2.6 * hh).toFixed(1); qq += ' L' + xVon(i4).toFixed(1) + ' ' + yy; pp += (i4 ? ' L' : 'M') + xVon(i4).toFixed(1) + ' ' + yy; }
+        qq += ' L' + xVon(N - 1).toFixed(1) + ' ' + (y0 + hh) + ' Z';
+        s += '<path d="' + qq + '" fill="var(--accent)" opacity="0.18"/><path d="' + pp + '" fill="none" stroke="var(--accent)" stroke-width="1.6"/>';
+        if (pxH >= 6) EXTREME.forEach(function(x){ s += '<text x="' + xVon(x.f) + '" y="' + (x.art === 'HW' ? y0 + 9 : y0 + hh - 4) + '" text-anchor="middle" font-size="9.5" font-weight="700" fill="currentColor" opacity="0.8" font-family="Plus Jakarta Sans, sans-serif">' + uhr(x.f % 24) + '</text>'; });
+      }
+      if (z.id === 'uv') {
+        for (var i5 = 0; i5 < N; i5++) if (D.uv[i5] > 0.2) s += '<rect x="' + (xVon(i5) - pxH * 0.35) + '" y="' + (y0 + hh - D.uv[i5] / 11 * hh) + '" width="' + Math.max(1.5, pxH * 0.7) + '" height="' + (D.uv[i5] / 11 * hh) + '" fill="' + (D.uv[i5] >= 8 ? 'var(--warn)' : D.uv[i5] >= 6 ? 'var(--warm)' : 'currentColor') + '" opacity="0.75"/>';
+      }
+      y += hh + 10;
+    });
+    var xj = xVon(IDX_JETZT);
+    s += '<line x1="' + xj + '" x2="' + xj + '" y1="0" y2="' + (H - 22) + '" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="3 3"/>';
+    svg.setAttribute('width', breite); svg.setAttribute('height', H); svg.setAttribute('viewBox', '0 0 ' + breite + ' ' + H); svg.style.color = 'var(--ink)';
+    svg.innerHTML = s; document.getElementById('mnamen').innerHTML = namen;
+    karteZeichnen();
+  }
+  function relText(dh){ if (Math.abs(dh) < 0.5) return ''; var v = dh > 0 ? '+' : '−', a = Math.abs(Math.round(dh)); if (a < 24) return v + a + ' h'; var t = Math.floor(a / 24), r = a % 24; return v + t + ' T' + (r ? ' ' + r + ' h' : ''); }
+  function anzeigen(){
+    var idx = idxAusScroll(), tag = Math.max(0, Math.min(6, Math.floor(idx / 24))), std = Math.round(idx % 24) % 24;
+    document.getElementById('mzeit').textContent = TAGE[tag] + ' · ' + (std < 10 ? '0' : '') + std + ':00';
+    var dh = idx - IDX_JETZT, rel = relText(dh);
+    document.getElementById('mrel').textContent = rel ? (dh > 0 ? 'in ' + rel.slice(1) : 'vor ' + rel.slice(1)) : 'jetzt';
+    var t = wertBei(D.temp, idx) + ort.dt, f = wertBei(D.fuehl, idx) + ort.dt, w = wertBei(D.wind, idx) + ort.dw, b = wertBei(D.boe, idx) + ort.dw;
+    var k = Math.max(0, wertBei(D.wolken, idx) + ort.dk), r = wertBei(D.regen, idx), td = wertBei(D.tide, idx), steigt = wertBei(D.tide, idx + 0.5) > td, uv = wertBei(D.uv, idx);
+    var naechst = EXTREME.filter(function(x){ return x.f > idx; })[0];
+    document.getElementById('mwerte').innerHTML =
+      '<div class="mg-wert"><small>Temp.</small><b>' + dez(t, 1) + '<i>°</i></b><span>gefühlt ' + dez(f, 1) + '°</span></div>' +
+      '<div class="mg-wert"><small>Wind</small><b>' + Math.round(w) + '<i>km/h</i></b><span>' + himmelsrichtung(wertBei(D.dir, idx)) + ' · Böen ' + Math.round(b) + '</span></div>' +
+      '<div class="mg-wert"><small>Wolken</small><b>' + Math.round(k) + '<i>%</i></b><span>' + (r > 0.05 ? 'Regen ' + dez(r, 1) + ' mm' : 'trocken') + '</span></div>' +
+      '<div class="mg-wert"><small>Tide</small><b>' + dez(td, 2) + '<i>m</i></b><span>' + (steigt ? 'steigt' : 'fällt') + (naechst ? ' · ' + naechst.art + ' ' + uhr(naechst.f % 24) : '') + '</span></div>' +
+      '<div class="mg-wert"><small>UV</small><b>' + Math.round(uv) + '</b><span>' + (uv >= 8 ? 'sehr hoch' : uv >= 6 ? 'hoch' : uv >= 3 ? 'mäßig' : uv > 0.5 ? 'niedrig' : '–') + '</span></div>';
+    var bj = mg.querySelector('.b-jetzt'); if (bj) { bj.querySelector('.rel').textContent = rel; bj.disabled = Math.abs(dh) < 0.5; }
+    var halb = W / 2 / pxH;
+    mg.querySelector('.mg-randpfeil.links').classList.toggle('is-da', IDX_JETZT < idx - halb + 0.5);
+    mg.querySelector('.mg-randpfeil.rechts').classList.toggle('is-da', IDX_JETZT > idx + halb - 0.5);
+    fensterNachfuehren();
+  }
+  var hinweisTimer = null;
+  function zoomSetzen(k){
+    k = Math.max(0, Math.min(STUFEN.length - 1, k));
+    var mitte = idxAusScroll(); stufe = k; stundenImBild = STUFEN[k].h;
+    zeichnen(); zentrieren(mitte, false);
+    mg.querySelector('[data-act="zoomrein"]').disabled = stufe >= STUFEN.length - 1;
+    mg.querySelector('[data-act="zoomraus"]').disabled = stufe <= 0;
+    var el = document.getElementById('mzoomhinweis'); el.textContent = STUFEN[stufe].name + ' im Bild'; el.classList.add('is-da');
+    clearTimeout(hinweisTimer); hinweisTimer = setTimeout(function(){ el.classList.remove('is-da'); }, 900);
+  }
+  // Wochenkarte
+  function karteZeichnen(){
+    var k = document.getElementById('mkarte'), Wk = k.clientWidth || 360, Hk = k.clientHeight || 42;
+    function xk(i){ return i / (N - 1) * Wk; }
+    var s = '';
+    for (var d = 0; d < 7; d++) { var a = d * 24 + 20, b = Math.min(N - 1, d * 24 + 31); s += '<rect x="' + xk(a) + '" y="0" width="' + (xk(b) - xk(a)) + '" height="' + Hk + '" fill="currentColor" opacity="0.07"/>'; }
+    for (var d2 = 1; d2 <= 6; d2++) s += '<line x1="' + xk(d2 * 24) + '" x2="' + xk(d2 * 24) + '" y1="0" y2="' + Hk + '" stroke="currentColor" stroke-opacity="0.22"/>';
+    var p = '';
+    for (var i = 0; i < N; i++) p += (i ? ' L' : 'M') + xk(i).toFixed(1) + ' ' + (Hk - 5 - (D.temp[i] - 17) / 11 * (Hk - 10)).toFixed(1);
+    s += '<path d="' + p + '" fill="none" stroke="var(--warm)" stroke-width="1.3" stroke-opacity="0.9"/>';
+    s += '<line x1="' + xk(IDX_JETZT) + '" x2="' + xk(IDX_JETZT) + '" y1="0" y2="' + Hk + '" stroke="var(--accent)" stroke-width="2"/>';
+    var svgk = document.getElementById('mkartesvg'); svgk.setAttribute('viewBox', '0 0 ' + Wk + ' ' + Hk); svgk.style.color = 'var(--ink)'; svgk.innerHTML = s;
+    fensterNachfuehren();
+  }
+  function fensterNachfuehren(){
+    var k = document.getElementById('mkarte'), f = document.getElementById('mfenster');
+    var Wk = k.clientWidth || 360, idx = idxAusScroll(), halb = W / 2 / pxH;
+    var l = Math.max(0, idx - halb) / (N - 1) * Wk, r = Math.min(N - 1, idx + halb) / (N - 1) * Wk;
+    f.style.left = l + 'px'; f.style.width = Math.max(6, r - l) + 'px';
+    var tag = Math.max(0, Math.min(6, Math.floor(idx / 24)));
+    mg.querySelectorAll('.mg-tage button').forEach(function(b){ b.classList.toggle('is-hier', +b.getAttribute('data-d') === tag); });
+  }
+  var tageHtml = '';
+  for (var dd = 0; dd < 7; dd++) tageHtml += dd === 0 ? '<button type="button" class="b-jetzt" data-act="jetzt" data-d="0">Jetzt<span class="rel"></span></button>' : '<button type="button" data-act="tag" data-d="' + dd + '">' + TAGK[dd] + '</button>';
+  document.getElementById('mtage').innerHTML = tageHtml;
+  var karteZieht = false;
+  function karteZu(ev){ var k = document.getElementById('mkarte'), r = k.getBoundingClientRect(); zentrieren((ev.clientX - r.left) / r.width * (N - 1), false); }
+  document.getElementById('mkarte').addEventListener('pointerdown', function(ev){ karteZieht = true; try { ev.currentTarget.setPointerCapture(ev.pointerId); } catch(e){} karteZu(ev); });
+  document.getElementById('mkarte').addEventListener('pointermove', function(ev){ if (karteZieht) karteZu(ev); });
+  ['pointerup', 'pointercancel'].forEach(function(t){ document.getElementById('mkarte').addEventListener(t, function(){ karteZieht = false; }); });
+  var frischTimer = null;
+  mg.addEventListener('click', function(ev){
+    var b = ev.target.closest('[data-act]'); if (!b) return;
+    var act = b.getAttribute('data-act');
+    if (act === 'jetzt') zentrieren(IDX_JETZT, true);
+    else if (act === 'tag') zentrieren(+b.getAttribute('data-d') * 24 + 12, true);
+    else if (act === 'zoomrein') zoomSetzen(stufe + 1);
+    else if (act === 'zoomraus') zoomSetzen(stufe - 1);
+    else if (act === 'frisch') { b.style.color = 'var(--accent)'; clearTimeout(frischTimer); frischTimer = setTimeout(function(){ b.style.color = ''; }, 900); }
+  });
+  scroller.addEventListener('scroll', anzeigen, { passive: true });
+  var tippTimer = null, letzterTipp = 0, pinch = null, pinchWar = false;
+  scroller.addEventListener('click', function(ev){
+    if (pinchWar) { pinchWar = false; return; }
+    var r = scroller.getBoundingClientRect(), ziel = (ev.clientX - r.left + scroller.scrollLeft - padL) / pxH, t = Date.now();
+    if (t - letzterTipp < 280) { clearTimeout(tippTimer); letzterTipp = 0; zentrieren(IDX_JETZT, true); return; }
+    letzterTipp = t; clearTimeout(tippTimer); tippTimer = setTimeout(function(){ zentrieren(ziel, true); }, 280);
+  });
+  function abstand(t){ var dx = t[0].clientX - t[1].clientX, dy = t[0].clientY - t[1].clientY; return Math.sqrt(dx * dx + dy * dy); }
+  scroller.addEventListener('touchstart', function(ev){ if (ev.touches.length !== 2) return; pinch = { d0: abstand(ev.touches), h0: stundenImBild, mitte: idxAusScroll() }; scroller.style.overflowX = 'hidden'; }, { passive: true });
+  scroller.addEventListener('touchmove', function(ev){ if (!pinch || ev.touches.length !== 2) return; ev.preventDefault(); stundenImBild = Math.max(6, Math.min(48, pinch.h0 * pinch.d0 / abstand(ev.touches))); zeichnen(); zentrieren(pinch.mitte, false); }, { passive: false });
+  function pinchEnde(){ if (!pinch) return; pinch = null; pinchWar = true; scroller.style.overflowX = ''; var best = 0, diff = Infinity; STUFEN.forEach(function(s, k){ var d = Math.abs(Math.log(s.h / stundenImBild)); if (d < diff) { diff = d; best = k; } }); zoomSetzen(best); setTimeout(function(){ pinchWar = false; }, 400); }
+  scroller.addEventListener('touchend', pinchEnde, { passive: true }); scroller.addEventListener('touchcancel', pinchEnde, { passive: true });
+  var radTimer = null;
+  scroller.addEventListener('wheel', function(ev){ if (!ev.ctrlKey) return; ev.preventDefault(); if (radTimer) return; radTimer = setTimeout(function(){ radTimer = null; }, 180); zoomSetzen(stufe + (ev.deltaY < 0 ? 1 : -1)); }, { passive: false });
+  if (window.ResizeObserver) new ResizeObserver(function(){ var m = idxAusScroll(); zeichnen(); zentrieren(m, false); }).observe(scroller);
+
+  // ---------- 7 Tage ----------
+  var TAGSYMBOL = ['wolkesonne', 'wolke', 'sonne', 'sonne', 'wolke', 'wolkesonne', 'sonne'];
+  function wocheMalen(){
+    var h = '';
+    for (var d = 0; d < 7; d++) {
+      var mx = -99, mn = 99, wm = 0, p = '';
+      for (var i = d * 24; i < d * 24 + 24; i++) { var t = D.temp[i] + ort.dt; if (t > mx) mx = t; if (t < mn) mn = t; wm = Math.max(wm, D.wind[i] + ort.dw); p += (i === d * 24 ? 'M' : ' L') + ((i - d * 24) / 23 * 100).toFixed(1) + ' ' + (24 - (t - 17) / 11 * 20).toFixed(1); }
+      var note = 5, L = TAGESLAGE[d]; if (wm > 30) note--; if (wm > 38) note--; if (L.w + ort.dk > 45) note--; if (L.w + ort.dk > 70) note--; if (L.r) note -= 2; note = Math.max(1, note);
+      var sym = TAGSYMBOL[d]; if (ort.dk < -20 && sym === 'wolke') sym = 'wolkesonne'; if (ort.dk < -25 && sym === 'wolkesonne') sym = 'sonne';
+      h += '<button type="button" class="tag ' + (d === 0 ? 'is-heute' : '') + '" data-d="' + d + '"><div class="tn"><b>' + (d === 0 ? 'Heute' : TAGK[d]) + '</b><span>' + TAGE[d].slice(3) + '</span></div>' +
+           '<div class="ti"><svg class="i"><use href="#i-' + sym + '"/></svg>' + (L.r ? ' <svg class="i" style="width:16px;height:16px"><use href="#i-tropfen"/></svg>' : '') + '</div>' +
+           '<div class="tt">' + Math.round(mx) + '°<small>' + Math.round(mn) + '°</small></div>' +
+           '<svg class="spark" viewBox="0 0 100 26" preserveAspectRatio="none"><path d="' + p + '" fill="none" stroke="var(--warm)" stroke-width="1.5"/></svg>' +
+           '<div class="tw"><svg class="i"><use href="#i-wind"/></svg>' + Math.round(wm) + ' km/h</div><div class="tw">' + noteHtml(note) + '</div></button>';
+    }
+    document.getElementById('wochenkarten').innerHTML = h;
+  }
+  document.getElementById('wochenkarten').addEventListener('click', function(ev){
+    var b = ev.target.closest('.tag'); if (!b) return;
+    zentrieren(+b.getAttribute('data-d') * 24 + 12, false);
+    document.getElementById('stunden').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  // ---------- Tide-Uhr, Mond, Windrose, Windtag ----------
+  function tideUhr(){
+    var idx = IDX_JETZT, s = '', cx = 100, cy = 100, R = 78;
+    var letzterHW = EXTREME.filter(function(x){ return x.art === 'HW' && x.f <= idx; }).pop() || { f: idx - 6 };
+    var phase = ((idx - letzterHW.f) / 12.42) % 1;                  // 0 = Hochwasser, 0.5 = Niedrigwasser
+    s += '<circle cx="' + cx + '" cy="' + cy + '" r="' + R + '" fill="none" stroke="var(--border)" stroke-width="10"/>';
+    var ang = phase * 2 * Math.PI, ex = cx + R * Math.sin(ang), ey = cy - R * Math.cos(ang);
+    s += '<path d="M' + cx + ' ' + (cy - R) + ' A' + R + ' ' + R + ' 0 ' + (phase > 0.5 ? 1 : 0) + ' 1 ' + ex + ' ' + ey + '" fill="none" stroke="var(--accent)" stroke-width="10" stroke-linecap="round"/>';
+    s += '<circle cx="' + ex + '" cy="' + ey + '" r="7" fill="var(--surface)" stroke="var(--ink)" stroke-width="2.5"/>';
+    s += '<text x="' + cx + '" y="' + (cy - R - 4) + '" text-anchor="middle" font-size="10" font-weight="700" fill="var(--dim)" font-family="Plus Jakarta Sans, sans-serif" letter-spacing="1">HW</text>';
+    s += '<text x="' + cx + '" y="' + (cy + R + 14) + '" text-anchor="middle" font-size="10" font-weight="700" fill="var(--dim)" font-family="Plus Jakarta Sans, sans-serif" letter-spacing="1">NW</text>';
+    var td = wertBei(D.tide, idx), steigt = wertBei(D.tide, idx + 0.5) > td;
+    s += '<text x="' + cx + '" y="' + (cy - 2) + '" text-anchor="middle" font-size="34" font-weight="500" fill="var(--ink)" font-family="Fraunces, serif">' + dez(td, 2) + '</text>';
+    s += '<text x="' + cx + '" y="' + (cy + 20) + '" text-anchor="middle" font-size="12" font-weight="600" fill="var(--dim)" font-family="Plus Jakarta Sans, sans-serif">m · ' + (steigt ? 'steigt' : 'fällt') + '</text>';
+    document.getElementById('tideuhr').innerHTML = s;
+    var liste = EXTREME.filter(function(x){ return x.f > idx; }).slice(0, 4).map(function(x){
+      return '<li><span>' + (x.art === 'HW' ? 'Hochwasser' : 'Niedrigwasser') + ' · ' + TAGK[Math.floor(x.f / 24)] + '</span><b>' + uhr(x.f % 24) + ' · ' + dez(x.v, 2) + ' m</b></li>';
+    }).join('');
+    // Lagunen-Fenster: das nächste Niedrigwasser bei Tageslicht
+    var nwTag = EXTREME.filter(function(x){ return x.art === 'NW' && x.f > idx && (x.f % 24) > AUF + 0.5 && (x.f % 24) < UNTER - 0.5; })[0];
+    document.getElementById('tideliste').innerHTML = liste + '<li><span>Lagunen El Cotillo · ' + (nwTag ? TAGK[Math.floor(nwTag.f / 24)] : '') + '</span><b>' + (nwTag ? uhr((nwTag.f - 1.3) % 24) + '–' + uhr((nwTag.f + 1.3) % 24) : '–') + '</b></li>';
+  }
+  function mondMalen(){
+    var s = '', cx = 100, cy = 60, R = 44, k = 0.82;                 // 82 % beleuchtet, abnehmend
+    s += '<circle cx="' + cx + '" cy="' + cy + '" r="' + R + '" fill="var(--surface2)" stroke="var(--border)"/>';
+    var w = (k - 0.5) * 2 * R;                                       // Halbachse der Schattengrenze
+    s += '<path d="M' + cx + ' ' + (cy - R) + ' A' + R + ' ' + R + ' 0 0 0 ' + cx + ' ' + (cy + R) + ' A' + Math.abs(w) + ' ' + R + ' 0 0 ' + (w > 0 ? 0 : 1) + ' ' + cx + ' ' + (cy - R) + ' Z" fill="var(--ink)" opacity="0.9"/>';
+    s += '<path d="M' + cx + ' ' + (cy - R) + ' A' + R + ' ' + R + ' 0 0 1 ' + cx + ' ' + (cy + R) + ' Z" fill="none"/>';
+    document.getElementById('mond').innerHTML = s;
+  }
+  function roseMalen(){
+    var idx = IDX_JETZT, dir = wertBei(D.dir, idx), w = wertBei(D.wind, idx) + ort.dw, b = wertBei(D.boe, idx) + ort.dw, s = '', cx = 100, cy = 100;
+    s += '<circle cx="' + cx + '" cy="' + cy + '" r="80" fill="none" stroke="var(--border)"/><circle cx="' + cx + '" cy="' + cy + '" r="52" fill="none" stroke="var(--border)" stroke-dasharray="2 4"/>';
+    ['N', 'E', 'S', 'W'].forEach(function(l, i){ var a = i * Math.PI / 2; s += '<text x="' + (cx + 92 * Math.sin(a)) + '" y="' + (cy - 92 * Math.cos(a) + 4) + '" text-anchor="middle" font-size="11" font-weight="700" fill="var(--dim)" font-family="Plus Jakarta Sans, sans-serif">' + l + '</text>'; });
+    for (var i = 0; i < 16; i++) { var a = i * Math.PI / 8; s += '<line x1="' + (cx + 74 * Math.sin(a)) + '" y1="' + (cy - 74 * Math.cos(a)) + '" x2="' + (cx + 80 * Math.sin(a)) + '" y2="' + (cy - 80 * Math.cos(a)) + '" stroke="var(--dim)" stroke-width="' + (i % 4 ? 1 : 2) + '"/>'; }
+    // Pfeil zeigt, wohin der Wind weht (aus NE nach SW)
+    s += '<g transform="rotate(' + (dir + 180) + ' ' + cx + ' ' + cy + ')"><path d="M' + cx + ' ' + (cy - 66) + ' L' + (cx - 9) + ' ' + (cy - 44) + ' L' + cx + ' ' + (cy - 50) + ' L' + (cx + 9) + ' ' + (cy - 44) + ' Z" fill="var(--accent)"/><line x1="' + cx + '" y1="' + (cy - 50) + '" x2="' + cx + '" y2="' + (cy + 40) + '" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/></g>';
+    s += '<circle cx="' + cx + '" cy="' + cy + '" r="30" fill="var(--surface)" stroke="var(--border)"/>';
+    s += '<text x="' + cx + '" y="' + (cy + 3) + '" text-anchor="middle" font-size="22" font-weight="500" fill="var(--ink)" font-family="Fraunces, serif">' + Math.round(w) + '</text>';
+    s += '<text x="' + cx + '" y="' + (cy + 17) + '" text-anchor="middle" font-size="9" fill="var(--dim)" font-family="Plus Jakarta Sans, sans-serif">km/h</text>';
+    document.getElementById('rose').innerHTML = s;
+    document.getElementById('windw').textContent = Math.round(w) + ' km/h · ' + himmelsrichtung(dir);
+    document.getElementById('windb').textContent = Math.round(b) + ' km/h';
+  }
+  function windTag(){
+    var s = '', Wt = 300, Ht = 120;
+    for (var h = 0; h < 24; h++) { var i = h, x = h / 24 * Wt, bw = Wt / 24 - 3; s += '<rect x="' + x + '" y="' + (Ht - 20 - (D.boe[i] + ort.dw) / 55 * 90) + '" width="' + bw + '" height="' + ((D.boe[i] + ort.dw) / 55 * 90) + '" fill="currentColor" opacity="0.15"/><rect x="' + x + '" y="' + (Ht - 20 - (D.wind[i] + ort.dw) / 55 * 90) + '" width="' + bw + '" height="' + ((D.wind[i] + ort.dw) / 55 * 90) + '" fill="var(--accent)" opacity="0.85"/>'; }
+    [0, 6, 12, 18].forEach(function(h){ s += '<text x="' + (h / 24 * Wt + 2) + '" y="' + (Ht - 5) + '" font-size="10" fill="var(--dim)" font-family="Plus Jakarta Sans, sans-serif">' + h + ' Uhr</text>'; });
+    s += '<line x1="0" x2="' + Wt + '" y1="' + (Ht - 20 - 25 / 55 * 90) + '" y2="' + (Ht - 20 - 25 / 55 * 90) + '" stroke="var(--warm)" stroke-dasharray="3 3"/><text x="' + Wt + '" y="' + (Ht - 24 - 25 / 55 * 90) + '" text-anchor="end" font-size="9.5" fill="var(--warm)" font-family="Plus Jakarta Sans, sans-serif">Sonnenschirm-Grenze 25</text>';
+    var svgw = document.getElementById('windtag'); svgw.style.color = 'var(--ink)'; svgw.innerHTML = s;
+  }
+  function luftMalen(){
+    var m = [
+      { l: 'Saharastaub', v: '12', e: 'µg/m³', p: 12, t: 'gering – Horizont klar. Fr: Ostwind, Anstieg möglich.' },
+      { l: 'Sicht', v: '38', e: 'km', p: 8, t: 'Lanzarote und Lobos scharf zu sehen.' },
+      { l: 'Luftfeuchte', v: '61', e: '%', p: 40, t: 'angenehm; nachts Tau auf dem Auto.' }
+    ];
+    document.getElementById('luftkacheln').innerHTML = m.map(function(x){ return '<div class="messer"><small>' + x.l + '</small><b>' + x.v + '<i>' + x.e + '</i></b><div class="balken"><i style="left:' + x.p + '%"></i></div><span>' + x.t + '</span></div>'; }).join('');
+  }
+
+  // ---------- Start ----------
+  heldMalen(); kartenMalen(); inselMalen();
+  zeichnen(); zentrieren(IDX_JETZT, false); anzeigen();
+  mg.querySelector('[data-act="zoomraus"]').disabled = false;
+  wocheMalen(); tideUhr(); mondMalen(); roseMalen(); windTag(); luftMalen();
+})();
+</script>
+
+</body>
+</html>

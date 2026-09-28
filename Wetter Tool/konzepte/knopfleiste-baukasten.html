@@ -1,0 +1,856 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Knopfleiste Baukasten</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&display=swap">
+<style>
+  :root {
+    --bg: #edece7;
+    --surface: #f9f8f5;
+    --surface2: #eeece6;
+    --border: #d4d1c8;
+    --ink: #1b2124;
+    --dim: #6b6a62;
+    --teal: #1f9aa1;
+    --shadow: 0 1px 3px rgba(20,25,30,.12);
+    --mono: Arial, Helvetica, sans-serif;
+    --sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #131718; --surface: #1b2124; --surface2: #202729; --border: #303836;
+      --ink: #ede9e0; --dim: #b4ac9c; --teal: #4bc4cb; --shadow: 0 1px 3px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #131718; --surface: #1b2124; --surface2: #202729; --border: #303836;
+    --ink: #ede9e0; --dim: #b4ac9c; --teal: #4bc4cb; --shadow: 0 1px 3px rgba(0,0,0,.35);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 500 14px/1.45 var(--sans); }
+  button { font: inherit; color: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  button:focus-visible, textarea:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  svg.i { width: 1.15em; height: 1.15em; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; vertical-align: -0.2em; }
+
+  .seite { max-width: 1120px; margin: 0 auto; padding-block: 22px 60px; padding-inline: 16px; }
+  .kopf { display: grid; gap: 6px; margin-bottom: 18px; }
+  .kopf .ueber { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
+  .kopf h1 { margin: 0; font-size: clamp(22px, 3.4vw, 30px); font-weight: 700; letter-spacing: -.01em; text-wrap: balance; }
+  .kopf p { margin: 0; max-width: 62ch; color: var(--dim); }
+
+  .buehne { display: grid; grid-template-columns: minmax(0, 400px) minmax(0, 1fr); gap: 26px; align-items: start; }
+  @media (max-width: 860px) { .buehne { grid-template-columns: minmax(0, 1fr); gap: 14px; } }
+
+  /* ---- Vorschau (haftet beim Scrollen) ---- */
+  .vorschau { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; display: grid; gap: 10px; padding-top: 6px; background: var(--bg); }
+  @media (max-width: 860px) { .vorschau { padding-bottom: 8px; box-shadow: 0 14px 12px -12px rgba(0,0,0,.35); } }
+  .handy { width: 100%; max-width: 390px; margin: 0 auto; height: min(600px, 66vh); overflow-y: auto; overflow-x: hidden; border: 1px solid var(--border); border-radius: 22px; background: var(--bg); scrollbar-width: none; }
+  .handy::-webkit-scrollbar { display: none; }
+  @media (max-width: 860px) { .handy { height: min(520px, 50vh); } }
+  .presets { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .preset { border: 1px solid var(--border); background: var(--surface); border-radius: 7px; padding: 7px 12px; font-weight: 600; font-size: 13px; }
+  .preset:hover { border-color: var(--ink); }
+  .probier { text-align: center; font-size: 12px; color: var(--dim); margin: 0; }
+
+  /* ---- Nachbau des Wetter-Tools (Handy-Innenleben) ---- */
+  .mg { --r: 11px; --bh: 40px; position: relative; margin: 10px 8px 0; background: var(--surface); border: 1px solid var(--border); border-radius: 18px; box-shadow: var(--shadow); font-family: var(--sans); }
+  .mg-reiter { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 12px 6px; }
+  .mg-tabs { display: inline-flex; gap: 2px; padding: 3px; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; }
+  .mg-tab { min-height: 32px; padding: 0 11px; border: 0; border-radius: 9px; background: transparent; color: var(--dim); font-weight: 600; font-size: 13px; }
+  .mg-tab.is-on { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,.18); }
+  .mg-zbtn-oben { position: absolute; right: 12px; top: 12px; display: none; align-items: center; justify-content: center; width: 34px; height: 34px; border: 1px solid var(--border); border-radius: 9px; background: transparent; }
+  .mg.a-schlank .mg-zbtn-oben { display: inline-flex; }
+  .mg-fahne { position: relative; display: flex; justify-content: center; padding: 8px 12px 8px; }
+  .mg-fahne::after { content: ""; position: absolute; left: 50%; bottom: 0; width: 2px; height: 8px; margin-left: -1px; background: var(--ink); opacity: .85; }
+  .mg-zeit { display: inline-flex; align-items: baseline; gap: 8px; padding: 5px 12px; border-radius: 8px; background: var(--ink); color: var(--surface); font: 700 15px/1.2 var(--mono); }
+  .mg-zeit small { font: 600 12px/1 var(--sans); opacity: .72; }
+  .mg-werte { position: relative; padding: 0 12px; }
+  .mg-werte::before { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; margin-left: -1px; border-left: 2px solid var(--ink); opacity: .85; }
+  .mg-wert { display: grid; grid-template-columns: 1fr 1fr; padding: 5px 0; border-bottom: 1px solid var(--border); }
+  .mg-wert:last-child { border-bottom: 0; }
+  .mg-wl { text-align: right; padding-right: 14px; font-size: 12.5px; color: var(--dim); align-self: center; }
+  .mg-wv { padding-left: 14px; font: 700 14.5px/1.2 var(--mono); white-space: nowrap; }
+  .mg-wv small { font-size: .78em; color: var(--dim); margin-left: 3px; }
+  .mg-wz { grid-column: 2; padding-left: 14px; font-size: 11.5px; color: var(--dim); margin-top: -2px; }
+
+  .mg-chart { position: relative; margin-top: 4px; }
+  .mg-scroll { overflow-x: auto; overflow-y: hidden; touch-action: pan-x; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .mg-scroll::-webkit-scrollbar { display: none; }
+  .mg-scroll svg { display: block; }
+  .mg-mittel { position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; margin-left: -1px; background: var(--ink); opacity: .85; pointer-events: none; }
+  .mg-randpfeil { position: absolute; top: 50%; transform: translateY(-50%); display: none; align-items: center; gap: 2px; padding: 6px 6px; border: 1px solid var(--border); background: color-mix(in srgb, var(--surface) 88%, transparent); backdrop-filter: blur(4px); font-size: 12px; font-weight: 600; }
+  .mg-randpfeil.links { left: 0; border-left: 0; border-radius: 0 var(--r) var(--r) 0; }
+  .mg-randpfeil.rechts { right: 0; border-right: 0; border-radius: var(--r) 0 0 var(--r); }
+  .mg-randpfeil.is-da { display: inline-flex; }
+  .mg-zoomhinweis { position: absolute; left: 50%; top: 42%; transform: translate(-50%, -50%); padding: 6px 12px; border-radius: 8px; background: var(--ink); color: var(--surface); font: 600 13px/1 var(--sans); opacity: 0; pointer-events: none; transition: opacity .25s; }
+  .mg-zoomhinweis.is-da { opacity: .92; }
+  .mg-ecke { position: absolute; right: 8px; bottom: 26px; display: none; align-items: center; border: 1px solid var(--border); border-radius: var(--r); background: color-mix(in srgb, var(--surface) 50%, transparent); backdrop-filter: blur(3px); overflow: hidden; }
+  .mg-ecke .mg-btn { min-height: 30px; min-width: 30px; padding: 0 7px; border: 0; border-radius: 0; background: transparent; font-size: 14px; }
+  .mg-ecke .mg-btn + .mg-btn, .mg-ecke .mg-lupe + .mg-btn { border-left: 1px solid var(--border); }
+  .mg-ecke .mg-lupe { display: inline-flex; align-items: center; padding: 0 4px; color: var(--dim); font-size: 12px; border-left: 1px solid var(--border); }
+  .mg-ecke.is-da { display: inline-flex; }
+  .mg-stufe { position: absolute; right: 8px; bottom: 26px; display: none; padding: 4px 8px; border: 1px solid var(--border); border-radius: var(--r); background: color-mix(in srgb, var(--surface) 50%, transparent); font: 600 12px/1.2 var(--mono); color: var(--dim); }
+  .mg-stufe.is-da { display: inline-block; }
+  .mg-spannen { display: none; justify-content: center; gap: 2px; padding: 6px 12px 0; }
+  .mg-spannen.is-da { display: flex; }
+  .mg-spannen button { border: 0; background: transparent; padding: 4px 8px; border-radius: 6px; font: 600 12px/1 var(--mono); color: var(--dim); }
+  .mg-spannen button.is-on { background: var(--ink); color: var(--surface); }
+
+  /* Knopfleiste */
+  .mg-knoepfe { position: relative; display: grid; gap: 6px; padding: 10px 12px 6px; }
+  .mg-cell { display: flex; align-items: center; gap: 6px; min-width: 0; }
+  .a-reihe .mg-knoepfe { grid-template-columns: 1fr; gap: 4px; padding-left: 8px; padding-right: 8px; }
+  .a-reihe .mg-cell { justify-content: center; gap: 4px; }
+  .a-reihe .mg-btn { padding: 0 8px; }
+  .mg-jz { display: none; } /* wie im echten Tool auf dem Handy */
+  .b-jetzt { min-width: 0; overflow: hidden; }
+  .a-mitte .mg-knoepfe { grid-template-columns: auto minmax(0, 1fr) auto; }
+  .a-mitte .mg-cell.c-mitte { justify-content: center; }
+  .a-mitte .mg-cell.c-rechts { justify-content: flex-end; }
+  .a-schlank .mg-knoepfe { grid-template-columns: 1fr; }
+  .a-schlank .mg-cell { justify-content: center; }
+  .a-geteilt .mg-knoepfe { grid-template-columns: auto auto; justify-content: space-between; }
+  /* Claude pur: Übersichtskarte statt Knöpfen */
+  .a-karte .mg-knoepfe { grid-template-columns: 1fr; padding-top: 8px; }
+  .a-karte .mg-cell { display: block; }
+  .a-karte .mg-zbtn-oben { display: inline-flex; }
+  .mg-karte { position: relative; height: 40px; border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; background: var(--surface2); touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none; }
+  .mg-karte:active { cursor: grabbing; }
+  .mg-karte svg { display: block; width: 100%; height: 100%; }
+  .mg-fenster { position: absolute; top: 0; bottom: 0; border: 1.5px solid var(--ink); border-radius: 4px; background: color-mix(in srgb, var(--ink) 9%, transparent); pointer-events: none; }
+  .mg-tage { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 3px; margin-top: 5px; }
+  .mg-tage .mg-btn { min-height: 30px; min-width: 0; padding: 0 2px; border-color: transparent; background: transparent; color: var(--dim); font-size: 12.5px; }
+  .mg-tage .mg-btn.is-hier { color: var(--ink); font-weight: 700; text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 2px; }
+  .mg-tage .mg-btn.b-jetzt { border-color: var(--border); color: var(--ink); }
+  .j-teal .mg-tage .b-jetzt { border-color: var(--teal); color: var(--teal); }
+  .j-invertiert .mg-tage .b-jetzt { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+  .j-invertiert .mg-tage .b-jetzt:disabled { background: transparent; color: var(--ink); border-color: var(--border); }
+  .mg-tage .b-jetzt .rel { font-size: 10.5px; }
+  .s-segment .a-karte .mg-cell, .s-segment.a-karte .mg-cell { border: 0; overflow: visible; }
+  .s-segment.a-karte .mg-cell > * + * { border-left: 0; }
+  .mg-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: var(--bh); min-width: var(--bh); padding: 0 12px; border-radius: var(--r); border: 1px solid var(--border); background: var(--surface2); color: var(--ink); font-weight: 600; font-size: 13.5px; line-height: 1; white-space: nowrap; }
+  .mg-btn:active { transform: scale(.97); }
+  .mg-btn:disabled { opacity: .38; cursor: default; transform: none; }
+  .mg-btn .rel { font: 600 11.5px/1 var(--mono); opacity: .75; }
+  .mg-btn.is-laedt svg { animation: dreht .9s linear infinite; }
+  @keyframes dreht { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .mg-btn.is-laedt svg { animation: none; opacity: .5; } .mg-zoomhinweis { transition: none; } }
+  .mg-btn.b-jetzt { flex: 0 1 200px; }
+  .a-mitte .mg-btn.b-jetzt, .a-schlank .mg-btn.b-jetzt, .a-geteilt .mg-btn.b-jetzt { flex: 0 1 170px; }
+  .mg-zoompaar { display: inline-flex; align-items: center; }
+  .mg-zoompaar .mg-btn { min-width: 34px; padding: 0 8px; }
+  .mg-zoompaar .mg-btn:first-child { border-radius: var(--r) 0 0 var(--r); border-right: 0; }
+  .mg-zoompaar .mg-btn:last-child { border-radius: 0 var(--r) var(--r) 0; border-left: 0; }
+  .mg-zoompaar .mg-lupe { display: inline-flex; align-items: center; justify-content: center; min-height: var(--bh); padding: 0 4px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--surface2); color: var(--dim); font-size: 12px; }
+  .mg-zoompaar .mg-lupe.emoji { font-size: 13px; }
+
+  /* Stil-Varianten */
+  .s-umrandet .mg-btn, .s-umrandet .mg-zoompaar .mg-lupe { background: transparent; }
+  .s-geist .mg-btn, .s-geist .mg-zoompaar .mg-lupe { background: transparent; border-color: transparent; }
+  .s-geist .mg-zoompaar .mg-lupe { border-color: transparent; }
+  .s-segment .mg-cell { border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; gap: 0; background: transparent; }
+  .s-segment .mg-cell .mg-btn, .s-segment .mg-zoompaar .mg-btn, .s-segment .mg-zoompaar .mg-lupe { border: 0; border-radius: 0; background: transparent; }
+  .s-segment .mg-cell > * + * { border-left: 1px solid var(--border); }
+  .s-segment .mg-zoompaar .mg-btn + .mg-lupe, .s-segment .mg-zoompaar .mg-lupe + .mg-btn { border-left: 1px solid var(--border); }
+  .s-segment .a-reihe .mg-cell { flex-wrap: nowrap; }
+  /* Jetzt-Hervorhebung */
+  .j-teal .b-jetzt { border-color: var(--teal); color: var(--teal); }
+  .j-invertiert .b-jetzt { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+  .j-invertiert .b-jetzt:disabled { background: transparent; color: var(--ink); border-color: var(--border); }
+  .j-fett .b-jetzt { font-weight: 700; }
+  .s-segment.j-invertiert .b-jetzt { background: var(--ink); color: var(--surface); }
+  /* Lage */
+  .l-schwebend .mg-knoepfe { position: absolute; left: 8px; right: 8px; bottom: 8px; z-index: 2; padding: 6px; border-radius: calc(var(--r) + 4px); background: color-mix(in srgb, var(--surface) 82%, transparent); backdrop-filter: blur(6px); border: 1px solid var(--border); }
+  .l-schwebend .mg-chart { padding-bottom: 0; }
+  .l-schwebend .mg-ecke, .l-schwebend .mg-stufe { bottom: calc(var(--bh) + 30px); }
+  .l-haftet .mg-knoepfe { position: sticky; bottom: 0; z-index: 3; background: var(--surface); border-top: 1px solid var(--border); padding-bottom: 8px; margin-top: 4px; }
+  .mg-foot { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 6px 12px 10px; font-size: 11.5px; color: var(--dim); }
+  .mg-foot .mg-btn { min-height: 26px; min-width: 26px; padding: 0 6px; font-size: 12px; }
+  .mg-menu { position: absolute; right: 12px; z-index: 8; display: grid; gap: 2px; min-width: 190px; padding: 8px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); box-shadow: 0 10px 24px -10px rgba(0,0,0,.5); font-size: 13px; }
+  .mg-menu div { display: flex; justify-content: space-between; padding: 6px 6px; border-radius: 6px; }
+  .mg-menu div.is-an { font-weight: 600; }
+  .mg-menu div span:last-child { font-family: var(--mono); color: var(--dim); }
+  .mg-menu[hidden] { display: none; }
+  .darunter { margin: 12px 8px 14px; display: grid; gap: 10px; }
+  .darunter .kasten { height: 120px; border: 1px dashed var(--border); border-radius: 14px; display: grid; place-items: center; color: var(--dim); font-size: 12.5px; }
+
+  /* ---- Auswahl-Panel ---- */
+  .panel { display: grid; gap: 22px; min-width: 0; }
+  .gruppe { display: grid; gap: 10px; }
+  .gruppe-kopf { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .gruppe h2 { margin: 0; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; font-weight: 700; }
+  .gruppe .frage { color: var(--dim); font-size: 13px; }
+  .optionen { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; align-items: start; }
+  .opt { position: relative; display: grid; gap: 3px; text-align: left; padding: 9px 10px 9px; border: 1px solid var(--border); border-radius: 7px; background: var(--surface); }
+  .opt:hover { border-color: var(--ink); }
+  .opt b { font-size: 13.5px; font-weight: 700; line-height: 1.3; padding-right: 8px; }
+  .opt span { font-size: 12px; color: var(--dim); line-height: 1.35; }
+  .opt .vorschlag { position: absolute; right: 8px; top: 7px; font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
+  .opt.is-on { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+  .opt.is-on span, .opt.is-on .vorschlag { color: var(--surface); opacity: .78; }
+  .opt.is-on::after { content: "✓"; position: absolute; right: 9px; bottom: 7px; font-size: 13px; font-weight: 700; }
+  .opt.is-on .vorschlag { right: 26px; }
+
+  .auswahl { display: grid; gap: 12px; padding: 16px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
+  .auswahl h2 { margin: 0; font-size: 16px; font-weight: 700; }
+  .auswahl ol { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 6px 14px; font-size: 13px; }
+  .auswahl ol li { display: flex; justify-content: space-between; gap: 10px; padding: 4px 0; border-bottom: 1px solid var(--border); }
+  .auswahl ol li span:first-child { color: var(--dim); }
+  .auswahl ol li span:last-child { font-weight: 600; text-align: right; }
+  .auswahl textarea { width: 100%; min-height: 64px; resize: vertical; padding: 8px 10px; border: 1px solid var(--border); border-radius: 7px; background: var(--bg); color: var(--ink); font: inherit; }
+  .aktionen { display: flex; gap: 8px; flex-wrap: wrap; }
+  .akt { padding: 9px 14px; border: 1px solid var(--border); border-radius: 7px; background: var(--surface2); font-weight: 600; font-size: 13.5px; }
+  .akt.haupt { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+  .akt:disabled { opacity: .5; cursor: default; }
+  .status { font-size: 12.5px; color: var(--dim); min-height: 1.2em; }
+  .varianten { display: flex; gap: 8px; flex-wrap: wrap; }
+  .variante { display: inline-flex; align-items: center; gap: 6px; padding: 6px 8px 6px 10px; border: 1px solid var(--border); border-radius: 7px; background: var(--bg); font-size: 13px; font-weight: 600; }
+  .variante .x { border: 0; background: transparent; color: var(--dim); font-size: 14px; padding: 0 2px; }
+  .variante .x:hover { color: var(--ink); }
+  details.technik { border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; background: var(--surface); }
+  details.technik summary { cursor: pointer; font-weight: 700; }
+  details.technik ul { margin: 10px 0 0; padding-left: 18px; font-size: 13px; color: var(--dim); display: grid; gap: 6px; }
+  details.technik li b { color: var(--ink); font-weight: 600; }
+  .ideen { display: grid; gap: 8px; }
+  .ideen h2 { margin: 0; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
+  .ideen p { margin: 0; color: var(--dim); font-size: 13px; max-width: 70ch; }
+</style>
+</head>
+<body>
+
+
+<div class="seite">
+  <header class="kopf">
+    <div class="ueber">Wetter-Tool · Fuerteventura</div>
+    <h1>Die Knopfleiste, neu gedacht</h1>
+    <p>Links das Handy, rechts die Bausteine. Tippe eine Option an, das Handy zeigt sie sofort. Im Handy kannst du wischen, tippen, zoomen wie im echten Tool. Am Ende speicherst du deine Kombination, und Claude liest sie direkt aus.</p>
+  </header>
+
+  <div class="buehne">
+    <section class="vorschau" aria-label="Vorschau auf dem Handy">
+      <div class="handy" id="handy">
+        <div class="mg" id="mg">
+          <div class="mg-reiter">
+            <div class="mg-tabs"><button class="mg-tab is-on" type="button">Corralejo</button><button class="mg-tab" type="button">El Cotillo</button><button class="mg-tab" type="button">Jandía</button></div>
+            <button class="mg-zbtn-oben" type="button" data-act="menu" aria-label="Zeilen wählen"><svg class="i"><use href="#i-menu"/></svg></button>
+          </div>
+          <div class="mg-fahne"><span class="mg-zeit"><span id="mzeit">Mi 30.09. · 14:00</span><small id="mrel">jetzt</small></span></div>
+          <div class="mg-werte">
+            <div class="mg-wert"><div class="mg-wl">Temperatur</div><div class="mg-wv"><span id="mtemp">24,3</span><small>°C</small></div><div class="mg-wz" id="mtempz">gefühlt 25,1 °C</div></div>
+            <div class="mg-wert"><div class="mg-wl">Tide</div><div class="mg-wv"><span id="mtide">1,42</span><small>m</small></div><div class="mg-wz" id="mtidez">steigt · Hochwasser 16:40</div></div>
+          </div>
+          <div class="mg-chart" id="mchart">
+            <div class="mg-scroll" id="mscroll"><svg id="msvg" xmlns="http://www.w3.org/2000/svg" width="10" height="156"></svg></div>
+            <div class="mg-mittel"></div>
+            <button class="mg-randpfeil links" type="button" data-act="jetzt" aria-label="Zurück zu jetzt"><svg class="i"><use href="#i-chevl"/></svg><svg class="i"><use href="#i-ziel"/></svg></button>
+            <button class="mg-randpfeil rechts" type="button" data-act="jetzt" aria-label="Zurück zu jetzt"><svg class="i"><use href="#i-ziel"/></svg><svg class="i"><use href="#i-chevr"/></svg></button>
+            <div class="mg-ecke" id="mecke">
+              <button class="mg-btn" type="button" data-act="zoomraus" aria-label="Mehr Tage zeigen"><svg class="i"><use href="#i-minus"/></svg></button>
+              <span class="mg-lupe"><svg class="i"><use href="#i-lupe"/></svg></span>
+              <button class="mg-btn" type="button" data-act="zoomrein" aria-label="Genauer zeigen"><svg class="i"><use href="#i-plus"/></svg></button>
+            </div>
+            <button class="mg-stufe" id="mstufe" type="button" data-act="stufe" title="Antippen: nächste Stufe">1 Tag</button>
+            <div class="mg-zoomhinweis" id="mzoomhinweis">1 Tag im Bild</div>
+          </div>
+          <div class="mg-spannen" id="mspannen"></div>
+          <div class="mg-knoepfe" id="mknoepfe"></div>
+          <div class="mg-menu" id="mmenu" hidden>
+            <div class="is-an"><span>Temperatur</span><span>✓</span></div>
+            <div class="is-an"><span>Tide</span><span>✓</span></div>
+            <div><span>Wind &amp; Böen</span><span>–</span></div>
+            <div><span>Wolken &amp; Regen</span><span>–</span></div>
+            <div><span>Wasser</span><span>–</span></div>
+            <div><span>Sonne &amp; Mond</span><span>–</span></div>
+          </div>
+          <div class="mg-foot"><span>ECMWF · Open-Meteo</span><span id="mfoot">zuletzt 14:02</span></div>
+        </div>
+        <div class="darunter" aria-hidden="true">
+          <div class="kasten">Webcam · Satellit · Regen</div>
+          <div class="kasten">Was der Tag bringt</div>
+        </div>
+      </div>
+      <p class="probier" id="probier">Probier: wischen, aufs Diagramm tippen, ‹ › und Jetzt drücken.</p>
+      <div class="presets">
+        <button class="preset" type="button" data-preset="bisher">So ist es heute</button>
+        <button class="preset" type="button" data-preset="vorschlag">Claudes Vorschlag</button>
+        <button class="preset" type="button" data-preset="pur">Claude pur</button>
+      </div>
+    </section>
+
+    <section class="panel" id="panel"></section>
+  </div>
+</div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-frisch" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.35-5.65"/><path d="M20 4v5h-5"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+    <symbol id="i-chevl" viewBox="0 0 24 24"><path d="M14.5 6l-6 6 6 6"/></symbol>
+    <symbol id="i-chevr" viewBox="0 0 24 24"><path d="M9.5 6l6 6-6 6"/></symbol>
+    <symbol id="i-lupe" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.3-4.3"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 6v12M6 12h12"/></symbol>
+    <symbol id="i-minus" viewBox="0 0 24 24"><path d="M6 12h12"/></symbol>
+    <symbol id="i-ziel" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="1.8" fill="currentColor" stroke="none"/></symbol>
+  </defs>
+</svg>
+
+<script>
+(function(){
+  'use strict';
+
+  // ---------- Die Bausteine ----------
+  var GRUPPEN = [
+    { id: 'anordnung', titel: 'Anordnung', frage: 'Wo sitzen die Knöpfe?', opt: [
+      { id: 'reihe', name: 'Eine Reihe (bisher)', text: '↻ ‹ Jetzt › −🔍+ ☰ nebeneinander, alles gleich wichtig.', tech: '.mg-knoepfe bleibt flex; nur Stil ändern.' },
+      { id: 'mitte', name: 'Jetzt in der Mitte', text: '‹ Jetzt › mittig, ↻ links außen, ☰ rechts außen. Der Daumen findet Jetzt blind.', emp: true, tech: '.mg-knoepfe als Raster „auto 1fr auto“, drei Zellen; Zoom-Paar (falls in der Leiste) zu ↻ in die linke Zelle.' },
+      { id: 'schlank', name: 'Nur Zeit-Knöpfe', text: 'Leiste nur ‹ Jetzt ›. ↻ wandert in die Fußzeile („zuletzt 14:02 ↻“), ☰ nach oben zu den Reitern.', tech: '☰ in .mg-reiter rechts (absolut); ↻ als kleiner Knopf in .mg-foot; das Zeilen-Menü klappt dann von oben nach unten auf.' },
+      { id: 'geteilt', name: 'Zwei Gruppen', text: 'Links Zeit (‹ Jetzt ›), rechts Werkzeug (↻ ☰). Lücke dazwischen trennt Sinn von Sinn.', tech: '.mg-knoepfe: justify-content space-between, zwei Zellen.' },
+      { id: 'karte', name: 'Übersichtskarte (Claude pur)', text: 'Keine Pfeile mehr: eine kleine 7-Tage-Karte mit der Kurve im Kleinen. Ein Fenster zeigt, was oben im Bild ist – ziehen blättert, Tag antippen springt, „Jetzt“ ist der Tag von heute. ↻ in der Fußzeile, ☰ oben bei den Reitern.', tech: 'Neues Element .mg-karte unter dem Diagramm: SVG (Nächte, Temperaturkurve, Jetzt-Strich) über die ganze Breite, darüber .mg-fenster (absolut, Breite = sichtbarer Bereich / n). pointerdown+move mit setPointerCapture → zentrieren(x/Breite·n). Darunter 7 Tagesknöpfe (Tag → 12:00; heutiger Tag = Jetzt-Knopf mit .mg-btn-jetzt). ↻ in .mg-foot, ☰ in .mg-reiter. Fenster in anzeigen() nachführen, bei Zoom neu breiten.' }
+    ]},
+    { id: 'stil', titel: 'Stil', frage: 'Wie sehen die Knöpfe aus?', opt: [
+      { id: 'flaeche', name: 'Fläche mit Rand (bisher)', text: 'Heller Kasten plus Linie.', tech: 'Bisheriges .mg-btn.' },
+      { id: 'umrandet', name: 'Nur Rand', text: 'Durchsichtig, feine Linie. Ruhig, tritt hinter das Diagramm zurück.', emp: true, tech: '.mg-btn { background: transparent }, auch .mg-zoom-lupe.' },
+      { id: 'geist', name: 'Nur Schrift', text: 'Kein Rand, keine Fläche. Am leisesten – aber weniger „drückbar“.', tech: '.mg-btn { background: transparent; border-color: transparent }.' },
+      { id: 'segment', name: 'Ein Rahmen pro Gruppe', text: 'Zusammengehörige Knöpfe in einem Kasten mit Trennstrichen, wie die Ortsreiter oben.', tech: 'Zellen bekommen border+radius+overflow hidden, Knöpfe darin ohne Rand, Trennstriche per border-left.' }
+    ]},
+    { id: 'ecken', titel: 'Ecken', frage: 'Wie rund?', opt: [
+      { id: 'eckig', name: 'Eckig', text: '6 px', tech: '--mg-r: 6px' },
+      { id: 'sanft', name: 'Sanft (bisher)', text: '11 px', emp: true, tech: '--mg-r: 11px (bisher)' },
+      { id: 'rund', name: 'Rund', text: '20 px – zum Vergleich, du magst es eigentlich nicht.', tech: '--mg-r: 20px' }
+    ]},
+    { id: 'jetzt', titel: 'Der Jetzt-Knopf', frage: 'Wie hebt er sich ab?', opt: [
+      { id: 'teal', name: 'Türkis (bisher)', text: 'Der einzige Farbtupfer – und genau darum wirkt er. Deine Wahl vom 28.09.', emp: true, tech: 'Bisher: border/color var(--mg-akzent).' },
+      { id: 'invertiert', name: 'Umgekehrt', text: 'Dunkel auf hell wie die Datumsfahne oben. Zwei Dinge, eine Sprache: „das hier ist die Zeit“.', tech: '.mg-btn-jetzt { background: var(--mg-text); color: var(--mg-flaeche); border-color: var(--mg-text) }; ruhend zurück auf transparent.' },
+      { id: 'fett', name: 'Nur fetter', text: 'Gleich wie die anderen, nur Schrift fett. Am ruhigsten, am wenigsten auffindbar.', tech: 'font-weight 700, sonst nichts.' }
+    ]},
+    { id: 'jetzttext', titel: 'Beschriftung', frage: 'Was steht auf Jetzt?', opt: [
+      { id: 'zentrieren', name: '„Jetzt zentrieren“ (bisher)', text: 'Auf dem Handy nur „Jetzt“.', tech: 'Bisher (.mg-jz ab 480 px ausgeblendet).' },
+      { id: 'nur', name: '„Jetzt“', text: 'Kurz, überall gleich.', tech: 'Span .mg-jz entfernen.' },
+      { id: 'symbol', name: '◎ Jetzt', text: 'Fadenkreuz-Zeichen davor. Passt zum Rand-Pfeil (siehe Extras).', tech: 'SVG-Symbol (Kreis+Punkt) vor dem Text.' },
+      { id: 'abstand', name: '„Jetzt“ + Abstand', text: 'Zeigt, wie weit du weg bist: „Jetzt  +14 h“. Steht man auf jetzt, nur „Jetzt“.', emp: true, tech: 'In anzeigen(): Differenz idx − idxJetzt formatieren (h / Tage) in einen <span class="mg-rel">, Schrift --mg-mono.' }
+    ]},
+    { id: 'zoom', titel: 'Zoom', frage: 'Wie zoomt man?', opt: [
+      { id: 'leiste', name: 'Knopfpaar in der Leiste (bisher)', text: '− 🔍 + neben den anderen. Keine Geste.', tech: 'Bisher. Hinweis: das 🔍-Emoji ist auf iPhone blau/farbig – für Monochrom durch ein SVG ersetzen.' },
+      { id: 'ecke', name: 'Lupe rechts unten im Diagramm + Geste', text: 'Kleines − 🔍 + schwebt in der Diagramm-Ecke. Dazu Zwei-Finger-Zoom (Handy) und Strg+Mausrad.', emp: true, tech: 'Absolut in .mg-diagramm (right 8, bottom über der Zeitachse), halbdurchsichtiger Grund + backdrop-filter. Geste: touch-action: pan-x am Scroller, touchmove mit 2 Fingern → Abstand-Verhältnis → pxH stufenlos, beim Loslassen auf ZOOMS einrasten; wheel mit ctrlKey → eine Stufe.' },
+      { id: 'geste', name: 'Nur Geste + Stufenanzeige', text: 'Keine Zoom-Knöpfe. Rechts unten steht nur „1 Tag“; antippen schaltet weiter.', tech: 'Wie „ecke“, aber statt Paar nur ein Label mit der Stufe (Tipp: nächste Stufe).' },
+      { id: 'spannen', name: 'Zeitspannen zum Antippen', text: 'Eine Zeile „3 h · 6 h · 12 h · 1 Tag · 2 Tage“ unter dem Diagramm.', tech: 'Kleine Textreihe unter .mg-diagramm, gewählte Stufe umgekehrt; ersetzt zoomen(±1) durch zoomSetzen(stufe).' }
+    ]},
+    { id: 'pfeile', titel: 'Tages-Pfeile', frage: 'Wie springt man einen Tag?', opt: [
+      { id: 'chevrons', name: '‹ › (bisher)', text: 'Nur Winkel.', tech: 'Bisher.' },
+      { id: 'tag', name: '‹ Tag  ·  Tag ›', text: 'Sagt, was passiert. Kostet Platz.', tech: 'Text „Tag“ neben dem Winkel, ab 480 px ausblenden oder kürzen.' },
+      { id: 'aus', name: 'Weg – nur wischen', text: 'Das Diagramm wischt man ohnehin. Mehr Platz für Jetzt.', tech: 'Knöpfe zurueck/vor nicht rendern; Wischen bleibt.' }
+    ]},
+    { id: 'lage', titel: 'Lage der Leiste', frage: 'Wo sitzt sie?', opt: [
+      { id: 'unter', name: 'Unter dem Diagramm (bisher)', text: 'Im Fluss der Seite.', emp: true, tech: 'Bisher.' },
+      { id: 'schwebend', name: 'Schwebt im Diagramm', text: 'Halbdurchsichtig über dem unteren Diagrammrand. Spart eine Zeile, verdeckt aber ein Stück Kurve.', tech: '.mg-knoepfe absolut in .mg-diagramm, backdrop-filter; Diagramm unten Platz lassen (padding).' },
+      { id: 'haftet', name: 'Haftet unten am Bildschirm', text: 'Scrollst du zu Webcam oder Tipps, bleibt die Leiste unten sichtbar, bis das Tool aus dem Bild ist. Scroll im Handy links, um es zu sehen.', tech: '.mg-knoepfe { position: sticky; bottom: 0 } mit Grundfläche und Trennlinie; .mg hat schon overflow: visible.' }
+    ]},
+    { id: 'groesse', titel: 'Größe', frage: 'Wie hoch sind die Knöpfe?', opt: [
+      { id: 'kompakt', name: 'Kompakt', text: '36 px', tech: 'min-height 36px' },
+      { id: 'normal', name: 'Normal (bisher)', text: '40 px', emp: true, tech: 'min-height 40px (bisher)' },
+      { id: 'gross', name: 'Groß', text: '46 px – Daumen-freundlich, aber wuchtig.', tech: 'min-height 46px' }
+    ]},
+    { id: 'extras', titel: 'Extras', frage: 'Kleine Dinge, die viel bringen (mehrere möglich).', multi: true, opt: [
+      { id: 'randpfeil', name: 'Rand-Pfeil zurück zu jetzt', text: 'Ist „jetzt“ aus dem Bild gewischt, erscheint am Diagrammrand ein kleiner ◎-Pfeil in die Richtung. Antippen springt zurück. Wie „Mein Standort“ in Karten-Apps.', emp: true, tech: 'In anzeigen(): liegt idxJetzt außerhalb des sichtbaren Bereichs, .mg-randpfeil.links/.rechts einblenden; Klick = zentrieren(idxJetzt).' },
+      { id: 'doppeltipp', name: 'Doppeltipp = Jetzt', text: 'Zweimal aufs Diagramm tippen springt zu jetzt. Einmal tippen setzt weiter den Strich.', emp: true, tech: 'Klick im Scroller 280 ms verzögern; zweiter Klick in der Zeit → zentrieren(idxJetzt). Achtung: bestehendes langes Drücken (Zeilen sortieren) nicht stören.' },
+      { id: 'zoomhinweis', name: 'Hinweis beim Zoomen', text: 'Kurz eingeblendet: „1 Tag im Bild“. Man weiß immer, wo man ist.', emp: true, tech: 'Nach zoomen(): Label mittig 900 ms einblenden (opacity-Übergang, reduced-motion beachten).' },
+      { id: 'jetztruht', name: 'Jetzt ruht, wenn du schon da bist', text: 'Steht der Strich auf jetzt, wird der Knopf blass. Man sieht: alles im Lot.', emp: true, tech: 'In anzeigen(): jetzt.disabled = |idx − idxJetzt| < 0.5; dabei ↻ trotzdem erreichbar lassen.' }
+    ]}
+  ];
+
+  var BISHER = { anordnung: 'reihe', stil: 'flaeche', ecken: 'sanft', jetzt: 'teal', jetzttext: 'zentrieren', zoom: 'leiste', pfeile: 'chevrons', lage: 'unter', groesse: 'normal', extras: [] };
+  var VORSCHLAG = {};
+  GRUPPEN.forEach(function(g){
+    if (g.multi) VORSCHLAG[g.id] = g.opt.filter(function(o){ return o.emp; }).map(function(o){ return o.id; });
+    else VORSCHLAG[g.id] = (g.opt.filter(function(o){ return o.emp; })[0] || g.opt[0]).id;
+  });
+  // Claude pur: wie der Vorschlag, aber die Übersichtskarte ersetzt Pfeile und Jetzt-Knopf
+  var PUR = JSON.parse(JSON.stringify(VORSCHLAG));
+  PUR.anordnung = 'karte'; PUR.pfeile = 'aus'; PUR.zoom = 'ecke'; PUR.jetzt = 'teal'; PUR.jetzttext = 'abstand'; PUR.stil = 'umrandet';
+  var wahl = JSON.parse(JSON.stringify(BISHER));
+  var varianten = [];
+
+  function optName(gid, oid){
+    var g = GRUPPEN.filter(function(x){ return x.id === gid; })[0];
+    var o = g && g.opt.filter(function(x){ return x.id === oid; })[0];
+    return o ? o.name : oid;
+  }
+  function icon(id){ return '<svg class="i" aria-hidden="true"><use href="#i-' + id + '"/></svg>'; }
+
+  // ---------- Auswahl-Panel ----------
+  var panel = document.getElementById('panel');
+  function panelBauen(){
+    var h = '';
+    GRUPPEN.forEach(function(g){
+      h += '<div class="gruppe" data-g="' + g.id + '"><div class="gruppe-kopf"><h2>' + g.titel + '</h2><span class="frage">' + g.frage + '</span></div><div class="optionen">';
+      g.opt.forEach(function(o){
+        h += '<button type="button" class="opt" data-g="' + g.id + '" data-o="' + o.id + '" aria-pressed="false">' +
+             (o.emp ? '<span class="vorschlag">Vorschlag</span>' : '') +
+             '<b>' + o.name + '</b><span>' + o.text + '</span></button>';
+      });
+      h += '</div></div>';
+    });
+    h += '<div class="ideen"><h2>Warum diese Vorschläge</h2>' +
+         '<p><b>Monochrom heißt: Wichtigkeit durch Form, nicht durch Farbe.</b> Das Türkis war bisher das einzige Signal für „Jetzt“. Umgekehrt dunkel-auf-hell sagt dasselbe lauter und spricht die Sprache der Datumsfahne. Alles andere tritt als Rand zurück – so bleibt das Diagramm der Star.</p>' +
+         '<p><b>Jetzt in der Mitte</b> ist der eine Knopf, den du blind treffen willst. Alles, was selten gebraucht wird (auffrischen, Zeilen), wandert an den Rand oder aus der Leiste heraus.</p>' +
+         '<p><b>Zoom gehört ans Diagramm,</b> nicht in die Leiste: Man zoomt, wo man hinschaut. Die Geste (zwei Finger) macht den Zoom nebenbei; die kleine Lupe in der Ecke ist der sichtbare Hinweis, dass es geht.</p>' +
+         '<p><b>Claude pur – ohne Vorgaben:</b> Knöpfe für „einen Tag vor“ sind ein Umweg. Was man eigentlich will, ist sehen, <i>wo in der Woche</i> man gerade steht, und direkt dorthin greifen. Darum ersetzt die Übersichtskarte Pfeile und Jetzt-Knopf durch die ganze Woche im Kleinen: Nächte grau, die Temperaturkurve als Faden, der Jetzt-Strich türkis, und ein Fenster, das zeigt, was oben im Bild ist. Ziehen blättert, Zoomen macht das Fenster schmaler oder breiter, und der heutige Tag heißt schlicht „Jetzt“. Ein Element erklärt Ort, Zoom und Weg zurück – drei Knöpfe weniger, kein Verlust an Bedienung. Auffrischen und Zeilen sind selten und wandern in die Fußzeile bzw. nach oben.</p></div>';
+    h += '<section class="auswahl" id="auswahl"><h2>Deine Auswahl</h2><ol id="zusammen"></ol>' +
+         '<textarea id="notiz" placeholder="Anmerkung für Claude (optional): was dir gefällt, was fehlt …"></textarea>' +
+         '<div class="aktionen"><button class="akt haupt" type="button" id="speichern">Auswahl speichern</button>' +
+         '<button class="akt" type="button" id="variante">Als Variante merken</button>' +
+         '<button class="akt" type="button" id="kopieren">Als Text kopieren</button></div>' +
+         '<div class="status" id="status"></div><div class="varianten" id="varianten"></div></section>';
+    h += '<details class="technik"><summary>Für die Umsetzung: was jede gewählte Option technisch bedeutet</summary><ul id="technik"></ul></details>';
+    panel.innerHTML = h;
+    panel.addEventListener('click', function(ev){
+      var b = ev.target.closest('.opt'); if (!b) return;
+      var g = b.getAttribute('data-g'), o = b.getAttribute('data-o');
+      var grp = GRUPPEN.filter(function(x){ return x.id === g; })[0];
+      if (grp.multi) {
+        var i = wahl[g].indexOf(o);
+        if (i >= 0) wahl[g].splice(i, 1); else wahl[g].push(o);
+      } else wahl[g] = o;
+      allesNeu();
+      merkLokal();
+    });
+    document.getElementById('speichern').addEventListener('click', speichern);
+    document.getElementById('variante').addEventListener('click', varianteMerken);
+    document.getElementById('kopieren').addEventListener('click', kopieren);
+    document.getElementById('notiz').addEventListener('input', merkLokal);
+    document.getElementById('varianten').addEventListener('click', function(ev){
+      var x = ev.target.closest('.x');
+      var v = ev.target.closest('.variante');
+      if (!v) return;
+      var k = +v.getAttribute('data-k');
+      if (x) { varianten.splice(k, 1); variantenZeigen(); merkLokal(); return; }
+      wahl = JSON.parse(JSON.stringify(varianten[k].wahl)); allesNeu(); merkLokal();
+    });
+  }
+  function panelZeigen(){
+    panel.querySelectorAll('.opt').forEach(function(b){
+      var g = b.getAttribute('data-g'), o = b.getAttribute('data-o');
+      var an = Array.isArray(wahl[g]) ? wahl[g].indexOf(o) >= 0 : wahl[g] === o;
+      b.classList.toggle('is-on', an); b.setAttribute('aria-pressed', an ? 'true' : 'false');
+    });
+    var z = '';
+    GRUPPEN.forEach(function(g){
+      var w = Array.isArray(wahl[g.id]) ? (wahl[g.id].length ? wahl[g.id].map(function(o){ return optName(g.id, o); }).join(', ') : 'keine') : optName(g.id, wahl[g.id]);
+      z += '<li><span>' + g.titel + '</span><span>' + w + '</span></li>';
+    });
+    document.getElementById('zusammen').innerHTML = z;
+    var t = '';
+    GRUPPEN.forEach(function(g){
+      var ids = Array.isArray(wahl[g.id]) ? wahl[g.id] : [wahl[g.id]];
+      ids.forEach(function(oid){
+        var o = g.opt.filter(function(x){ return x.id === oid; })[0]; if (!o) return;
+        t += '<li><b>' + g.titel + ' – ' + o.name + ':</b> ' + o.tech + '</li>';
+      });
+    });
+    t += '<li><b>Allgemein:</b> Alle Zeichen (↻ ☰ ‹ › Lupe ◎) als einfarbige SVG-Symbole in currentColor, keine Emojis. Versionskennung an meteogramm.js/.css hochzählen. Neue Gesten mit dem bestehenden langen Drücken (Zeilen sortieren) und dem Zeitraffer abstimmen.</li>';
+    document.getElementById('technik').innerHTML = t;
+  }
+  function auswahlText(){
+    var s = 'Knopfleiste – meine Auswahl (' + new Date().toLocaleString('de-DE') + ')\n';
+    GRUPPEN.forEach(function(g){
+      var w = Array.isArray(wahl[g.id]) ? (wahl[g.id].length ? wahl[g.id].map(function(o){ return optName(g.id, o); }).join(', ') : 'keine') : optName(g.id, wahl[g.id]);
+      s += '- ' + g.titel + ': ' + w + '\n';
+    });
+    var n = document.getElementById('notiz').value.trim();
+    if (n) s += 'Anmerkung: ' + n + '\n';
+    s += 'Schlüssel: ' + JSON.stringify(wahl);
+    return s;
+  }
+  function variantenZeigen(){
+    var el = document.getElementById('varianten');
+    el.innerHTML = varianten.map(function(v, k){
+      return '<span class="variante" data-k="' + k + '" role="button" tabindex="0" title="Antippen lädt diese Variante">' + v.name + '<button class="x" type="button" aria-label="Variante löschen">×</button></span>';
+    }).join('');
+  }
+  function varianteMerken(){
+    varianten.push({ name: 'Variante ' + (varianten.length + 1), wahl: JSON.parse(JSON.stringify(wahl)), zeit: new Date().toISOString() });
+    variantenZeigen(); merkLokal();
+    status('Variante gemerkt. Antippen lädt sie wieder, × löscht sie. „Auswahl speichern“ sichert auch die Varianten.');
+  }
+  function status(t){ document.getElementById('status').textContent = t; }
+  function kopieren(){
+    var t = auswahlText();
+    function fallback(){
+      var ta = document.getElementById('notiz'); var alt = ta.value; ta.value = t; ta.select();
+      try { document.execCommand('copy'); } catch(e){}
+      ta.value = alt; status('Text steht markiert im Feld – kopieren mit Strg/⌘+C.');
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(function(){ status('Text kopiert. Einfach im Chat einfügen.'); }, fallback);
+    else fallback();
+  }
+
+  // ---------- Speichern: geteilte Ablage (db) oder Browser ----------
+  var db = null, DOC = 'konzept/knopfleiste';
+  function merkLokal(){
+    try { localStorage.setItem('knopfleiste', JSON.stringify({ wahl: wahl, varianten: varianten, notiz: document.getElementById('notiz').value })); } catch(e){}
+  }
+  function ladeLokal(){
+    try { var s = JSON.parse(localStorage.getItem('knopfleiste') || 'null'); if (s && s.wahl) { uebernehmen(s); return true; } } catch(e){}
+    return false;
+  }
+  function uebernehmen(s){
+    var w = JSON.parse(JSON.stringify(BISHER));
+    Object.keys(w).forEach(function(k){ if (s.wahl && s.wahl[k] != null) w[k] = s.wahl[k]; });
+    wahl = w; varianten = Array.isArray(s.varianten) ? s.varianten : [];
+    document.getElementById('notiz').value = s.notiz || '';
+    variantenZeigen();
+  }
+  function speichern(){
+    var knopf = document.getElementById('speichern');
+    var daten = { wahl: wahl, varianten: varianten, notiz: document.getElementById('notiz').value, text: auswahlText(), zeit: new Date().toISOString() };
+    merkLokal();
+    if (!db) { status('Im Browser gemerkt. Damit Claude es liest: „Als Text kopieren“ und im Chat einfügen.'); return; }
+    knopf.disabled = true;
+    db.doc(DOC).set(daten).then(function(){
+      status('Gespeichert um ' + new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) + ' Uhr. Claude kann deine Auswahl jetzt direkt lesen.');
+    }, function(e){
+      status('Speichern in der geteilten Ablage ging nicht (' + (e && e.code || 'Fehler') + '). Im Browser ist es gemerkt – nutze „Als Text kopieren“.');
+    }).then(function(){ knopf.disabled = false; });
+  }
+  function dbStarten(){
+    if (!window.claude || typeof window.claude.use !== 'function') return;
+    window.claude.use('db').then(function(ns){
+      if (!ns) return;
+      db = ns;
+      return db.doc(DOC).get().then(function(snap){
+        if (snap.exists) { var d = snap.data(); uebernehmen(d); allesNeu(); status('Deine letzte gespeicherte Auswahl ist geladen.'); }
+      });
+    }).catch(function(){});
+  }
+
+  // ---------- Das nachgebaute Wetter-Tool ----------
+  var mg = document.getElementById('mg'), scroller = document.getElementById('mscroll'), svg = document.getElementById('msvg');
+  var N = 168, IDX_JETZT = 62;                 // Mo 28.09. 00:00 + 62 h = Mi 30.09. 14:00
+  var TAGE = ['Mo 28.09.', 'Di 29.09.', 'Mi 30.09.', 'Do 01.10.', 'Fr 02.10.', 'Sa 03.10.', 'So 04.10.'];
+  var TAGK = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
+  var STUFEN = [ { h: 48, name: '2 Tage' }, { h: 24, name: '1 Tag' }, { h: 12, name: '12 h' }, { h: 6, name: '6 h' }, { h: 3, name: '3 h' } ];
+  var stufe = 1, stundenImBild = 24, pxH = 15, W = 360, padL = 180;
+  var TEMP = [], TIDE = [];
+  for (var i = 0; i < N; i++) {
+    TEMP.push(22.4 + 3.4 * Math.sin((i - 9) / 24 * 2 * Math.PI) + 0.9 * Math.sin(i / 60) + (i > 100 ? -0.8 : 0));
+    TIDE.push(1.35 + 1.08 * Math.sin((i + 4) / 12.42 * 2 * Math.PI));
+  }
+  function dez(v, n){ return v.toFixed(n).replace('.', ','); }
+  function idxAusScroll(){ return scroller.scrollLeft / pxH; }
+  function zentrieren(idx, weich){
+    idx = Math.max(0, Math.min(N - 1, idx));
+    try { scroller.scrollTo({ left: idx * pxH, behavior: weich ? 'smooth' : 'auto' }); } catch(e){ scroller.scrollLeft = idx * pxH; }
+    anzeigen();
+  }
+  function xVon(i){ return padL + i * pxH; }
+
+  function zeichnen(){
+    W = scroller.clientWidth || 360; padL = W / 2; pxH = W / stundenImBild;
+    var breite = padL * 2 + (N - 1) * pxH, H = 156;
+    var t0 = 8, th = 62, d0 = 84, dh = 50;
+    var s = '';
+    // Nächte
+    for (var d = 0; d < 7; d++) {
+      var a = d * 24 + 20, b = Math.min(N - 1, d * 24 + 31);
+      s += '<rect x="' + xVon(a) + '" y="0" width="' + ((b - a) * pxH) + '" height="' + (H - 14) + '" fill="currentColor" opacity="0.06"/>';
+    }
+    // Tagesgrenzen + Beschriftung
+    for (var d2 = 0; d2 <= 6; d2++) {
+      var x = xVon(d2 * 24);
+      s += '<line x1="' + x + '" x2="' + x + '" y1="0" y2="' + (H - 14) + '" stroke="currentColor" stroke-opacity="0.3"/>';
+      var name = pxH * 24 > 120 ? TAGE[d2] : TAGK[d2];
+      s += '<text x="' + (x + 4) + '" y="12" font-size="10.5" font-weight="700" fill="currentColor" opacity="0.7" font-family="Arial">' + name + '</text>';
+    }
+    // Stunden
+    var schritt = pxH * 3 >= 30 ? 3 : pxH * 6 >= 30 ? 6 : pxH * 12 >= 30 ? 12 : 0;
+    if (schritt) for (var h = 0; h < N; h += schritt) {
+      if (h % 24 === 0) continue;
+      var xh = xVon(h);
+      s += '<line x1="' + xh + '" x2="' + xh + '" y1="' + (H - 22) + '" y2="' + (H - 14) + '" stroke="currentColor" stroke-opacity="0.35"/>';
+      s += '<text x="' + xh + '" y="' + (H - 2) + '" text-anchor="middle" font-size="9.5" fill="currentColor" opacity="0.6" font-family="Arial">' + (h % 24) + '</text>';
+    }
+    // Temperatur
+    var tmin = 17.5, tmax = 27.5, p = '';
+    for (var i = 0; i < N; i++) p += (i ? ' L' : 'M') + xVon(i).toFixed(1) + ' ' + (t0 + th - (TEMP[i] - tmin) / (tmax - tmin) * th).toFixed(1);
+    s += '<line x1="' + padL + '" x2="' + (breite - padL) + '" y1="' + (t0 + th) + '" y2="' + (t0 + th) + '" stroke="currentColor" stroke-opacity="0.25"/>';
+    s += '<path d="' + p + '" fill="none" stroke="currentColor" stroke-width="1.8" stroke-opacity="0.92"/>';
+    // Tide als Fläche
+    var q = 'M' + xVon(0).toFixed(1) + ' ' + (d0 + dh);
+    for (var j = 0; j < N; j++) q += ' L' + xVon(j).toFixed(1) + ' ' + (d0 + dh - (TIDE[j] - 0.2) / 2.5 * dh).toFixed(1);
+    q += ' L' + xVon(N - 1).toFixed(1) + ' ' + (d0 + dh) + ' Z';
+    s += '<path d="' + q + '" fill="currentColor" opacity="0.14"/>';
+    s += '<path d="' + q.replace(/^M[^L]*L/, 'M').replace(/ L[^L]* Z$/, '') + '" fill="none" stroke="currentColor" stroke-width="1.4" stroke-opacity="0.8"/>';
+    // Jetzt-Linie
+    var xj = xVon(IDX_JETZT);
+    s += '<line x1="' + xj + '" x2="' + xj + '" y1="0" y2="' + (H - 14) + '" stroke="currentColor" stroke-width="1.5" stroke-dasharray="3 3" stroke-opacity="0.75"/>';
+    s += '<text x="' + (xj + 4) + '" y="' + (H - 26) + '" font-size="9.5" font-weight="700" fill="currentColor" opacity="0.75" font-family="Arial">jetzt</text>';
+    svg.setAttribute('width', breite); svg.setAttribute('height', H); svg.setAttribute('viewBox', '0 0 ' + breite + ' ' + H);
+    svg.style.color = 'var(--ink)';
+    svg.innerHTML = s;
+    karteZeichnen();
+  }
+
+  // Übersichtskarte (Claude pur): die Woche im Kleinen
+  function karteZeichnen(){
+    var k = document.getElementById('mkarte'); if (!k) return;
+    var Wk = k.clientWidth || 360, Hk = k.clientHeight || 40;
+    function xk(i){ return i / (N - 1) * Wk; }
+    var s = '';
+    for (var d = 0; d < 7; d++) {
+      var a = d * 24 + 20, b = Math.min(N - 1, d * 24 + 31);
+      s += '<rect x="' + xk(a) + '" y="0" width="' + (xk(b) - xk(a)) + '" height="' + Hk + '" fill="currentColor" opacity="0.07"/>';
+    }
+    for (var d2 = 1; d2 <= 6; d2++) s += '<line x1="' + xk(d2 * 24) + '" x2="' + xk(d2 * 24) + '" y1="0" y2="' + Hk + '" stroke="currentColor" stroke-opacity="0.22"/>';
+    var tmin = 17.5, tmax = 27.5, p = '';
+    for (var i = 0; i < N; i++) p += (i ? ' L' : 'M') + xk(i).toFixed(1) + ' ' + (Hk - 5 - (TEMP[i] - tmin) / (tmax - tmin) * (Hk - 10)).toFixed(1);
+    s += '<path d="' + p + '" fill="none" stroke="currentColor" stroke-width="1.3" stroke-opacity="0.8"/>';
+    var xj = xk(IDX_JETZT);
+    s += '<line x1="' + xj + '" x2="' + xj + '" y1="0" y2="' + Hk + '" stroke="' + (wahl.jetzt === 'teal' ? 'var(--teal)' : 'currentColor') + '" stroke-width="2"/>';
+    var svgk = document.getElementById('mkartesvg');
+    svgk.setAttribute('viewBox', '0 0 ' + Wk + ' ' + Hk); svgk.style.color = 'var(--ink)'; svgk.innerHTML = s;
+    fensterNachfuehren();
+  }
+  function fensterNachfuehren(){
+    var k = document.getElementById('mkarte'), f = document.getElementById('mfenster'); if (!k || !f) return;
+    var Wk = k.clientWidth || 360, idx = idxAusScroll(), halb = W / 2 / pxH;
+    var l = Math.max(0, idx - halb) / (N - 1) * Wk, r = Math.min(N - 1, idx + halb) / (N - 1) * Wk;
+    f.style.left = l + 'px'; f.style.width = Math.max(6, r - l) + 'px';
+    var tag = Math.max(0, Math.min(6, Math.floor(idx / 24)));
+    mg.querySelectorAll('.mg-tage .mg-btn').forEach(function(b){ b.classList.toggle('is-hier', +b.getAttribute('data-d') === tag); });
+  }
+  var karteZieht = false;
+  function karteZu(ev, k){ var r = k.getBoundingClientRect(); zentrieren((ev.clientX - r.left) / r.width * (N - 1), false); }
+  mg.addEventListener('pointerdown', function(ev){
+    var k = ev.target.closest('#mkarte'); if (!k) return;
+    karteZieht = true; try { k.setPointerCapture(ev.pointerId); } catch(e){}
+    karteZu(ev, k);
+  });
+  mg.addEventListener('pointermove', function(ev){ if (!karteZieht) return; var k = document.getElementById('mkarte'); if (k) karteZu(ev, k); });
+  ['pointerup', 'pointercancel'].forEach(function(t){ mg.addEventListener(t, function(){ karteZieht = false; }); });
+
+  function relText(dh){
+    if (Math.abs(dh) < 0.5) return '';
+    var v = dh > 0 ? '+' : '−', a = Math.abs(Math.round(dh));
+    if (a < 24) return v + a + ' h';
+    var t = Math.floor(a / 24), r = a % 24;
+    return v + t + ' T' + (r ? ' ' + r + ' h' : '');
+  }
+  function anzeigen(){
+    var idx = idxAusScroll(), i0 = Math.max(0, Math.min(N - 2, Math.floor(idx))), f = idx - i0;
+    var temp = TEMP[i0] + (TEMP[i0 + 1] - TEMP[i0]) * f, tide = TIDE[i0] + (TIDE[i0 + 1] - TIDE[i0]) * f;
+    var tag = Math.floor(idx / 24), std = Math.round(idx % 24) % 24;
+    document.getElementById('mzeit').textContent = TAGE[Math.min(6, Math.max(0, tag))] + ' · ' + (std < 10 ? '0' : '') + std + ':00';
+    var dh = idx - IDX_JETZT, rel = relText(dh);
+    document.getElementById('mrel').textContent = rel ? (dh > 0 ? 'in ' + rel.slice(1) : 'vor ' + rel.slice(1)) : 'jetzt';
+    document.getElementById('mtemp').textContent = dez(temp, 1);
+    document.getElementById('mtempz').textContent = 'gefühlt ' + dez(temp + 0.8, 1) + ' °C';
+    document.getElementById('mtide').textContent = dez(tide, 2);
+    document.getElementById('mtidez').textContent = (TIDE[i0 + 1] > TIDE[i0] ? 'steigt' : 'fällt') + ' · Hochwasser 16:40';
+    // Jetzt-Knopf
+    var bj = mg.querySelector('.b-jetzt');
+    if (bj) {
+      var relEl = bj.querySelector('.rel'); if (relEl) relEl.textContent = rel;
+      bj.disabled = wahl.extras.indexOf('jetztruht') >= 0 && Math.abs(dh) < 0.5;
+    }
+    // Rand-Pfeil
+    var halb = W / 2 / pxH, an = wahl.extras.indexOf('randpfeil') >= 0;
+    mg.querySelector('.mg-randpfeil.links').classList.toggle('is-da', an && IDX_JETZT < idx - halb + 0.5);
+    mg.querySelector('.mg-randpfeil.rechts').classList.toggle('is-da', an && IDX_JETZT > idx + halb - 0.5);
+    fensterNachfuehren();
+  }
+
+  var hinweisTimer = null;
+  function zoomHinweis(){
+    if (wahl.extras.indexOf('zoomhinweis') < 0) return;
+    var el = document.getElementById('mzoomhinweis');
+    el.textContent = STUFEN[stufe].name + ' im Bild'; el.classList.add('is-da');
+    clearTimeout(hinweisTimer); hinweisTimer = setTimeout(function(){ el.classList.remove('is-da'); }, 900);
+  }
+  function zoomSetzen(k, ohneHinweis){
+    k = Math.max(0, Math.min(STUFEN.length - 1, k));
+    var mitte = idxAusScroll();
+    stufe = k; stundenImBild = STUFEN[k].h;
+    zeichnen(); zentrieren(mitte, false); zoomKnoepfe();
+    if (!ohneHinweis) zoomHinweis();
+  }
+  function zoomKnoepfe(){
+    mg.querySelectorAll('[data-act="zoomrein"]').forEach(function(b){ b.disabled = stufe >= STUFEN.length - 1; });
+    mg.querySelectorAll('[data-act="zoomraus"]').forEach(function(b){ b.disabled = stufe <= 0; });
+    document.getElementById('mstufe').textContent = STUFEN[stufe].name;
+    document.querySelectorAll('#mspannen button').forEach(function(b){ b.classList.toggle('is-on', +b.getAttribute('data-k') === stufe); });
+  }
+
+  // Leiste bauen
+  function leisteBauen(){
+    var a = wahl.anordnung;
+    var pf = wahl.pfeile;
+    var zur = pf === 'aus' ? '' : '<button class="mg-btn" type="button" data-act="zurueck" aria-label="Einen Tag zurück">' + icon('chevl') + (pf === 'tag' ? 'Tag' : '') + '</button>';
+    var vor = pf === 'aus' ? '' : '<button class="mg-btn" type="button" data-act="vor" aria-label="Einen Tag vor">' + (pf === 'tag' ? 'Tag' : '') + icon('chevr') + '</button>';
+    var jt = wahl.jetzttext;
+    var jetzt = '<button class="mg-btn b-jetzt" type="button" data-act="jetzt">' +
+      (jt === 'symbol' ? icon('ziel') : '') + 'Jetzt' + (jt === 'zentrieren' ? '<span class="mg-jz"> zentrieren</span>' : '') +
+      (jt === 'abstand' ? '<span class="rel"></span>' : '') + '</button>';
+    var frisch = '<button class="mg-btn b-frisch" type="button" data-act="frisch" aria-label="Werte auffrischen">' + icon('frisch') + '</button>';
+    var menu = '<button class="mg-btn" type="button" data-act="menu" aria-label="Zeilen wählen">' + icon('menu') + '</button>';
+    var zoom = wahl.zoom === 'leiste' ? '<span class="mg-zoompaar"><button class="mg-btn" type="button" data-act="zoomraus" aria-label="Mehr Tage">' + icon('minus') + '</button><span class="mg-lupe' + (BISHER_LUPE() ? ' emoji' : '') + '">' + (BISHER_LUPE() ? '🔍' : icon('lupe')) + '</span><button class="mg-btn" type="button" data-act="zoomrein" aria-label="Genauer">' + icon('plus') + '</button></span>' : '';
+    var h = '';
+    if (a === 'reihe') h = '<div class="mg-cell">' + frisch + zur + jetzt + vor + zoom + menu + '</div>';
+    else if (a === 'mitte') h = '<div class="mg-cell c-links">' + frisch + zoom + '</div><div class="mg-cell c-mitte">' + zur + jetzt + vor + '</div><div class="mg-cell c-rechts">' + menu + '</div>';
+    else if (a === 'schlank') h = '<div class="mg-cell">' + zur + jetzt + vor + zoom + '</div>';
+    else if (a === 'karte') {
+      var tage = '';
+      for (var d = 0; d < 7; d++) {
+        if (d === 2) tage += '<button class="mg-btn b-jetzt" type="button" data-act="jetzt" data-d="2">Jetzt' + (jt === 'abstand' ? '<span class="rel"></span>' : '') + '</button>';
+        else tage += '<button class="mg-btn" type="button" data-act="tag" data-d="' + d + '">' + TAGK[d] + '</button>';
+      }
+      h = '<div class="mg-cell"><div class="mg-karte" id="mkarte" aria-label="Wochenübersicht: ziehen blättert"><svg id="mkartesvg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"></svg><div class="mg-fenster" id="mfenster"></div></div>' +
+          '<div class="mg-tage">' + tage + '</div>' + (zoom ? '<div style="display:flex;justify-content:center;margin-top:6px">' + zoom + '</div>' : '') + '</div>';
+    }
+    else h = '<div class="mg-cell">' + zur + jetzt + vor + '</div><div class="mg-cell">' + zoom + frisch + menu + '</div>';
+    document.getElementById('mknoepfe').innerHTML = h;
+    document.getElementById('mfoot').innerHTML = (a === 'schlank' || a === 'karte') ? 'zuletzt 14:02 &nbsp;<button class="mg-btn b-frisch" type="button" data-act="frisch" aria-label="Werte auffrischen">' + icon('frisch') + '</button>' : 'zuletzt 14:02';
+    // Zeitspannen-Zeile
+    var sp = document.getElementById('mspannen');
+    sp.classList.toggle('is-da', wahl.zoom === 'spannen');
+    sp.innerHTML = STUFEN.map(function(s, k){ return '<button type="button" data-act="spanne" data-k="' + k + '">' + s.name + '</button>'; }).join('');
+    document.getElementById('mecke').classList.toggle('is-da', wahl.zoom === 'ecke');
+    document.getElementById('mstufe').classList.toggle('is-da', wahl.zoom === 'geste');
+    document.getElementById('mmenu').hidden = true;
+  }
+  // Bisheriger Zustand zeigt das farbige Emoji, damit der Unterschied sichtbar wird
+  function BISHER_LUPE(){ return wahl.stil === 'flaeche' && wahl.jetzt === 'teal' && wahl.zoom === 'leiste'; }
+
+  function klassen(){
+    mg.className = 'mg a-' + wahl.anordnung + ' s-' + wahl.stil + ' j-' + wahl.jetzt + ' l-' + wahl.lage;
+    mg.style.setProperty('--r', { eckig: '6px', sanft: '11px', rund: '20px' }[wahl.ecken]);
+    mg.style.setProperty('--bh', { kompakt: '36px', normal: '40px', gross: '46px' }[wahl.groesse]);
+    var p = 'Probier: wischen, aufs Diagramm tippen, ‹ › und Jetzt drücken.';
+    if (wahl.zoom !== 'leiste') p = 'Probier: mit zwei Fingern zoomen (am Rechner Strg + Mausrad), wischen, tippen.';
+    if (wahl.anordnung === 'karte') p = 'Probier: die kleine Wochenkarte ziehen, einen Tag antippen, mit zwei Fingern zoomen – das Fenster wird schmaler.';
+    if (wahl.extras.indexOf('doppeltipp') >= 0) p += ' Doppeltipp springt zu jetzt.';
+    document.getElementById('probier').textContent = p;
+  }
+  function allesNeu(){
+    klassen(); leisteBauen(); panelZeigen();
+    var mitte = idxAusScroll();
+    zeichnen(); zentrieren(mitte || IDX_JETZT, false); zoomKnoepfe();
+  }
+
+  // Bedienung im Handy
+  var frischTimer = null;
+  mg.addEventListener('click', function(ev){
+    var b = ev.target.closest('[data-act]'); if (!b) return;
+    var act = b.getAttribute('data-act');
+    if (act === 'jetzt') zentrieren(IDX_JETZT, true);
+    else if (act === 'zurueck') zentrieren(idxAusScroll() - 24, true);
+    else if (act === 'vor') zentrieren(idxAusScroll() + 24, true);
+    else if (act === 'tag') zentrieren(+b.getAttribute('data-d') * 24 + 12, true);
+    else if (act === 'zoomrein') zoomSetzen(stufe + 1);
+    else if (act === 'zoomraus') zoomSetzen(stufe - 1);
+    else if (act === 'stufe') zoomSetzen((stufe + 1) % STUFEN.length);
+    else if (act === 'spanne') zoomSetzen(+b.getAttribute('data-k'));
+    else if (act === 'menu') {
+      var m = document.getElementById('mmenu');
+      var r = b.getBoundingClientRect(), rm = mg.getBoundingClientRect();
+      m.style.top = (r.bottom - rm.top + 6) + 'px';
+      m.hidden = !m.hidden;
+    }
+    else if (act === 'frisch') {
+      mg.querySelectorAll('.b-frisch').forEach(function(x){ x.classList.add('is-laedt'); });
+      clearTimeout(frischTimer);
+      frischTimer = setTimeout(function(){
+        mg.querySelectorAll('.b-frisch').forEach(function(x){ x.classList.remove('is-laedt'); });
+        var t = new Date();
+        var txt = 'zuletzt ' + (t.getHours() < 10 ? '0' : '') + t.getHours() + ':' + (t.getMinutes() < 10 ? '0' : '') + t.getMinutes();
+        var f = document.getElementById('mfoot');
+        if (wahl.anordnung === 'schlank' || wahl.anordnung === 'karte') f.innerHTML = txt + ' &nbsp;<button class="mg-btn b-frisch" type="button" data-act="frisch" aria-label="Werte auffrischen">' + icon('frisch') + '</button>';
+        else f.textContent = txt;
+      }, 900);
+    }
+  });
+  document.addEventListener('click', function(ev){
+    if (!ev.target.closest('[data-act="menu"]') && !ev.target.closest('#mmenu')) document.getElementById('mmenu').hidden = true;
+  });
+  scroller.addEventListener('scroll', anzeigen, { passive: true });
+
+  // Tippen ins Diagramm: Strich setzen; Doppeltipp: zu jetzt (wenn gewählt)
+  var tippTimer = null, letzterTipp = 0;
+  scroller.addEventListener('click', function(ev){
+    if (pinchWar) { pinchWar = false; return; }
+    var r = scroller.getBoundingClientRect();
+    var ziel = (ev.clientX - r.left + scroller.scrollLeft - padL) / pxH;
+    if (wahl.extras.indexOf('doppeltipp') >= 0) {
+      var t = Date.now();
+      if (t - letzterTipp < 280) { clearTimeout(tippTimer); letzterTipp = 0; zentrieren(IDX_JETZT, true); return; }
+      letzterTipp = t;
+      clearTimeout(tippTimer); tippTimer = setTimeout(function(){ zentrieren(ziel, true); }, 280);
+    } else zentrieren(ziel, true);
+  });
+
+  // Zwei-Finger-Zoom und Strg+Mausrad (nur wenn die gewählte Zoom-Art Gesten vorsieht)
+  var pinch = null, pinchWar = false;
+  function gesteErlaubt(){ return wahl.zoom !== 'leiste'; }
+  function abstand(t){ var dx = t[0].clientX - t[1].clientX, dy = t[0].clientY - t[1].clientY; return Math.sqrt(dx * dx + dy * dy); }
+  scroller.addEventListener('touchstart', function(ev){
+    if (!gesteErlaubt() || ev.touches.length !== 2) return;
+    pinch = { d0: abstand(ev.touches), h0: stundenImBild, mitte: idxAusScroll() };
+    scroller.style.overflowX = 'hidden';
+  }, { passive: true });
+  scroller.addEventListener('touchmove', function(ev){
+    if (!pinch || ev.touches.length !== 2) return;
+    ev.preventDefault();
+    var h = Math.max(3, Math.min(48, pinch.h0 * pinch.d0 / abstand(ev.touches)));
+    stundenImBild = h; zeichnen(); zentrieren(pinch.mitte, false);
+  }, { passive: false });
+  function pinchEnde(){
+    if (!pinch) return;
+    pinch = null; pinchWar = true; scroller.style.overflowX = '';
+    var best = 0, diff = Infinity;
+    STUFEN.forEach(function(s, k){ var d = Math.abs(Math.log(s.h / stundenImBild)); if (d < diff) { diff = d; best = k; } });
+    zoomSetzen(best);
+    setTimeout(function(){ pinchWar = false; }, 400);
+  }
+  scroller.addEventListener('touchend', pinchEnde, { passive: true });
+  scroller.addEventListener('touchcancel', pinchEnde, { passive: true });
+  var radTimer = null;
+  scroller.addEventListener('wheel', function(ev){
+    if (!gesteErlaubt() || !ev.ctrlKey) return;
+    ev.preventDefault();
+    if (radTimer) return;
+    radTimer = setTimeout(function(){ radTimer = null; }, 180);
+    zoomSetzen(stufe + (ev.deltaY < 0 ? 1 : -1));
+  }, { passive: false });
+
+  // Vorgaben
+  document.querySelectorAll('.preset').forEach(function(b){
+    b.addEventListener('click', function(){
+      var p = b.getAttribute('data-preset');
+      wahl = JSON.parse(JSON.stringify(p === 'bisher' ? BISHER : p === 'pur' ? PUR : VORSCHLAG));
+      allesNeu(); merkLokal();
+    });
+  });
+
+  // Größenänderung: neu zeichnen, Mitte behalten
+  var ro = null;
+  if (window.ResizeObserver) {
+    ro = new ResizeObserver(function(){ var m = idxAusScroll(); zeichnen(); zentrieren(m, false); });
+    ro.observe(scroller);
+  } else window.addEventListener('resize', function(){ var m = idxAusScroll(); zeichnen(); zentrieren(m, false); });
+
+  // Start
+  panelBauen();
+  ladeLokal();
+  klassen(); leisteBauen(); panelZeigen();
+  zeichnen(); zentrieren(IDX_JETZT, false); zoomKnoepfe();
+  dbStarten();
+})();
+</script>
+
+</body>
+</html>
