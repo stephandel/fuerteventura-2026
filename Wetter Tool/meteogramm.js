@@ -498,14 +498,14 @@
       if (z.id === 'uv')    { hi = Math.max(8, Math.ceil(hi)); }
       if (z.id === 'druck') { lo = Math.floor(lo) - 1; hi = Math.ceil(hi) + 1; }
       if (z.id === 'tide')  { var a = Math.max(Math.abs(lo), Math.abs(hi), 0.5); a = Math.ceil(a * 2) / 2; lo = -a; hi = a; }
-      // Das Meer ändert seine Temperatur nur langsam - mindestens 3 Grad Spanne, sonst wirkt jede Zehntelschwankung riesig
-      if (z.id === 'wasser') { lo = Math.floor(lo); hi = Math.ceil(hi); while (hi - lo < 3) { lo -= 1; if (hi - lo < 3) hi += 1; } }
+      // Das Meer ändert seine Temperatur nur langsam - enger Ausschnitt (mindestens 1 Grad, in halben Graden), damit die Kurve sichtbar schwankt
+      if (z.id === 'wasser') { lo = Math.floor((lo - 0.1) * 2) / 2; hi = Math.ceil((hi + 0.1) * 2) / 2; while (hi - lo < 1) { lo -= 0.5; if (hi - lo < 1) hi += 0.5; } }
       if (hi === lo) hi = lo + 1;
       var ticks = z.ticks;
       if (!ticks) {
         if (z.id === 'temp') { ticks = []; for (var t = lo + 1; t <= hi - 1; t += (hi - lo > 12 ? 4 : 2)) ticks.push(t); }
         else if (z.id === 'tide') ticks = [lo, 0, hi];
-        else if (z.id === 'wasser') { ticks = []; for (var tw = lo + 1; tw <= hi - 1; tw++) ticks.push(tw); }
+        else if (z.id === 'wasser') { var sw = hi - lo > 2 ? 1 : 0.5; ticks = []; for (var tw = Math.ceil((lo + 0.01) / sw) * sw; tw < hi - 0.01; tw += sw) ticks.push(tw); }
         else ticks = [lo, (lo + hi) / 2, hi];
       }
       return { lo: lo, hi: hi, ticks: ticks };
@@ -603,7 +603,7 @@
           esc(g.z.titel) + (g.z.einheit ? ' <small>in ' + esc(g.z.einheit) + '</small>' : '') + '</div>');
         g.s.ticks.forEach(function(t){
           var ty = Math.max(g.y0, Math.min(g.y0 + g.h - 14, g.yv(t) - 7));
-          var txt = (g.z.id === 'welle' || g.z.id === 'tide' || g.z.id === 'regen') ? dez(t, 1) : Math.round(t);
+          var txt = (g.z.id === 'welle' || g.z.id === 'tide' || g.z.id === 'regen' || (g.z.id === 'wasser' && t % 1)) ? dez(t, 1) : Math.round(t);
           a.push('<div class="mg-ax-tick" style="top:' + ty + 'px">' + txt + '</div>');
         });
       });
