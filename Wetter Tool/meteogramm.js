@@ -1278,19 +1278,7 @@
           '<div class="mg-achse" id="' + kid('achse') + '"></div>' +
           '<div class="mg-cursor" aria-hidden="true"></div>' +
         '</div>' +
-        '<div class="mg-tipps" id="' + kid('tipps') + '" hidden></div>' +
-        (ANSICHTEN.length > 1 ? '<div class="mg-ansichten" id="' + kid('ansichten') + '" role="tablist" aria-label="Bildansicht"></div>' : '') +
-        (KARTE ? '<div class="mg-karte" id="' + kid('karte') + '" hidden>' +
-          '<img class="mg-k-basis" id="' + kid('kbasis') + '" alt="Satellitenbild" decoding="async">' +
-          '<img class="mg-k-auflage" id="' + kid('kauflage') + '" alt="" decoding="async" hidden>' +
-          (FILM_LEISTE ? '' : '<button type="button" class="mg-play" id="' + kid('play') + '" aria-label="Film abspielen">▶</button>') +
-          '<div class="mg-cam-text" id="' + kid('ktext') + '"></div>' +
-        '</div>' : '') +
-        '<div class="mg-cam" id="' + kid('cam') + '" hidden><img id="' + kid('camimg') + '" alt="Webcam-Bild" decoding="async" referrerpolicy="no-referrer">' +
-          '<div class="mg-camwahl" id="' + kid('camwahl') + '" hidden></div>' +
-          '<div class="mg-cam-text" id="' + kid('camtext') + '"></div></div>' +
-        // Knöpfe unten, nah am Daumen
-        (FILM_LEISTE ? '<div class="mg-film" id="' + kid('film') + '" hidden></div>' : '') +
+        // Knöpfe direkt unter dem Diagramm, die Tipps zum Tag stehen unten
         '<div class="mg-knoepfe">' +
           (KNOEPFE_MITTIG ? '<button type="button" class="mg-btn mg-btn-frisch" id="' + kid('frisch') + '" aria-label="Werte auffrischen" title="Werte neu holen">↻</button>' : '') +
           '<button type="button" class="mg-btn" id="' + kid('zurueck') + '" aria-label="Einen Tag zurück">‹</button>' +
@@ -1302,6 +1290,18 @@
             '<div class="mg-zeilen-panel" id="' + kid('zpanel') + '" hidden><h4>Welche Zeilen?</h4></div>' +
           '</span>' +
         '</div>' +
+        (ANSICHTEN.length > 1 ? '<div class="mg-ansichten" id="' + kid('ansichten') + '" role="tablist" aria-label="Bildansicht"></div>' : '') +
+        (KARTE ? '<div class="mg-karte" id="' + kid('karte') + '" hidden>' +
+          '<img class="mg-k-basis" id="' + kid('kbasis') + '" alt="Satellitenbild" decoding="async">' +
+          '<img class="mg-k-auflage" id="' + kid('kauflage') + '" alt="" decoding="async" hidden>' +
+          (FILM_LEISTE ? '' : '<button type="button" class="mg-play" id="' + kid('play') + '" aria-label="Film abspielen">▶</button>') +
+          '<div class="mg-cam-text" id="' + kid('ktext') + '"></div>' +
+        '</div>' : '') +
+        '<div class="mg-cam" id="' + kid('cam') + '" hidden><img id="' + kid('camimg') + '" alt="Webcam-Bild" decoding="async" referrerpolicy="no-referrer">' +
+          '<div class="mg-camwahl" id="' + kid('camwahl') + '" hidden></div>' +
+          '<div class="mg-cam-text" id="' + kid('camtext') + '"></div></div>' +
+        (FILM_LEISTE ? '<div class="mg-film" id="' + kid('film') + '" hidden></div>' : '') +
+        '<div class="mg-tipps" id="' + kid('tipps') + '" hidden></div>' +
         '<div class="mg-foot"><span>← Wischen → · Auswahl in der Mitte · Antippen holt die Stelle in die Mitte</span><span id="' + kid('quelle') + '"></span></div>';
 
       el.scroll  = document.getElementById(kid('scroll'));
