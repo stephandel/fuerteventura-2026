@@ -1629,7 +1629,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     <div class="stat-strip">
       <div class="stat"><span class="n" id="todo-stat-open">&#8211;</span><span class="l">offen</span></div>
       <div class="stat"><span class="n" id="todo-stat-done">&#8211;</span><span class="l">erledigt</span></div>
-      <div class="stat"><span class="n" id="todo-stat-days">&#8211;</span><span class="l">Tage bis zum Abflug</span></div>
+      <div class="stat"><span class="n" id="todo-stat-days">&#8211;</span><span class="l">Tage auf der Insel</span></div>
       <div class="stat"><span class="n" id="todo-stat-next">&#8211;</span><span class="l">n&#228;chste Frist</span></div>
     </div>
   </div>
@@ -7638,7 +7638,11 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     var setTxt = function(id, v){ var e = document.getElementById(id); if (e) e.textContent = v; };
     setTxt('todo-stat-open', openItems.length);
     setTxt('todo-stat-done', doneCount);
-    var dLeft = Math.max(0, Math.floor((new Date(2026, 8, 29, 12, 10) - new Date()) / 86400000));  // wie der Countdown auf der Startseite
+    // Tage auf der Insel: vor der Reise alle 14, waehrend der Reise die verbleibenden inkl. heute, danach 0.
+    var jetzt = Date.now(), dLeft;
+    if (jetzt < T_TAG1) dLeft = 14;
+    else if (jetzt < T_RUECK) dLeft = Math.max(1, 14 - Math.floor((jetzt - T_TAG1) / 86400000));
+    else dLeft = 0;
     setTxt('todo-stat-days', dLeft);
     var nextDue = openItems.filter(function(it){ return it.due; })
       .sort(function(a, b){ return daysUntil(a.due) - daysUntil(b.due); })[0];
