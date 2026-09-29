@@ -793,6 +793,10 @@ body { font-size: var(--fs-body); }
 
 /* ---- page header (non-home pages) ---- */
 .page-header { padding: 40px 20px 8px; }
+/* Kopfbild ueber Unterseiten ohne eigene Fotos (Planen, Packliste, Vergleich, Kalender) */
+.page-kopfbild { margin: 0; line-height: 0; }
+.page-kopfbild img { display: block; width: 100%; height: clamp(150px, 30vw, 300px); object-fit: cover; }
+.page-kopfbild + .page-header { padding-top: 22px; }
 /* Unterkuenfte-Seite: Kopf enger, Kennzahlen als schmale Reihe */
 #page-unterkuenfte .page-header { padding-top: 18px; }
 #page-unterkuenfte .eyebrow { margin-bottom: 6px; }
@@ -1623,6 +1627,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
 
 <!-- ============ TO-DO ============ -->
 <section class="page" id="page-todo">
+  <div class="page-kopfbild"><img src="images/kopf-planen.webp" alt="" loading="lazy" decoding="async"></div>
   <div class="page-header wrap">
     <div class="eyebrow" id="todo-eyebrow">Bis zum Abflug am 29.09.2026</div>
     <h1>Was noch zu tun ist</h1>
@@ -2354,6 +2359,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
 
 <!-- ============ PACKLISTE ============ -->
 <section class="page" id="page-packliste">
+  <div class="page-kopfbild"><img src="images/kopf-packliste.webp" alt="" loading="lazy" decoding="async"></div>
   <div class="page-header wrap">
     <div class="eyebrow">Vorbereitung</div>
     <h1>Packliste</h1>
@@ -2417,6 +2423,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
 
 <!-- ============ VERGLEICH ============ -->
 <section class="page" id="page-vergleich">
+  <div class="page-kopfbild"><img src="images/kopf-vergleich.webp" alt="" loading="lazy" decoding="async"></div>
   <div class="page-header wrap">
     <div class="eyebrow">Planen</div>
     <h1>Kombi-Rechner</h1>
@@ -2862,6 +2869,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
 
 <!-- ============ KALENDER ============ -->
 <section class="page" id="page-kalender">
+  <div class="page-kopfbild"><img src="images/kopf-kalender.webp" alt="" loading="lazy" decoding="async"></div>
   <div class="page-header wrap">
     <div class="eyebrow">Vor Ort</div>
     <h1>Kalender</h1>

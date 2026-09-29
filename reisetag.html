@@ -27,6 +27,7 @@
   p { margin: 0; }
   a { color: var(--accent); }
   .kopf { display: grid; gap: 8px; }
+  .kopfbild { display: block; width: 100%; height: clamp(150px, 30vw, 260px); object-fit: cover; border-radius: 16px; }
   .kopf p { color: var(--dim); }
   .eck { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
   @media (max-width: 480px) { .eck { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
@@ -74,6 +75,7 @@
 
 <div class="wrap">
   <p><a href="index.html" style="font-weight:700;text-decoration:none">← Zurück zur Startseite</a></p>
+  <img class="kopfbild" src="images/kopf-reisetag.webp" alt="" decoding="async">
   <header class="kopf">
     <h2>Dienstag, 29. September 2026</h2>
     <h1>Reisetag: von zu Hause bis zur Wohnung in Corralejo</h1>
