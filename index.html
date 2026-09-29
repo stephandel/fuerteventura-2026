@@ -932,18 +932,27 @@ table.price-table tfoot td.num { color: var(--teal); }
 .event-card.is-hidden:hover { opacity: 0.7; filter: grayscale(0.3); }
 .event-card .card-fav-actions { top: 14px; right: 14px; }
 .rc-media .card-fav-actions { top: auto; bottom: 10px; right: 10px; }
-.cal-strip { display: flex; flex-direction: column; gap: 2px; margin-top: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow); overflow: hidden; }
-.cal-day { display: flex; align-items: flex-start; gap: 16px; padding: 12px 18px; border-top: 1px solid var(--border); }
+.cal-strip { display: flex; flex-direction: column; margin-top: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow); overflow: hidden; }
+.cal-day { position: relative; display: flex; align-items: flex-start; gap: 14px; padding: 13px 16px 13px 18px; border-top: 1px solid var(--border); }
 .cal-day:first-child { border-top: none; }
-.cal-day-empty { opacity: 0.55; }
-.cal-date { font-family: "JetBrains Mono", monospace; font-weight: 700; color: var(--teal); font-size: 13px; width: 56px; flex-shrink: 0; line-height: 1.4; }
-.cal-weekday { display: block; font-size: 11px; color: var(--ink-dim); font-weight: 600; }
-.cal-items { flex: 1; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
-.cal-chip { border-radius: 999px; padding: 3px 10px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.cal-day-empty .cal-items { opacity: 0.7; }
+/* Wochenende leicht getoent, vergangene Tage abgeblendet, heute mit Balken links */
+.cal-wochenende { background: color-mix(in srgb, var(--surface-2) 55%, transparent); }
+.cal-vorbei { opacity: 0.45; }
+.cal-heute { background: color-mix(in srgb, var(--teal) 9%, transparent); }
+.cal-heute::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--teal); }
+.cal-date { font-family: "JetBrains Mono", monospace; font-weight: 700; color: var(--teal); font-size: 15px; width: 62px; flex-shrink: 0; line-height: 1.25; }
+.cal-weekday { display: block; font-size: 12px; color: var(--ink); font-weight: 700; margin-top: 2px; }
+.cal-tag { display: block; font-size: 10.5px; color: var(--ink-dim); font-weight: 600; letter-spacing: 0.02em; }
+.cal-heute .cal-tag { display: inline-block; margin-top: 4px; padding: 1px 7px; border-radius: 999px; background: var(--teal); color: var(--teal-ink); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; }
+.cal-items { flex: 1; min-width: 0; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding-top: 2px; }
+.cal-chip { border-radius: 999px; padding: 5px 11px; font-size: 12.5px; font-weight: 600; max-width: 100%; white-space: normal; line-height: 1.3; }
 .cal-chip-market { background: var(--surface-2); border: 1px solid var(--border); color: var(--ink); }
 .cal-chip-event { background: var(--warn-bg); color: var(--warn); }
 .cal-chip-trip { background: var(--good-bg); color: var(--good); }
-.cal-chip-note { background: transparent; color: var(--ink-dim); font-weight: 400; }
+.cal-chip-note { background: transparent; color: var(--ink-dim); font-weight: 400; font-style: italic; padding-left: 2px; }
+.cal-legende { display: flex; flex-wrap: wrap; gap: 6px 8px; margin-top: 12px; align-items: center; }
+.cal-legende .cal-chip { font-size: 11.5px; padding: 3px 9px; }
 .event-date { font-family: "JetBrains Mono", monospace; font-size: 12px; font-weight: 700; color: var(--teal); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; }
 .event-card h3 { font-size: 1.1rem; margin-bottom: 6px; }
 .event-card p { margin: 0; font-size: 13.5px; color: var(--ink-dim); }
@@ -2884,14 +2893,15 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       <div class="cal-day"><div class="cal-date">03.10.<span class="cal-weekday">Sa</span></div><div class="cal-items"><span class="cal-chip cal-chip-market">🏪 Lajares Kunsthandwerksmarkt</span><span class="cal-chip cal-chip-event">🎊 A.F. Dunas – 50º Aniversario</span></div></div>
       <div class="cal-day"><div class="cal-date">04.10.<span class="cal-weekday">So</span></div><div class="cal-items"><span class="cal-chip cal-chip-market">🏪 El Campanario (Kunsthandwerk &amp; Folklore)</span></div></div>
       <div class="cal-day cal-day-empty"><div class="cal-date">05.10.<span class="cal-weekday">Mo</span></div><div class="cal-items"><span class="cal-chip cal-chip-note">Fiestas del Rosario laufen weiter</span></div></div>
-      <div class="cal-day"><div class="cal-date">06.10.<span class="cal-weekday">Di</span></div><div class="cal-items"><span class="cal-chip cal-chip-market">🏪 Acua Water Park</span><span class="cal-chip cal-chip-market">🏪 Mercado Tradiciones</span></div></div>
+      <div class="cal-day"><div class="cal-date">06.10.<span class="cal-weekday">Di</span></div><div class="cal-items"><span class="cal-chip cal-chip-trip">🏠 Umzug: Oasis Duna (bis 11:00) → Renacer Zen (ab 15:00)</span><span class="cal-chip cal-chip-market">🏪 Acua Water Park</span><span class="cal-chip cal-chip-market">🏪 Mercado Tradiciones</span></div></div>
       <div class="cal-day cal-day-empty"><div class="cal-date">07.10.<span class="cal-weekday">Mi</span></div><div class="cal-items"><span class="cal-chip cal-chip-event">🎉 Fiestas del Rosario – letzter Tag</span></div></div>
-      <div class="cal-day cal-day-empty"><div class="cal-date">08.10.<span class="cal-weekday">Do</span></div><div class="cal-items"><span class="cal-chip cal-chip-note">nichts Bekanntes</span></div></div>
+      <div class="cal-day cal-day-empty"><div class="cal-date">08.10.<span class="cal-weekday">Do</span></div><div class="cal-items"><span class="cal-chip cal-chip-note">kein fester Termin – freier Tag ☀️</span></div></div>
       <div class="cal-day"><div class="cal-date">09.10.<span class="cal-weekday">Fr</span></div><div class="cal-items"><span class="cal-chip cal-chip-market">🏪 Acua Water Park</span><span class="cal-chip cal-chip-market">🏪 Mercado Tradiciones</span><span class="cal-chip cal-chip-market">🏪 El Cotillo Sunset Market (abends)</span></div></div>
       <div class="cal-day"><div class="cal-date">10.10.<span class="cal-weekday">Sa</span></div><div class="cal-items"><span class="cal-chip cal-chip-market">🏪 Lajares Kunsthandwerksmarkt</span><span class="cal-chip cal-chip-event">🌌 ELARA – Puerto del Rosario</span></div></div>
       <div class="cal-day"><div class="cal-date">11.10.<span class="cal-weekday">So</span></div><div class="cal-items"><span class="cal-chip cal-chip-market">🏪 El Campanario (Kunsthandwerk &amp; Folklore)</span><span class="cal-chip cal-chip-event">🌌 ELARA – Auditorio de Antigua</span></div></div>
       <div class="cal-day"><div class="cal-date">12.10.<span class="cal-weekday">Mo</span></div><div class="cal-items"><span class="cal-chip cal-chip-trip">🛫 Abreise</span></div></div>
     </div>
+    <div class="cal-legende" aria-label="Legende"><span class="cal-chip cal-chip-market">🏪 Markt</span><span class="cal-chip cal-chip-event">🎉 Fest / Show</span><span class="cal-chip cal-chip-trip">✈️ Reise &amp; Umzug</span></div>
     <p class="dim" style="font-size:12px;margin-top:10px">Märkte sind wiederkehrend (Wochentag entscheidet), Termine können sich kurzfristig ändern — Quelle: Fuerteventura TV Market Calendar, Fuerteventura Rural, Cultura Fuerteventura. Vor Ort kurz gegenchecken.</p>
 
     <section class="events-section" style="margin-top:40px">
@@ -5560,9 +5570,24 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     document.querySelectorAll('.cal-strip .cal-day').forEach(function(row){
       var dt = row.querySelector('.cal-date');
       if (!dt || dt.textContent.indexOf(key) !== 0 || row.classList.contains('cal-day-empty')) return;
-      row.querySelectorAll('.cal-chip').forEach(function(c){ out.push(c.textContent.trim()); });
+      // Reise-/Umzugs-Chips nicht, die Kachel hat dafuer ihren eigenen Text
+      row.querySelectorAll('.cal-chip:not(.cal-chip-trip)').forEach(function(c){ out.push(c.textContent.trim()); });
     });
     return out;
+  }
+  // Kalenderleiste: Tag-Nummer je Zeile, Wochenende toenen, vergangene Tage
+  // abblenden, heutigen Tag hervorheben. n = laufender Reisetag (1..14).
+  function kalenderMarkieren(n){
+    document.querySelectorAll('.cal-strip .cal-day').forEach(function(row, i){
+      var tag = i + 1, dt = row.querySelector('.cal-date');
+      var wt = row.querySelector('.cal-weekday');
+      row.classList.toggle('cal-wochenende', !!wt && /^(Sa|So)$/.test(wt.textContent.trim()));
+      row.classList.toggle('cal-vorbei', tag < n);
+      row.classList.toggle('cal-heute', tag === n);
+      var t = row.querySelector('.cal-tag');
+      if (!t && dt) { t = document.createElement('span'); t.className = 'cal-tag'; dt.appendChild(t); }
+      if (t) t.textContent = tag === n ? 'Heute' : 'Tag ' + tag;
+    });
   }
   var heuteLetzterKey = '', heuteOriginal = null;
   function heuteKachel(now){
@@ -5573,6 +5598,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     var key = now >= T_DAHEIM ? 'ende' : id.key;
     if (key === heuteLetzterKey) return;
     heuteLetzterKey = key;
+    kalenderMarkieren(id.n);
     if (key === 'ende') { el.style.display = 'none'; return; }
     el.style.display = '';
     var eyebrow, text, more, href, chips = kalenderChips(id.key);
