@@ -1623,7 +1623,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
 <!-- ============ TO-DO ============ -->
 <section class="page" id="page-todo">
   <div class="page-header wrap">
-    <div class="eyebrow">Bis zum Abflug am 29.09.2026</div>
+    <div class="eyebrow" id="todo-eyebrow">Bis zum Abflug am 29.09.2026</div>
     <h1>Was noch zu tun ist</h1>
     <p class="sub">Alles, was vor der Reise erledigt sein muss &#8211; nach Dringlichkeit sortiert. Abgehakte Aufgaben werden zwischen euren Ger&#228;ten geteilt &#8211; was einer von euch abhakt, sieht der andere auch. Die obersten offenen Punkte stehen auch direkt auf der <a href="#home">Startseite</a>.</p>
     <div class="stat-strip">
@@ -7644,6 +7644,10 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     else if (jetzt < T_RUECK) dLeft = Math.max(1, 14 - Math.floor((jetzt - T_TAG1) / 86400000));
     else dLeft = 0;
     setTxt('todo-stat-days', dLeft);
+    // Die Zeile ueber der Ueberschrift wandert mit der Reisephase.
+    setTxt('todo-eyebrow', jetzt < T_LANDUNG ? 'Bis zum Abflug am 29.09.2026'
+                          : jetzt < T_RUECK ? 'Auf der Insel · bis zum Rückflug am 12.10.2026'
+                          : 'Wieder zu Hause seit dem 12.10.2026');
     var nextDue = openItems.filter(function(it){ return it.due; })
       .sort(function(a, b){ return daysUntil(a.due) - daysUntil(b.due); })[0];
     setTxt('todo-stat-next', nextDue ? (todoDueBadge(nextDue.due).label.replace('bis ', '')) : '–');
