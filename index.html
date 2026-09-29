@@ -1625,7 +1625,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
   <div class="page-header wrap">
     <div class="eyebrow" id="todo-eyebrow">Bis zum Abflug am 29.09.2026</div>
     <h1>Was noch zu tun ist</h1>
-    <p class="sub">Alles, was vor der Reise erledigt sein muss &#8211; nach Dringlichkeit sortiert. Abgehakte Aufgaben werden zwischen euren Ger&#228;ten geteilt &#8211; was einer von euch abhakt, sieht der andere auch. Die obersten offenen Punkte stehen auch direkt auf der <a href="#home">Startseite</a>.</p>
+    <p class="sub"><span id="todo-sub-phase">Alles, was vor der Reise erledigt sein muss &#8211; nach Dringlichkeit sortiert.</span> Abgehakte Aufgaben werden zwischen euren Ger&#228;ten geteilt &#8211; was einer von euch abhakt, sieht der andere auch. Die obersten offenen Punkte stehen auch direkt auf der <a href="#home">Startseite</a>.</p>
     <div class="stat-strip">
       <div class="stat"><span class="n" id="todo-stat-open">&#8211;</span><span class="l">offen</span></div>
       <div class="stat"><span class="n" id="todo-stat-done">&#8211;</span><span class="l">erledigt</span></div>
@@ -7708,6 +7708,9 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     setTxt('todo-eyebrow', jetzt < T_LANDUNG ? 'Bis zum Abflug am 29.09.2026'
                           : jetzt < T_RUECK ? 'Auf der Insel · bis zum Rückflug am 12.10.2026'
                           : 'Wieder zu Hause seit dem 12.10.2026');
+    setTxt('todo-sub-phase', jetzt < T_LANDUNG ? 'Alles, was vor der Reise erledigt sein muss – nach Dringlichkeit sortiert.'
+                            : jetzt < T_RUECK ? 'Was auf der Insel noch ansteht – Umzug, Rückgabe, Kleinkram – nach Dringlichkeit sortiert.'
+                            : 'Was nach der Reise noch zu erledigen ist – nach Dringlichkeit sortiert.');
     var nextDue = openItems.filter(function(it){ return it.due; })
       .sort(function(a, b){ return daysUntil(a.due) - daysUntil(b.due); })[0];
     setTxt('todo-stat-next', nextDue ? (todoDueBadge(nextDue.due).label.replace('bis ', '')) : '–');
