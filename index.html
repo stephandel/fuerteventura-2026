@@ -389,7 +389,7 @@ input[type=range]::-moz-range-thumb { width: 26px; height: 26px; border: 2px sol
 }
 .hero-card .cd-box .cd-n { color: #fff !important; }
 .hero-card .cd-box .cd-l { color: rgba(255, 255, 255, 0.82) !important; }
-/* Kurze Zeile ueber dem Zaehler („Abflug in:“, „Noch Inselzeit“ …) – der Zaehler rueckt dicht darunter */
+/* Kurze Zeile ueber dem Zaehler („Abflug in:“, „Verbleibende Zeit auf der Insel:“ …) – der Zaehler rueckt dicht darunter */
 .hero-card .cd-label { margin-top: 14px; font-weight: 700; }
 .hero-card .countdown { margin-top: 10px; }
 
@@ -5542,8 +5542,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     if (now < T_ABFLUG)  return { label: 'Abflug in:', bis: T_ABFLUG, aria: 'Countdown bis zum Abflug' };
     if (now < T_LANDUNG) return { label: 'Landung auf Fuerteventura in:', bis: T_LANDUNG, aria: 'Countdown bis zur Landung' };
     if (now < T_RUECK) {
-      var tag = Math.min(14, Math.floor((now - T_TAG1) / 86400000) + 1);
-      return { label: 'Noch Inselzeit:', bis: T_RUECK, aria: 'Verbleibende Zeit bis zum Rückflug (Tag ' + tag + ' von 14)' };
+      return { label: 'Verbleibende Zeit auf der Insel:', bis: T_RUECK, aria: 'Verbleibende Zeit bis zum Rückflug' };
     }
     if (now < T_DAHEIM)  return { label: 'Landung in Frankfurt in:', bis: T_DAHEIM, aria: 'Countdown bis zur Landung in Frankfurt' };
     return { label: 'Wieder zu Hause seit:', seit: T_DAHEIM, aria: 'Zeit seit der Rückkehr' };
@@ -5622,7 +5621,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     var eb = document.getElementById('hero-eyebrow');
     if (eb) {
       if (heroEyebrowOriginal === null) heroEyebrowOriginal = eb.textContent;
-      eb.textContent = phase === 'insel' ? id.wt + ', ' + id.key + ' · Tag ' + Math.min(14, Math.max(1, id.n)) + ' von 14'
+      eb.textContent = phase === 'insel' ? id.wt + ', ' + id.key
                      : phase === 'danach' ? '29.09.–12.10.2026 · 13 Nächte · das war Fuerte 2026'
                      : heroEyebrowOriginal;
     }
