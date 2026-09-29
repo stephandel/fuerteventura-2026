@@ -1378,6 +1378,17 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
 .aktiv-text a { color: var(--teal); font-weight: 700; }
 .aktiv-zeit { display: block; font-size: 12px; color: var(--ink-dim); font-family: "JetBrains Mono", monospace; }
 .aktiv-leer { color: var(--ink-dim); font-size: 14px; margin: 0; }
+details.aktiv-kasten > summary.aktiv-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; cursor: pointer; list-style: none; min-height: var(--tap); }
+details.aktiv-kasten > summary.aktiv-head::-webkit-details-marker { display: none; }
+details.aktiv-kasten > summary.aktiv-head::before { content: none; }
+details.aktiv-kasten > summary:focus-visible { outline: 2px solid var(--ochre); outline-offset: 3px; border-radius: 8px; }
+details.aktiv-kasten[open] .teaser-chevron { transform: rotate(-135deg); }
+details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
+.aktiv-peek { flex: 1 0 100%; order: 9; list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-direction: column; gap: 5px; font-size: 14.5px; color: var(--ink-dim); }
+.aktiv-peek:empty, details[open] .aktiv-peek { display: none; }
+.aktiv-peek li { display: flex; gap: 8px; align-items: baseline; min-width: 0; }
+.aktiv-peek .ap-t { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink); }
+.aktiv-peek .ap-z { flex: none; font-family: "JetBrains Mono", monospace; font-size: 12px; color: var(--ink-dim); }
 
 /* Fahrstrecken statt Luftlinie */
 .strecken { display: flex; flex-direction: column; gap: 3px; margin: 8px 0 0; font-size: 13.5px; }
@@ -1541,11 +1552,15 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
       </div>
     </div>
 
-    <div class="aktiv-kasten" id="home-aktiv">
-      <h2>&#128172;&nbsp;Zuletzt passiert</h2>
+    <details class="aktiv-kasten" id="home-aktiv">
+      <summary class="aktiv-head">
+        <h2>&#128172;&nbsp;Zuletzt passiert</h2>
+        <span class="teaser-chevron" aria-hidden="true"></span>
+        <ul class="aktiv-peek" id="home-aktiv-peek"></ul>
+      </summary>
       <p class="sub">Was du und Bilgen zuletzt gemacht habt.</p>
       <ul class="aktiv-liste" id="home-aktiv-liste"><li class="aktiv-leer">Lade &#8230;</li></ul>
-    </div>
+    </details>
 
     <details class="todo-teaser" id="home-todo" open>
       <summary class="todo-teaser-head">
@@ -8525,6 +8540,23 @@ details.cal-teaser[open] .teaser-chevron { transform: rotate(-135deg); }
     }
     var SYM = { notiz: '💬', herz: '❤️', aus: '🙈', wahl: '✅', haken: '☑️', seite: '✨' };
     var me = whoAmI();
+    var peek = document.getElementById('home-aktiv-peek');
+    var textVon = function(html){ var d = document.createElement('div'); d.innerHTML = html; return d.textContent.trim(); };
+    var kopf = function(e){
+      if (e.typ === 'seite') { var m = /<b>(.*?)<\/b>/.exec(e.text); return textVon(m ? m[1] : e.text); }
+      return textVon(zeileText(e));
+    };
+    var zeileText = function(e){
+      var ich = (e.wer === me), wer = ich ? 'Du' : whoName(e.wer), hat = ich ? 'hast' : 'hat';
+      if (e.typ === 'notiz') return wer + ' ' + hat + ' zu ' + nameVon(e.slug) + ' geschrieben';
+      if (e.typ === 'herz') return wer + ' ' + (ich ? 'magst' : 'mag') + ' ' + nameVon(e.slug);
+      if (e.typ === 'aus') return wer + ' ' + hat + ' ' + nameVon(e.slug) + ' ausgeblendet';
+      if (e.typ === 'haken') return wer + ' ' + hat + ' „' + todoTitel(e.slug) + '“ abgehakt';
+      return wer + ' ' + hat + ' ' + nameVon(e.slug) + ' als Unterkunft gewählt';
+    };
+    if (peek) peek.innerHTML = zeigen.slice(0, 3).map(function(e){
+      return '<li><span class="ap-t">' + SYM[e.typ] + ' ' + escapeHtml(kopf(e)) + '</span><span class="ap-z">' + vorZeit(e.at) + '</span></li>';
+    }).join('');
     ziel.innerHTML = zeigen.map(function(e){
       if (e.typ === 'seite') {
         return '<li><span class="aktiv-icon">✨</span><span class="aktiv-text">' + e.text +
