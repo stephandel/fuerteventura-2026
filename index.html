@@ -134,7 +134,7 @@ body { padding-bottom: env(safe-area-inset-bottom, 0px); }
 .hero-card .eyebrow { color: var(--teal); }
 .hero-card h1 { color: var(--ink); font-size: clamp(2rem, 5vw, 3.1rem); letter-spacing: -0.028em; }
 .hero-card .sub { color: var(--ink-dim); }
-.countdown { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 24px; }
+.countdown { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 24px; }
 .cd-box { background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px; padding: 12px 6px; min-width: 0; text-align: center; }
 .cd-box .cd-n { font-family: "JetBrains Mono", monospace; font-size: clamp(1.15rem, 5.2vw, 1.6rem); font-weight: 700; display: block; color: var(--ink); line-height: 1.15; }
 .cd-box .cd-l { font-size: clamp(9px, 2.6vw, 10.5px); text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-dim); white-space: nowrap; }
@@ -1537,7 +1537,6 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
           <div class="cd-box"><span class="cd-n" id="cd-d">–</span><span class="cd-l">Tage</span></div>
           <div class="cd-box"><span class="cd-n" id="cd-h">–</span><span class="cd-l">Std.</span></div>
           <div class="cd-box"><span class="cd-n" id="cd-m">–</span><span class="cd-l">Min.</span></div>
-          <div class="cd-box"><span class="cd-n" id="cd-s">–</span><span class="cd-l">Sek.</span></div>
         </div>
       </div>
     </div>
@@ -5543,9 +5542,8 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     var d = Math.floor(diff/86400000);
     var h = Math.floor((diff%86400000)/3600000);
     var m = Math.floor((diff%3600000)/60000);
-    var s = Math.floor((diff%60000)/1000);
-    var elD=document.getElementById('cd-d'), elH=document.getElementById('cd-h'), elM=document.getElementById('cd-m'), elS=document.getElementById('cd-s');
-    if (elD){ elD.textContent = d; elH.textContent = pad(h); elM.textContent = pad(m); elS.textContent = pad(s); }
+    var elD=document.getElementById('cd-d'), elH=document.getElementById('cd-h'), elM=document.getElementById('cd-m');
+    if (elD){ elD.textContent = d; elH.textContent = pad(h); elM.textContent = pad(m); }
     if (ph.label !== cdLetztesLabel) {
       cdLetztesLabel = ph.label;
       var elL = document.getElementById('cd-label'), elC = document.getElementById('countdown');
