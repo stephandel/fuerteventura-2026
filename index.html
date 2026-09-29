@@ -1384,7 +1384,7 @@ details.aktiv-kasten > summary.aktiv-head::before { content: none; }
 details.aktiv-kasten > summary:focus-visible { outline: 2px solid var(--ochre); outline-offset: 3px; border-radius: 8px; }
 details.aktiv-kasten[open] .teaser-chevron { transform: rotate(-135deg); }
 details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
-.aktiv-peek { flex: 1 0 100%; order: 9; list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-direction: column; gap: 5px; font-size: 14.5px; color: var(--ink-dim); }
+.aktiv-peek { flex: 1 0 100%; min-width: 0; max-width: 100%; order: 9; list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-direction: column; gap: 5px; font-size: 14.5px; color: var(--ink-dim); }
 .aktiv-peek:empty, details[open] .aktiv-peek { display: none; }
 .aktiv-peek li { display: flex; gap: 8px; align-items: baseline; min-width: 0; }
 .aktiv-peek .ap-t { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink); }
