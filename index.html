@@ -1520,7 +1520,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
           <div class="cd-box"><span class="cd-n" id="cd-m">–</span><span class="cd-l">Min.</span></div>
           <div class="cd-box"><span class="cd-n" id="cd-s">–</span><span class="cd-l">Sek.</span></div>
         </div>
-        <a class="reisetag-card" href="reisetag.html">
+        <a class="reisetag-card" id="heute-kachel" href="reisetag.html">
           <span class="rt-eyebrow">Dienstag, 29.09. · Reisetag</span>
           <strong>Der Plan bis zur Wohnung: Abfahrt 09:15, SmartWay 10:45, Flug 12:10, Mietwagen 16:00, Oasis Duna Tür A216</strong>
           <span class="rt-more">Zum Zeitplan mit Checkliste →</span>
@@ -5528,6 +5528,66 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       if (elL) elL.textContent = ph.label;
       if (elC) elC.setAttribute('aria-label', ph.aria);
     }
+    heuteKachel(now);
+  }
+
+  // ---- „Heute“-Kachel unter dem Zaehler ----
+  // Am Reisetag bleibt der Plan aus dem HTML stehen. Danach zeigt die Kachel den
+  // Umzugstag (06.10.), den Rueckreisetag (12.10.) oder die Kalender-Eintraege des
+  // Tages. Der Tag wird in Inselzeit bestimmt; nach der Heimkehr verschwindet sie.
+  var WOCHENTAGE = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
+  function inselDatum(now){
+    var d = new Date(now), tag, monat, wt, parts = null;
+    try {
+      parts = new Intl.DateTimeFormat('de-DE', {timeZone:'Atlantic/Canary', day:'2-digit', month:'2-digit', weekday:'long'}).formatToParts(d);
+    } catch(e) {}
+    if (parts) parts.forEach(function(p){ if (p.type==='day') tag=p.value; if (p.type==='month') monat=p.value; if (p.type==='weekday') wt=p.value; });
+    else { tag = pad(d.getDate()); monat = pad(d.getMonth()+1); wt = WOCHENTAGE[d.getDay()]; }
+    return { key: tag + '.' + monat + '.', wt: wt, n: Math.floor((now - T_TAG1) / 86400000) + 1 };
+  }
+  function kalenderChips(key){
+    var out = [];
+    document.querySelectorAll('.cal-strip .cal-day').forEach(function(row){
+      var dt = row.querySelector('.cal-date');
+      if (!dt || dt.textContent.indexOf(key) !== 0 || row.classList.contains('cal-day-empty')) return;
+      row.querySelectorAll('.cal-chip').forEach(function(c){ out.push(c.textContent.trim()); });
+    });
+    return out;
+  }
+  var heuteLetzterKey = '', heuteOriginal = null;
+  function heuteKachel(now){
+    var el = document.getElementById('heute-kachel');
+    if (!el) return;
+    if (!heuteOriginal) heuteOriginal = { eyebrow: el.querySelector('.rt-eyebrow').textContent, text: el.querySelector('strong').textContent, more: el.querySelector('.rt-more').textContent, href: el.getAttribute('href') };
+    var id = inselDatum(now);
+    var key = now >= T_DAHEIM ? 'ende' : id.key;
+    if (key === heuteLetzterKey) return;
+    heuteLetzterKey = key;
+    if (key === 'ende') { el.style.display = 'none'; return; }
+    el.style.display = '';
+    var eyebrow, text, more, href, chips = kalenderChips(id.key);
+    if (id.n <= 1) {  // Reisetag: der Plan aus dem HTML
+      eyebrow = heuteOriginal.eyebrow; text = heuteOriginal.text; more = heuteOriginal.more; href = heuteOriginal.href;
+    } else if (id.key === '06.10.') {
+      eyebrow = id.wt + ', ' + id.key + ' · Umzugstag';
+      text = 'Oasis Duna bis 11:00 räumen, ab 15:00 ins Renacer Zen (C. Pardelas 7) – Schlüssel bei Yolanda';
+      more = chips.length ? 'Dazwischen: ' + chips.join(' · ') + ' →' : 'Zu den Unterkünften →';
+      href = '#unterkuenfte';
+    } else if (id.key === '12.10.') {
+      eyebrow = id.wt + ', ' + id.key + ' · Rückreisetag';
+      text = 'Renacer Zen bis 11:00 räumen, Mietwagen am Flughafen abgeben (bis ca. 13:45), Flug DE 1403 um 15:55, Landung Frankfurt 21:30';
+      more = 'Flug & Mietwagen →';
+      href = '#links';
+    } else {
+      eyebrow = id.wt + ', ' + id.key + ' · Tag ' + id.n + ' von 14';
+      text = chips.length ? chips.join(' · ') : 'Kein fester Termin – freier Tag. Worauf habt ihr Lust?';
+      more = 'Ganzer Kalender →';
+      href = '#kalender';
+    }
+    el.querySelector('.rt-eyebrow').textContent = eyebrow;
+    el.querySelector('strong').textContent = text;
+    el.querySelector('.rt-more').textContent = more;
+    el.setAttribute('href', href);
   }
   tick();
   setInterval(tick, 1000);
