@@ -1,4 +1,5 @@
 <!doctype html>
+<html lang="de">
 <meta charset="utf-8">
 <title>Fuerteventura Reiseplaner</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -117,7 +118,7 @@ body { padding-bottom: env(safe-area-inset-bottom, 0px); }
   .navwrap { flex-wrap: nowrap; padding: 10px 14px; gap: 10px; }
   .navlinks { flex: 1 1 auto; min-width: 0; flex-wrap: nowrap; overflow-x: auto; max-width: 100%; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
   .brand { flex-shrink: 0; }
-  .nav-kosten-pp { flex: 1 1 auto; min-width: 0; text-align: right; }
+  .nav-kosten-pp { flex: 1 1 auto; min-width: 0; text-align: right; font-size: 0.76rem; }
   .nav-link { padding: 7px 9px; font-size: 13px; }
   .navlinks::-webkit-scrollbar { display: none; }
 }
@@ -144,7 +145,13 @@ body { padding-bottom: env(safe-area-inset-bottom, 0px); }
 .steps li::before { content: counter(step); position: absolute; left: 0; top: 0; width: 28px; height: 28px; border-radius: 50%; background: var(--teal); color: var(--teal-ink); font-family: "JetBrains Mono", monospace; font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: center; }
 .steps strong { color: var(--ink); }
 .quicknav { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; margin-top: 24px; }
-.qn-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px; text-decoration: none; color: inherit; display: flex; flex-direction: column; gap: 6px; box-shadow: var(--shadow); }
+.qn-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 0 18px 18px; text-decoration: none; color: inherit; display: flex; flex-direction: column; gap: 6px; box-shadow: var(--shadow); overflow: hidden; transition: transform .15s, border-color .15s; }
+.qn-card:hover { transform: translateY(-2px); }
+.qn-card:active { transform: scale(.985); }
+.qn-foto { position: relative; display: block; margin: 0 -18px 8px; height: 104px; overflow: hidden; background: var(--surface-2); }
+.qn-foto img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .6s; }
+.qn-card:hover .qn-foto img { transform: scale(1.05); }
+.qn-foto .qn-emoji { position: absolute; left: 12px; bottom: 10px; width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,.92); display: grid; place-items: center; font-size: 1.05rem; box-shadow: 0 2px 8px rgba(0,0,0,.25); }
 .qn-card:hover { border-color: var(--teal); }
 .qn-emoji { font-size: 1.6rem; }
 .qn-card h3 { font-size: 1.02rem; }
@@ -160,11 +167,12 @@ body { padding-bottom: env(safe-area-inset-bottom, 0px); }
 .highlight-card p { margin: 0; font-size: 13px; color: var(--ink-dim); line-height: 1.45; }
 
 .mood-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; }
-.mood-card { text-decoration: none; color: inherit; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 18px 16px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px; box-shadow: var(--shadow); transition: transform .15s, border-color .15s, background .15s; }
-.mood-card:hover { transform: translateY(-2px); border-color: var(--teal); background: var(--surface-2); }
+.mood-card { text-decoration: none; color: #fff; background: linear-gradient(180deg, rgba(6,20,30,.15) 0%, rgba(6,20,30,.72) 100%), var(--mood-bild) center/cover, var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 18px 16px; min-height: 132px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; text-align: center; gap: 4px; box-shadow: var(--shadow); text-shadow: 0 1px 6px rgba(0,0,0,.45); transition: transform .15s, border-color .15s, background .15s; }
+.mood-card:hover { transform: translateY(-2px); border-color: var(--teal); }
+.mood-card:active { transform: scale(.985); }
 .mood-emoji { font-size: 1.9rem; margin-bottom: 2px; }
 .mood-label { font-weight: 700; font-size: 14px; }
-.mood-hint { font-size: 11.5px; color: var(--ink-dim); }
+.mood-hint { font-size: 11.5px; color: rgba(255,255,255,.88); }
 
 /* ---- map & cards (Unterkünfte) ---- */
 .map-scroll-hint { display: none; }
@@ -693,6 +701,7 @@ body { font-size: var(--fs-body); }
 .todo-due.over { background: var(--bad); color: #fff; }
 .todo-item.done .todo-due { background: var(--muted-bg); color: var(--ink-dim); }
 .todo-teaser-foot { margin: 12px 0 0; font-size: 13px; }
+.todo-teaser-foot a { display: inline-block; padding: 12px 0 10px; }
 .todo-alldone { margin: 14px 0 0; font-size: 14px; color: var(--good); font-weight: 600; }
 .todo-group { margin-top: 30px; }
 .todo-group:first-of-type { margin-top: 8px; }
@@ -1615,24 +1624,24 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     <h2 style="margin-top:40px">Nach Stimmung w&#228;hlen</h2>
     <p class="sub" style="margin:-6px 0 16px">Je nach Wetter und Laune – hier geht's direkt zu den passenden Ideen.</p>
     <div class="mood-grid">
-      <a class="mood-card" href="#ausfluege"><span class="mood-emoji">🏖️</span><span class="mood-label">Strandtag</span><span class="mood-hint">Grandes Playas, Cofete, Sotavento</span></a>
-      <a class="mood-card" href="#kalender"><span class="mood-emoji">🛍️</span><span class="mood-label">Shopping &amp; Markt</span><span class="mood-hint">Corralejo, Lajares-Markt (Sa.), La Oliva</span></a>
-      <a class="mood-card" href="#ausfluege"><span class="mood-emoji">🚙</span><span class="mood-label">Tour &amp; Ausflug</span><span class="mood-hint">Lobos, Cofete, Betancuria, Dünen</span></a>
-      <a class="mood-card" href="#ausfluege"><span class="mood-emoji">💨</span><span class="mood-label">Zu windig – lieber drinnen</span><span class="mood-hint">Restaurant-Tipps &amp; Museen</span></a>
+      <a class="mood-card" href="#ausfluege" style="--mood-bild:url(images/kachel-strand.webp)"><span class="mood-emoji">🏖️</span><span class="mood-label">Strandtag</span><span class="mood-hint">Grandes Playas, Cofete, Sotavento</span></a>
+      <a class="mood-card" href="#kalender" style="--mood-bild:url(images/kachel-markt.webp)"><span class="mood-emoji">🛍️</span><span class="mood-label">Shopping &amp; Markt</span><span class="mood-hint">Corralejo, Lajares-Markt (Sa.), La Oliva</span></a>
+      <a class="mood-card" href="#ausfluege" style="--mood-bild:url(images/kachel-tour.webp)"><span class="mood-emoji">🚙</span><span class="mood-label">Tour &amp; Ausflug</span><span class="mood-hint">Lobos, Cofete, Betancuria, Dünen</span></a>
+      <a class="mood-card" href="#ausfluege" style="--mood-bild:url(images/kachel-drinnen.webp)"><span class="mood-emoji">💨</span><span class="mood-label">Zu windig – lieber drinnen</span><span class="mood-hint">Restaurant-Tipps &amp; Museen</span></a>
     </div>
     </div>
 
     <div class="home-block" id="hb-bereiche">
     <h2 style="margin-top:40px">Alle Bereiche</h2>
     <div class="quicknav">
-      <a class="qn-card" href="#unterkuenfte"><span class="qn-emoji">🏡</span><h3>Unterkünfte</h3><p id="qn-uk-anzahl">Karte &amp; Ausstattungs-Check</p></a>
-      <a class="qn-card" href="#kosten"><span class="qn-emoji">🧮</span><h3>Kosten</h3><p>Gesamtrechnung pro Person</p></a>
-      <a class="qn-card" href="#wetter"><span class="qn-emoji">🌤️</span><h3>Wetter</h3><p>Live-Webcams, Wassertemperatur, Gezeiten</p></a>
-      <a class="qn-card" href="#packliste"><span class="qn-emoji">🎒</span><h3>Packliste</h3><p>Zum Abhaken, gemeinsam gepflegt</p></a>
-      <a class="qn-card" href="#ausfluege"><span class="qn-emoji">🗺️</span><h3>Ausflüge</h3><p>Top 20 Highlights der Insel</p></a>
-      <a class="qn-card" href="#kalender"><span class="qn-emoji">📅</span><h3>Kalender</h3><p>Märkte, Events &amp; Insider-Tipps nach Datum</p></a>
-      <a class="qn-card" href="#gastro"><span class="qn-emoji">🍽️</span><h3>Gastro</h3><p>53 Restaurants &amp; Bäckereien, sortiert nach Bewertung</p></a>
-      <a class="qn-card" href="#links"><span class="qn-emoji">🔗</span><h3>Links &amp; Tipps</h3><p>Alle Direktlinks gesammelt</p></a>
+      <a class="qn-card" href="#unterkuenfte"><span class="qn-foto"><img src="images/kachel-unterkuenfte.webp" alt="" loading="lazy" decoding="async"><span class="qn-emoji">🏡</span></span><h3>Unterkünfte</h3><p id="qn-uk-anzahl">Karte &amp; Ausstattungs-Check</p></a>
+      <a class="qn-card" href="#kosten"><span class="qn-foto"><img src="images/kachel-kosten.webp" alt="" loading="lazy" decoding="async"><span class="qn-emoji">🧮</span></span><h3>Kosten</h3><p>Gesamtrechnung pro Person</p></a>
+      <a class="qn-card" href="#wetter"><span class="qn-foto"><img src="images/kachel-wetter.webp" alt="" loading="lazy" decoding="async"><span class="qn-emoji">🌤️</span></span><h3>Wetter</h3><p>Live-Webcams, Wassertemperatur, Gezeiten</p></a>
+      <a class="qn-card" href="#packliste"><span class="qn-foto"><img src="images/kachel-packliste.webp" alt="" loading="lazy" decoding="async"><span class="qn-emoji">🎒</span></span><h3>Packliste</h3><p>Zum Abhaken, gemeinsam gepflegt</p></a>
+      <a class="qn-card" href="#ausfluege"><span class="qn-foto"><img src="images/kachel-ausfluege.webp" alt="" loading="lazy" decoding="async"><span class="qn-emoji">🗺️</span></span><h3>Ausflüge</h3><p>Top 20 Highlights der Insel</p></a>
+      <a class="qn-card" href="#kalender"><span class="qn-foto"><img src="images/kachel-kalender.webp" alt="" loading="lazy" decoding="async"><span class="qn-emoji">📅</span></span><h3>Kalender</h3><p>Märkte, Events &amp; Insider-Tipps nach Datum</p></a>
+      <a class="qn-card" href="#gastro"><span class="qn-foto"><img src="images/kachel-gastro.webp" alt="" loading="lazy" decoding="async"><span class="qn-emoji">🍽️</span></span><h3>Gastro</h3><p><span id="gastro-anzahl-3">64</span> Restaurants &amp; Bäckereien, sortiert nach Bewertung</p></a>
+      <a class="qn-card" href="#links"><span class="qn-foto"><img src="images/kachel-links.webp" alt="" loading="lazy" decoding="async"><span class="qn-emoji">🔗</span></span><h3>Links &amp; Tipps</h3><p>Alle Direktlinks gesammelt</p></a>
     </div>
     </div>
   </div>
@@ -1671,6 +1680,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
 
 <!-- ============ UNTERKÜNFTE ============ -->
 <section class="page" id="page-unterkuenfte">
+  <div class="page-kopfbild"><img src="images/kopf-unterkuenfte.webp" alt="" loading="lazy" decoding="async"></div>
   <div class="page-header wrap">
     <div class="eyebrow">29.09.–12.10.2026 · 13 Nächte · 2 Personen</div>
     <h1>Unterkünfte</h1>
@@ -1952,7 +1962,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       <span class="badge score-neutral">Preis am 24.09. gepr&#252;ft</span>
     </div>
     <p class="meta-line">bahiazul.com (Direkt) · Pardelas 7, Geafond, Corralejo (Resort)</p>
-    <p class="meta-line beach-line">🏖️ 2219 m Luftlinie zum Strand <span class="dim">(Grandes Playas (Corralejo), geprüft)</span></p>
+    <p class="meta-line beach-line">🏖️ 2.219 m Luftlinie zum Strand <span class="dim">(Grandes Playas (Corralejo), geprüft)</span></p>
     <p class="meta-line rating-line">★ 8,6/10 (Quelle: Booking.com) <span class="dim">(94 Bewertungen · Bewertung aus früherer Recherche; Preis und Verfügbarkeit am 10.09.2026 direkt bei bahiazul.com geprüft)</span></p>
     <p class="price-headline"><span class="num">3.039 &#8364;</span> <span class="ppn">234 &#8364;/Nacht</span> <span class="dim">gesamt &#183; 1.519,50 &#8364; p.P. &#183; 29.09.&#8211;12.10., 13 N&#228;chte, 2 Pers.</span></p>
     <div class="card-links">
@@ -2007,7 +2017,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       </div>
     </div>
     <p class="meta-line">Booking.com · Calle Pardelas, 35660 Corralejo</p>
-    <p class="meta-line beach-line">🏖️ 2266 m Luftlinie zum Strand <span class="dim">(Grandes Playas (Corralejo), geprüft)</span></p>
+    <p class="meta-line beach-line">🏖️ 2.266 m Luftlinie zum Strand <span class="dim">(Grandes Playas (Corralejo), geprüft)</span></p>
     <p class="meta-line rating-line">★ 8,1/10 (Quelle: Booking.com) <span class="dim">(33 Bewertungen · live geprüft 10.09.2026)</span></p>
     <p class="price-headline"><span class="num">2.797 &#8364;</span> <span class="ppn">215 &#8364;/Nacht</span> <span class="dim">gesamt &#183; 1.398,50 &#8364; p.P. &#183; 29.09.&#8211;12.10., 13 N&#228;chte, 2 Pers.</span></p>
     <div class="card-links">
@@ -2179,6 +2189,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
 
 <!-- ============ KOSTEN ============ -->
 <section class="page" id="page-kosten">
+  <div class="page-kopfbild"><img src="images/kopf-kosten.webp" alt="" loading="lazy" decoding="async"></div>
   <div class="page-header wrap">
     <div class="eyebrow">Kostenrechner</div>
     <h1>Was wird es kosten?</h1>
@@ -2449,6 +2460,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
 
 <!-- ============ AUSFLÜGE ============ -->
 <section class="page" id="page-ausfluege">
+  <div class="page-kopfbild"><img src="images/kopf-ausfluege.webp" alt="" loading="lazy" decoding="async"></div>
   <div class="page-header wrap">
     <div class="eyebrow">Vor Ort</div>
     <h1>Ausflüge &amp; Highlights</h1>
@@ -2555,18 +2567,18 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.7286,-13.9207" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
-<article class="ex-card" data-id="markt-am-aqua-water-park-corralejo" data-rank="4" data-title="Markt am Aqua Water Park (Corralejo)" data-drive="8" data-stay="60" data-cost="0" data-cat="dorf" data-lat="28.728" data-lng="-13.859">
+<article class="ex-card" data-id="markt-am-aqua-water-park-corralejo" data-rank="4" data-title="Markt am Acua Water Park (Corralejo)" data-drive="8" data-stay="60" data-cost="0" data-cat="dorf" data-lat="28.728" data-lng="-13.859">
   <div class="ex-media">
-    <img src="images/markt-am-aqua-water-park-corralejo.webp" alt="Markt am Aqua Water Park (Corralejo)" loading="lazy">
+    <img src="images/markt-am-aqua-water-park-corralejo.webp" alt="Markt am Acua Water Park (Corralejo)" loading="lazy">
     <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
     <div class="ex-rank">#4</div>
   </div>
   <div class="ex-body">
-    <h3>Markt am Aqua Water Park (Corralejo)</h3>
+    <h3>Markt am Acua Water Park (Corralejo)</h3>
     
     <div class="ex-chips"><span class="ex-chip">&#128663; 8 Min.</span><span class="ex-chip">&#9201;&#65039; ca. 1 Std.</span><span class="ex-chip">&#128181; kostenlos</span></div>
     <p>Der touristische Markt beim Wasserpark mit Souvenirs, Accessoires und Kunsthandwerk.</p>
-    <p class="ex-tip"><strong>Tipp:</strong> Ehrlich gesagt der schwächste der Inselmärkte: viel Souvenirware, wenig Handgemachtes. Wenn die Wahl besteht, lieber den Samstagsmarkt in Lajares oder den Sonntagsmarkt in Corralejo nehmen. Für einen halben Stündchen Bummeln zwischen zwei Strandabschnitten reicht er aber.</p>
+    <p class="ex-tip"><strong>Tipp:</strong> Ehrlich gesagt der schwächste der Inselmärkte: viel Souvenirware, wenig Handgemachtes. Wenn die Wahl besteht, lieber den Samstagsmarkt in Lajares oder den Sonntagsmarkt in Corralejo nehmen. Für ein halbes Stündchen Bummeln zwischen zwei Strandabschnitten reicht er aber.</p>
     <p class="ex-meta">&#128197; Dienstags &amp; freitags &#183; ca. 9:00&#8211;14:00 Uhr</p>
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.728,-13.859" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
@@ -2810,7 +2822,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     
     <div class="ex-chips"><span class="ex-chip">&#128663; 70 Min.</span><span class="ex-chip">&#9201;&#65039; 1–2 Std.</span><span class="ex-chip">&#128181; kostenlos</span></div>
     <p>Einsamer Leuchtturm auf dramatischer Steilküste bei Las Playitas – einer der spektakulärsten und am wenigsten besuchten Aussichtspunkte der Insel.</p>
-    <p class="ex-tip"><strong>Tipp:</strong> Der Punkt Afrikas nächstgelegene Stelle der Kanaren — bei sehr klarer Sicht ahnt man die marokkanische Küste am Horizont, gut 100 km entfernt. Die letzte Serpentinenstraße hoch zum Leuchtturm ist schmal und ohne Leitplanke, aber asphaltiert. Am schönsten am frühen Morgen, wenn die Sonne über dem Wasser aufgeht.</p>
+    <p class="ex-tip"><strong>Tipp:</strong> Die Afrika nächstgelegene Stelle der Kanaren — bei sehr klarer Sicht ahnt man die marokkanische Küste am Horizont, gut 100 km entfernt. Die letzte Serpentinenstraße hoch zum Leuchtturm ist schmal und ohne Leitplanke, aber asphaltiert. Am schönsten am frühen Morgen, wenn die Sonne über dem Wasser aufgeht.</p>
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.2789,-13.935" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
@@ -2876,7 +2888,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       <div class="trip-grid" id="trip-grid"></div>
     </section>
 
-    <p class="bildnachweis">Bildnachweise (Wikimedia Commons): La Pared – dronepicr, CC BY 2.0 · Tindaya – Jose Mesa, CC BY 2.0 · Lajares (Ermita de San Antonio) – Llez, CC BY-SA 3.0 · Cofete – Xosema, CC BY-SA 4.0 · Puerto del Rosario – Bybbisch94/Christian Gebhardt, CC BY-SA 4.0. Übrige Fotos: Unsplash, Pexels und eigene Aufnahmen. · Wetter-Kopfbilder (Strand mit Isla de Lobos) – Markus Wagner, Unsplash-Lizenz, farblich je nach Wetter angepasst</p>
+    <p class="bildnachweis">Bildnachweise (Wikimedia Commons): La Pared – dronepicr, CC BY 2.0 · Tindaya – Jose Mesa, CC BY 2.0 · Lajares (Ermita de San Antonio) – Llez, CC BY-SA 3.0 · Cofete – Xosema, CC BY-SA 4.0 · Puerto del Rosario – Bybbisch94/Christian Gebhardt, CC BY-SA 4.0. Übrige Fotos: Unsplash, Pexels und eigene Aufnahmen. · Weitere Fotos (Kopfbilder und Kacheln) von Unsplash-Fotografen, frei nutzbar · Wetter-Kopfbilder (Strand mit Isla de Lobos) – Markus Wagner, Unsplash-Lizenz, farblich je nach Wetter angepasst</p>
   </div>
 </section>
 
@@ -2997,6 +3009,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
 
 <!-- ============ GASTRO ============ -->
 <section class="page" id="page-gastro">
+  <div class="page-kopfbild"><img src="images/kopf-gastro.webp" alt="" loading="lazy" decoding="async"></div>
   <div class="page-header wrap">
     <div class="eyebrow">Vor Ort</div>
     <h1>Gastro</h1>
@@ -3017,7 +3030,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       </div>
       <div class="livemap tall" id="map-food"></div>
       <div class="lm-legend"><span><i style="background:#a03a5c"></i> Lokal</span><span><i style="background:#d4770f"></i> Favorit</span><span><i style="background:#1E7D46"></i> Eure Unterkunft</span></div>
-      <p class="livemap-hint">64 Adressen quer &#252;ber die Insel. Die Ballung im Norden ist Corralejo, die zweite Gruppe ganz unten ist Morro Jable und Jand&#237;a. Antippen zeigt Bewertung und Preisklasse.</p>
+      <p class="livemap-hint"><span id="gastro-anzahl-4">64</span> Adressen quer &#252;ber die Insel. Die Ballung im Norden ist Corralejo, die zweite Gruppe ganz unten ist Morro Jable und Jand&#237;a. Antippen zeigt Bewertung und Preisklasse.</p>
     </section>
 
 <div class="sort-filter-bar">
@@ -4412,6 +4425,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
 </section>
 
 <section class="page" id="page-links">
+  <div class="page-kopfbild"><img src="images/kopf-links.webp" alt="" loading="lazy" decoding="async"></div>
   <div class="page-header wrap">
     <div class="eyebrow">Sammlung</div>
     <h1>Links &amp; Tipps</h1>
@@ -4461,7 +4475,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       <div class="insider-list" style="margin-top:0">
         <div class="insider-row"><span class="insider-n">1</span><div class="insider-body"><strong>Cultura Fuerteventura</strong><p>Offizieller Kulturkalender — Termine &amp; Preise</p></div></div>
         <div class="insider-row"><span class="insider-n">2</span><div class="insider-body"><strong>Ayuntamiento La Oliva</strong><p>Gemeindeseite für Corralejo/El Cotillo/Lajares — Fiestas, Sperrungen, Märkte</p></div></div>
-        <div class="insider-row"><span class="insider-n">3</span><div class="insider-body"><strong>Macaronesia Fuerteventura</strong><p>Lokales Freizeitmagazin — ⚠️ nur Startseite/Events-Rubrik nutzen, der alte „Featured Events October"-Artikel ist veraltet (falsches Jahr)</p></div></div>
+        <div class="insider-row"><span class="insider-n">3</span><div class="insider-body"><strong>Macaronesia Fuerteventura</strong><p>Lokales Freizeitmagazin — ⚠️ nur Startseite/Events-Rubrik nutzen, der alte „Featured Events October“-Artikel ist veraltet (falsches Jahr)</p></div></div>
         <div class="insider-row"><span class="insider-n">4</span><div class="insider-body"><strong>Corralejo.info &amp; Fuerteventura-Zeitung</strong><p>Lokales Portal bzw. deutschsprachige News &amp; Veranstaltungen</p></div></div>
         <div class="insider-row"><span class="insider-n">5</span><div class="insider-body"><strong>EcoEntradas</strong><p>Ticketplattform — zeigt nur tatsächlich buchbare Events, gute Gegenprobe</p></div></div>
         <div class="insider-row"><span class="insider-n">6</span><div class="insider-body"><strong>Fuerteventura-Live Forum &amp; r/Fuerteventura</strong><p>Größtes deutsches Forum bzw. sehr aktives Reddit für aktuelle Tipps</p></div></div>
@@ -5872,7 +5886,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     var el = document.createElement('div');
     el.className = 'stale-note';
     el.innerHTML = '<span>⚠️ <strong>Deine frühere Auswahl ist nicht mehr verfügbar.</strong> ' +
-      (removed.length === 1 ? 'Die Unterkunft „' + escapeHtml(removed[0]) + '" steht' : 'Die Unterkünfte stehen') +
+      (removed.length === 1 ? 'Die Unterkunft „' + escapeHtml(removed[0]) + '“ steht' : 'Die Unterkünfte stehen') +
       ' nicht mehr auf der Liste — sie war für unseren Zeitraum ausgebucht oder wurde aussortiert. ' +
       'Bitte such dir unten eine neue aus.</span>' +
       '<button type="button" aria-label="Hinweis schließen">×</button>';
@@ -6823,7 +6837,8 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       var planenActive = document.querySelector('.tab-btn[data-tab="planen"]');
       planenActive = !!(planenActive && planenActive.classList.contains('active'));
       if (planenActive && cpp.accs.length > 0) {
-        navPP.textContent = 'Kosten: ' + (cpp.accs.some(function(a){return a.estimated;}) ? '≈ ' : '') + fmtEuro(cpp.total/2) + ' € p. P.';
+        navPP.textContent = (cpp.accs.some(function(a){return a.estimated;}) ? '≈ ' : '') + fmtEuro0(cpp.total/2) + ' €/P.';
+        navPP.title = 'Kosten pro Person';
         navPP.hidden = false;
       } else {
         navPP.hidden = true;
@@ -8160,7 +8175,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     }).filter(Boolean).sort(function(a, b){ return b.score - a.score; }).slice(0, 40);
 
     if (!hits.length) {
-      box.innerHTML = '<p class="sr-empty">Nichts gefunden für „' + escapeHtml(q) + '".</p>';
+      box.innerHTML = '<p class="sr-empty">Nichts gefunden für „' + escapeHtml(q) + '“.</p>';
       return;
     }
     var html = '', lastG = '';
@@ -9389,7 +9404,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
          'Airbnb über die Karte, dazu bahiazul.com, Booking.com, Villas Veaco und Holidu. ' +
          'Von rund 90 Villen der Anlage sind 30 überhaupt einzeln vermietet; die übrigen laufen über das Resort selbst. ' +
          '<strong>Achtung bei Holidu-Inseraten:</strong> fünf davon zeigen im Kalender alle 13 Nächte frei, ' +
-         'melden beim Buchen aber durchgehend „nicht verfügbar" – darunter Zweitinserate von Villa 8.7, 3.4 und 10.3.</p>' +
+         'melden beim Buchen aber durchgehend „nicht verfügbar“ – darunter Zweitinserate von Villa 8.7, 3.4 und 10.3.</p>' +
          '</div>';
 
     ziel.innerHTML = h;
@@ -10432,7 +10447,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
   function gastroKennzahlenAktualisieren(){
     var n = document.querySelectorAll('.rc-card').length;
     if (!n) return;
-    ['gastro-anzahl-1', 'gastro-anzahl-2'].forEach(function(id){
+    ['gastro-anzahl-1', 'gastro-anzahl-2', 'gastro-anzahl-3', 'gastro-anzahl-4'].forEach(function(id){
       var el = document.getElementById(id);
       if (el) el.textContent = n;
     });
@@ -11304,7 +11319,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       frei: ['2026-09-29','2026-10-12'],
       link: 'https://www.fewo-direkt.de/ferienwohnung-ferienhaus/p11215763?startDate=2026-09-29&endDate=2026-10-12&adults=2',
       krit: { pool: 'ja', heizpool: 'ja', grill: 'ja', ac: 'unklar', kueche: 'ja', wlan: 'ja', parken: 'unklar', wholeplace: 'ja', freecancel: 'unklar' },
-      hinweis: '<strong>Die einzige im Budget mit beheiztem Pool</strong> – „piscina climatizada" steht im Titel des Angebots. Gesamtpreis aus dem Nachtpreis hochgerechnet, bitte beim Buchen gegenprüfen.' },
+      hinweis: '<strong>Die einzige im Budget mit beheiztem Pool</strong> – „piscina climatizada“ steht im Titel des Angebots. Gesamtpreis aus dem Nachtpreis hochgerechnet, bitte beim Buchen gegenprüfen.' },
 
     // --- Drei Hotels in Corralejo ---
     { slug: 'island-home-fuerteventura', name: 'Island Home Fuerteventura', art: 'Hotel', ort: 'Corralejo', portal: 'Booking.com',
