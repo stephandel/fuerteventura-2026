@@ -589,7 +589,7 @@ body { font-size: var(--fs-body); }
 .trip-card.is-favorited { outline: 2px solid var(--ochre); outline-offset: -1px; }
 .trip-card.is-hidden { opacity: 0.42; filter: grayscale(0.7); }
 .trip-media { position: relative; aspect-ratio: 16/9; background: var(--surface-2); }
-.trip-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.trip-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 .trip-media::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10,20,24,0) 45%, rgba(10,20,24,0.78) 100%); }
 .trip-titlebox { position: absolute; left: 16px; right: 16px; bottom: 12px; z-index: 1; }
 .trip-titlebox h3 { color: #fff; font-size: 1.14rem; line-height: 1.25; text-shadow: 0 1px 8px rgba(0,0,0,0.5); }
@@ -865,7 +865,7 @@ table.price-table tfoot td.num { color: var(--teal); }
 .excursion-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 18px; }
 .ex-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; box-shadow: var(--shadow); display: flex; flex-direction: column; }
 .ex-media { position: relative; aspect-ratio: 4/3; background: var(--surface-2); }
-.ex-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ex-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 .ex-rank { position: absolute; top: 10px; left: 10px; background: rgba(20,24,26,0.72); color: #fff; font-family: "JetBrains Mono", monospace; font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 999px; }
 .ex-body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
 .ex-card h3 { font-size: 1.03rem; }
