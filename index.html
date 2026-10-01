@@ -607,6 +607,15 @@ body { font-size: var(--fs-body); }
 .trip-plan .tp-time { font-family: "JetBrains Mono", monospace; font-weight: 700; color: var(--teal); flex-shrink: 0; min-width: 52px; }
 .trip-plan .tp-what { flex: 1; color: var(--ink); }
 .trip-plan .tp-what small { display: block; color: var(--ink-dim); font-size: 12px; margin-top: 1px; }
+.trip-plan .tp-img { float: right; width: 92px; height: 64px; object-fit: cover; border-radius: 8px; margin: 0 0 4px 10px; background: var(--surface-2); }
+.trip-plan .tp-what { display: flow-root; }
+.trip-plan .tp-links { display: block; margin-top: 4px; font-style: normal; }
+.trip-plan .tp-map { display: inline-block; font-size: 12px; font-weight: 600; color: var(--teal); text-decoration: none; border: 1px solid var(--border); border-radius: 999px; padding: 2px 10px; margin: 2px 6px 2px 0; }
+.trip-plan .tp-map:hover { background: var(--surface-2); }
+.trip-plan .tp-spots { display: block; margin-top: 6px; font-style: normal; }
+.trip-plan .tp-spots a { display: inline-block; font-size: 12px; color: var(--ink); text-decoration: none; background: var(--surface-2); border-radius: 6px; padding: 2px 8px; margin: 0 4px 4px 0; }
+.trip-plan .tp-spots a:hover { color: var(--teal); }
+.trip-route { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 4px; }
 .trip-plan li.is-drive .tp-what { color: var(--ink-dim); font-style: italic; }
 .trip-plan li.is-dark { background: var(--bad-bg); border-radius: 6px; padding-left: 8px; padding-right: 8px; }
 .trip-foot { display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; padding-top: 4px; }
@@ -2933,7 +2942,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       <div class="trip-grid" id="trip-grid"></div>
     </section>
 
-    <p class="bildnachweis">Bildnachweise (Wikimedia Commons): La Pared – dronepicr, CC BY 2.0 · Tindaya – Jose Mesa, CC BY 2.0 · Lajares (Ermita de San Antonio) – Llez, CC BY-SA 3.0 · Cofete – Xosema, CC BY-SA 4.0 · Puerto del Rosario – Bybbisch94/Christian Gebhardt, CC BY-SA 4.0 · Puertito de los Molinos – Patrice78500, CC BY-SA 4.0 · Aloe-Vera-Feld – Dennis140, CC BY-SA 3.0. Übrige Fotos: Unsplash, Pexels und eigene Aufnahmen. · Weitere Fotos (Kopfbilder und Kacheln) von Unsplash-Fotografen, frei nutzbar · Wetter-Kopfbilder (Strand mit Isla de Lobos) – Markus Wagner, Unsplash-Lizenz, farblich je nach Wetter angepasst</p>
+    <p class="bildnachweis">Bildnachweise (Wikimedia Commons): La Pared – dronepicr, CC BY 2.0 · Tindaya – Jose Mesa, CC BY 2.0 · Lajares (Ermita de San Antonio) – Llez, CC BY-SA 3.0 · Cofete – Xosema, CC BY-SA 4.0 · Puerto del Rosario – Bybbisch94/Christian Gebhardt, CC BY-SA 4.0 · Puertito de los Molinos – Patrice78500, CC BY-SA 4.0 · Aloe-Vera-Feld – Dennis140, CC BY-SA 3.0. · Tourenbilder (Wikimedia Commons): Vegueta – Maria.M Hernández Gómez, CC BY-SA 4.0 · Las Canteras – Uwe Barghaan, CC BY 3.0 · Villa Winter – H. Zell, CC BY-SA 3.0 · Mirador de Cofete – Xosema, CC BY-SA 4.0 · Playa de la Concha – Jarek Prokop, CC BY 3.0 · Faro de Martiño – Ina Widegren, CC BY-SA 2.0 · Morro Velosa – Gerd Eichmann, CC BY 4.0 · Faro del Tostón – Thérèse Gaigé, CC BY-SA 3.0 · Calderón Hondo – Norbert Nagel, CC BY-SA 3.0 · Costa Calma – Klapi, CC BY-SA 4.0 · Popcorn Beach (Maerl) – Erik del Toro Streb, CC BY 4.0 · Majanicho – Alexey Komarov, CC BY-SA 4.0 · Hafen Corralejo – HHSS, CC BY-SA 4.0 · Mercado de Vegueta gemeinfrei. Übrige Fotos: Unsplash, Pexels und eigene Aufnahmen. · Weitere Fotos (Kopfbilder und Kacheln) von Unsplash-Fotografen, frei nutzbar · Wetter-Kopfbilder (Strand mit Isla de Lobos) – Markus Wagner, Unsplash-Lizenz, farblich je nach Wetter angepasst</p>
   </div>
 </section>
 
@@ -6937,15 +6946,15 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       summary: 'Ein Tag rund um das einzige komplett vegane Restaurant der Insel. Vormittags die versteinerte Sandschlucht von Los Estancos — eine kaum bekannte Höhlenlandschaft im Inselinneren, keine zehn Minuten vom Restaurant entfernt. Mittags das wechselnde Fünf-Gänge-Menü im El Invernadero, danach Skulpturen und Eis in der Inselhauptstadt.',
       warn: 'Der ganze Tag hängt an der Tischreservierung um 13:30 — stell die Abfahrt oben auf 09:15, dann geht die Rechnung auf. El Invernadero öffnet nur Dienstag bis Freitag, die Küche schließt um 15:30. In unserem Zeitraum passen Mi 30.09., Do 01.10., Fr 02.10., Di 06.10., Mi 07.10., Do 08.10. und Fr 09.10. Vorher über DISH reservieren, das Lokal ist mit 4,9 aus 879 Bewertungen gut gebucht.',
       stops: [
-        {t:'stop',  min:60,  label:'Frühstück im H2O Juice Bar & Vegan Cafè', note:'C. la Milagrosa 29, Corralejo · vegane Bowls, Säfte, Burger und Kuchen, begrünte Terrasse · 4,6 aus 670 Bewertungen'},
+        {t:'stop',  min:60,  label:'Frühstück im H2O Juice Bar & Vegan Cafè', note:'C. la Milagrosa 29, Corralejo · vegane Bowls, Säfte, Burger und Kuchen, begrünte Terrasse · 4,6 aus 670 Bewertungen', q:'H2O Juice Bar & Vegan Cafè, C. la Milagrosa 29, Corralejo', img:'images/h2o-juice-bar.webp'},
         {t:'drive', min:40,  label:'Corralejo → Los Estancos', note:'Über die FV-1 bis Puerto del Rosario, dann landeinwärts auf die FV-20'},
-        {t:'stop',  min:105, label:'Cuevas de Los Estancos', note:'Versteinerte Sanddünen-Schlucht mit ausgewaschenen Höhlen, teils früher als Unterstände genutzt. Nicht ausgeschildert und unbefestigt — feste Schuhe, Wasser mitnehmen'},
+        {t:'stop',  min:105, label:'Cuevas de Los Estancos', note:'Versteinerte Sanddünen-Schlucht mit ausgewaschenen Höhlen, teils früher als Unterstände genutzt. Nicht ausgeschildert und unbefestigt — feste Schuhe, Wasser mitnehmen', q:'Cuevas de Los Estancos, Fuerteventura'},
         {t:'drive', min:10,  label:'Weiter zum Restaurant', note:'Nur gut 3 km nach Süden, beide liegen westlich der Hauptstadt'},
         {t:'stop',  min:40,  label:'Ankommen und durchatmen', note:'Puffer, damit die Reservierung um 13:30 sicher steht'},
-        {t:'stop',  min:135, label:'El Invernadero: Fünf-Gänge-Menü', note:'Travesia Llanos Pelados 4C · 100 % vegan und glutenfrei, Gemüse größtenteils aus dem eigenen Garten, Karte wechselt wöchentlich · ca. 34 € p.P.'},
+        {t:'stop',  min:135, label:'El Invernadero: Fünf-Gänge-Menü', note:'Travesia Llanos Pelados 4C · 100 % vegan und glutenfrei, Gemüse größtenteils aus dem eigenen Garten, Karte wechselt wöchentlich · ca. 34 € p.P.', q:'El Invernadero Restaurante, Travesia Llanos Pelados 4C, Puerto del Rosario', img:'images/el-invernadero-restaurante.webp'},
         {t:'drive', min:10,  label:'Ins Zentrum von Puerto del Rosario'},
-        {t:'stop',  min:70,  label:'Skulpturenroute & Hafen', note:'Über 100 Skulpturen frei im Stadtraum verteilt, dazu das Geburtshaus des Dichters Unamuno'},
-        {t:'stop',  min:30,  label:'Eis bei Vrebac Gelato', note:'C. Francisco Pi y Arsuaga · italienisches Gelato, die Sorbets sind ohne Milch — vor Ort kurz nachfragen'},
+        {t:'stop',  min:70,  label:'Skulpturenroute & Hafen', note:'Über 100 Skulpturen frei im Stadtraum verteilt, dazu das Geburtshaus des Dichters Unamuno', q:'Parque Escultórico, Puerto del Rosario', img:'images/puerto-del-rosario-skulpturenroute-amp-hafen.webp', spots:[{"n": "Arcabucero", "q": "28.49996,-13.85541"}, {"n": "Las Cabras", "q": "28.4987,-13.85955"}, {"n": "Manuel Vázquez Cabrera", "q": "28.49873,-13.86053"}, {"n": "Baifo", "q": "28.49795,-13.86067"}, {"n": "Casa Museo Unamuno", "q": "28.4987406,-13.8610845"}, {"n": "Reloj de Sol", "q": "28.49755,-13.86377"}, {"n": "Las Culonas", "q": "28.49989,-13.86285"}, {"n": "Siroco", "q": "28.50038,-13.86266"}, {"n": "Guernica", "q": "28.50166,-13.85826"}, {"n": "Carnero", "q": "28.50371,-13.85861"}, {"n": "Tomato", "q": "28.50095,-13.86605"}, {"n": "Peleas de gallos", "q": "28.49298,-13.86317"}]},
+        {t:'stop',  min:30,  label:'Eis bei Vrebac Gelato', note:'C. Francisco Pi y Arsuaga · italienisches Gelato, die Sorbets sind ohne Milch — vor Ort kurz nachfragen', q:'Vrebac Gelato, Puerto del Rosario', img:'images/vrebac-gelato.webp'},
         {t:'drive', min:35,  label:'Rückfahrt nach Corralejo'}
       ]
     },
@@ -6957,12 +6966,12 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       summary: 'Die Nachbarinsel liegt keine halbe Stunde entfernt \u2014 vom Hafen Corralejo fahren bis zu 26 F\u00e4hren am Tag. Dr\u00fcben wartet die Marina Rubic\u00f3n mit Boutiquen, Kunsthandwerksst\u00e4nden und Restaurants am Hafenbecken, dazu die breite Uferpromenade bis ins Ortszentrum. Ein Tag zum Schlendern, Schauen und gut Essen \u2014 kein Strandtag.',
       warn: 'Der Kunsthandwerkermarkt an der Marina Rubic\u00f3n ist nur mittwochs und samstags von 09:00 bis 14:00. In unserem Zeitraum passen also Mi 30.09., Sa 03.10., Mi 07.10. und Sa 10.10. F\u00fcr die F\u00e4hre den Personalausweis mitnehmen. Das Auto kann in Corralejo stehen bleiben \u2014 in Playa Blanca ist alles zu Fu\u00df erreichbar.',
       stops: [
-        {t:'drive', min:10,  label:'Zum Hafen Corralejo', note:'Parkhaus am Hafen, Tickets abholen'},
-        {t:'ferry', min:30,  label:'F\u00e4hre nach Playa Blanca', note:'Fred Olsen, Naviera Armas oder L\u00edneas Romero \u00b7 ab 17 \u20ac pro Strecke'},
-        {t:'stop',  min:135, label:'Marina Rubic\u00f3n: Markt und Boutiquen', note:'Kunsthandwerk, Schmuck, Leder, Weine und Kleidung entlang des Hafenbeckens, dazwischen Designerl\u00e4den'},
-        {t:'stop',  min:90,  label:'Mittagessen an der Marina', note:'Reihe von Restaurants direkt am Wasser mit Blick auf die Yachten'},
-        {t:'stop',  min:60,  label:'Paseo Mar\u00edtimo Richtung Ortskern', note:'Breite Uferpromenade, gem\u00fctliche 20 bis 40 Minuten \u2014 unterwegs immer wieder B\u00e4nke mit Blick auf Fuerteventura'},
-        {t:'stop',  min:90,  label:'Playa Blanca: Ortszentrum', note:'Gesch\u00e4fte, Cafeter\u00edas und der alte Ortskern rund um die Kirche'},
+        {t:'drive', min:10,  label:'Zum Hafen Corralejo', note:'Parkhaus am Hafen, Tickets abholen', q:'Hafen Corralejo Fähre', img:'images/tour-hafen-corralejo.webp'},
+        {t:'ferry', min:30,  label:'F\u00e4hre nach Playa Blanca', note:'Fred Olsen, Naviera Armas oder L\u00edneas Romero \u00b7 ab 17 \u20ac pro Strecke', q:'Fährhafen Playa Blanca, Lanzarote'},
+        {t:'stop',  min:135, label:'Marina Rubic\u00f3n: Markt und Boutiquen', note:'Kunsthandwerk, Schmuck, Leder, Weine und Kleidung entlang des Hafenbeckens, dazwischen Designerl\u00e4den', q:'Marina Rubicón, Playa Blanca', img:'images/marina-rubicon.webp'},
+        {t:'stop',  min:90,  label:'Mittagessen an der Marina', note:'Reihe von Restaurants direkt am Wasser mit Blick auf die Yachten', q:'Restaurantes Marina Rubicón, Playa Blanca'},
+        {t:'stop',  min:60,  label:'Paseo Mar\u00edtimo Richtung Ortskern', note:'Breite Uferpromenade, gem\u00fctliche 20 bis 40 Minuten \u2014 unterwegs immer wieder B\u00e4nke mit Blick auf Fuerteventura', q:'Paseo Marítimo, Playa Blanca, Lanzarote', img:'images/lanzarote-playa-blanca.webp'},
+        {t:'stop',  min:90,  label:'Playa Blanca: Ortszentrum', note:'Gesch\u00e4fte, Cafeter\u00edas und der alte Ortskern rund um die Kirche', q:'Playa Blanca Centro, Lanzarote'},
         {t:'stop',  min:45,  label:'Kaffee und Pause am Wasser'},
         {t:'drive', min:15,  label:'Zur\u00fcck zum F\u00e4hrhafen'},
         {t:'ferry', min:30,  label:'F\u00e4hre zur\u00fcck nach Corralejo', note:'Letzte Verbindungen am fr\u00fchen Abend \u2014 R\u00fcckfahrtzeit vorher pr\u00fcfen'},
@@ -6978,12 +6987,12 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       warn: 'Der härteste Trip der Liste: rund 14 Stunden von Tür zu Tür, davon etwa 7,5 unterwegs. Die Fähre kostet für zwei Personen etwa 240 € hin und zurück. Wer den Tag entspannter will, fliegt mit Binter ab Puerto del Rosario in 40 Minuten — dann ist es ein ganz anderer Ausflug.',
       stops: [
         {t:'drive', min:115, label:'Corralejo → Morro Jable', note:'Sehr früh los, die erste Fähre geht um 08:00'},
-        {t:'stop',  min:45,  label:'Einchecken am Fährhafen', note:'Mindestens eine Stunde vor Abfahrt da sein, Ausweis nicht vergessen'},
+        {t:'stop',  min:45,  label:'Einchecken am Fährhafen', note:'Mindestens eine Stunde vor Abfahrt da sein, Ausweis nicht vergessen', q:'Puerto de Morro Jable, Fuerteventura'},
         {t:'ferry', min:105, label:'Fähre nach Las Palmas', note:'08:00 ab Morro Jable, Ankunft 09:45 · Fred Olsen, Armas oder Balearia'},
-        {t:'stop',  min:105, label:'Altstadt Vegueta', note:'Kathedrale Santa Ana, Casa de Colón, Gassen aus dem 15. Jahrhundert'},
-        {t:'stop',  min:75,  label:'Mittagessen im Mercado de Vegueta'},
-        {t:'stop',  min:120, label:'Playa de las Canteras', note:'Drei Kilometer Stadtstrand, durch ein Naturriff wellengeschützt'},
-        {t:'stop',  min:45,  label:'Zurück zum Hafen'},
+        {t:'stop',  min:105, label:'Altstadt Vegueta', note:'Kathedrale Santa Ana, Casa de Colón, Gassen aus dem 15. Jahrhundert', q:'Catedral de Santa Ana, Las Palmas de Gran Canaria', img:'images/tour-vegueta.webp'},
+        {t:'stop',  min:75,  label:'Mittagessen im Mercado de Vegueta', q:'Mercado de Vegueta, Las Palmas de Gran Canaria', img:'images/tour-mercado-vegueta.webp'},
+        {t:'stop',  min:120, label:'Playa de las Canteras', note:'Drei Kilometer Stadtstrand, durch ein Naturriff wellengeschützt', q:'Playa de Las Canteras, Las Palmas de Gran Canaria', img:'images/tour-las-canteras.webp'},
+        {t:'stop',  min:45,  label:'Zurück zum Hafen', q:'Puerto de la Luz, Las Palmas de Gran Canaria'},
         {t:'ferry', min:120, label:'Fähre zurück', note:'16:00 ab Las Palmas, Ankunft 18:00 in Morro Jable — die letzte brauchbare Verbindung'},
         {t:'drive', min:115, label:'Morro Jable → Corralejo'}
       ]
@@ -6997,12 +7006,12 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       warn: 'Vor der Fahrt in den Mietvertrag schauen: Die meisten Vermieter schließen Schotterpisten aus. Vollgetankt losfahren, Wasser mitnehmen, unterwegs gibt es weder Netz noch Tankstelle.',
       stops: [
         {t:'drive', min:110, label:'Corralejo → Morro Jable', note:'Autobahn FV-2, gut ausgebaut'},
-        {t:'stop',  min:50,  label:'Mittagessen in Morro Jable', note:'Letzte Gelegenheit für Essen, Tanken und Toilette'},
-        {t:'drive', min:55,  label:'Schotterpiste über den Pass', note:'20 km, Schritttempo, spektakuläre Aussicht am Mirador'},
-        {t:'stop',  min:75,  label:'Playa de Cofete', note:'14 km wilder Strand vor Bergkulisse — Baden lebensgefährlich, Strömung'},
-        {t:'stop',  min:45,  label:'Villa Winter', note:'Das rätselhafte Haus des deutschen Ingenieurs Gustav Winter, ca. 5 € Eintritt'},
+        {t:'stop',  min:50,  label:'Mittagessen in Morro Jable', note:'Letzte Gelegenheit für Essen, Tanken und Toilette', q:'Morro Jable, Fuerteventura'},
+        {t:'drive', min:55,  label:'Schotterpiste über den Pass', note:'20 km, Schritttempo, spektakuläre Aussicht am Mirador', q:'Mirador de Cofete, Fuerteventura', img:'images/tour-mirador-cofete.webp'},
+        {t:'stop',  min:75,  label:'Playa de Cofete', note:'14 km wilder Strand vor Bergkulisse — Baden lebensgefährlich, Strömung', q:'Playa de Cofete, Fuerteventura', img:'images/cofete-amp-villa-winter.webp'},
+        {t:'stop',  min:45,  label:'Villa Winter', note:'Das rätselhafte Haus des deutschen Ingenieurs Gustav Winter, ca. 5 € Eintritt', q:'Villa Winter, Cofete, Fuerteventura', img:'images/tour-villa-winter.webp'},
         {t:'drive', min:55,  label:'Zurück über die Piste'},
-        {t:'stop',  min:30,  label:'Faro de Jandía', note:'Kurzer Abstecher zum Leuchtturm an der Südspitze'},
+        {t:'stop',  min:30,  label:'Faro de Jandía', note:'Kurzer Abstecher zum Leuchtturm an der Südspitze', q:'Faro de Jandía, Fuerteventura', img:'images/faro-de-jand-a-amp-playas-de-sotavento.webp'},
         {t:'drive', min:115, label:'Rückfahrt nach Corralejo'}
       ]
     },
@@ -7014,11 +7023,11 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       summary: 'Die kleine Naturschutzinsel liegt zum Greifen nah vor Corralejo — 15 Minuten mit der Fähre. Kein Auto, keine Straßen, keine Läden: nur Wanderwege, ein Leuchtturm und die türkise Playa de la Concha. Der entspannteste Ausflugstag überhaupt, weil man nicht fahren muss.',
       warn: 'Die Genehmigung des Cabildo ist kostenlos, aber Pflicht und auf 400 Personen pro Tag begrenzt. Fähre und Genehmigung unbedingt vorher online sichern.',
       stops: [
-        {t:'drive', min:10,  label:'Zum Hafen Corralejo', note:'Parken am Hafen, Ticket abholen'},
+        {t:'drive', min:10,  label:'Zum Hafen Corralejo', note:'Parken am Hafen, Ticket abholen', q:'Hafen Corralejo Fähre', img:'images/tour-hafen-corralejo.webp'},
         {t:'drive', min:15,  label:'Überfahrt nach Lobos'},
-        {t:'stop',  min:75,  label:'Playa de la Concha', note:'Flache türkise Bucht, der beste Badeplatz der Insel'},
-        {t:'stop',  min:90,  label:'Wanderung zum Faro Martiño', note:'Etwa 4 km je Richtung, flach, kaum Schatten'},
-        {t:'stop',  min:60,  label:'Mittagessen im Casa Antoñita', note:'Das einzige Lokal der Insel — vorher reservieren'},
+        {t:'stop',  min:75,  label:'Playa de la Concha', note:'Flache türkise Bucht, der beste Badeplatz der Insel', q:'Playa de la Concha, Isla de Lobos', img:'images/tour-playa-de-la-concha.webp'},
+        {t:'stop',  min:90,  label:'Wanderung zum Faro Martiño', note:'Etwa 4 km je Richtung, flach, kaum Schatten', q:'Faro de Martiño, Isla de Lobos', img:'images/tour-faro-martino.webp'},
+        {t:'stop',  min:60,  label:'Mittagessen im Casa Antoñita', note:'Das einzige Lokal der Insel — vorher reservieren', q:'Casa Antoñita, Isla de Lobos', img:'images/isla-de-lobos.webp'},
         {t:'drive', min:15,  label:'Rückfahrt mit der Fähre'},
         {t:'drive', min:10,  label:'Zurück in die Unterkunft'}
       ]
@@ -7031,13 +7040,13 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       summary: 'Die Kultur- und Landschaftsrunde durch das grüne Inselinnere: die alte Hauptstadt Betancuria, das aztekisch anmutende Kirchenportal von Pájara und zum Schluss der schwarze Lavastrand von Ajuy mit seinen Millionen Jahre alten Höhlen. Kurvige Straßen, viele Aussichtspunkte.',
       stops: [
         {t:'drive', min:45,  label:'Corralejo → Mirador Morro Velosa', note:'Über die FV-30 durchs Bergland'},
-        {t:'stop',  min:30,  label:'Mirador Morro Velosa', note:'Weitester Blick übers Inselinnere, kleines Café'},
+        {t:'stop',  min:30,  label:'Mirador Morro Velosa', note:'Weitester Blick übers Inselinnere, kleines Café', q:'Mirador Morro Velosa, Betancuria', img:'images/tour-morro-velosa.webp'},
         {t:'drive', min:15,  label:'Weiter nach Betancuria'},
-        {t:'stop',  min:75,  label:'Betancuria', note:'Kirche Santa María, Gassen, Mittagessen'},
+        {t:'stop',  min:75,  label:'Betancuria', note:'Kirche Santa María, Gassen, Mittagessen', q:'Betancuria, Fuerteventura', img:'images/betancuria.webp'},
         {t:'drive', min:20,  label:'Nach Pájara'},
-        {t:'stop',  min:40,  label:'Pájara', note:'Das Barockportal mit den rätselhaften Ornamenten, schattiger Dorfplatz'},
+        {t:'stop',  min:40,  label:'Pájara', note:'Das Barockportal mit den rätselhaften Ornamenten, schattiger Dorfplatz', q:'Iglesia de Nuestra Señora de la Regla, Pájara', img:'images/p-jara-kirche-amp-dorfplatz.webp'},
         {t:'drive', min:25,  label:'Hinunter nach Ajuy'},
-        {t:'stop',  min:90,  label:'Ajuy: Strand & Höhlen', note:'20 Min. Aufstieg zu den Kalksteinhöhlen, feste Schuhe'},
+        {t:'stop',  min:90,  label:'Ajuy: Strand & Höhlen', note:'20 Min. Aufstieg zu den Kalksteinhöhlen, feste Schuhe', q:'Cuevas de Ajuy, Fuerteventura', img:'images/ajuy-schwarzer-strand-amp-h-hlen.webp'},
         {t:'drive', min:75,  label:'Rückfahrt nach Corralejo'}
       ]
     },
@@ -7049,12 +7058,12 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       summary: 'Die entspannteste Runde, komplett in unserer Nachbarschaft. Vormittags der Markt und die Cafés von Lajares, nachmittags baden in den windgeschützten Lagunen von El Cotillo, zum Schluss der Sonnenuntergang am Leuchtturm und Fisch essen am alten Hafen.',
       stops: [
         {t:'drive', min:15,  label:'Corralejo → Lajares'},
-        {t:'stop',  min:75,  label:'Lajares', note:'Samstags Kunsthandwerkermarkt, sonst Cafés und Surfshops'},
+        {t:'stop',  min:75,  label:'Lajares', note:'Samstags Kunsthandwerkermarkt, sonst Cafés und Surfshops', q:'Lajares, Fuerteventura', img:'images/lajares-kunsthandwerkermarkt.webp'},
         {t:'drive', min:15,  label:'Weiter nach El Cotillo'},
-        {t:'stop',  min:150, label:'Lagunas de El Cotillo', note:'Flache türkise Becken, windgeschützt — der beste Badeplatz im Norden'},
+        {t:'stop',  min:150, label:'Lagunas de El Cotillo', note:'Flache türkise Becken, windgeschützt — der beste Badeplatz im Norden', q:'Lagunas de El Cotillo, Fuerteventura', img:'images/el-cotillo-lagunen-amp-sonnenuntergang.webp'},
         {t:'drive', min:10,  label:'Zum Faro de El Tostón'},
-        {t:'stop',  min:60,  label:'Sonnenuntergang am Leuchtturm', note:'Einer der schönsten der Insel'},
-        {t:'stop',  min:90,  label:'Abendessen am alten Hafen', note:'Fischlokale in El Cotillo — abends voll, vorher reservieren'},
+        {t:'stop',  min:60,  label:'Sonnenuntergang am Leuchtturm', note:'Einer der schönsten der Insel', q:'Faro del Tostón, El Cotillo', img:'images/tour-faro-toston.webp'},
+        {t:'stop',  min:90,  label:'Abendessen am alten Hafen', note:'Fischlokale in El Cotillo — abends voll, vorher reservieren', q:'Puerto Viejo, El Cotillo, Fuerteventura', img:'images/santa-ana-del-cotillo.webp'},
         {t:'drive', min:25,  label:'Rückfahrt nach Corralejo'}
       ]
     },
@@ -7066,11 +7075,11 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       summary: 'Der kurze Kultur- und Naturausflug direkt vor der Haustür: der heilige Berg der Ureinwohner, das Herrenhaus der Militärgouverneure in La Oliva und zum Abschluss die Wanderung auf einen echten Vulkankrater. Wenig Fahrzeit, viel Landschaft.',
       stops: [
         {t:'drive', min:12,  label:'Corralejo → La Oliva'},
-        {t:'stop',  min:60,  label:'La Oliva', note:'Casa de los Coroneles und Kirche La Candelaria'},
+        {t:'stop',  min:60,  label:'La Oliva', note:'Casa de los Coroneles und Kirche La Candelaria', q:'Casa de los Coroneles, La Oliva', img:'images/la-oliva-casa-de-los-coroneles.webp'},
         {t:'drive', min:12,  label:'Weiter nach Tindaya'},
-        {t:'stop',  min:60,  label:'Montaña de Tindaya', note:'Umrundung auf dem Feldweg, der Berg selbst ist gesperrt'},
+        {t:'stop',  min:60,  label:'Montaña de Tindaya', note:'Umrundung auf dem Feldweg, der Berg selbst ist gesperrt', q:'Montaña de Tindaya, Fuerteventura', img:'images/tindaya.webp'},
         {t:'drive', min:20,  label:'Nach Lajares'},
-        {t:'stop',  min:120, label:'Wanderung Calderón Hondo', note:'Rund 2 Std. hin und zurück, am Kraterrand leben zutrauliche Streifenhörnchen. Nad: der rechte Weg ist länger, aber leichter – der linke kürzer und steil. Nur bei klarem Himmel hinauf, nicht bei Calima'},
+        {t:'stop',  min:120, label:'Wanderung Calderón Hondo', note:'Rund 2 Std. hin und zurück, am Kraterrand leben zutrauliche Streifenhörnchen. Nad: der rechte Weg ist länger, aber leichter – der linke kürzer und steil. Nur bei klarem Himmel hinauf, nicht bei Calima', q:'Calderón Hondo, Lajares, Fuerteventura', img:'images/tour-calderon-hondo.webp'},
         {t:'drive', min:15,  label:'Rückfahrt nach Corralejo'}
       ]
     },
@@ -7083,9 +7092,9 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       warn: 'Vor der Fahrt die Gezeiten prüfen und die Ankunft auf ablaufendes Wasser legen. Die Zeiten stehen live auf der Wetterseite.',
       stops: [
         {t:'drive', min:95,  label:'Corralejo → Risco del Paso', note:'Über die FV-2, dann kurz auf die Halbinsel'},
-        {t:'stop',  min:180, label:'Playa de Sotavento', note:'Baden in der Lagune, Kite- und Windsurfer beobachten'},
+        {t:'stop',  min:180, label:'Playa de Sotavento', note:'Baden in der Lagune, Kite- und Windsurfer beobachten', q:'Playa de Sotavento, Risco del Paso, Fuerteventura', img:'images/playas-de-sotavento-risco-del-paso.webp'},
         {t:'drive', min:15,  label:'Nach Costa Calma'},
-        {t:'stop',  min:75,  label:'Costa Calma', note:'Mittagessen und Strandpromenade'},
+        {t:'stop',  min:75,  label:'Costa Calma', note:'Mittagessen und Strandpromenade', q:'Costa Calma, Fuerteventura', img:'images/tour-costa-calma.webp'},
         {t:'drive', min:85,  label:'Rückfahrt nach Corralejo'}
       ]
     },
@@ -7098,12 +7107,29 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       warn: 'Vom 25.09. bis 07.10. laufen in Puerto del Rosario die Fiestas del Rosario — viel los, aber auch Straßensperrungen und volle Parkplätze.',
       stops: [
         {t:'drive', min:35,  label:'Corralejo → Puerto del Rosario'},
-        {t:'stop',  min:105, label:'Skulpturenroute & Hafen', note:'Über 100 Skulpturen im Stadtraum, dazu das Unamuno-Haus'},
+        {t:'stop',  min:105, label:'Skulpturenroute & Hafen', note:'Über 100 Skulpturen im Stadtraum, dazu das Unamuno-Haus', q:'Parque Escultórico, Puerto del Rosario', img:'images/puerto-del-rosario-skulpturenroute-amp-hafen.webp', spots:[{"n": "Arcabucero", "q": "28.49996,-13.85541"}, {"n": "Las Cabras", "q": "28.4987,-13.85955"}, {"n": "Manuel Vázquez Cabrera", "q": "28.49873,-13.86053"}, {"n": "Baifo", "q": "28.49795,-13.86067"}, {"n": "Casa Museo Unamuno", "q": "28.4987406,-13.8610845"}, {"n": "Reloj de Sol", "q": "28.49755,-13.86377"}, {"n": "Las Culonas", "q": "28.49989,-13.86285"}, {"n": "Siroco", "q": "28.50038,-13.86266"}, {"n": "Guernica", "q": "28.50166,-13.85826"}, {"n": "Carnero", "q": "28.50371,-13.85861"}, {"n": "Tomato", "q": "28.50095,-13.86605"}, {"n": "Peleas de gallos", "q": "28.49298,-13.86317"}]},
         {t:'drive', min:20,  label:'Nach Antigua'},
-        {t:'stop',  min:70,  label:'Molino de Antigua', note:'Restaurierte Gofio-Mühle mit Museum und Kaktusgarten, montags meist zu'},
+        {t:'stop',  min:70,  label:'Molino de Antigua', note:'Restaurierte Gofio-Mühle mit Museum und Kaktusgarten, montags meist zu', q:'Molino de Antigua, Fuerteventura', img:'images/antigua-windm-hlenmuseum.webp'},
         {t:'drive', min:15,  label:'Nach Caleta de Fuste'},
-        {t:'stop',  min:90,  label:'Caleta de Fuste', note:'Wellenfreie künstliche Bucht, Promenade, Kaffee'},
+        {t:'stop',  min:90,  label:'Caleta de Fuste', note:'Wellenfreie künstliche Bucht, Promenade, Kaffee', q:'Caleta de Fuste, Fuerteventura', img:'images/caleta-de-fuste-hafenpromenade.webp'},
         {t:'drive', min:50,  label:'Rückfahrt nach Corralejo'}
+      ]
+    },
+    {
+      id: 'trip-rosario-shopping',
+      title: 'Rosario: Shopping bei Las Rotondas',
+      zone: 'Halber Tag · Osten · 1–3 Std. Shopping',
+      img: 'images/puerto-del-rosario-skulpturenroute-amp-hafen.webp',
+      summary: 'Der Einkaufstag für Regen, Wind oder wenn Kleidung und Mitbringsel dran sind. Das Centro Comercial Las Rotondas am Rand von Puerto del Rosario hat rund 80 Läden auf mehreren Etagen (Zara, H&M, Pull&Bear, Stradivarius, dazu Schmuck, Kosmetik und Geschenke), Cafés auf jeder Etage und ein Kino. Dazu das Eis bei Vrebac in der Straße nebenan. Wer mehr Zeit hat, hängt Stadtbummel, Skulpturen und den Einkauf fürs Abendessen dran.',
+      warn: 'Las Rotondas ist Montag bis Samstag von 10 bis 22 Uhr geöffnet, <b>sonntags geschlossen</b>. Vom 25.09. bis 07.10. laufen in Puerto del Rosario die Fiestas del Rosario: viel los, aber auch Straßensperrungen. Die Punkte mit „Optional“ lassen sich einzeln weglassen, wenn die Zeit knapp wird.',
+      stops: [
+        {t:'drive', min:35,  label:'Corralejo → Las Rotondas', note:'Über die FV-1 nach Süden, das Zentrum liegt direkt an der Hauptstraße. Rund 1.000 Parkplätze', q:'Centro Comercial Las Rotondas, Puerto del Rosario'},
+        {t:'stop',  min:150, label:'Centro Comercial Las Rotondas', note:'C. Francisco Pi y Arsuaga 2 · rund 80 Läden auf vier Etagen, Kino und Cafés auf jeder Ebene. Je nach Lust 1 bis 3 Stunden', q:'Centro Comercial Las Rotondas, C. Francisco Pi y Arsuaga 2, Puerto del Rosario'},
+        {t:'stop',  min:30,  label:'Eis bei Vrebac Gelato', note:'Liegt in derselben Straße (C. Francisco Pi y Arsuaga) · italienisches Gelato, Sorbets ohne Milch', q:'Vrebac Gelato, Puerto del Rosario', img:'images/vrebac-gelato.webp'},
+        {t:'stop',  min:45,  label:'Optional: Calle León y Castillo bummeln', note:'Die Hauptstraße der Stadt mit kleinen Geschäften, Cafés und Bäckereien — das echte Inselleben statt Einkaufszentrum', q:'Calle León y Castillo, Puerto del Rosario'},
+        {t:'stop',  min:60,  label:'Optional: Skulpturenroute & Casa Museo Unamuno', note:'Über 100 Skulpturen frei im Stadtraum — zwölf davon als Spaziergang zum Anklicken. Dazu das Wohnhaus des Dichters Unamuno', q:'Parque Escultórico, Puerto del Rosario', img:'images/puerto-del-rosario-skulpturenroute-amp-hafen.webp', spots:[{"n": "Arcabucero", "q": "28.49996,-13.85541"}, {"n": "Las Cabras", "q": "28.4987,-13.85955"}, {"n": "Manuel Vázquez Cabrera", "q": "28.49873,-13.86053"}, {"n": "Baifo", "q": "28.49795,-13.86067"}, {"n": "Casa Museo Unamuno", "q": "28.4987406,-13.8610845"}, {"n": "Reloj de Sol", "q": "28.49755,-13.86377"}, {"n": "Las Culonas", "q": "28.49989,-13.86285"}, {"n": "Siroco", "q": "28.50038,-13.86266"}, {"n": "Guernica", "q": "28.50166,-13.85826"}, {"n": "Carnero", "q": "28.50371,-13.85861"}, {"n": "Tomato", "q": "28.50095,-13.86605"}, {"n": "Peleas de gallos", "q": "28.49298,-13.86317"}]},
+        {t:'stop',  min:30,  label:'Optional: Einkauf fürs Abendessen', note:'Frischen Fisch, Obst und Gemüse oder Getränke für die Villa gleich mitnehmen, dann muss man heute nicht mehr los', q:'Supermercado, Puerto del Rosario'},
+        {t:'drive', min:35,  label:'Rückfahrt nach Corralejo'}
       ]
     },
     {
@@ -7114,21 +7140,21 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       summary: 'Einmal um den ganzen Norden, ohne Auto. Auf der Küstenpiste nach Westen — Popcorn Beach, das Fischerdorf Majanicho, Lavafelder und eine leere Bucht nach der anderen — bis zum Leuchtturm Faro del Tostón. Dann baden in den Lagunen von El Cotillo, Mittagessen am alten Hafen und auf Asphalt über Lajares zurück. Rund 51 km und etwa 250 Höhenmeter, gut 25 km davon Schotter; mit Motor ist das auch ohne Training ein schöner Tag statt einer Quälerei.',
       warn: 'Räder 1–2 Tage vorher reservieren (Easy Riders oder Electric Legs, ca. 25–49 € p.P.). Unbedingt in dieser Richtung fahren: der Passat kommt aus Nordost, auf der Piste hat man ihn so im Rücken. Zwischen Corralejo und El Cotillo gibt es auf 25 km weder Laden noch Bar — Wasser und Proviant müssen mit. Helm ist außerorts ab Oktober 2026 Pflicht (200 € Bußgeld). Akku im Eco-Modus fahren, der einzige richtige Anstieg kommt erst am Nachmittag. Startzeit oben auf 09:00 stellen, dann ist man lange vor Sonnenuntergang zurück.',
       stops: [
-        {t:'stop',  min:30,  label:'Räder abholen und einstellen', note:'Easy Riders, C/ Las Dunas im Alua Suites · Sattelhöhe, Akkustand, Helm und Schloss prüfen'},
+        {t:'stop',  min:30,  label:'Räder abholen und einstellen', note:'Easy Riders, C/ Las Dunas im Alua Suites · Sattelhöhe, Akkustand, Helm und Schloss prüfen', q:'Easy Riders Corralejo, C. Las Dunas'},
         {t:'bike',  min:40,  label:'Corralejo → Popcorn Beach', note:'9 km · die Piste beginnt am westlichen Ortsrand hinter der Busstation, Schotter und Lavagestein, praktisch flach'},
-        {t:'stop',  min:30,  label:'Playa del Bajo de la Burra („Popcorn Beach“)', note:'Weiße Algenfossilien, die aussehen wie Popcorn. Anschauen ja, einsammeln nein — Naturschutzgebiet, Bußgeld in Tausenderhöhe'},
+        {t:'stop',  min:30,  label:'Playa del Bajo de la Burra („Popcorn Beach“)', note:'Weiße Algenfossilien, die aussehen wie Popcorn. Anschauen ja, einsammeln nein — Naturschutzgebiet, Bußgeld in Tausenderhöhe', q:'Playa del Bajo de la Burra, Fuerteventura', img:'images/tour-popcorn-beach.webp'},
         {t:'bike',  min:20,  label:'Weiter nach Majanicho', note:'4,5 km · die Piste wird sandiger, dazwischen Wellblech'},
-        {t:'stop',  min:25,  label:'Majanicho', note:'Winziges Fischerdorf an einer geschützten Bucht — kein Laden, keine Bar, kein Strom. Jetzt kommt der Proviant aus dem Rucksack'},
+        {t:'stop',  min:25,  label:'Majanicho', note:'Winziges Fischerdorf an einer geschützten Bucht — kein Laden, keine Bar, kein Strom. Jetzt kommt der Proviant aus dem Rucksack', q:'Majanicho, Fuerteventura', img:'images/tour-majanicho.webp'},
         {t:'bike',  min:50,  label:'Majanicho → Faro del Tostón', note:'11 km an der Nordküste entlang. Der schönste und einsamste Abschnitt der Runde'},
-        {t:'stop',  min:35,  label:'Leuchtturm und Museo de la Pesca', note:'Museum der traditionellen Fischerei im Turm · Di–Sa 10–18 Uhr, 3 €'},
+        {t:'stop',  min:35,  label:'Leuchtturm und Museo de la Pesca', note:'Museum der traditionellen Fischerei im Turm · Di–Sa 10–18 Uhr, 3 €', q:'Faro del Tostón, El Cotillo', img:'images/tour-faro-toston.webp'},
         {t:'bike',  min:18,  label:'Hinunter zu den Lagunen', note:'4 km · ab hier wieder fester Untergrund'},
-        {t:'stop',  min:60,  label:'Baden in den Lagunas de El Cotillo', note:'Flache türkise Becken, windgeschützt — die beste Abkühlung der Runde'},
+        {t:'stop',  min:60,  label:'Baden in den Lagunas de El Cotillo', note:'Flache türkise Becken, windgeschützt — die beste Abkühlung der Runde', q:'Lagunas de El Cotillo, Fuerteventura', img:'images/el-cotillo-lagunen-amp-sonnenuntergang.webp'},
         {t:'bike',  min:8,   label:'In den Ort El Cotillo'},
-        {t:'stop',  min:70,  label:'Spätes Mittagessen am alten Hafen', note:'Zum Beispiel Santa Ana del Cotillo mit Dachterrasse · mittags meist auch ohne Reservierung'},
+        {t:'stop',  min:70,  label:'Spätes Mittagessen am alten Hafen', note:'Zum Beispiel Santa Ana del Cotillo mit Dachterrasse · mittags meist auch ohne Reservierung', q:'Santa Ana del Cotillo, El Cotillo', img:'images/santa-ana-del-cotillo.webp'},
         {t:'bike',  min:35,  label:'El Cotillo → Lajares', note:'9,5 km Asphalt auf der FV-109, gleichmäßig bergauf und meist Gegenwind — dafür hat man den Akku aufgespart'},
-        {t:'stop',  min:30,  label:'Kaffeepause in Lajares', note:'La Paneteca und El Goloso liegen sich gegenüber. Wer noch Kraft hat: einen Kilometer weiter beginnt der Weg auf den Krater Calderón Hondo'},
+        {t:'stop',  min:30,  label:'Kaffeepause in Lajares', note:'La Paneteca und El Goloso liegen sich gegenüber. Wer noch Kraft hat: einen Kilometer weiter beginnt der Weg auf den Krater Calderón Hondo', q:'La Paneteca, Lajares, Fuerteventura'},
         {t:'bike',  min:35,  label:'Lajares → Corralejo', note:'12 km · überwiegend bergab, zum Schluss auf dem Radstreifen in den Ort'},
-        {t:'stop',  min:20,  label:'Räder zurückgeben'}
+        {t:'stop',  min:20,  label:'Räder zurückgeben', q:'Easy Riders Corralejo, C. Las Dunas'}
       ]
     }
   ];
@@ -7184,6 +7210,37 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     return {min: h * 60, label: fmtClock(h * 60) + ' Uhr'};
   }
 
+  // Google-Maps-Links der Touren: Suche je Station, Gesamtroute ab/bis Unterkunft, Spaziergang durch die Skulpturen
+  var TRIP_MAPS_START = { oasis: '28.7298,-13.8694', renacer: '28.7093358,-13.8710096' };
+  function mapsSuche(q){ return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q); }
+  function mapsRoute(von, nach, zwischen, modus){
+    return 'https://www.google.com/maps/dir/?api=1&origin=' + encodeURIComponent(von) + '&destination=' + encodeURIComponent(nach) +
+      (zwischen.length ? '&waypoints=' + zwischen.map(encodeURIComponent).join('%7C') : '') + '&travelmode=' + modus;
+  }
+  function tripStopLinks(s){
+    var h = '';
+    if (s.q) h += '<a class="tp-map" href="' + mapsSuche(s.q) + '" target="_blank" rel="noopener">📍 Auf der Karte</a>';
+    if (s.spots && s.spots.length) {
+      var q = s.spots.map(function(x){ return x.q; });
+      var zw = q.slice(1, -1).slice(0, 9);
+      h += '<a class="tp-map" href="' + mapsRoute(q[0], q[q.length - 1], zw, 'walking') + '" target="_blank" rel="noopener">🚶 Spaziergang durch alle ' + s.spots.length + '</a>';
+      h += '<span class="tp-spots">' + s.spots.map(function(x){ return '<a href="' + mapsSuche(x.q) + '" target="_blank" rel="noopener">' + escapeHtml(x.n) + '</a>'; }).join('') + '</span>';
+    }
+    return h ? '<span class="tp-links">' + h + '</span>' : '';
+  }
+  function tripRouteLinks(t){
+    if (t.stops.some(function(x){ return x.t === 'ferry'; }) || t.id === 'trip-lobos') return '';
+    var orte = [];
+    t.stops.forEach(function(x){ if (x.q && x.t === 'stop' && orte.indexOf(x.q) === -1) orte.push(x.q); });
+    if (!orte.length) return '';
+    var b = (typeof basisAktiv === 'function') ? basisAktiv() : 'oasis';
+    var start = TRIP_MAPS_START[b] || TRIP_MAPS_START.oasis;
+    var bike = t.stops.some(function(x){ return x.t === 'bike'; });
+    var zw = orte.slice(0, 9);
+    return '<div class="trip-route"><a class="tp-map" href="' + mapsRoute(start, start, zw, bike ? 'bicycling' : 'driving') +
+      '" target="_blank" rel="noopener">🗺️ Ganze Route in Google Maps (ab ' + (b === 'renacer' ? 'Renacer Zen' : 'Oasis Duna') + ')</a></div>';
+  }
+
   function renderTrips(){
     var grid = document.getElementById('trip-grid');
     if (!grid) return;
@@ -7230,8 +7287,9 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
         var moving = (s.t === 'drive' || s.t === 'ferry' || s.t === 'bike');
         rows += '<li class="' + (moving ? 'is-drive' : '') + (isDark ? ' is-dark' : '') + '">' +
           '<span class="tp-time">' + fmtClock(cur) + '</span>' +
-          '<span class="tp-what">' + (s.t === 'drive' ? '🚗 ' : (s.t === 'ferry' ? '⛴️ ' : (s.t === 'bike' ? '🚴 ' : ''))) + escapeHtml(s.label) +
-          (s.note ? '<small>' + escapeHtml(s.note) + '</small>' : '') + '</span></li>';
+          '<span class="tp-what">' + (s.img ? '<img class="tp-img" src="' + s.img + '" alt="" loading="lazy">' : '') +
+          (s.t === 'drive' ? '🚗 ' : (s.t === 'ferry' ? '⛴️ ' : (s.t === 'bike' ? '🚴 ' : ''))) + escapeHtml(s.label) +
+          (s.note ? '<small>' + escapeHtml(s.note) + '</small>' : '') + tripStopLinks(s) + '</span></li>';
         cur += s.min;
       });
       rows += '<li><span class="tp-time">' + fmtClock(cur) + '</span><span class="tp-what"><strong>Zurück in Corralejo</strong></span></li>';
@@ -7260,6 +7318,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
           (t.warn ? '<div class="trip-verdict tight">⚠️ <span>' + t.warn + '</span></div>' : '') +
           '<div class="trip-verdict ' + verdictCls + '"><span class="tv-time">' + fmtClock(c.endMin) + '</span><span>' + verdictTxt +
             (backAfterDark && c.over <= 0 ? ' Die letzte Etappe liegt dann im Dunkeln.' : '') + '</span></div>' +
+          tripRouteLinks(t) +
           '<ul class="trip-plan">' + rows + '</ul>' +
         '</div>' +
       '</article>';
@@ -11735,7 +11794,8 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     'trip-norden':      { hin: 'pt:lajares', rueck: 'pt:toston' },
     'trip-vulkane':     { hin: 'pt:laoliva', rueck: 'pt:lajares' },
     'trip-sotavento':   { hin: 'pt:risco', rueck: 'pt:costacalma' },
-    'trip-stadt':       { hin: 'pt:puerto', rueck: 'pt:caleta' }
+    'trip-stadt':       { hin: 'pt:puerto', rueck: 'pt:caleta' },
+    'trip-rosario-shopping': { hin: 'pt:puerto', rueck: 'pt:puerto' }
   };
   var TRIPS_ORIG = null;
   function basisTripsAnwenden(b){
