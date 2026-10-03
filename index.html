@@ -1519,6 +1519,155 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
 .split-streifen { margin-top: 2px; }
 .preisblock.ist-teil .pb-zelle:last-child .pb-wert { color: var(--teal); }
 .split-streifen .ns-zelle { height: 18px; }
+
+/* ---- Inselplaner (seit 03.10.2026): Tages-Leiste mit ziehbaren Foto-Kacheln ---- */
+:root { --ip-k-tour: #0f6e76; --ip-k-insel: #2f5f9e; --ip-k-ausflug: #3d7a5a; --ip-k-frei: #a8681a; --ip-k-essen: #a8503c; --ip-k-eigen: #6b6658; --ip-today: #e1efee; --ip-scrim: rgba(10,14,16,.62); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --ip-today: #183a3c; } }
+:root[data-theme="dark"] { --ip-today: #183a3c; }
+.ip { background: var(--surface); border: 1px solid var(--border); border-radius: 22px; padding: 18px; display: flex; flex-direction: column; gap: 16px; box-shadow: var(--shadow); margin-bottom: 40px; scroll-margin-top: 110px; }
+.ip-kopf { display: flex; flex-direction: column; gap: 10px; }
+.ip-titelzeile { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.ip-titelzeile h2 { margin: 0; }
+.ip-sync { font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 999px; background: var(--muted-bg); color: var(--ink-dim); }
+.ip-sync.live { background: var(--good-bg); color: var(--good); }
+.ip-kopf .sub { margin-top: 0; font-size: 14.5px; }
+.ip svg.ic { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.ip svg.ic .fi { fill: currentColor; stroke: none; }
+.ip-tools { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.ip-tbtn { min-height: 64px; border-radius: 18px; border: 1px solid var(--border); background: var(--surface-2); color: var(--ink-dim); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font: inherit; font-size: 11.5px; font-weight: 600; padding: 6px 4px; text-align: center; line-height: 1.15; min-width: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.ip-tbtn svg.ic { width: 24px; height: 24px; color: var(--teal); }
+.ip-tbtn.prim { background: color-mix(in srgb, var(--teal) 14%, var(--surface-2)); border-color: var(--teal); color: var(--ink); }
+.ip-tbtn.sicher { border-color: var(--bad); color: var(--bad); background: var(--bad-bg); }
+.ip-tbtn.sicher svg.ic { color: var(--bad); }
+.ip-tbtn:active, .ip-tab:active { transform: scale(.97); }
+.ip-tray { display: flex; flex-direction: column; gap: 10px; }
+.ip-tabs { display: flex; gap: 22px; border-bottom: 1px solid var(--border); overflow-x: auto; scrollbar-width: none; }
+.ip-tabs::-webkit-scrollbar { display: none; }
+.ip-tab { border: 0; background: none; color: var(--ink-dim); padding: 10px 0 11px; font: inherit; font-size: 14.5px; font-weight: 600; display: inline-flex; gap: 7px; align-items: center; box-shadow: inset 0 -3px 0 transparent; white-space: nowrap; cursor: pointer; flex: none; -webkit-tap-highlight-color: transparent; }
+.ip-tab svg.ic { width: 16px; height: 16px; }
+.ip-tab .cnt { font-family: "JetBrains Mono", monospace; font-size: 11px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 999px; padding: 0 6px; }
+.ip-tab[aria-selected="true"] { color: var(--ink); box-shadow: inset 0 -3px 0 var(--teal); }
+.ip-tab[aria-selected="true"] svg.ic { color: var(--teal); }
+.ip-row { display: flex; gap: 10px; overflow-x: auto; padding: 4px 2px 10px; scroll-snap-type: x proximity; overscroll-behavior-x: contain; }
+.ip-row .ip-tile { flex: 0 0 auto; width: 150px; scroll-snap-align: start; }
+.ip-row .ip-tile.planned { opacity: .55; }
+.ip-eigen { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.ip-eigen[hidden] { display: none; }
+.ip-eigen input[type=text] { flex: 1 1 180px; min-width: 0; min-height: 40px; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface-2); color: var(--ink); font: inherit; font-size: 16px; }
+.ip-eigen select { min-height: 40px; padding: 6px 8px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface-2); color: var(--ink); font: inherit; font-size: 16px; }
+.ip-eigen .btn { min-height: 40px; }
+.ip-leer { font-size: 12px; color: var(--ink-dim); font-style: italic; }
+
+/* Kacheln im Foto-Stil */
+.ip-tile { position: relative; display: flex; flex-direction: column; justify-content: flex-end; width: 100%; min-height: 84px; padding: 9px 10px; border: 0; border-radius: 12px; text-align: left; font: inherit; color: #fff; cursor: grab;
+  user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+  background-color: var(--k); background-image: linear-gradient(to top, var(--ip-scrim), rgba(0,0,0,0) 72%), var(--img, none); background-size: cover; background-position: center;
+  box-shadow: 0 6px 16px -10px rgba(0,0,0,.55); transition: transform .18s ease, opacity .18s; }
+.ip-tile .e { position: absolute; top: 7px; left: 8px; font-size: 16px; line-height: 1; }
+.ip-tile .t { display: block; font-weight: 700; font-size: 13.5px; line-height: 1.2; overflow-wrap: anywhere; }
+.ip-tile .s { display: block; margin-top: 2px; font-size: 11.5px; line-height: 1.25; opacity: .88; }
+.ip-tile .by { position: absolute; top: 7px; right: 8px; font-size: 10px; font-weight: 700; background: rgba(0,0,0,.35); border-radius: 999px; padding: 1px 6px; }
+.ip-tile .flag { position: absolute; top: 6px; right: 6px; width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; font-weight: 800; color: #fff; }
+.ip-tile .flag + .by { display: none; }
+.ip-tile .flag.bad { background: #b24a39; }
+.ip-tile .flag.good { background: #b8861f; }
+.ip-tile.pressing { transform: scale(.96); }
+.ip-tile.sel { outline: 3px solid var(--teal); outline-offset: 2px; }
+.ip-tile.lifted { opacity: .25; }
+.ip-tile.pop { animation: ip-pop .42s cubic-bezier(.3,1.6,.5,1); }
+@keyframes ip-pop { 0% { transform: scale(.7); } 100% { transform: scale(1); } }
+.ip-ghost { position: fixed; z-index: 95; pointer-events: none; width: 160px; transform: translate(-50%, -60%) rotate(-3deg) scale(1.06); box-shadow: 0 18px 36px -12px rgba(0,0,0,.55); }
+
+/* Tages-Leiste */
+.ip-leiste { display: flex; gap: 10px; overflow-x: auto; padding: 4px 2px 14px; scroll-snap-type: x proximity; overscroll-behavior-x: contain; }
+.ip-tag { flex: 0 0 clamp(168px, 46vw, 210px); background: var(--surface-2); border: 1px solid var(--border); border-radius: 16px; padding: 10px; display: flex; flex-direction: column; gap: 8px; scroll-snap-align: start; min-width: 0; }
+.ip-tag.heute { background: var(--ip-today); border-color: var(--teal); box-shadow: 0 0 0 2px var(--teal) inset; }
+.ip-tag.vorbei { opacity: .6; }
+.ip-tag-h .l1 { display: flex; justify-content: space-between; align-items: baseline; gap: 6px; }
+.ip-tag-h .wd { font-weight: 800; font-size: 16px; }
+.ip-tag-h .dt { font-family: "JetBrains Mono", monospace; font-size: 12px; color: var(--ink-dim); }
+.ip-tag-h .l2 { display: flex; justify-content: space-between; gap: 6px; font-size: 11px; color: var(--ink-dim); }
+.ip-tag-h .l2 b { color: var(--teal); }
+.ip-fix { display: flex; flex-wrap: wrap; gap: 4px; }
+.ip-fx { font-size: 11px; line-height: 1.25; padding: 2px 7px; border-radius: 6px; border: 1px dashed var(--border); color: var(--ink-dim); }
+.ip-fx.reise { border-style: solid; color: var(--ink); font-weight: 600; }
+.ip-zone { border-radius: 12px; border: 1.5px dashed transparent; padding: 6px; display: flex; flex-direction: column; gap: 7px; min-height: 66px; transition: background .15s, border-color .15s; }
+.ip-zone .zl { font-size: 10.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-dim); }
+.ip-zone.abend { min-height: 76px; background: color-mix(in srgb, var(--teal) 6%, transparent); }
+.ip-dragging .ip-zone { border-color: var(--border); }
+.ip-zone.over { border-color: var(--teal); background: color-mix(in srgb, var(--teal) 16%, transparent); }
+.ip-waehlt .ip-zone { border-color: var(--teal); cursor: pointer; animation: ip-puls 1.6s ease-in-out infinite; }
+.ip-waehlt .ip-zone::after { content: "＋ hier ablegen"; font-size: 11px; font-weight: 700; color: var(--teal); }
+@keyframes ip-puls { 50% { background: color-mix(in srgb, var(--teal) 12%, transparent); } }
+.ip-hinweise { display: flex; flex-direction: column; gap: 4px; }
+.ip-hw { font-size: 11px; line-height: 1.3; padding: 4px 7px; border-radius: 8px; }
+.ip-hw.bad { background: var(--bad-bg); color: var(--bad); }
+.ip-hw.good { background: var(--warn-bg); color: var(--warn); }
+.ip-hw.info { background: color-mix(in srgb, var(--ip-k-insel) 14%, transparent); color: var(--ink); }
+
+/* Energie-Leiste */
+.ip-energie { display: flex; flex-direction: column; gap: 6px; }
+.ip-energie-kopf { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; align-items: baseline; }
+.ip-energie-kopf h3 { margin: 0; font-size: 16px; }
+.ip-en-msg { font-size: 13px; color: var(--ink-dim); }
+.ip-en-bars, .ip-en-lab { display: grid; grid-template-columns: repeat(14, minmax(0, 1fr)); gap: 4px; }
+.ip-en-bars { align-items: end; height: 54px; }
+.ip-en-bars div { border-radius: 5px 5px 2px 2px; background: var(--border); min-height: 4px; position: relative; }
+.ip-en-bars div.e1 { background: var(--good); } .ip-en-bars div.e2 { background: var(--gold); } .ip-en-bars div.e3 { background: var(--bad); }
+.ip-en-bars div.heute::after { content: ""; position: absolute; left: 50%; bottom: -8px; width: 5px; height: 5px; margin-left: -2.5px; border-radius: 50%; background: var(--teal); }
+.ip-en-lab { font-family: "JetBrains Mono", monospace; font-size: 10px; color: var(--ink-dim); text-align: center; padding-top: 4px; }
+
+/* Auswahl-Leiste, Papierkorb, Meldung */
+.ip-selbar { position: fixed; left: 12px; right: 12px; margin: 0 auto; max-width: 520px; bottom: calc(92px + env(safe-area-inset-bottom, 0px)); z-index: 90;
+  background: var(--surface); color: var(--ink); border: 1px solid var(--border); border-radius: 20px; padding: 10px; box-shadow: 0 18px 40px -16px rgba(0,0,0,.45), 0 0 0 3px var(--tab-active-bg);
+  display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; gap: 4px 12px; align-items: center; animation: ip-hoch .22s ease-out; }
+.ip-selbar[hidden] { display: none; }
+@keyframes ip-hoch { from { transform: translateY(24px); opacity: 0; } }
+.ip-sel-bild { width: 48px; height: 48px; border-radius: 12px; background-color: var(--k, var(--teal)); background-image: var(--img, none); background-size: cover; background-position: center; display: grid; place-items: center; font-size: 22px; }
+.ip-sel-text { min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.ip-sel-text b { font-size: 15px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ip-sel-text span { font-size: 12.5px; color: var(--ink-dim); line-height: 1.3; }
+.ip-sel-btns { display: flex; gap: 6px; }
+.ip-sel-btns button { border: 1px solid var(--border); border-radius: 12px; padding: 9px 14px; font: inherit; font-weight: 700; font-size: 13.5px; cursor: pointer; background: var(--surface-2); color: var(--ink); white-space: nowrap; }
+.ip-sel-btns .weg { color: var(--bad); background: var(--bad-bg); border-color: transparent; }
+.ip-sel-btns .ab { background: var(--teal); color: var(--teal-ink); border-color: var(--teal); }
+@media (max-width: 480px) {
+  .ip-selbar { grid-template-columns: 44px minmax(0, 1fr); }
+  .ip-sel-bild { width: 44px; height: 44px; }
+  .ip-sel-btns { grid-column: 1 / -1; }
+  .ip-sel-btns button { flex: 1; padding: 10px; }
+}
+.ip-trash { position: fixed; left: 50%; transform: translateX(-50%) translateY(260%); bottom: calc(96px + env(safe-area-inset-bottom, 0px)); z-index: 92; padding: 14px 26px; border-radius: 999px; background: var(--bad-bg); color: var(--bad); border: 2px dashed var(--bad); font-weight: 700; transition: transform .2s, visibility 0s .2s; visibility: hidden; }
+.ip-dragging .ip-trash.zeigen { transform: translateX(-50%) translateY(0); visibility: visible; transition: transform .2s; }
+.ip-trash.over { background: var(--bad); color: #fff; }
+.ip-dragging, .ip-dragging * { cursor: grabbing !important; }
+.ip-toast { position: fixed; top: calc(124px + env(safe-area-inset-top, 0px)); left: 50%; transform: translateX(-50%); z-index: 96; background: var(--teal); color: var(--teal-ink); padding: 8px 16px; border-radius: 999px; font-weight: 600; font-size: 14px; box-shadow: var(--shadow); max-width: calc(100vw - 32px); text-align: center; }
+.ip-toast[hidden] { display: none; }
+.ip-waehlt .wrap { padding-bottom: 260px; }
+.ip-fest-h { margin: 0 0 12px; }
+
+/* Startseite: Bühne mit heutigem Tag und den nächsten Tagen (nur auf der Insel) */
+#hb-heute { display: none; }
+:root[data-phase="insel"] #hb-heute.hat-tag { display: block; order: 1; margin-top: 28px; }
+.ip-b { display: flex; flex-direction: column; gap: 12px; }
+.ip-b-eb { font-size: 11.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--teal); }
+.ip-hero { border-radius: 20px; min-height: 220px; padding: 16px; color: #fff; text-decoration: none; display: flex; flex-direction: column; justify-content: flex-end; gap: 4px;
+  background-color: var(--k, var(--teal)); background-image: linear-gradient(to top, var(--ip-scrim), rgba(0,0,0,0) 70%), var(--img, none); background-size: cover; background-position: center; box-shadow: var(--shadow); }
+.ip-hero .he { font-size: 26px; line-height: 1; }
+.ip-hero .ht { font-size: 24px; font-weight: 800; line-height: 1.1; }
+.ip-hero .hs { font-size: 14px; opacity: .92; }
+.ip-hero .pills { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+.ip-hero .pills span { font-size: 11.5px; background: rgba(255,255,255,.2); border-radius: 999px; padding: 2px 9px; }
+.ip-b-h { font-size: 11.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-dim); }
+.ip-next { display: flex; flex-direction: column; gap: 6px; }
+.ip-next-r { display: grid; grid-template-columns: 46px 48px minmax(0, 1fr); gap: 10px; align-items: center; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 6px; color: var(--ink); text-decoration: none; }
+.ip-next-r .nd { font-family: "JetBrains Mono", monospace; font-size: 12px; text-align: center; color: var(--ink-dim); line-height: 1.15; }
+.ip-next-r .nd b { display: block; color: var(--ink); font-size: 16px; }
+.ip-next-r .ni { width: 48px; height: 48px; border-radius: 10px; background-color: var(--k); background-image: var(--img, none); background-size: cover; background-position: center; display: grid; place-items: center; font-size: 20px; }
+.ip-next-r .nt { font-size: 14px; font-weight: 700; line-height: 1.2; min-width: 0; }
+.ip-next-r .nt small { display: block; font-weight: 500; color: var(--ink-dim); font-size: 12px; }
+.ip-b-link { align-self: flex-start; }
+@media (prefers-reduced-motion: reduce) { .ip-tile, .ip-zone, .ip-trash, .ip-selbar { transition: none !important; animation: none !important; } }
 </style>
 
 <nav class="topnav">
@@ -1591,6 +1740,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       </div>
     </div>
 
+    <div class="home-block" id="hb-heute" aria-label="Heute im Plan"></div>
     <details class="aktiv-kasten" id="home-aktiv">
       <summary class="aktiv-head">
         <h2>&#128172;&nbsp;Zuletzt passiert</h2>
@@ -2967,9 +3117,43 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
   <div class="page-header wrap">
     <div class="eyebrow">Vor Ort</div>
     <h1>Kalender</h1>
-    <p class="sub">Alle wichtigen Termine unserer 14 Tage (29.09.–12.10.2026) auf einen Blick — Märkte, Feste, Shows — danach die Top-10-Insider-Tipps.</p>
+    <p class="sub">Unser Plan für die 14 Tage zum Anfassen, darunter alle festen Termine (Märkte, Feste, Shows) und die Top-10-Insider-Tipps.</p>
   </div>
   <div class="wrap">
+    <section class="ip" id="inselplaner" aria-labelledby="ip-titel">
+      <div class="ip-kopf">
+        <div class="ip-titelzeile"><h2 id="ip-titel">Unser Plan</h2><span class="ip-sync" id="ip-sync"></span></div>
+        <p class="sub">Touren und eigene Termine auf die Tage legen: Kachel lange gedrückt halten und auf einen Tag ziehen, oder antippen und dann auf den Tag tippen. Märkte, Feste und der Umzug stehen schon fest drin.</p>
+        <div class="ip-tools">
+          <button type="button" class="ip-tbtn prim" id="ip-wuerfel"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1.3" class="fi"/><circle cx="12" cy="12" r="1.3" class="fi"/><circle cx="15.5" cy="15.5" r="1.3" class="fi"/></svg><span>Freien Tag füllen</span></button>
+          <button type="button" class="ip-tbtn" id="ip-zuheute"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/><circle cx="12" cy="15.5" r="1.8" class="fi"/></svg><span>Zu heute</span></button>
+          <button type="button" class="ip-tbtn" id="ip-neu"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6-5.5-6-11a6 6 0 0 1 12 0c0 5.5-6 11-6 11z"/><path d="M12 7.5v5M9.5 10h5"/></svg><span>Eigener Termin</span></button>
+          <button type="button" class="ip-tbtn" id="ip-leeren"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg><span>Alles leeren</span></button>
+        </div>
+      </div>
+      <div class="ip-tray">
+        <div class="ip-tabs" id="ip-tabs" role="tablist" aria-label="Kacheln">
+          <button type="button" class="ip-tab" role="tab" data-tab="touren"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="6" r="2.5"/><path d="M8.5 18H15a3 3 0 0 0 0-6H9a3 3 0 0 1 0-6h6.5"/></svg>Tagestrips<span class="cnt"></span></button>
+          <button type="button" class="ip-tab" role="tab" data-tab="ausfluege"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20l6-12 4 7 3-4 5 9z"/><circle cx="17" cy="6" r="2"/></svg>Ausflugsziele<span class="cnt"></span></button>
+          <button type="button" class="ip-tab" role="tab" data-tab="frei"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>Freie Zeit<span class="cnt"></span></button>
+          <button type="button" class="ip-tab" role="tab" data-tab="essen"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M17 21V3c-2.5 1-4 3.5-4 7v3h4"/></svg>Essen<span class="cnt"></span></button>
+          <button type="button" class="ip-tab" role="tab" data-tab="eigen"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6-5.5-6-11a6 6 0 0 1 12 0c0 5.5-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/></svg>Eigene<span class="cnt"></span></button>
+        </div>
+        <div class="ip-row" id="ip-row"></div>
+        <form class="ip-eigen" id="ip-eigen-form" hidden>
+          <select id="ip-eigen-emoji" aria-label="Symbol"><option>📌</option><option>🎂</option><option>🍷</option><option>🤿</option><option>🏄</option><option>💆</option><option>📞</option><option>🛒</option><option>🎶</option><option>📸</option></select>
+          <input type="text" id="ip-eigen-text" placeholder="z. B. Tisch im Hafen 20 Uhr" maxlength="40" aria-label="Was ist geplant?">
+          <button type="submit" class="btn">Kachel anlegen</button>
+        </form>
+      </div>
+      <div class="ip-leiste" id="ip-leiste"></div>
+      <div class="ip-energie" id="ip-energie">
+        <div class="ip-energie-kopf"><h3>Energie-Leiste</h3><span class="ip-en-msg" id="ip-en-msg"></span></div>
+        <div class="ip-en-bars" id="ip-en-bars"></div>
+        <div class="ip-en-lab" id="ip-en-lab"></div>
+      </div>
+    </section>
+    <h2 class="ip-fest-h">Alle festen Termine</h2>
     <div class="cal-strip">
       <div class="cal-day"><div class="cal-date">29.09.<span class="cal-weekday">Di</span></div><div class="cal-items"><span class="cal-chip cal-chip-trip">✈️ Anreise</span><span class="cal-chip cal-chip-market">🏪 Acua Water Park</span><span class="cal-chip cal-chip-market">🏪 Mercado Tradiciones</span><span class="cal-chip cal-chip-event">🎉 Fiestas del Rosario beginnen (bis 07.10.)</span></div></div>
       <div class="cal-day cal-day-empty"><div class="cal-date">30.09.<span class="cal-weekday">Mi</span></div><div class="cal-items"><span class="cal-chip cal-chip-note">Fiestas del Rosario laufen weiter</span></div></div>
@@ -5704,6 +5888,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     heuteLetzterKey = key;
     kalenderMarkieren(id.n);
     reisephaseSetzen(now, id);
+    if (typeof Planer !== 'undefined' && Planer) { try { Planer.render(); } catch(e){} }
   }
   tick();
   setInterval(tick, 1000);
@@ -9073,7 +9258,9 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     sel.forEach(function(e){ shared.sel[e.slug] = { by: e.by, at: e.at }; });
     renderShareFlags();
 
-    einreihen({ pfad: '/marks', koerper: { by: me, favs: favs, hidden: hidden, todos: todos, pack: pack, sel: sel } });
+    // Inselplaner: ohne 'plan' im Paket laesst der Worker den gemeinsamen Plan unangetastet
+    var planListe = (typeof Planer !== 'undefined' && Planer) ? Planer.liste() : undefined;
+    einreihen({ pfad: '/marks', koerper: { by: me, favs: favs, hidden: hidden, todos: todos, pack: pack, sel: sel, plan: planListe } });
     abgleichen();
   }
 
@@ -9113,6 +9300,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     try { lsSet(STAND_KEY, JSON.stringify({ favs: shared.favs, hidden: shared.hidden, todos: d.todos, pack: d.pack, notes: d.notes || {} })); } catch(e){}
     lsSet('fuerte-stand-zeit', String(Date.now()));
     applyShared();
+    try { if (typeof Planer !== 'undefined' && Planer) Planer.ausServer(d); } catch(e){}
     renderAllNotes();
     try { renderAktiv(); } catch(e){}
     setSyncState('live');
@@ -12056,6 +12244,507 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     });
     einstBereit = true;
     if (einstWartet) einstellungenOeffnen(einstWartet === true ? null : einstWartet);
+  })();
+
+  // ============================================================
+  //  Inselplaner (seit 03.10.2026): Touren und eigene Termine auf die
+  //  14 Reisetage ziehen. Liegt oben auf der Kalender-Seite; die
+  //  Startseite zeigt daraus „Heute“ und die naechsten Tage (Buehne).
+  //  Gemeinsam ueber den Worker: kind 'plan', slug 'uid|ref|tag|slot'.
+  //  Feste Termine liest der Planer aus der Kalenderleiste (.cal-strip).
+  // ============================================================
+  var Planer = (function(){
+    var PLAN_KEY = 'fuerte-plan', EIGEN_KEY = 'fuerte-plan-eigen', GESEHEN_KEY = 'fuerte-plan-server';
+    var WD = ['So','Mo','Di','Mi','Do','Fr','Sa'];
+    var UMZUG = '2026-10-06';
+    var TAGE = [];
+    for (var i = 0; i < 14; i++) {
+      var dt = new Date(Date.UTC(2026, 8, 29 + i));
+      TAGE.push({ i: i, key: dt.toISOString().slice(0, 10), wd: dt.getUTCDay(), dd: dt.getUTCDate(),
+        lab: pad(dt.getUTCDate()) + '.' + pad(dt.getUTCMonth() + 1) + '.', basis: i < 7 ? 'Oasis Duna' : 'Renacer Zen' });
+    }
+    function tagVon(k){ for (var j = 0; j < TAGE.length; j++) if (TAGE[j].key === k) return TAGE[j]; return null; }
+    function $(id){ return document.getElementById(id); }
+    var esc = escapeHtml;
+
+    // ---- Kachel-Katalog ----
+    // Kurznamen, Laenge (0 kurz, 1 halber Tag, 2 ganzer Tag, 3 sehr lang) und Regeln je Tagestrip
+    var TRIP_META = {
+      'trip-lobos':            { t: 'Isla de Lobos', s: 'Insel-Tag vor der Haustür', e: '🏝️', len: 2 },
+      'trip-sueden':           { t: 'Der große Süden', s: 'Jandía, Cofete, Villa Winter', e: '🏜️', len: 2 },
+      'trip-vegan':            { t: 'Vegan-Tag', s: 'Los Estancos & El Invernadero', e: '🌱', len: 2, nurWd: [2, 3, 4, 5], nurMsg: 'El Invernadero hat nur Di bis Fr offen' },
+      'trip-norden':           { t: 'Der Norden', s: 'Lajares, Lagunen, Sonnenuntergang', e: '🌅', len: 1 },
+      'trip-vulkane':          { t: 'Vulkane & Dörfer', s: 'Tindaya, La Oliva, Calderón Hondo', e: '🌋', len: 1 },
+      'trip-sotavento':        { t: 'Sotavento', s: 'die türkise Lagune', e: '🏖️', len: 2 },
+      'trip-westen':           { t: 'Der wilde Westen', s: 'Betancuria, Pájara, Ajuy', e: '⛰️', len: 2 },
+      'trip-stadt':            { t: 'Stadt & Küste', s: 'Puerto, Antigua, Caleta', e: '🏛️', len: 1 },
+      'trip-rosario-shopping': { t: 'Rosario-Shopping', s: 'Las Rotondas', e: '🛍️', len: 1 },
+      'trip-emtb':             { t: 'E-MTB Nordschleife', s: 'ca. 51 km', e: '🚵', len: 2 },
+      'trip-lanzarote':        { t: 'Lanzarote', s: 'Playa Blanca, mit der Fähre', e: '⛴️', len: 2, k: 'insel' },
+      'trip-grancanaria':      { t: 'Gran Canaria', s: 'Las Palmas, sehr langer Tag', e: '⛴️', len: 3, k: 'insel' }
+    };
+    var FREI = [
+      { id: 'f-strand', t: 'Strandtag', s: 'Liege, Buch, Meer', e: '🏖️', img: 'images/kachel-strand.webp' },
+      { id: 'f-pool', t: 'Pool & Faulenzen', s: 'an der Unterkunft', e: '🛟' },
+      { id: 'f-sunset', t: 'Sonnenuntergang', s: 'Aussichtspunkt suchen', e: '🌇', abend: 1, img: 'images/sonnenuntergang-fuerteventura.webp' },
+      { id: 'f-markt', t: 'Markt bummeln', s: 'welcher, steht im Tag', e: '🏪', img: 'images/kachel-markt.webp' },
+      { id: 'f-einkauf', t: 'Einkaufen', s: 'Supermarkt & Vorräte', e: '🛒' },
+      { id: 'f-spa', t: 'Massage / Spa', s: 'zwei Stunden Ruhe', e: '💆' }
+    ];
+    var ESSEN = [
+      { id: 'g-h2o', t: 'Frühstück H2O', s: 'vegan, Corralejo', e: '🥑', img: 'images/h2o-juice-bar.webp' },
+      { id: 'g-gelato', t: 'Eis bei Vrebac', s: 'Puerto del Rosario', e: '🍨', img: 'images/vrebac-gelato.webp' },
+      { id: 'g-tisch', t: 'Tisch reservieren', s: 'Abendessen', e: '🍽️', abend: 1 },
+      { id: 'g-tapas', t: 'Tapas-Abend', s: 'Hafen oder Altstadt', e: '🫒', abend: 1 }
+    ];
+    var katCache = {};
+    function lenAusZone(z){ z = z || ''; return /Sehr lang/i.test(z) ? 3 : /Ganzer/i.test(z) ? 2 : /Halber/i.test(z) ? 1 : 1; }
+    function kat(ref){
+      if (!ref) return null;
+      if (katCache[ref]) return katCache[ref];
+      var c = null;
+      if (ref.indexOf('trip-') === 0 && typeof TRIPS !== 'undefined') {
+        var tr = null;
+        TRIPS.forEach(function(x){ if (x.id === ref) tr = x; });
+        if (tr) {
+          var m = TRIP_META[ref] || {};
+          c = { id: ref, g: 'touren', t: m.t || tr.title.split(':')[0], s: m.s || tr.zone || '', e: m.e || '🚗', img: tr.img,
+                len: m.len != null ? m.len : lenAusZone(tr.zone), k: m.k || 'tour', nurWd: m.nurWd, nurMsg: m.nurMsg };
+        }
+      } else if (ref.indexOf('ex:') === 0) {
+        var card = document.querySelector('.ex-card[data-id="' + ref.slice(3).replace(/"/g, '') + '"]');
+        if (card) {
+          var bild = card.querySelector('.ex-media img'), stay = +card.getAttribute('data-stay') || 0;
+          var chip = card.querySelector('.ex-chip');
+          c = { id: ref, g: 'ausfluege', t: card.getAttribute('data-title') || '', s: chip ? chip.textContent.trim() : '', e: '📍',
+                img: bild ? bild.getAttribute('src') : '', len: stay >= 240 ? 2 : stay >= 120 ? 1 : 0, k: 'ausflug' };
+        }
+      } else if (ref.indexOf('e:') === 0) {
+        var rest = ref.slice(2), sp = rest.indexOf(' ');
+        c = { id: ref, g: 'eigen', t: sp > 0 ? rest.slice(sp + 1) : rest, s: 'eigener Termin', e: sp > 0 ? rest.slice(0, sp) : '📌', len: 0, k: 'eigen' };
+      } else {
+        FREI.concat(ESSEN).forEach(function(x){ if (x.id === ref) c = x; });
+        if (c) { c.g = c.id.charAt(0) === 'f' ? 'frei' : 'essen'; c.k = c.g; c.len = 0; }
+      }
+      if (c) katCache[ref] = c;
+      return c;
+    }
+    function katListe(tab){
+      if (tab === 'touren') return (typeof TRIPS !== 'undefined' ? TRIPS : []).map(function(x){ return kat(x.id); }).filter(Boolean);
+      if (tab === 'ausfluege') return Array.prototype.map.call(document.querySelectorAll('#page-ausfluege .ex-card[data-id]'), function(a){ return kat('ex:' + a.getAttribute('data-id')); }).filter(Boolean);
+      if (tab === 'frei') return FREI.map(function(x){ return kat(x.id); });
+      if (tab === 'essen') return ESSEN.map(function(x){ return kat(x.id); });
+      var refs = eigeneVorlagen().slice();
+      plan.forEach(function(p){ if (p.ref.indexOf('e:') === 0 && refs.indexOf(p.ref) < 0) refs.push(p.ref); });
+      return refs.map(kat).filter(Boolean);
+    }
+    function eigeneVorlagen(){ try { var a = JSON.parse(localStorage.getItem(EIGEN_KEY) || '[]'); return Array.isArray(a) ? a : []; } catch(e){ return []; } }
+
+    // ---- Plan (lokal + gemeinsam) ----
+    function gueltig(p){ return p && typeof p.uid === 'string' && typeof p.ref === 'string' && tagVon(p.day) && (p.slot === 'tag' || p.slot === 'abend'); }
+    function nachZeit(a, b){ return (a.at || 0) - (b.at || 0); }
+    var plan = [];
+    try { plan = JSON.parse(localStorage.getItem(PLAN_KEY) || '[]'); } catch(e){}
+    if (!Array.isArray(plan)) plan = [];
+    plan = plan.filter(gueltig).sort(nachZeit);
+    var vomServer = false, zuletztLokal = 0, sendTimer = null, wartet = false;
+    function speichern(){ try { localStorage.setItem(PLAN_KEY, JSON.stringify(plan)); } catch(e){} }
+    function nid(){ return Math.random().toString(36).slice(2, 7); }
+    function slugVon(p){ return [p.uid, p.ref, p.day, p.slot].join('|'); }
+    function senden(){
+      // Erst senden, wenn der Serverstand einmal da war – sonst koennte ein
+      // veralteter Stand dieses Geraets die Auswahl der anderen Person ueberschreiben.
+      if (typeof auswahlServerDa === 'undefined' || !auswahlServerDa) { wartet = true; return; }
+      try { pushShared(); } catch(e){}
+    }
+    function geaendert(){
+      speichern();
+      zuletztLokal = Date.now();
+      clearTimeout(sendTimer);
+      sendTimer = setTimeout(senden, 600);
+      alles();
+    }
+    // Fuer pushShared: alle Plan-Eintraege als Markierungen
+    function liste(){ return plan.map(function(p){ return { slug: slugVon(p), by: p.by || whoAmI() || 'stephan', at: p.at || Date.now() }; }); }
+    // Serverstand uebernehmen (aus standUebernehmen)
+    function ausServer(d){
+      vomServer = !!(d && d.plan);
+      syncAnzeigen();
+      if (!vomServer) return;
+      var slugs = Object.keys(d.plan);
+      if (wartet) { wartet = false; setTimeout(senden, 0); return; }
+      var gesehen = false;
+      try { gesehen = localStorage.getItem(GESEHEN_KEY) === '1'; } catch(e){}
+      // Noch nie ein Plan auf dem Server: dieses Geraet legt seinen ab
+      if (!slugs.length && plan.length && !gesehen) {
+        try { localStorage.setItem(GESEHEN_KEY, '1'); } catch(e){}
+        setTimeout(senden, 0);
+        return;
+      }
+      try { localStorage.setItem(GESEHEN_KEY, '1'); } catch(e){}
+      if (Date.now() - zuletztLokal < 6000) return;
+      if (warteliste().some(function(e){ return e.pfad === '/marks'; })) return;
+      var neu = slugs.map(function(s){
+        var a = s.split('|'), m = d.plan[s] || {};
+        return a.length === 4 ? { uid: a[0], ref: a[1], day: a[2], slot: a[3], by: m.by, at: m.at || 0 } : null;
+      }).filter(gueltig).sort(nachZeit);
+      if (JSON.stringify(neu) !== JSON.stringify(plan)) { plan = neu; speichern(); alles(); }
+    }
+    function syncAnzeigen(){
+      var el = $('ip-sync');
+      if (!el) return;
+      el.className = 'ip-sync' + (vomServer ? ' live' : '');
+      el.textContent = vomServer ? 'gemeinsam mit ' + whoName(otherPerson()) : 'nur auf diesem Gerät';
+      el.title = vomServer ? 'Was einer von euch ändert, sieht der andere nach spätestens 20 Sekunden.' : 'Der gemeinsame Speicher kennt den Plan noch nicht – er bleibt bis dahin auf diesem Gerät.';
+    }
+
+    // ---- Heute (Inselzeit, Reisephasen-Mechanik) ----
+    function heuteIdx(){ return inselDatum(Date.now()).n - 1; }  // <0 vor der Reise, >13 danach
+
+    // ---- Feste Termine aus der Kalenderleiste ----
+    function fest(t){
+      var row = document.querySelectorAll('#page-kalender .cal-strip .cal-day')[t.i], out = [];
+      if (!row) return out;
+      row.querySelectorAll('.cal-chip').forEach(function(c){
+        if (c.classList.contains('cal-chip-note')) return;
+        out.push({ t: c.textContent.trim(), reise: c.classList.contains('cal-chip-trip'), event: c.classList.contains('cal-chip-event') });
+      });
+      return out;
+    }
+    function hatMarkt(t){ return fest(t).some(function(f){ return f.t.indexOf('🏪') === 0; }); }
+
+    // ---- Konflikt-Waechter und Passt-zusammen-Hinweise ----
+    function pruefen(p){
+      var out = [], c = kat(p.ref), t = tagVon(p.day);
+      if (!c || !t) return out;
+      if (c.nurWd && c.nurWd.indexOf(t.wd) < 0) out.push({ l: 'bad', m: c.nurMsg + ', nicht am ' + WOCHENTAGE[t.wd] + '.' });
+      if (c.len >= 2 && p.slot === 'tag') {
+        if (t.i === 0) out.push({ l: 'bad', m: 'Anreisetag: Landung erst 15:45, für ' + c.t + ' zu knapp.' });
+        if (t.key === UMZUG) out.push({ l: 'bad', m: 'Umzugstag: Auszug bis 11:00, Einzug ab 15:00.' });
+        if (t.i === 13) out.push({ l: 'bad', m: 'Abreisetag: Rückflug 15:55.' });
+      }
+      if (c.k === 'insel') out.push({ l: 'info', m: 'Fähre vorher buchen und Ausweis mitnehmen.' });
+      if (p.ref === 'trip-lobos' || p.ref === 'ex:isla-de-lobos') out.push({ l: 'info', m: 'Lobos: Genehmigung und Fähre vorher sichern.' });
+      if (p.ref === 'f-markt' && !hatMarkt(t)) out.push({ l: 'bad', m: 'An diesem Tag steht kein Markt im Kalender.' });
+      if ((p.ref === 'trip-norden' || p.ref === 'trip-vulkane' || p.ref === 'trip-emtb') && t.wd === 6) out.push({ l: 'good', m: 'Samstag: Kunsthandwerksmarkt in Lajares liegt auf dem Weg.' });
+      if (p.ref === 'trip-norden' && t.wd === 5) out.push({ l: 'good', m: 'Freitag: abends Sunset Market in El Cotillo.' });
+      if ((p.ref === 'trip-stadt' || p.ref === 'trip-rosario-shopping' || p.ref === 'g-gelato') && t.key === '2026-10-10') out.push({ l: 'good', m: 'Abends ELARA in Puerto del Rosario, gleich mitnehmen.' });
+      if ((p.ref === 'trip-stadt' || p.ref === 'trip-rosario-shopping') && t.key <= '2026-10-07') out.push({ l: 'good', m: 'Fiestas del Rosario laufen noch.' });
+      return out;
+    }
+
+    // ---- Darstellung ----
+    var tab = 'touren', sel = null, frischUid = null;
+    function stil(c){ return c ? '--k:var(--ip-k-' + c.k + ');' + (c.img ? "--img:url('" + c.img + "');" : '') : ''; }
+    function kachel(c, p){
+      var fl = '', h = p ? pruefen(p) : [];
+      if (h.some(function(x){ return x.l === 'bad'; })) fl = '<span class="flag bad" aria-label="passt nicht">!</span>';
+      else if (h.some(function(x){ return x.l === 'good'; })) fl = '<span class="flag good" aria-label="passt gut">★</span>';
+      var schonDrin = !p && (c.g === 'touren' || c.g === 'ausfluege') && plan.some(function(x){ return x.ref === c.id; });
+      var istSel = sel && ((p && sel.uid === p.uid) || (!p && !sel.uid && sel.ref === c.id));
+      var cls = 'ip-tile' + (schonDrin ? ' planned' : '') + (istSel ? ' sel' : '') + (p && p.uid === frischUid ? ' pop' : '');
+      var von = p && p.by && PEOPLE[p.by] ? '<span class="by" title="eingeplant von ' + esc(whoName(p.by)) + '">' + esc(whoName(p.by).charAt(0)) + '</span>' : '';
+      return '<button type="button" class="' + cls + '" style="' + stil(c) + '" data-ref="' + esc(c.id) + '"' + (p ? ' data-uid="' + esc(p.uid) + '"' : '') + ' aria-label="' + esc(c.t) + '">' +
+        '<span class="e" aria-hidden="true">' + esc(c.e) + '</span><span class="t">' + esc(c.t) + '</span><span class="s">' + esc(c.s || '') + '</span>' + fl + von + '</button>';
+    }
+    function eintraege(key, slot){ return plan.filter(function(p){ return p.day === key && (!slot || p.slot === slot); }); }
+    function kacheln(key, slot){ return eintraege(key, slot).map(function(p){ var c = kat(p.ref); return c ? kachel(c, p) : ''; }).join(''); }
+    function hinweise(key){
+      var h = [];
+      eintraege(key).forEach(function(p){ pruefen(p).forEach(function(x){ h.push(x); }); });
+      return h.length ? '<div class="ip-hinweise">' + h.map(function(x){ return '<div class="ip-hw ' + x.l + '">' + esc(x.m) + '</div>'; }).join('') + '</div>' : '';
+    }
+    function leisteZeichnen(){
+      var el = $('ip-leiste'); if (!el) return;
+      var keep = el.scrollLeft, hi = heuteIdx();
+      el.innerHTML = TAGE.map(function(t){
+        var tag = kacheln(t.key, 'tag'), ab = kacheln(t.key, 'abend');
+        return '<section class="ip-tag' + (t.i === hi ? ' heute' : '') + (t.i < hi ? ' vorbei' : '') + '" data-tagidx="' + t.i + '">' +
+          '<div class="ip-tag-h"><div class="l1"><span class="wd">' + WOCHENTAGE[t.wd] + '</span><span class="dt">' + t.lab + '</span></div>' +
+          '<div class="l2"><span>' + (t.i === hi ? '<b>Heute · Tag ' + (t.i + 1) + '</b>' : 'Tag ' + (t.i + 1)) + '</span><span>🏠 ' + t.basis + '</span></div></div>' +
+          '<div class="ip-fix">' + fest(t).map(function(f){ return '<span class="ip-fx' + (f.reise ? ' reise' : '') + '">' + esc(f.t) + '</span>'; }).join('') + '</div>' +
+          '<div class="ip-zone" data-ip-drop="' + t.key + '|tag"><span class="zl">Tagsüber</span>' + (tag || '<span class="ip-leer">frei</span>') + '</div>' +
+          '<div class="ip-zone abend" data-ip-drop="' + t.key + '|abend"><span class="zl">Abends</span>' + ab + '</div>' +
+          hinweise(t.key) + '</section>';
+      }).join('');
+      el.scrollLeft = keep;
+    }
+    function ablageZeichnen(){
+      var row = $('ip-row'); if (!row) return;
+      var l = katListe(tab);
+      row.innerHTML = l.length ? l.map(function(c){ return kachel(c, null); }).join('') : '<span class="ip-leer">Noch keine eigenen Kacheln. Unten eine anlegen.</span>';
+      $('ip-eigen-form').hidden = tab !== 'eigen';
+      document.querySelectorAll('#ip-tabs .ip-tab').forEach(function(b){
+        b.setAttribute('aria-selected', b.getAttribute('data-tab') === tab ? 'true' : 'false');
+        b.querySelector('.cnt').textContent = katListe(b.getAttribute('data-tab')).length;
+      });
+    }
+    function tagLast(t){
+      var s = 0;
+      eintraege(t.key, 'tag').forEach(function(p){ var c = kat(p.ref); if (c) s += c.len; });
+      s = Math.min(3, s);
+      if (t.i === 0 || t.i === 13 || t.key === UMZUG) s = Math.max(s, 1);
+      return s;
+    }
+    function energieZeichnen(){
+      if (!$('ip-en-bars')) return;
+      var bars = '', lab = '', run = 0, maxRun = 0, ende = -1, hi = heuteIdx();
+      TAGE.forEach(function(t){
+        var l = tagLast(t);
+        bars += '<div class="e' + l + (t.i === hi ? ' heute' : '') + '" style="height:' + (8 + l * 15) + 'px" title="' + WD[t.wd] + ' ' + t.lab + '"></div>';
+        lab += '<span>' + t.dd + '</span>';
+        if (l >= 2) { run++; if (run > maxRun) { maxRun = run; ende = t.i; } } else run = 0;
+      });
+      $('ip-en-bars').innerHTML = bars; $('ip-en-lab').innerHTML = lab;
+      $('ip-en-msg').textContent = maxRun >= 3 ? '⚠ ' + maxRun + ' lange Tage am Stück bis ' + TAGE[ende].lab + ' – vielleicht einen Strandtag dazwischen?'
+        : 'Gut verteilt: nie mehr als zwei lange Tage hintereinander.';
+    }
+
+    // ---- Startseite: Buehne ----
+    function hauptVon(key){
+      var l = eintraege(key, 'tag').map(function(p){ return kat(p.ref); }).filter(Boolean);
+      l.sort(function(a, b){ return b.len - a.len; });
+      return l;
+    }
+    function abendVon(key){ return eintraege(key, 'abend').map(function(p){ return kat(p.ref); }).filter(Boolean); }
+    function hoehepunkt(t){
+      var h = hauptVon(t.key)[0] || abendVon(t.key)[0];
+      if (h) return h;
+      var f = fest(t), x = f.filter(function(y){ return y.reise; })[0] || f.filter(function(y){ return y.event; })[0];
+      if (x) return { t: x.t.replace(/^\S+\s/, ''), e: x.t.split(' ')[0], k: 'eigen', s: 'fester Termin' };
+      return { t: 'Freier Tag', e: '☀️', k: 'frei', s: 'noch nichts geplant' };
+    }
+    function buehneZeichnen(){
+      var box = $('hb-heute'); if (!box) return;
+      var hi = heuteIdx();
+      box.classList.toggle('hat-tag', hi >= 0 && hi <= 13);
+      if (hi < 0 || hi > 13) { box.innerHTML = ''; return; }
+      var t = TAGE[hi], haupt = hauptVon(t.key), c = haupt[0], ab = abendVon(t.key), f = fest(t);
+      var titel = c ? c.t : 'Freier Tag', unter = c ? c.s : 'Noch nichts geplant – im Planer würfeln?';
+      if (haupt.length > 1) unter = 'dazu ' + haupt.slice(1).map(function(x){ return x.t; }).join(', ');
+      if (ab.length) unter += (unter ? ' · ' : '') + 'abends ' + ab.map(function(x){ return x.t; }).join(', ');
+      var bild = c ? stil(c) : "--k:var(--ip-k-frei);--img:url('images/kachel-strand.webp');";
+      var h = '<div class="ip-b"><div class="ip-b-eb">Heute · ' + WOCHENTAGE[t.wd] + ', ' + t.lab + ' · Tag ' + (t.i + 1) + ' von 14</div>' +
+        '<a class="ip-hero" href="#kalender" data-ip-zuheute="1" style="' + bild + '"><div class="he" aria-hidden="true">' + (c ? c.e : '☀️') + '</div><div class="ht">' + esc(titel) + '</div><div class="hs">' + esc(unter) + '</div>' +
+        (f.length ? '<div class="pills">' + f.slice(0, 4).map(function(x){ return '<span>' + esc(x.t) + '</span>'; }).join('') + '</div>' : '') + '</a>';
+      var naechste = TAGE.slice(t.i + 1, t.i + 4);
+      if (naechste.length) {
+        h += '<div class="ip-b-h">Die nächsten Tage</div><div class="ip-next">' + naechste.map(function(n){
+          var x = hoehepunkt(n);
+          return '<a class="ip-next-r" href="#kalender" data-ip-tag="' + n.i + '"><div class="nd">' + WD[n.wd] + '<b>' + n.dd + '.</b></div><div class="ni" style="' + stil(x) + '">' + (x.img ? '' : esc(x.e)) + '</div><div class="nt">' + esc(x.t) + '<small>' + esc(x.s || '') + '</small></div></a>';
+        }).join('') + '</div>';
+      }
+      h += '<a class="btn btn-outline ip-b-link" href="#kalender" data-ip-zuheute="1">Plan ansehen und ändern →</a></div>';
+      box.innerHTML = h;
+    }
+
+    function alles(){
+      leisteZeichnen(); ablageZeichnen(); energieZeichnen(); buehneZeichnen(); syncAnzeigen();
+      frischUid = null;
+    }
+    function zuTag(i, sanft){
+      var sc = $('ip-leiste'); if (!sc) return;
+      var el = sc.querySelector('[data-tagidx="' + Math.max(0, Math.min(13, i)) + '"]'); if (!el) return;
+      sc.scrollTo({ left: el.offsetLeft - sc.offsetLeft - 4, behavior: sanft ? 'smooth' : 'auto' });
+    }
+
+    // ---- Einplanen, verschieben, entfernen ----
+    function einplanen(ref, uid, key, slot){
+      var c = kat(ref), t = tagVon(key); if (!c || !t) return;
+      var me = whoAmI() || 'stephan';
+      if (uid) {
+        var p = null; plan.forEach(function(x){ if (x.uid === uid) p = x; });
+        if (!p) return;
+        plan = plan.filter(function(x){ return x.uid !== uid; });
+        p.day = key; p.slot = slot; p.at = Date.now(); p.by = me; plan.push(p); frischUid = uid;
+      } else {
+        var n = { uid: nid(), ref: ref, day: key, slot: slot, by: me, at: Date.now() };
+        plan.push(n); frischUid = n.uid;
+      }
+      meldung(c.e + ' ' + c.t + ' → ' + WD[t.wd] + ' ' + t.lab);
+      geaendert();
+    }
+    function entfernen(uid){ plan = plan.filter(function(p){ return p.uid !== uid; }); meldung('Entfernt'); geaendert(); }
+
+    // Auswahl-Leiste unten (Antippen, dann Tag antippen)
+    var selbar = document.createElement('div');
+    selbar.className = 'ip-selbar'; selbar.hidden = true; selbar.setAttribute('role', 'status');
+    selbar.innerHTML = '<div class="ip-sel-bild" aria-hidden="true"></div><div class="ip-sel-text"><b></b><span></span></div><div class="ip-sel-btns"><button type="button" class="weg">🗑 Entfernen</button><button type="button" class="ab">Fertig</button></div>';
+    var trash = document.createElement('div');
+    trash.className = 'ip-trash'; trash.setAttribute('data-ip-drop', 'trash'); trash.textContent = '🗑 Hier loslassen zum Entfernen';
+    var toastEl = document.createElement('div');
+    toastEl.className = 'ip-toast'; toastEl.hidden = true; toastEl.setAttribute('role', 'status');
+    document.body.appendChild(selbar); document.body.appendChild(trash); document.body.appendChild(toastEl);
+    var toastT = null;
+    function meldung(m){ toastEl.textContent = m; toastEl.hidden = false; clearTimeout(toastT); toastT = setTimeout(function(){ toastEl.hidden = true; }, 1800); }
+
+    function waehlen(s){
+      sel = s;
+      document.body.classList.toggle('ip-waehlt', !!s);
+      selbar.hidden = !s;
+      if (s) {
+        var c = kat(s.ref), p = null;
+        if (s.uid) plan.forEach(function(x){ if (x.uid === s.uid) p = x; });
+        var t = p && tagVon(p.day), b = selbar.querySelector('.ip-sel-bild');
+        b.style.cssText = stil(c); b.textContent = c.img ? '' : c.e;
+        selbar.querySelector('b').textContent = c.t;
+        selbar.querySelector('.ip-sel-text span').textContent = t ? 'Steht am ' + WD[t.wd] + ' ' + t.lab + ' · tippe auf einen anderen Tag zum Verschieben' : 'Tippe auf „Tagsüber“ oder „Abends“ eines Tages';
+        selbar.querySelector('.weg').hidden = !s.uid;
+      }
+      leisteZeichnen(); ablageZeichnen();
+    }
+    selbar.querySelector('.ab').addEventListener('click', function(){ waehlen(null); });
+    selbar.querySelector('.weg').addEventListener('click', function(){ if (sel && sel.uid) { var u = sel.uid; sel = null; entfernen(u); } waehlen(null); });
+
+    // ---- Ziehen: Maus sofort, Finger nach kurzem Festhalten ----
+    var zug = null, klickSperre = false, raf = 0;
+    document.addEventListener('pointerdown', function(e){
+      var k = e.target.closest('.ip-tile[data-ref]');
+      if (!k || (e.pointerType === 'mouse' && e.button !== 0)) return;
+      zug = { tile: k, ref: k.getAttribute('data-ref'), uid: k.getAttribute('data-uid'), pid: e.pointerId, sx: e.clientX, sy: e.clientY, x: e.clientX, y: e.clientY, aktiv: false, finger: e.pointerType !== 'mouse' };
+      if (zug.finger) { k.classList.add('pressing'); zug.timer = setTimeout(zugStart, 360); }
+    });
+    document.addEventListener('pointermove', function(e){
+      if (!zug || e.pointerId !== zug.pid) return;
+      zug.x = e.clientX; zug.y = e.clientY;
+      if (!zug.aktiv) {
+        var weit = Math.hypot(e.clientX - zug.sx, e.clientY - zug.sy);
+        if (zug.finger) { if (weit > 10) zugAbbrechen(); return; }
+        if (weit > 6) zugStart(); else return;
+      }
+      e.preventDefault();
+      zugBewegen();
+    });
+    document.addEventListener('touchmove', function(e){ if (zug && zug.aktiv) e.preventDefault(); }, { passive: false });
+    document.addEventListener('pointerup', function(e){ if (!zug || e.pointerId !== zug.pid) return; if (zug.aktiv) zugLoslassen(); else zugAbbrechen(); });
+    document.addEventListener('pointercancel', function(){ if (zug) { if (zug.aktiv) zugAufraeumen(); zugAbbrechen(); } });
+    document.addEventListener('contextmenu', function(e){ if (e.target.closest('.ip-tile')) e.preventDefault(); });
+    function zugStart(){
+      if (!zug) return;
+      zug.aktiv = true; zug.tile.classList.remove('pressing');
+      if (navigator.vibrate) try { navigator.vibrate(12); } catch(e){}
+      var g = zug.tile.cloneNode(true);
+      g.classList.add('ip-ghost'); g.classList.remove('sel', 'pop', 'planned');
+      document.body.appendChild(g); zug.ghost = g;
+      zug.tile.classList.add('lifted');
+      document.body.classList.add('ip-dragging');
+      trash.classList.toggle('zeigen', !!zug.uid);
+      zugBewegen(); raf = requestAnimationFrame(zugRollen);
+    }
+    function zielUnter(x, y){ var el = document.elementFromPoint(x, y); return el ? el.closest('[data-ip-drop]') : null; }
+    function zugBewegen(){
+      zug.ghost.style.left = zug.x + 'px'; zug.ghost.style.top = zug.y + 'px';
+      var z = zielUnter(zug.x, zug.y);
+      if (z !== zug.over) { if (zug.over) zug.over.classList.remove('over'); if (z) z.classList.add('over'); zug.over = z; }
+    }
+    // Am Rand der Leiste oder des Fensters mitrollen
+    function zugRollen(){
+      if (!zug || !zug.aktiv) return;
+      var sc = $('ip-leiste');
+      if (sc) { var r = sc.getBoundingClientRect(); if (zug.y > r.top && zug.y < r.bottom) { if (zug.x < r.left + 48) sc.scrollLeft -= 10; else if (zug.x > r.right - 48) sc.scrollLeft += 10; } }
+      if (zug.y < 80) window.scrollBy(0, -10); else if (zug.y > innerHeight - 110) window.scrollBy(0, 10);
+      zugBewegen();
+      raf = requestAnimationFrame(zugRollen);
+    }
+    function zugAufraeumen(){
+      cancelAnimationFrame(raf);
+      if (zug.ghost) zug.ghost.remove();
+      if (zug.over) zug.over.classList.remove('over');
+      zug.tile.classList.remove('lifted');
+      document.body.classList.remove('ip-dragging');
+      klickSperre = true; setTimeout(function(){ klickSperre = false; }, 60);
+    }
+    function zugLoslassen(){
+      var z = zug.over, ref = zug.ref, uid = zug.uid;
+      zugAufraeumen(); zug = null;
+      sel = null; selbar.hidden = true; document.body.classList.remove('ip-waehlt');
+      if (!z) { alles(); return; }
+      var v = z.getAttribute('data-ip-drop');
+      if (v === 'trash') { if (uid) entfernen(uid); else alles(); return; }
+      var a = v.split('|');
+      einplanen(ref, uid, a[0], a[1]);
+    }
+    function zugAbbrechen(){ if (!zug) return; clearTimeout(zug.timer); zug.tile.classList.remove('pressing'); zug = null; }
+
+    // Antippen, dann Tag antippen
+    document.addEventListener('click', function(e){
+      if (klickSperre && e.target.closest('.ip-tile, [data-ip-drop]')) { e.preventDefault(); return; }
+      var k = e.target.closest('.ip-tile[data-ref]');
+      if (k) {
+        var s = { ref: k.getAttribute('data-ref'), uid: k.getAttribute('data-uid') };
+        if (sel && sel.ref === s.ref && sel.uid === s.uid) return waehlen(null);
+        // Neue Kachel ausgewaehlt und auf eine eingeplante getippt: dorthin legen
+        if (sel && !sel.uid && s.uid) {
+          var z0 = k.closest('[data-ip-drop]');
+          if (z0) { var a0 = z0.getAttribute('data-ip-drop').split('|'); var r0 = sel.ref; waehlen(null); einplanen(r0, null, a0[0], a0[1]); return; }
+        }
+        return waehlen(s);
+      }
+      var z = e.target.closest('[data-ip-drop]');
+      if (z && sel && z.getAttribute('data-ip-drop') !== 'trash') {
+        var a = z.getAttribute('data-ip-drop').split('|'), s2 = sel;
+        waehlen(null);
+        einplanen(s2.ref, s2.uid, a[0], a[1]);
+      }
+      // Von der Startseite: Planer beim richtigen Tag oeffnen
+      var bz = e.target.closest('[data-ip-zuheute], [data-ip-tag]');
+      if (bz) {
+        var ziel = bz.hasAttribute('data-ip-tag') ? +bz.getAttribute('data-ip-tag') : heuteIdx();
+        setTimeout(function(){ zuTag(ziel, false); }, 120);
+      }
+    });
+    document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && sel) waehlen(null); });
+
+    // ---- Knoepfe ----
+    var tabs = $('ip-tabs');
+    if (tabs) tabs.addEventListener('click', function(e){ var b = e.target.closest('.ip-tab'); if (b) { tab = b.getAttribute('data-tab'); ablageZeichnen(); } });
+    var form = $('ip-eigen-form');
+    if (form) form.addEventListener('submit', function(e){
+      e.preventDefault();
+      var inp = $('ip-eigen-text'), txt = inp.value.replace(/\|/g, '/').replace(/\s+/g, ' ').trim().slice(0, 40);
+      if (!txt) { inp.focus(); return; }
+      var ref = 'e:' + $('ip-eigen-emoji').value + ' ' + txt, l = eigeneVorlagen();
+      if (l.indexOf(ref) < 0) l.push(ref);
+      try { localStorage.setItem(EIGEN_KEY, JSON.stringify(l.slice(-30))); } catch(e2){}
+      inp.value = ''; inp.blur();
+      waehlen({ ref: ref, uid: null });
+      meldung('Kachel angelegt – jetzt auf einen Tag tippen');
+    });
+    function knopf(id, fn){ var b = $(id); if (b) b.addEventListener('click', fn); }
+    knopf('ip-zuheute', function(){ zuTag(heuteIdx(), true); });
+    knopf('ip-neu', function(){ tab = 'eigen'; ablageZeichnen(); var i2 = $('ip-eigen-text'); if (i2) i2.focus(); });
+    knopf('ip-leeren', function(){
+      var b = $('ip-leeren'), l = b.querySelector('span');
+      if (!plan.length) { meldung('Der Plan ist schon leer'); return; }
+      if (b.classList.contains('sicher')) {
+        b.classList.remove('sicher'); l.textContent = 'Alles leeren';
+        plan = []; meldung('Plan geleert'); geaendert(); return;
+      }
+      b.classList.add('sicher'); l.textContent = 'Wirklich leeren?';
+      setTimeout(function(){ b.classList.remove('sicher'); l.textContent = 'Alles leeren'; }, 3000);
+    });
+    // Wuerfel: naechsten freien Tag mit einer noch nicht geplanten, an dem Tag moeglichen Tour fuellen
+    knopf('ip-wuerfel', function(){
+      var ab = Math.max(0, heuteIdx());
+      var frei = TAGE.filter(function(t){ return t.i >= ab && t.i < 13 && t.key !== UMZUG && !eintraege(t.key, 'tag').length; })[0];
+      if (!frei) { meldung('Kein freier Tag mehr – ihr seid komplett verplant'); return; }
+      var kand = katListe('touren').filter(function(c){
+        return !plan.some(function(p){ return p.ref === c.id; }) && (!c.nurWd || c.nurWd.indexOf(frei.wd) >= 0) && !(frei.i === 0 && c.len >= 2);
+      });
+      if (!kand.length) { meldung('Alle Tagestrips sind schon eingeplant'); return; }
+      var c = kand[Math.floor(Math.random() * kand.length)];
+      einplanen(c.id, null, frei.key, 'tag');
+      zuTag(frei.i, true);
+    });
+
+    // Beim Oeffnen der Kalender-Seite zum heutigen Tag rollen
+    window.addEventListener('hashchange', function(){
+      if (/^#kalender/.test(location.hash) && !sel) setTimeout(function(){ zuTag(heuteIdx(), false); }, 80);
+    });
+
+    alles();
+    if (/^#kalender/.test(location.hash)) setTimeout(function(){ zuTag(heuteIdx(), false); }, 120);
+    return { liste: liste, ausServer: ausServer, render: alles };
   })();
 })();
 // ---- Kombi-Rechner auf der Vergleichsseite (seit 26.09.2026) ----

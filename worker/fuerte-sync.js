@@ -4,7 +4,7 @@
 //
 // Drei Wege hinein:
 //   GET  /state         -> alles auf einmal
-//   POST /marks         -> Favoriten, Ausgeblendete, Aufgaben- und Packlisten-Haken setzen
+//   POST /marks         -> Favoriten, Ausgeblendete, Aufgaben- und Packlisten-Haken, Auswahl und Inselplaner setzen
 //                          (je Liste: nur die mitgeschickten Arten werden ersetzt)
 //   POST /note          -> Notiz anhängen
 //   POST /note/delete   -> eigene Notiz löschen
@@ -63,7 +63,7 @@ const WEBCAM_MAX_BYTES = 600000; // Sicherheitsgrenze je Bild
 
 // Obergrenzen, damit ein Versehen oder ein Fremder die Datenbank
 // nicht vollschreiben kann.
-const MAX_MARKEN = 60;
+const MAX_MARKEN = 150;
 const MAX_TEXT = 500;
 const MAX_SLUG = 80;
 
@@ -111,8 +111,11 @@ async function standLesen(env) {
   // Seit 26.09.2026: gemeinsame Auswahl fuer die Kostenrechnung,
   // slug = 'schluessel=wert' (z. B. 'fuerte-shortlist-selected=renacer-zen')
   const sel = {};
+  // Seit 03.10.2026: gemeinsamer Inselplaner,
+  // slug = 'uid|ref|tag|slot' (z. B. 'k3x9a|trip-lobos|2026-10-04|tag')
+  const plan = {};
   for (const z of marken.results) {
-    const ziel = z.kind === 'fav' ? favs : z.kind === 'todo' ? todos : z.kind === 'pack' ? pack : z.kind === 'sel' ? sel : hidden;
+    const ziel = z.kind === 'fav' ? favs : z.kind === 'todo' ? todos : z.kind === 'pack' ? pack : z.kind === 'sel' ? sel : z.kind === 'plan' ? plan : hidden;
     ziel[z.slug] = { by: z.by_who, at: z.at };
   }
 
@@ -122,7 +125,7 @@ async function standLesen(env) {
     notes[z.slug].push({ id: z.id, by: z.by_who, text: z.text, at: z.at });
   }
 
-  return { favs, hidden, todos, pack, sel, notes, stand: Date.now() };
+  return { favs, hidden, todos, pack, sel, plan, notes, stand: Date.now() };
 }
 
 // ---------- Webcam-Bilder ----------
@@ -276,7 +279,7 @@ export default {
         // eine ältere Fassung der Seite, die die Haken noch nicht kennt,
         // diese nicht versehentlich löschen.
         const befehle = [];
-        for (const [art, liste] of [['fav', daten.favs], ['hidden', daten.hidden], ['todo', daten.todos], ['pack', daten.pack], ['sel', daten.sel]]) {
+        for (const [art, liste] of [['fav', daten.favs], ['hidden', daten.hidden], ['todo', daten.todos], ['pack', daten.pack], ['sel', daten.sel], ['plan', daten.plan]]) {
           if (!Array.isArray(liste)) continue;
           befehle.push(env.DB.prepare('DELETE FROM marks WHERE kind = ?').bind(art));
           for (const eintrag of liste.slice(0, MAX_MARKEN)) {
