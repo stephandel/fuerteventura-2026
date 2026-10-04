@@ -1761,6 +1761,21 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
 .ip-tb-karte .hinweis { font-size: 12.5px; color: var(--ink-dim); }
 .ip-tb-karte .knoepfe { display: flex; gap: 8px; justify-content: flex-end; }
 .ip-tb-karte .knoepfe .btn { min-height: 42px; padding: 0 16px; font-size: 14.5px; }
+
+/* Märkte je Tag im Planer, Fiestas-Balken, Umzugs-/Abreise-Liste (seit 04.10.2026) */
+.ip-maerkte { display: flex; flex-direction: column; gap: 4px; }
+.ip-mk { display: flex; align-items: center; gap: 6px; width: 100%; text-align: left; border: 1px dashed color-mix(in srgb, var(--ochre) 55%, var(--border)); background: color-mix(in srgb, var(--ochre) 7%, transparent); color: var(--ink); border-radius: 8px; padding: 5px 8px; font: inherit; font-size: 11.5px; line-height: 1.25; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.ip-mk b { font-weight: 700; }
+.ip-mk .zt { margin-left: auto; font-family: "JetBrains Mono", monospace; font-size: 10.5px; color: var(--ink-dim); white-space: nowrap; }
+.ip-mk .plus { color: var(--ochre); font-weight: 800; }
+.ip-mk:active { transform: scale(.98); }
+.cal-banner { display: flex; gap: 10px; align-items: center; margin-top: 16px; padding: 10px 14px; border-radius: 12px; background: var(--warn-bg); color: var(--warn); font-size: 14px; font-weight: 600; }
+.cal-banner small { font-weight: 500; opacity: .85; }
+.mk-heute { display: inline-block; margin-left: 6px; font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 999px; background: var(--good-bg); color: var(--good); vertical-align: 1px; }
+.mk-morgen { display: inline-block; margin-left: 6px; font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 999px; background: var(--muted-bg); color: var(--ink-dim); vertical-align: 1px; }
+.ip-hero-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+.ip-hero-btns .btn { min-height: 42px; padding: 0 14px; font-size: 14px; }
+:root[data-phase="insel"] #home-todo.alles-fertig { display: none; }
 </style>
 
 <nav class="topnav">
@@ -2808,7 +2823,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.728,-13.858" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
-<article class="ex-card" data-id="lajares-kunsthandwerkermarkt" data-rank="3" data-title="Lajares Kunsthandwerkermarkt" data-drive="15" data-stay="120" data-cost="0" data-cat="dorf kultur" data-lat="28.7286" data-lng="-13.9207">
+<article class="ex-card" data-id="lajares-kunsthandwerkermarkt" data-rank="3" data-title="Lajares Kunsthandwerkermarkt" data-drive="15" data-stay="120" data-cost="0" data-cat="dorf kultur" data-lat="28.6836" data-lng="-13.9333">
   <div class="ex-media">
     <img src="images/lajares-kunsthandwerkermarkt.webp" alt="Lajares Kunsthandwerkermarkt" loading="lazy">
     <div class="card-fav-actions"><button type="button" class="fav-btn" title="Favorit">🤍</button><button type="button" class="hide-btn" title="Ausblenden">🙈</button></div>
@@ -2821,7 +2836,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     <p>Jeden Samstagvormittag verwandelt sich der beschauliche Dorfplatz von Lajares in einen bunten Markt: Kunsthandwerk, Schmuck, lokale Produkte.</p>
     <p class="ex-tip"><strong>Tipp:</strong> Nur samstags — und wirklich nur vormittags, gegen 14 Uhr ist Schluss. Lajares selbst lohnt auch ohne Markt: der Ort ist die Surfer- und Aussteigerecke der Insel, mit den besten Cafés im Norden. Danach passt ein Abstecher zum Vulkan Calderón Hondo, der Wanderweg startet gleich am Ortsrand.</p>
     <p class="ex-meta">&#128197; Nur samstags &#183; ca. 10:00&#8211;14:00/15:00 Uhr</p>
-    <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.7286,-13.9207" target="_blank" rel="noopener">Google Maps ↗</a>
+    <a class="btn btn-outline ex-link" href="https://www.google.com/maps/search/?api=1&query=28.6836,-13.9333" target="_blank" rel="noopener">Google Maps ↗</a>
   </div>
 </article>
 <article class="ex-card" data-id="markt-am-aqua-water-park-corralejo" data-rank="4" data-title="Markt am Acua Water Park (Corralejo)" data-drive="8" data-stay="60" data-cost="0" data-cat="dorf" data-lat="28.728" data-lng="-13.859">
@@ -3248,24 +3263,25 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       </div>
     </section>
     <h2 class="ip-fest-h">Alle festen Termine</h2>
+    <div class="cal-banner">🎉 <span>Fiestas del Rosario in Puerto del Rosario <small>· 25.09.–07.10., die ganze erste Woche · Umzug, Konzerte, Kinderfest</small></span></div>
     <div class="cal-strip">
-      <div class="cal-day"><div class="cal-date">29.09.<span class="cal-weekday">Di</span></div><div class="cal-items"><span class="cal-chip cal-chip-trip">✈️ Anreise</span><span class="cal-chip cal-chip-market">🏪 Acua Water Park</span><span class="cal-chip cal-chip-market">🏪 Mercado Tradiciones</span><span class="cal-chip cal-chip-event">🎉 Fiestas del Rosario beginnen (bis 07.10.)</span></div></div>
-      <div class="cal-day cal-day-empty"><div class="cal-date">30.09.<span class="cal-weekday">Mi</span></div><div class="cal-items"><span class="cal-chip cal-chip-note">Fiestas del Rosario laufen weiter</span></div></div>
-      <div class="cal-day cal-day-empty"><div class="cal-date">01.10.<span class="cal-weekday">Do</span></div><div class="cal-items"><span class="cal-chip cal-chip-note">Fiestas del Rosario laufen weiter</span></div></div>
-      <div class="cal-day"><div class="cal-date">02.10.<span class="cal-weekday">Fr</span></div><div class="cal-items"><span class="cal-chip cal-chip-market">🏪 Acua Water Park</span><span class="cal-chip cal-chip-market">🏪 Mercado Tradiciones</span><span class="cal-chip cal-chip-market">🏪 El Cotillo Sunset Market (abends)</span></div></div>
-      <div class="cal-day"><div class="cal-date">03.10.<span class="cal-weekday">Sa</span></div><div class="cal-items"><span class="cal-chip cal-chip-market">🏪 Lajares Kunsthandwerksmarkt</span><span class="cal-chip cal-chip-event">🎊 A.F. Dunas – 50º Aniversario</span></div></div>
-      <div class="cal-day"><div class="cal-date">04.10.<span class="cal-weekday">So</span></div><div class="cal-items"><span class="cal-chip cal-chip-market">🏪 El Campanario (Kunsthandwerk &amp; Folklore)</span></div></div>
-      <div class="cal-day cal-day-empty"><div class="cal-date">05.10.<span class="cal-weekday">Mo</span></div><div class="cal-items"><span class="cal-chip cal-chip-note">Fiestas del Rosario laufen weiter</span></div></div>
-      <div class="cal-day"><div class="cal-date">06.10.<span class="cal-weekday">Di</span></div><div class="cal-items"><span class="cal-chip cal-chip-trip">🏠 Umzug: Oasis Duna (bis 11:00) → Renacer Zen (ab 15:00)</span><span class="cal-chip cal-chip-market">🏪 Acua Water Park</span><span class="cal-chip cal-chip-market">🏪 Mercado Tradiciones</span></div></div>
-      <div class="cal-day cal-day-empty"><div class="cal-date">07.10.<span class="cal-weekday">Mi</span></div><div class="cal-items"><span class="cal-chip cal-chip-event">🎉 Fiestas del Rosario – letzter Tag</span></div></div>
-      <div class="cal-day cal-day-empty"><div class="cal-date">08.10.<span class="cal-weekday">Do</span></div><div class="cal-items"><span class="cal-chip cal-chip-note">kein fester Termin – freier Tag ☀️</span></div></div>
-      <div class="cal-day"><div class="cal-date">09.10.<span class="cal-weekday">Fr</span></div><div class="cal-items"><span class="cal-chip cal-chip-market">🏪 Acua Water Park</span><span class="cal-chip cal-chip-market">🏪 Mercado Tradiciones</span><span class="cal-chip cal-chip-market">🏪 El Cotillo Sunset Market (abends)</span></div></div>
-      <div class="cal-day"><div class="cal-date">10.10.<span class="cal-weekday">Sa</span></div><div class="cal-items"><span class="cal-chip cal-chip-market">🏪 Lajares Kunsthandwerksmarkt</span><span class="cal-chip cal-chip-event">🌌 ELARA – Puerto del Rosario</span></div></div>
-      <div class="cal-day"><div class="cal-date">11.10.<span class="cal-weekday">So</span></div><div class="cal-items"><span class="cal-chip cal-chip-market">🏪 El Campanario (Kunsthandwerk &amp; Folklore)</span><span class="cal-chip cal-chip-event">🌌 ELARA – Auditorio de Antigua</span></div></div>
+      <div class="cal-day"><div class="cal-date">29.09.<span class="cal-weekday">Di</span></div><div class="cal-items"><span class="cal-chip cal-chip-trip">✈️ Anreise</span></div></div>
+      <div class="cal-day cal-day-empty"><div class="cal-date">30.09.<span class="cal-weekday">Mi</span></div><div class="cal-items"><span class="cal-chip cal-chip-note">kein fester Termin</span></div></div>
+      <div class="cal-day cal-day-empty"><div class="cal-date">01.10.<span class="cal-weekday">Do</span></div><div class="cal-items"><span class="cal-chip cal-chip-note">kein fester Termin</span></div></div>
+      <div class="cal-day cal-day-empty"><div class="cal-date">02.10.<span class="cal-weekday">Fr</span></div><div class="cal-items"><span class="cal-chip cal-chip-note">kein fester Termin</span></div></div>
+      <div class="cal-day"><div class="cal-date">03.10.<span class="cal-weekday">Sa</span></div><div class="cal-items"><span class="cal-chip cal-chip-event">🎊 A.F. Dunas – 50º Aniversario</span></div></div>
+      <div class="cal-day cal-day-empty"><div class="cal-date">04.10.<span class="cal-weekday">So</span></div><div class="cal-items"><span class="cal-chip cal-chip-note">kein fester Termin</span></div></div>
+      <div class="cal-day cal-day-empty"><div class="cal-date">05.10.<span class="cal-weekday">Mo</span></div><div class="cal-items"><span class="cal-chip cal-chip-note">kein fester Termin</span></div></div>
+      <div class="cal-day"><div class="cal-date">06.10.<span class="cal-weekday">Di</span></div><div class="cal-items"><span class="cal-chip cal-chip-trip">🏠 Umzug: Oasis Duna (bis 11:00) → Renacer Zen (ab 15:00)</span></div></div>
+      <div class="cal-day cal-day-empty"><div class="cal-date">07.10.<span class="cal-weekday">Mi</span></div><div class="cal-items"><span class="cal-chip cal-chip-note">kein fester Termin</span></div></div>
+      <div class="cal-day cal-day-empty"><div class="cal-date">08.10.<span class="cal-weekday">Do</span></div><div class="cal-items"><span class="cal-chip cal-chip-note">kein fester Termin</span></div></div>
+      <div class="cal-day cal-day-empty"><div class="cal-date">09.10.<span class="cal-weekday">Fr</span></div><div class="cal-items"><span class="cal-chip cal-chip-note">kein fester Termin</span></div></div>
+      <div class="cal-day"><div class="cal-date">10.10.<span class="cal-weekday">Sa</span></div><div class="cal-items"><span class="cal-chip cal-chip-event">🌌 ELARA – Puerto del Rosario</span></div></div>
+      <div class="cal-day"><div class="cal-date">11.10.<span class="cal-weekday">So</span></div><div class="cal-items"><span class="cal-chip cal-chip-event">🌌 ELARA – Auditorio de Antigua</span></div></div>
       <div class="cal-day"><div class="cal-date">12.10.<span class="cal-weekday">Mo</span></div><div class="cal-items"><span class="cal-chip cal-chip-trip">🛫 Abreise</span></div></div>
     </div>
-    <div class="cal-legende" aria-label="Legende"><span class="cal-chip cal-chip-market">🏪 Markt</span><span class="cal-chip cal-chip-event">🎉 Fest / Show</span><span class="cal-chip cal-chip-trip">✈️ Reise &amp; Umzug</span></div>
-    <p class="dim" style="font-size:12px;margin-top:10px">Märkte sind wiederkehrend (Wochentag entscheidet), Termine können sich kurzfristig ändern — Quelle: Fuerteventura TV Market Calendar, Fuerteventura Rural, Cultura Fuerteventura. Vor Ort kurz gegenchecken.</p>
+    <div class="cal-legende" aria-label="Legende"><span class="cal-chip cal-chip-event">🎉 Fest / Show</span><span class="cal-chip cal-chip-trip">✈️ Reise &amp; Umzug</span></div>
+    <p class="dim" style="font-size:12px;margin-top:10px">Die Wochenmärkte stehen nicht mehr hier, sondern oben im Planer bei jedem Tag zum Antippen – und unten in der Tabelle mit Zeiten. Termine können sich kurzfristig ändern (Quelle: Cultura Fuerteventura, Fuerteventura Rural). Vor Ort kurz gegenchecken.</p>
 
     <section class="events-section" style="margin-top:40px">
       <div class="results-head">
@@ -3318,7 +3334,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       <p class="sub">Tage/Zeiten ändern sich gelegentlich — vor Ort kurz gegenchecken, z. B. bei <a href="https://www.fuerteventuratv.net/en/fuerteventura-news/764-fuerteventura-market-calendar" target="_blank" rel="noopener">Fuerteventura TV</a> oder <a href="https://fuerteventurarural.org/de/mercados-locales-de-artesania-y-productos/" target="_blank" rel="noopener">Fuerteventura Rural</a>.</p>
       <table class="price-table" style="margin-top:14px">
         <thead><tr><th>Markt</th><th>Tag / Zeit</th></tr></thead>
-        <tbody>
+        <tbody id="markt-tabelle">
           <tr><td>Corralejo, Acua Water Park</td><td>Di + Fr</td></tr>
           <tr><td>El Campanario, Corralejo</td><td>Sa Flohmarkt / So Kunsthandwerk &amp; Folklore</td></tr>
           <tr><td>Mercado de las Tradiciones, La Oliva</td><td>Di + Fr</td></tr>
@@ -5964,7 +5980,9 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     if (phase !== 'vor' && vorher !== phase) {
       var todo = document.getElementById('home-todo'), cal = document.getElementById('home-cal');
       if (todo) todo.removeAttribute('open');
-      if (cal) cal.setAttribute('open', '');
+      // Auf der Insel zeigt die Buehne des Inselplaners die naechsten Tage - der
+      // Kalender-Kasten bleibt zu, damit nichts doppelt steht.
+      if (cal) { if (phase === 'insel') cal.removeAttribute('open'); else cal.setAttribute('open', ''); }
     }
     var eb = document.getElementById('hero-eyebrow');
     if (eb) {
@@ -8121,6 +8139,8 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       if (bar) bar.style.width = pct + '%';
       var cnt = document.getElementById('home-todo-count');
       if (cnt) cnt.textContent = doneCount + '/' + all.length;
+      var homeTodo = document.getElementById('home-todo');
+      if (homeTodo) homeTodo.classList.toggle('alles-fertig', all.length > 0 && doneCount === all.length);
 
       // Zugeklappt bleibt die dringendste offene Aufgabe als Zeile stehen,
       // damit der Kasten nicht voellig leer wirkt.
@@ -9056,7 +9076,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     var tab = document.querySelector('.tab-btn[data-tab="planen"]');
     if (tab) {
       var tp = tab.querySelector('.notiz-punkt');
-      if (anzahl > 0) {
+      if (anzahl > 0 && document.documentElement.getAttribute('data-phase') === 'vor') {
         if (!tp) { tp = document.createElement('span'); tp.className = 'notiz-punkt'; tab.appendChild(tp); }
         tp.textContent = anzahl > 9 ? '9+' : String(anzahl);
       } else if (tp) { tp.remove(); }
@@ -9131,6 +9151,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
   // Aenderungen an der Seite selbst - nicht von Stephan oder Bilgen, sondern
   // an Angebot und Funktion. Stehen gleichberechtigt neben Notizen und Herzen.
   var SEITEN_NEUIGKEITEN = [
+    { at: '2026-10-04T22:00', text: '<b>Märkte stehen jetzt bei jedem Tag im Planer</b> – mit Uhrzeit, antippen genügt. Die Startseite zeigt am Umzugs- und Abreisetag eine Abhak-Liste, bei freien Tagen einen Würfel.' },
     { at: '2026-10-04T20:00', text: '<b>Neu: unser Inselplaner.</b> Oben auf der Kalender-Seite Touren und eigene Termine auf die Tage ziehen, mit Wetter-Ampel, Herzen für eure Wünsche und Tagebuch. Die Startseite zeigt heute, wann ihr losfahren müsst, die Stationen zum Abhaken und einen Spontan-Knopf.' },
     { at: '2026-09-27T10:00', text: '<b>Neuer Wetterkasten auf der Startseite und oben auf der Wetterseite.</b> Das Bild passt jetzt zum Wetter und zur Tageszeit \u2013 Strand bei Sonne, Palmen im Abendlicht, Sternennacht, Regen- oder Gewitterwolken, gelber Dunst bei Calima. Dar\u00fcber ziehen Wolken mit dem echten Wind, bei Regen fallen Tropfen. Rechts die Wassertemperatur, auf der Startseite dazu der Temperaturverlauf von heute und die Gezeiten als Linien. <a href="#wetter">Zum Wetter \u2192</a>' },
     { at: '2026-09-27T09:00', text: '<b>Die Wetterseite ist aufger\u00e4umt.</b> Die Liste \u201eDie n\u00e4chsten 7 Tage\u201c und die Kacheln sind weg \u2013 alles steht jetzt im Wetter-Tool: Wetter-Symbol mit Hoch und Tief je Tag, die <b>echte Wassertemperatur</b> (oben im Kasten und als eigene Linie), der Mond mit Uhrzeit von Vollmond und Neumond, und unter dem Diagramm <b>Tipps zum Tag</b>: wann Strandwetter ist, wann Kitewind, wann Ebbe f\u00fcr Popcorn Beach, den Weg zum Leuchtturm in El Cotillo und die Lagune am Risco del Paso. Neu ist auch der <b>Zeitraffer</b>: \u25b6 vorn neben Webcam, Satellit und Regen spielt die letzten Stunden ab. <a href="#wetter">Zum Wetter \u2192</a>' },
@@ -9542,7 +9563,10 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
   function initTeaserToggle(id, key){
     var box = document.getElementById(id);
     if (!box || box.tagName !== 'DETAILS') return;
-    box.open = lsGet(key, '1') !== '0';
+    // Auf der Insel bleibt der Kalender-Kasten zu, solange ihn niemand selbst aufklappt -
+    // die naechsten Tage zeigt dort die Buehne des Inselplaners.
+    var vorgabe = (id === 'home-cal' && document.documentElement.getAttribute('data-phase') === 'insel') ? '0' : '1';
+    box.open = lsGet(key, vorgabe) !== '0';
     box.addEventListener('toggle', function(){
       lsSet(key, box.open ? '1' : '0');
     });
@@ -12440,7 +12464,6 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       { id: 'f-strand', t: 'Strandtag', s: 'Liege, Buch, Meer', e: '🏖️', img: 'images/kachel-strand.webp' },
       { id: 'f-pool', t: 'Pool & Faulenzen', s: 'an der Unterkunft', e: '🛟' },
       { id: 'f-sunset', t: 'Sonnenuntergang', s: 'Aussichtspunkt suchen', e: '🌇', abend: 1, img: 'images/sonnenuntergang-fuerteventura.webp' },
-      { id: 'f-markt', t: 'Markt bummeln', s: 'welcher, steht im Tag', e: '🏪', img: 'images/kachel-markt.webp' },
       { id: 'f-einkauf', t: 'Einkaufen', s: 'Supermarkt & Vorräte', e: '🛒' },
       { id: 'f-spa', t: 'Massage / Spa', s: 'zwei Stunden Ruhe', e: '💆' }
     ];
@@ -12450,6 +12473,31 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       { id: 'g-tisch', t: 'Tisch reservieren', s: 'Abendessen', e: '🍽️', abend: 1 },
       { id: 'g-tapas', t: 'Tapas-Abend', s: 'Hafen oder Altstadt', e: '🫒', abend: 1 }
     ];
+    // Wochenmaerkte: eine Liste fuer Planer, Startseite, Spontan-Knopf und die Tabelle auf der Kalender-Seite.
+    // wd = Wochentage (0 So … 6 Sa), von/bis = Stunden. Zeiten nach Cultura Fuerteventura / Fuerteventura Rural, Stand Sept. 2026.
+    var MAERKTE = [
+      { id: 'acua',        kurz: 'Acua Water Park', t: 'Markt am Acua Water Park', ort: 'Corralejo',          wd: [2, 5], von: 9,  bis: 14, lat: 28.7280, lng: -13.8590, was: 'Kunsthandwerk, Kleidung, Souvenirs' },
+      { id: 'tradiciones', kurz: 'Tradiciones La Oliva', t: 'Mercado de las Tradiciones', ort: 'La Oliva',         wd: [2, 5], von: 10, bis: 14, lat: 28.6112, lng: -13.9269, was: 'Käse, Honig, Handwerk · im Casa del Coronel' },
+      { id: 'sunset',      kurz: 'Sunset Market Cotillo', t: 'Sunset Market', ort: 'El Cotillo',                    wd: [5],    von: 19, bis: 22, lat: 28.6860, lng: -14.0100, was: 'Kunsthandwerk & Musik am Abend', abend: 1 },
+      { id: 'lajares',     kurz: 'Lajares-Markt', t: 'Kunsthandwerksmarkt', ort: 'Lajares',                 wd: [6],    von: 10, bis: 15, lat: 28.6836, lng: -13.9333, was: 'Kunsthandwerk, Livemusik, Café' },
+      { id: 'campanario-sa', kurz: 'Flohmarkt Campanario', t: 'Floh- & Bauernmarkt', ort: 'El Campanario, Corralejo', wd: [6], von: 9,  bis: 14, lat: 28.7324, lng: -13.8707, was: 'Flohmarkt, Gemüse, Obst, Käse, Pflanzen' },
+      { id: 'campanario-so', kurz: 'Folklore Campanario', t: 'Kunsthandwerk & Folklore', ort: 'El Campanario, Corralejo', wd: [0], von: 10, bis: 14, lat: 28.7324, lng: -13.8707, was: 'Kunsthandwerk, Folklore-Tanz' },
+      { id: 'holandes',    kurz: 'Flohmarkt P. Holandés', t: 'Flohmarkt', ort: 'Parque Holandés',                   wd: [0],    von: 8,  bis: 14, lat: 28.6900, lng: -13.8560, was: 'Flohmarkt im Einkaufszentrum' },
+      { id: 'biosfera',    kurz: 'Biosfera P. Rosario', t: 'Mercado Biosfera', ort: 'Puerto del Rosario',          wd: [6],    von: 8,  bis: 13, lat: 28.4985, lng: -13.8660, was: 'Bio-Bauernmarkt am Busbahnhof' },
+      { id: 'rastro',      kurz: 'Rastro P. Rosario', t: 'Rastro (Flohmarkt)', ort: 'Puerto del Rosario',        wd: [0],    von: 8,  bis: 14, lat: 28.5005, lng: -13.8625, was: 'Flohmarkt auf der Plaza de la Paz' }
+    ];
+    function markt(id){ for (var j = 0; j < MAERKTE.length; j++) if (MAERKTE[j].id === id) return MAERKTE[j]; return null; }
+    function marktZeit(m){ return m.von + '–' + m.bis + ' Uhr'; }
+    // Maerkte, die an diesem Reisetag wirklich erreichbar sind (Anreise erst 15:45, Abreise ab ca. 12:30 weg)
+    function maerkteAm(t){
+      return MAERKTE.filter(function(m){
+        if (m.wd.indexOf(t.wd) < 0) return false;
+        if (t.i === 0 && m.bis <= 17) return false;
+        if (t.i === 13 && m.bis > 13) return false;
+        return true;
+      });
+    }
+    function wdText(wd){ return wd.map(function(d){ return WD[d]; }).join(' + '); }
     var katCache = {};
     function lenAusZone(z){ z = z || ''; return /Sehr lang/i.test(z) ? 3 : /Ganzer/i.test(z) ? 2 : /Halber/i.test(z) ? 1 : 1; }
     function kat(ref){
@@ -12472,6 +12520,12 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
           c = { id: ref, g: 'ausfluege', t: card.getAttribute('data-title') || '', s: chip ? chip.textContent.trim() : '', e: '📍',
                 img: bild ? bild.getAttribute('src') : '', len: stay >= 240 ? 2 : stay >= 120 ? 1 : 0, k: 'ausflug' };
         }
+      } else if (ref.indexOf('m:') === 0) {
+        var mk = markt(ref.slice(2));
+        if (mk) c = { id: ref, g: 'markt', t: mk.t, s: mk.ort + ' · ' + marktZeit(mk), e: '🏪', img: 'images/kachel-markt.webp', len: 0, k: 'frei', abend: mk.abend, wd: mk.wd, lat: mk.lat, lng: mk.lng };
+      } else if (ref === 'f-markt') {
+        // alte Kachel aus der ersten Fassung - wird beim Laden auf den Markt des Tages umgestellt
+        c = { id: ref, g: 'frei', t: 'Markt bummeln', s: 'welcher, steht im Tag', e: '🏪', img: 'images/kachel-markt.webp', len: 0, k: 'frei' };
       } else if (ref.indexOf('e:') === 0) {
         var rest = ref.slice(2), sp = rest.indexOf(' ');
         c = { id: ref, g: 'eigen', t: sp > 0 ? rest.slice(sp + 1) : rest, s: 'eigener Termin', e: sp > 0 ? rest.slice(0, sp) : '📌', len: 0, k: 'eigen' };
@@ -12500,6 +12554,17 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     try { plan = JSON.parse(localStorage.getItem(PLAN_KEY) || '[]'); } catch(e){}
     if (!Array.isArray(plan)) plan = [];
     plan = plan.filter(gueltig).sort(nachZeit);
+    // Alte "Markt bummeln"-Kacheln auf den konkreten Markt des Tages umstellen
+    function planMigrieren(liste){
+      var geaendert = false;
+      liste.forEach(function(p){
+        if (p.ref !== 'f-markt') return;
+        var t = tagVon(p.day), mk = t ? maerkteAm(t).filter(function(m){ return !m.abend; })[0] || maerkteAm(t)[0] : null;
+        if (mk) { p.ref = 'm:' + mk.id; p.slot = mk.abend ? 'abend' : 'tag'; geaendert = true; }
+      });
+      return geaendert;
+    }
+    var migriert = planMigrieren(plan);
     var vomServer = false, zuletztLokal = 0, sendTimer = null, wartet = false;
     function speichern(){ try { localStorage.setItem(PLAN_KEY, JSON.stringify(plan)); } catch(e){} }
     function nid(){ return Math.random().toString(36).slice(2, 7); }
@@ -12541,7 +12606,9 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
         var a = s.split('|'), m = d.plan[s] || {};
         return a.length === 4 ? { uid: a[0], ref: a[1], day: a[2], slot: a[3], by: m.by, at: m.at || 0 } : null;
       }).filter(gueltig).sort(nachZeit);
-      if (JSON.stringify(neu) !== JSON.stringify(plan)) { plan = neu; speichern(); alles(); }
+      var mig = planMigrieren(neu);
+      if (JSON.stringify(neu) !== JSON.stringify(plan)) { plan = neu; if (mig) geaendert(); else { speichern(); alles(); } }
+      else if (mig) geaendert();
     }
     function syncAnzeigen(){
       var el = $('ip-sync');
@@ -12564,7 +12631,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       });
       return out;
     }
-    function hatMarkt(t){ return fest(t).some(function(f){ return f.t.indexOf('🏪') === 0; }); }
+    function hatMarkt(t){ return maerkteAm(t).length > 0; }
 
     // ---- Konflikt-Waechter und Passt-zusammen-Hinweise ----
     function pruefen(p){
@@ -12578,7 +12645,8 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       }
       if (c.k === 'insel') out.push({ l: 'info', m: 'Fähre vorher buchen und Ausweis mitnehmen.' });
       if (p.ref === 'trip-lobos' || p.ref === 'ex:isla-de-lobos') out.push({ l: 'info', m: 'Lobos: Genehmigung und Fähre vorher sichern.' });
-      if (p.ref === 'f-markt' && !hatMarkt(t)) out.push({ l: 'bad', m: 'An diesem Tag steht kein Markt im Kalender.' });
+      if (c.g === 'markt' && c.wd.indexOf(t.wd) < 0) out.push({ l: 'bad', m: c.t + ' (' + c.s.split(' · ')[0] + ') gibt es nur ' + wdText(c.wd) + '.' });
+      if (c.g === 'markt' && t.i === 0) out.push({ l: 'bad', m: 'Anreisetag: Landung erst 15:45, der Markt ist dann zu.' });
       if ((p.ref === 'trip-norden' || p.ref === 'trip-vulkane' || p.ref === 'trip-emtb') && t.wd === 6) out.push({ l: 'good', m: 'Samstag: Kunsthandwerksmarkt in Lajares liegt auf dem Weg.' });
       if (p.ref === 'trip-norden' && t.wd === 5) out.push({ l: 'good', m: 'Freitag: abends Sunset Market in El Cotillo.' });
       if ((p.ref === 'trip-stadt' || p.ref === 'trip-rosario-shopping' || p.ref === 'g-gelato') && t.key === '2026-10-10') out.push({ l: 'good', m: 'Abends ELARA in Puerto del Rosario, gleich mitnehmen.' });
@@ -12618,6 +12686,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     function mitnehmen(c){
       if (!c) return [];
       if (MITNEHMEN[c.id]) return MITNEHMEN[c.id];
+      if (c.g === 'markt') return ['Bargeld', 'Einkaufstasche'];
       var card = exKarte(c), cat = card ? card.getAttribute('data-cat') || '' : '', l = [];
       if (/strand/.test(cat)) l.push('Badesachen', 'Sonnencreme');
       if (/natur|aktiv|aussicht/.test(cat)) l.push('Feste Schuhe', 'Wasser');
@@ -12652,6 +12721,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
         });
         return out;
       }
+      if (c.g === 'markt') return [{ i: 0, label: c.t + ', ' + c.s.split(' · ')[0], lat: c.lat, lng: c.lng }];
       var card = exKarte(c);
       return card ? [{ i: 0, label: c.t, lat: +card.getAttribute('data-lat'), lng: +card.getAttribute('data-lng') }] : [];
     }
@@ -12683,9 +12753,27 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       }).join('') + '</div></div>';
     }
     // Heute-Modus: Losfahr-Uhr, naechste Station gross mit Navigation, Stationen zum Abhaken, Mitnehm-Liste
+    var UMZUG_LISTE = ['Kühlschrank und Vorräte leeren', 'Ladekabel, Adapter, Bad einsammeln', 'Müll raus', 'Schlüssel an Nad zurück', 'Auszug bis 11:00', 'Einzug Renacer Zen ab 15:00'];
+    var ABREISE_LISTE = ['Koffer packen, Zimmer kontrollieren', 'Schlüssel übergeben', 'Mietwagen volltanken', 'Mietwagen bei Autoreisen abgeben', 'Pässe und Bordkarten', 'Online-Check-in erledigt'];
     function heuteModus(t, c){
-      if (!c) return '';
-      var h = '', lf = losfahren(c, t), st = stationen(c), hk = haken(), mitZeit = lf && lf.min != null;
+      var h = '', jz = inselMinJetzt();
+      if (t.key === UMZUG) {
+        h += '<div class="ip-hm-uhr' + (jz > 10 * 60 + 30 && jz < 11 * 60 ? ' spaet' : '') + '"><span class="big">🏠 Auszug bis 11:00 · Einzug ab 15:00</span><small>Dazwischen bleibt Zeit für einen kurzen Ausflug' + (maerkteAm(t).length ? ' oder den ' + maerkteAm(t)[0].t + ' (' + marktZeit(maerkteAm(t)[0]) + ')' : '') + '.</small></div>';
+        h += packHtml(t, { id: 'umzug' }, UMZUG_LISTE, 'Umzugstag');
+      }
+      if (t.i === 13) {
+        h += '<div class="ip-hm-uhr' + (jz > 12 * 60 + 45 ? ' spaet' : '') + '"><span class="big">🛫 Spätestens 12:45 losfahren</span><small>Rückflug 15:55 · vorher den Mietwagen abgeben · ca. 40 Min. zum Flughafen</small></div>';
+        h += packHtml(t, { id: 'abreise' }, ABREISE_LISTE, 'Abreisetag');
+      }
+      if (!c) {
+        if (t.key !== UMZUG && t.i !== 13 && t.i !== 0) h += '<div class="ip-hero-btns"><button type="button" class="btn" data-ip-wuerfel="1">🎲 Tour würfeln</button><a class="btn btn-outline" href="#kalender" data-ip-zuheute="1">Selbst planen →</a></div>';
+        return h ? '<div class="ip-hm">' + h + '</div>' : '';
+      }
+      var lf = losfahren(c, t), st = stationen(c), hk = haken(), mitZeit = lf && lf.min != null;
+      if (c.g === 'markt') {
+        var mk = markt(c.id.slice(2)), vorbei = jz > mk.bis * 60, offen = jz >= mk.von * 60 && !vorbei;
+        h += '<div class="ip-hm-uhr' + (vorbei ? ' spaet' : '') + '"><span class="big">🏪 ' + (vorbei ? 'Heute schon vorbei' : offen ? 'Jetzt geöffnet' : 'Öffnet um ' + mk.von + ' Uhr') + ' · ' + marktZeit(mk) + '</span><small>' + esc(mk.was) + '</small></div>';
+      }
       function hk_(x){ return t.key + '|' + c.id + '|s' + x.i; }
       if (lf && lf.faehre) h += '<div class="ip-hm-uhr"><span class="big">⛴️ Fähre bestimmt den Start</span><small>' + esc(lf.faehre) + '</small></div>';
       else if (mitZeit) {
@@ -12715,6 +12803,17 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       var mn = mitnehmen(c);
       if (mn.length) h += packHtml(t, c, mn, 'Mitnehmen');
       return h ? '<div class="ip-hm">' + h + '</div>' : '';
+    }
+    function wuerfeln(ab){
+      var frei = TAGE.filter(function(t){ return t.i >= ab && t.i < 13 && t.key !== UMZUG && !eintraege(t.key, 'tag').length; })[0];
+      if (!frei) { meldung('Kein freier Tag mehr – ihr seid komplett verplant'); return null; }
+      var kand = katListe('touren').filter(function(c){
+        return !plan.some(function(p){ return p.ref === c.id; }) && (!c.nurWd || c.nurWd.indexOf(frei.wd) >= 0) && !(frei.i === 0 && c.len >= 2);
+      });
+      if (!kand.length) { meldung('Alle Tagestrips sind schon eingeplant'); return null; }
+      var c = kand[Math.floor(Math.random() * kand.length)];
+      einplanen(c.id, null, frei.key, 'tag');
+      return frei;
     }
     // ---- Stufe 3 (seit 04.10.2026) ----
     // Wetter-Ampel: Vorhersage (Open-Meteo), Wellen und Saharastaub je Tag, zwischengespeichert fuer unterwegs
@@ -12785,7 +12884,8 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     }
     function wxChip(key){
       var s2 = wxStufe(key);
-      if (!s2) return '<span class="ip-wx leer" title="Vorhersage reicht noch nicht so weit">Wetter folgt</span>';
+      var tw = tagVon(key);
+      if (!s2) return tw && tw.i < heuteIdx() ? '' : '<span class="ip-wx leer" title="Vorhersage reicht noch nicht so weit">Wetter folgt</span>';
       var w = s2.w;
       return '<span class="ip-wx ' + s2.stufe + '" title="Wetter-Ampel für das, was an dem Tag geplant ist">' + (WMO_ICON[w.code] || '') + ' ' + Math.round(w.tmax) + '° · 💨 ' + Math.round(w.wind) + '</span>';
     }
@@ -12965,6 +13065,18 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
         if (plan.some(function(p){ return p.ref === c.id && p.day === heuteKey; })) return;
         l.push({ c: c, fahrt: fahrt, vorOrt: vorOrt, zurueck: zurueck, punkte: punkte, ziel: ziel, herzen: Object.keys(w).length, kurz: vorOrt < stay });
       });
+      // Maerkte, die jetzt noch lohnen
+      if (TAGE[hi]) maerkteAm(TAGE[hi]).forEach(function(m){
+        var ref = 'm:' + m.id, c = kat(ref); if (!c) return;
+        if (plan.some(function(p){ return p.ref === ref && p.day === heuteKey; })) return;
+        var ziel = { lat: m.lat, lng: m.lng };
+        var fahrt = meinOrt ? fahrMin(kmZwischen(meinOrt, ziel)) : fahrMin(kmZwischen({ lat: 28.7298, lng: -13.8694 }, ziel));
+        var da = Math.max(jetzt + fahrt, m.von * 60), rest = m.bis * 60 - da;
+        if (rest < 40 || da - jetzt > min - 40) return;
+        var vorOrt = Math.min(90, rest, min - 2 * fahrt);
+        if (vorOrt < 40) return;
+        l.push({ c: c, fahrt: fahrt, vorOrt: vorOrt, zurueck: da + vorOrt + fahrt, punkte: 1, ziel: ziel, herzen: Object.keys(wuensche(ref)).length, kurz: false, markt: m, ab: da > jetzt + fahrt ? m.von : 0 });
+      });
       l.sort(function(a, b){ return a.punkte - b.punkte; });
       return l.slice(0, 4);
     }
@@ -12981,8 +13093,8 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
         var l = spontanVorschlaege(spZeit);
         if (!l.length) h += '<p class="ip-sp-leer">Dafür reicht die Zeit gerade nicht – oder es wird vorher dunkel. Vielleicht ein Strandspaziergang vor der Tür?</p>';
         else h += '<div class="ip-sp-liste">' + l.map(function(v){
-          return '<div class="ip-sp-v"><span class="bild" style="background-image:url(\'' + esc(v.c.img || '') + '\')"></span><div><b>' + (v.herzen ? '❤️ ' : '') + esc(v.c.t) + '</b>' +
-            '<small>' + v.fahrt + ' Min. hin · ' + String(fmtDuration(v.vorOrt)).trim() + (v.kurz ? ' (kurz)' : '') + ' vor Ort · zurück ca. ' + fmtClock(v.zurueck) + '</small>' +
+          return '<div class="ip-sp-v"><span class="bild" style="background-image:url(\'' + esc(v.c.img || '') + '\')"></span><div><b>' + (v.herzen ? '❤️ ' : '') + esc(v.c.t) + (v.markt ? ' · ' + esc(v.markt.ort.split(',')[0]) : '') + '</b>' +
+            '<small>' + (v.markt ? (v.ab ? 'öffnet ' + v.ab + ' Uhr · ' : 'bis ' + v.markt.bis + ' Uhr geöffnet · ') : '') + v.fahrt + ' Min. hin · ' + String(fmtDuration(v.vorOrt)).trim() + (v.kurz ? ' (kurz)' : '') + ' vor Ort · zurück ca. ' + fmtClock(v.zurueck) + '</small>' +
             '<div class="knoepfe"><a class="btn" href="' + navLink(v.ziel) + '" target="_blank" rel="noopener">Los ↗</a><button type="button" class="btn btn-outline" data-ip-sp-plan="' + esc(v.c.id) + '">Für heute einplanen</button></div></div></div>';
         }).join('') + '</div>';
         if (!meinOrt) h += '<button type="button" class="btn btn-outline ip-b-link" data-ip-standort="1">📍 Lieber ab meinem Standort rechnen</button>';
@@ -13027,7 +13139,26 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       eintraege(key).forEach(function(p){ pruefen(p).forEach(function(x){ h.push(x); }); });
       var ws = wxStufe(key);
       if (ws) ws.hinweise.forEach(function(x){ h.push({ l: x.l === 'rot' ? 'bad' : x.l === 'gelb' ? 'good' : 'info', m: (x.l === 'info' ? '☀️ ' : '🌦 ') + x.m }); });
+      var gesehen = {};
+      h = h.filter(function(x){ if (gesehen[x.m]) return false; gesehen[x.m] = true; return true; });
       return h.length ? '<div class="ip-hinweise">' + h.map(function(x){ return '<div class="ip-hw ' + x.l + '">' + esc(x.m) + '</div>'; }).join('') + '</div>' : '';
+    }
+    // Maerkte des Tages als gestrichelte Zeile: Antippen legt sie in den Plan
+    function marktVorschlaege(t, hi){
+      if (t.i < hi) return '';
+      var l = maerkteAm(t).filter(function(m){ return !plan.some(function(p){ return p.day === t.key && p.ref === 'm:' + m.id; }); });
+      if (!l.length) return '';
+      return '<div class="ip-maerkte">' + l.map(function(m){
+        return '<button type="button" class="ip-mk" data-ip-markt="m:' + m.id + '|' + t.key + '" title="' + esc(m.t + ', ' + m.ort + ' – ' + m.was) + '"><span class="plus">＋</span><span>🏪 <b>' + esc(m.kurz) + '</b></span><span class="zt">' + esc(m.abend ? 'ab ' + m.von : m.von + '–' + m.bis) + '</span></button>';
+      }).join('') + '</div>';
+    }
+    function marktTabelle(){
+      var tb = $('markt-tabelle'); if (!tb) return;
+      var hi = heuteIdx(), heute = TAGE[hi], morgen = TAGE[hi + 1];
+      tb.innerHTML = MAERKTE.map(function(m){
+        var tag = heute && maerkteAm(heute).indexOf(m) >= 0 ? '<span class="mk-heute">heute</span>' : morgen && maerkteAm(morgen).indexOf(m) >= 0 ? '<span class="mk-morgen">morgen</span>' : '';
+        return '<tr><td>' + esc(m.t) + ', ' + esc(m.ort) + ' <span class="dim">(' + esc(m.was) + ')</span>' + tag + '</td><td>' + wdText(m.wd) + ' ' + marktZeit(m) + '</td></tr>';
+      }).join('') + '<tr><td>Tetir, Plaza Juan Rodríguez <span class="dim">(mit Werkstätten &amp; Livemusik)</span></td><td>alle 2 Monate, 2. Sonntag – Datum offen</td></tr>';
     }
     function leisteZeichnen(){
       var el = $('ip-leiste'); if (!el) return;
@@ -13038,6 +13169,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
           '<div class="ip-tag-h" title="Antippen oder ziehen, um den ganzen Tag zu tauschen"><div class="l1"><span class="wd">' + WOCHENTAGE[t.wd] + '</span><span class="dt">' + t.lab + ' <span class="tausch" aria-hidden="true">⇄</span></span></div>' +
           '<div class="l2"><span>' + (t.i === hi ? '<b>Heute · Tag ' + (t.i + 1) + '</b>' : 'Tag ' + (t.i + 1)) + '</span><span>🏠 ' + t.basis + '</span></div><div class="l3">' + wxChip(t.key) + '</div></div>' +
           '<div class="ip-fix">' + fest(t).map(function(f){ return '<span class="ip-fx' + (f.reise ? ' reise' : '') + '">' + esc(f.t) + '</span>'; }).join('') + '</div>' +
+          marktVorschlaege(t, hi) +
           '<div class="ip-zone" data-ip-drop="' + t.key + '|tag"><span class="zl">Tagsüber</span>' + (tag || '<span class="ip-leer">frei</span>') + '</div>' +
           '<div class="ip-zone abend" data-ip-drop="' + t.key + '|abend"><span class="zl">Abends</span>' + ab + '</div>' +
           hinweise(t.key) + (t.i <= hi ? erinnerungHtml(t) : '') + '</section>';
@@ -13107,14 +13239,19 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       box.classList.toggle('hat-tag', hi >= 0 && hi <= 13);
       if (hi < 0 || hi > 13) { box.innerHTML = ''; return; }
       var t = TAGE[hi], haupt = hauptVon(t.key), c = haupt[0], ab = abendVon(t.key), f = fest(t);
-      var titel = c ? c.t : 'Freier Tag', unter = c ? c.s : 'Noch nichts geplant – im Planer würfeln?';
+      var mkHeute = maerkteAm(t);
+      var titel = c ? c.t : 'Freier Tag', unter = c ? c.s : (mkHeute.length ? 'Noch nichts geplant · heute wäre ' + mkHeute[0].t + ' in ' + mkHeute[0].ort : 'Noch nichts geplant');
+      var sonder = !c && (t.i === 0 ? { t: 'Anreisetag', s: 'Landung 15:45 · Schlüssel bei Nad', e: '✈️', img: 'images/kachel-unterkuenfte.webp' }
+                        : t.key === UMZUG ? { t: 'Umzugstag', s: 'Oasis Duna → Renacer Zen' + (mkHeute.length ? ' · dazwischen ' + mkHeute[0].kurz : ''), e: '🏠', img: 'images/kachel-unterkuenfte.webp' }
+                        : t.i === 13 ? { t: 'Abreisetag', s: 'Rückflug 15:55 · bis dahin noch ein letztes Bad?', e: '🛫', img: 'images/sonnenuntergang-fuerteventura.webp' } : null);
+      if (sonder) { titel = sonder.t; unter = sonder.s; }
       if (haupt.length > 1) unter = 'dazu ' + haupt.slice(1).map(function(x){ return x.t; }).join(', ');
       if (ab.length) unter += (unter ? ' · ' : '') + 'abends ' + ab.map(function(x){ return x.t; }).join(', ');
-      var bild = c ? stil(c) : "--k:var(--ip-k-frei);--img:url('images/kachel-strand.webp');";
+      var bild = c ? stil(c) : sonder ? "--k:var(--ip-k-eigen);--img:url('" + sonder.img + "');" : "--k:var(--ip-k-frei);--img:url('images/kachel-strand.webp');";
       var wsH = wxStufe(t.key);
       if (wsH) f = [{ t: (WMO_ICON[wsH.w.code] || '') + ' ' + Math.round(wsH.w.tmax) + '° · Wind ' + Math.round(wsH.w.wind) + ' km/h' + (wsH.stufe === 'rot' ? ' · ⚠️' : wsH.stufe === 'gelb' ? ' · Wetter beachten' : '') }].concat(f);
       var h = '<div class="ip-b"><div class="ip-b-eb">Heute · ' + WOCHENTAGE[t.wd] + ', ' + t.lab + ' · Tag ' + (t.i + 1) + ' von 14</div>' +
-        '<a class="ip-hero" href="#kalender" data-ip-zuheute="1" style="' + bild + '"><div class="he" aria-hidden="true">' + esc(c ? c.e : '☀️') + '</div><div class="ht">' + esc(titel) + '</div><div class="hs">' + esc(unter) + '</div>' +
+        '<a class="ip-hero" href="#kalender" data-ip-zuheute="1" style="' + bild + '"><div class="he" aria-hidden="true">' + esc(c ? c.e : sonder ? sonder.e : '☀️') + '</div><div class="ht">' + esc(titel) + '</div><div class="hs">' + esc(unter) + '</div>' +
         (f.length ? '<div class="pills">' + f.slice(0, 4).map(function(x){ return '<span>' + esc(x.t) + '</span>'; }).join('') + '</div>' : '') + '</a>';
       h += heuteModus(t, c);
       if (wsH && wsH.hinweise.length) h += '<div class="ip-hinweise">' + wsH.hinweise.map(function(x){ return '<div class="ip-hw ' + (x.l === 'rot' ? 'bad' : x.l === 'gelb' ? 'good' : 'info') + '">' + esc(x.m) + '</div>'; }).join('') + '</div>';
@@ -13123,8 +13260,11 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       var naechste = TAGE.slice(t.i + 1, t.i + 4);
       if (naechste.length) {
         h += '<div class="ip-b-h">Die nächsten Tage</div><div class="ip-next">' + naechste.map(function(n){
-          var x = hoehepunkt(n), wn = wxTag(n.key), wsN = wxStufe(n.key);
-          if (wn) x = { t: x.t, e: x.e, k: x.k, img: x.img, s: (x.s ? x.s + ' · ' : '') + (WMO_ICON[wn.code] || '') + ' ' + Math.round(wn.tmax) + '°' + (wsN && wsN.stufe !== 'gruen' ? ' · ⚠️ Wetter' : '') };
+          var x = hoehepunkt(n), wn = wxTag(n.key), wsN = wxStufe(n.key), mkN = maerkteAm(n);
+          var zus = [];
+          if (mkN.length && (!x.g || x.g !== 'markt')) zus.push('🏪 ' + mkN[0].kurz);
+          if (wn) zus.push((WMO_ICON[wn.code] || '') + ' ' + Math.round(wn.tmax) + '°' + (wsN && wsN.stufe !== 'gruen' ? ' · ⚠️ Wetter' : ''));
+          if (zus.length) x = { t: x.t, e: x.e, k: x.k, img: x.img, s: (x.s ? x.s + ' · ' : '') + zus.join(' · ') };
           return '<a class="ip-next-r" href="#kalender" data-ip-tag="' + n.i + '"><div class="nd">' + WD[n.wd] + '<b>' + n.dd + '.</b></div><div class="ni" style="' + stil(x) + '">' + (x.img ? '' : esc(x.e)) + '</div><div class="nt">' + esc(x.t) + '<small>' + esc(x.s || '') + '</small></div></a>';
         }).join('') + '</div>';
       }
@@ -13136,7 +13276,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     }
 
     function alles(){
-      leisteZeichnen(); ablageZeichnen(); energieZeichnen(); buehneZeichnen(); syncAnzeigen();
+      leisteZeichnen(); ablageZeichnen(); energieZeichnen(); buehneZeichnen(); syncAnzeigen(); marktTabelle();
       frischUid = null;
     }
     function zuTag(i, sanft){
@@ -13316,6 +13456,9 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
         einplanen(spp.getAttribute('data-ip-sp-plan'), null, TAGE[hi2].key, inselMinJetzt() >= 18 * 60 ? 'abend' : 'tag');
         spZeit = 0; buehneZeichnen(); return;
       }
+      var mkb = e.target.closest('[data-ip-markt]');
+      if (mkb) { var am = mkb.getAttribute('data-ip-markt').split('|'), cm = kat(am[0]); if (cm) einplanen(am[0], null, am[1], cm.abend ? 'abend' : 'tag'); return; }
+      if (e.target.closest('[data-ip-wuerfel]')) { wuerfeln(Math.max(0, heuteIdx())); return; }
       var tbk = e.target.closest('[data-ip-tb]');
       if (tbk) { tbOeffnen(tbk.getAttribute('data-ip-tb')); return; }
       if (e.target.closest('[data-ip-standort]')) {
@@ -13327,6 +13470,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
         var tg = e.target.closest('#ip-leiste .ip-tag');
         if (tg) { var b2 = +tg.getAttribute('data-tagidx'), a2 = sel.tag; waehlen(null); if (b2 !== a2) tauschen(a2, b2); return; }
       }
+      if (sel && sel.tag != null && e.target.closest('.ip-mk')) return;
       var kopfK = e.target.closest('#ip-leiste .ip-tag-h');
       if (kopfK && !sel) { waehlen({ tag: +kopfK.parentNode.getAttribute('data-tagidx') }); return; }
       var k = e.target.closest('.ip-tile[data-ref]');
@@ -13393,18 +13537,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       setTimeout(function(){ b.classList.remove('sicher'); l.textContent = 'Alles leeren'; }, 3000);
     });
     // Wuerfel: naechsten freien Tag mit einer noch nicht geplanten, an dem Tag moeglichen Tour fuellen
-    knopf('ip-wuerfel', function(){
-      var ab = Math.max(0, heuteIdx());
-      var frei = TAGE.filter(function(t){ return t.i >= ab && t.i < 13 && t.key !== UMZUG && !eintraege(t.key, 'tag').length; })[0];
-      if (!frei) { meldung('Kein freier Tag mehr – ihr seid komplett verplant'); return; }
-      var kand = katListe('touren').filter(function(c){
-        return !plan.some(function(p){ return p.ref === c.id; }) && (!c.nurWd || c.nurWd.indexOf(frei.wd) >= 0) && !(frei.i === 0 && c.len >= 2);
-      });
-      if (!kand.length) { meldung('Alle Tagestrips sind schon eingeplant'); return; }
-      var c = kand[Math.floor(Math.random() * kand.length)];
-      einplanen(c.id, null, frei.key, 'tag');
-      zuTag(frei.i, true);
-    });
+    knopf('ip-wuerfel', function(){ var frei = wuerfeln(Math.max(0, heuteIdx())); if (frei) zuTag(frei.i, true); });
 
     // Beim Oeffnen der Kalender-Seite zum heutigen Tag rollen
     window.addEventListener('hashchange', function(){
@@ -13412,6 +13545,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     });
 
     alles();
+    if (migriert) geaendert();
     if (/^#kalender/.test(location.hash)) setTimeout(function(){ zuTag(heuteIdx(), false); }, 120);
     setInterval(function(){ if (document.visibilityState === 'visible') buehneZeichnen(); }, 60000);
     wetterLaden();
