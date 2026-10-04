@@ -1668,6 +1668,42 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
 .ip-next-r .nt small { display: block; font-weight: 500; color: var(--ink-dim); font-size: 12px; }
 .ip-b-link { align-self: flex-start; }
 @media (prefers-reduced-motion: reduce) { .ip-tile, .ip-zone, .ip-trash, .ip-selbar { transition: none !important; animation: none !important; } }
+
+/* Inselplaner Stufe 2 (seit 04.10.2026): Tage tauschen, Standort, Heute-Modus, Mitnehm-Liste */
+.ip-ortknopf { align-self: flex-start; border: 1px solid var(--border); background: var(--surface-2); color: var(--ink-dim); border-radius: 999px; padding: 7px 13px; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.ip-ortknopf[aria-pressed="true"] { background: var(--teal); color: var(--teal-ink); border-color: var(--teal); }
+.ip-tag-h { cursor: grab; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; border-radius: 10px; }
+.ip-tag-h .tausch { color: var(--ink-dim); font-size: 13px; font-weight: 600; }
+.ip-tag.over { outline: 3px dashed var(--teal); outline-offset: 2px; }
+.ip-tag.tausch-sel { outline: 3px solid var(--teal); outline-offset: 2px; }
+.ip-tauscht .ip-tag:not(.tausch-sel) { cursor: pointer; animation: ip-puls 1.6s ease-in-out infinite; }
+.ip-ghost-kopf { width: 190px; background: var(--surface-2); border: 1px solid var(--teal); border-radius: 12px; padding: 8px 10px; color: var(--ink); }
+.ip-hm { display: flex; flex-direction: column; gap: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 14px; }
+.ip-hm-uhr { display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; border-radius: 12px; background: color-mix(in srgb, var(--teal) 10%, transparent); }
+.ip-hm-uhr .big { font-weight: 800; font-size: 17px; }
+.ip-hm-uhr small { color: var(--ink-dim); font-size: 13px; }
+.ip-hm-uhr.spaet { background: var(--warn-bg); }
+.ip-hm-uhr.spaet .big { color: var(--warn); }
+.ip-hm-next { display: flex; flex-direction: column; gap: 3px; }
+.ip-hm-next .lbl, .ip-hm-pack .lbl { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-dim); }
+.ip-hm-next b { font-size: 20px; line-height: 1.2; }
+.ip-hm-next small { color: var(--ink-dim); font-size: 13px; }
+.ip-hm-btns { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+.ip-hm-btns .btn { min-height: 42px; padding: 0 14px; font-size: 14px; }
+.ip-hm-liste { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.ip-hm-haken { width: 100%; display: grid; grid-template-columns: 24px 46px minmax(0, 1fr); gap: 8px; align-items: center; border: 0; border-bottom: 1px solid var(--border); background: none; padding: 8px 2px; font: inherit; font-size: 14px; color: var(--ink); text-align: left; cursor: pointer; }
+.ip-hm-liste li:last-child .ip-hm-haken { border-bottom: 0; }
+.ip-hm-haken .kasten { width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--border); display: grid; place-items: center; font-size: 13px; font-weight: 800; color: var(--teal-ink); }
+.ip-hm-haken.an .kasten { background: var(--teal); border-color: var(--teal); }
+.ip-hm-haken .zeit { font-family: "JetBrains Mono", monospace; font-size: 12.5px; color: var(--ink-dim); }
+.ip-hm-haken.an .was { text-decoration: line-through; color: var(--ink-dim); }
+.ip-hm-pack { display: flex; flex-direction: column; gap: 6px; }
+.ip-hm-pack .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.ip-pack { border: 1px solid var(--border); background: var(--surface-2); color: var(--ink); border-radius: 999px; padding: 6px 11px; font: inherit; font-size: 13px; cursor: pointer; }
+.ip-pack.an { background: var(--good-bg); color: var(--good); border-color: transparent; text-decoration: line-through; }
+.ip-b > .ip-hm-pack { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 12px; }
+.lm-ort { width: 36px; height: 36px; border-radius: 8px; border: 2px solid rgba(0,0,0,.2); background: #fff; color: #1c1a17; font-size: 18px; line-height: 1; cursor: pointer; display: grid; place-items: center; padding: 0; }
+.lm-ort.laedt { opacity: .5; }
 </style>
 
 <nav class="topnav">
@@ -3123,7 +3159,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     <section class="ip" id="inselplaner" aria-labelledby="ip-titel">
       <div class="ip-kopf">
         <div class="ip-titelzeile"><h2 id="ip-titel">Unser Plan</h2><span class="ip-sync" id="ip-sync"></span></div>
-        <p class="sub">Touren und eigene Termine auf die Tage legen: Kachel lange gedrückt halten und auf einen Tag ziehen, oder antippen und dann auf den Tag tippen. Märkte, Feste und der Umzug stehen schon fest drin.</p>
+        <p class="sub">Touren und eigene Termine auf die Tage legen: Kachel lange gedrückt halten und auf einen Tag ziehen, oder antippen und dann auf den Tag tippen. Märkte, Feste und der Umzug stehen schon fest drin. Ganze Tage tauschen: Datum antippen oder ziehen.</p>
         <div class="ip-tools">
           <button type="button" class="ip-tbtn prim" id="ip-wuerfel"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1.3" class="fi"/><circle cx="12" cy="12" r="1.3" class="fi"/><circle cx="15.5" cy="15.5" r="1.3" class="fi"/></svg><span>Freien Tag füllen</span></button>
           <button type="button" class="ip-tbtn" id="ip-zuheute"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/><circle cx="12" cy="15.5" r="1.8" class="fi"/></svg><span>Zu heute</span></button>
@@ -3139,6 +3175,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
           <button type="button" class="ip-tab" role="tab" data-tab="essen"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M17 21V3c-2.5 1-4 3.5-4 7v3h4"/></svg>Essen<span class="cnt"></span></button>
           <button type="button" class="ip-tab" role="tab" data-tab="eigen"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6-5.5-6-11a6 6 0 0 1 12 0c0 5.5-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/></svg>Eigene<span class="cnt"></span></button>
         </div>
+        <button type="button" class="ip-ortknopf" id="ip-ort" aria-pressed="false">📍 Entfernungen ab meinem Standort</button>
         <div class="ip-row" id="ip-row"></div>
         <form class="ip-eigen" id="ip-eigen-form" hidden>
           <select id="ip-eigen-emoji" aria-label="Symbol"><option>📌</option><option>🎂</option><option>🍷</option><option>🤿</option><option>🏄</option><option>💆</option><option>📞</option><option>🛒</option><option>🎶</option><option>📸</option></select>
@@ -8333,6 +8370,31 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     return pts;
   }
 
+  // ---- Eigener Standort (seit 04.10.2026): Knopf auf den Karten, Entfernungen im Inselplaner ----
+  var meinOrt = null;   // {lat, lng, genau, at}
+  function standortHolen(){
+    return new Promise(function(ok, nein){
+      if (!navigator.geolocation) { nein({ code: 0 }); return; }
+      navigator.geolocation.getCurrentPosition(function(pos){
+        meinOrt = { lat: pos.coords.latitude, lng: pos.coords.longitude, genau: pos.coords.accuracy, at: Date.now() };
+        Object.keys(LM).forEach(function(k){ try { refreshMap(k); } catch(e){} });
+        ok(meinOrt);
+      }, function(err){ nein(err || { code: 0 }); }, { enableHighAccuracy: true, timeout: 12000, maximumAge: 60000 });
+    });
+  }
+  function standortFehlerText(err){
+    return err && err.code === 1 ? 'Standort nicht freigegeben – in den Handy-Einstellungen für Safari bzw. die App erlauben.'
+                                 : 'Standort gerade nicht verfügbar. Draußen klappt es meist besser.';
+  }
+  // Luftlinie in km
+  function kmZwischen(a, b){
+    var R = 6371, r = Math.PI / 180, dLa = (b.lat - a.lat) * r, dLo = (b.lng - a.lng) * r;
+    var x = Math.sin(dLa / 2) * Math.sin(dLa / 2) + Math.cos(a.lat * r) * Math.cos(b.lat * r) * Math.sin(dLo / 2) * Math.sin(dLo / 2);
+    return 2 * R * Math.asin(Math.sqrt(x));
+  }
+  // Grobe Fahrzeit: Strasse ca. 1,3 x Luftlinie, im Schnitt 50 km/h, plus Parken
+  function fahrMin(km){ return Math.round(km * 1.3 / 50 * 60 + 3); }
+
   function buildMap(kind){
     var host = document.getElementById('map-' + kind);
     if (!host || typeof L === 'undefined' || LM[kind]) return;
@@ -8346,6 +8408,26 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
 
     var layer = L.layerGroup().addTo(map);
     LM[kind] = {map: map, layer: layer};
+    // Knopf "Mein Standort" oben rechts
+    var ortCtl = L.control({position: 'topright'});
+    ortCtl.onAdd = function(){
+      var b = L.DomUtil.create('button', 'lm-ort');
+      b.type = 'button'; b.title = 'Mein Standort'; b.setAttribute('aria-label', 'Mein Standort zeigen'); b.textContent = '\uD83D\uDCCD';
+      L.DomEvent.disableClickPropagation(b);
+      L.DomEvent.on(b, 'click', function(){
+        b.classList.add('laedt');
+        standortHolen().then(function(o){
+          b.classList.remove('laedt');
+          map.flyTo([o.lat, o.lng], Math.max(map.getZoom(), 15), {duration: 0.6});
+          if (typeof Planer !== 'undefined' && Planer) Planer.render();
+        }, function(err){
+          b.classList.remove('laedt');
+          if (typeof Planer !== 'undefined' && Planer) Planer.meldung(standortFehlerText(err));
+        });
+      });
+      return b;
+    };
+    ortCtl.addTo(map);
     refreshMap(kind);
 
     var startView = kind === 'acc' ? 'corralejo' : (kind === 'tour' ? 'all' : 'nord');
@@ -8408,6 +8490,11 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
                      (an ? ' \u00b7 Entfernungen gelten ab hier' : '') + '</span>');
         mk.addTo(m.layer);
       });
+    }
+    // Eigener Standort als blauer Punkt
+    if (meinOrt) {
+      L.circleMarker([meinOrt.lat, meinOrt.lng], {radius: 9, color: '#ffffff', weight: 3, fillColor: '#2b7fb8', fillOpacity: 1})
+        .bindPopup('<span class="lm-pop-t">Du bist hier</span>').addTo(m.layer);
     }
   }
 
@@ -12433,6 +12520,149 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       return out;
     }
 
+    // ---- Stufe 2 (seit 04.10.2026): Losfahr-Uhr, Heute-Modus, Mitnehm-Liste, Standort ----
+    // Fixpunkte, von denen aus die Losfahrzeit rueckwaerts gerechnet wird (stop = Index in TRIPS[].stops)
+    var LOSFAHR = {
+      'trip-vegan':  { stop: 5, um: 13 * 60 + 30, grund: 'Tisch im El Invernadero um 13:30' },
+      'trip-norden': { stop: 5, sonne: -30, grund: 'rechtzeitig zum Sonnenuntergang am Leuchtturm' }
+    };
+    // Bei Faehren entscheidet der Fahrplan bzw. die Lobos-Schicht
+    var LOSFAHR_FAEHRE = {
+      'trip-lobos': 'Die Losfahrzeit hängt an eurer Lobos-Schicht (Genehmigung) und der Fähre ab Corralejo.',
+      'trip-lanzarote': 'Die Losfahrzeit hängt an der Fähre – Abfahrt im Ticket prüfen, 10 Min. zum Hafen einplanen.',
+      'trip-grancanaria': 'Die Losfahrzeit hängt an der Fähre ab Morro Jable – knapp 2 Std. Fahrt und 45 Min. Einchecken einplanen.'
+    };
+    var MITNEHMEN = {
+      'trip-vegan': ['Feste Schuhe', 'Wasser', 'Tischreservierung 13:30'],
+      'trip-lanzarote': ['Ausweis', 'Fährtickets', 'Sonnencreme', 'Kreditkarte'],
+      'trip-grancanaria': ['Ausweis', 'Fährtickets', 'Powerbank', 'Snacks für die Fähre', 'Jacke'],
+      'trip-sueden': ['Vollgetankt losfahren', 'Wasser & Snacks', 'Badesachen', 'Windjacke', 'Sonnencreme'],
+      'trip-lobos': ['Lobos-Genehmigung', 'Fährticket', 'Ausweis', 'Wasser', 'Feste Schuhe', 'Badesachen', 'Sonnenhut'],
+      'trip-westen': ['Feste Schuhe', 'Wasser', 'Sonnencreme'],
+      'trip-norden': ['Badesachen', 'Jacke für den Abend', 'Bargeld für den Markt'],
+      'trip-vulkane': ['Wanderschuhe', 'Wasser', 'Sonnenhut', 'Windjacke'],
+      'trip-sotavento': ['Badesachen', 'Sonnencreme', 'Windschutz', 'Wasser & Snacks'],
+      'trip-stadt': ['Bequeme Schuhe', 'Badesachen'],
+      'trip-rosario-shopping': ['Einkaufstasche', 'Bequeme Schuhe'],
+      'trip-emtb': ['Wasser (1,5 l pro Person)', 'Sonnencreme', 'Badesachen', 'Ausweis für den Radverleih'],
+      'f-strand': ['Badesachen', 'Sonnencreme', 'Buch', 'Windschutz'],
+      'f-markt': ['Bargeld', 'Einkaufstasche']
+    };
+    function exKarte(c){ return c && c.id.indexOf('ex:') === 0 ? document.querySelector('.ex-card[data-id="' + c.id.slice(3).replace(/"/g, '') + '"]') : null; }
+    function mitnehmen(c){
+      if (!c) return [];
+      if (MITNEHMEN[c.id]) return MITNEHMEN[c.id];
+      var card = exKarte(c), cat = card ? card.getAttribute('data-cat') || '' : '', l = [];
+      if (/strand/.test(cat)) l.push('Badesachen', 'Sonnencreme');
+      if (/natur|aktiv|aussicht/.test(cat)) l.push('Feste Schuhe', 'Wasser');
+      return l;
+    }
+    function tripVon(ref){ var tr = null; if (typeof TRIPS !== 'undefined') TRIPS.forEach(function(x){ if (x.id === ref) tr = x; }); return tr; }
+    // Losfahrzeit in Minuten nach Mitternacht (Inselzeit), rueckwaerts gerechnet
+    function losfahren(c, t){
+      var tr = tripVon(c.id); if (!tr) return null;
+      if (LOSFAHR_FAEHRE[c.id]) return { faehre: LOSFAHR_FAEHRE[c.id] };
+      var tot = tripTotals(tr).total, sun = tripSunMinutes(new Date(2026, 8, 29 + t.i)), a = LOSFAHR[c.id], ab;
+      if (a) {
+        var vorher = 0;
+        tr.stops.slice(0, a.stop).forEach(function(x){ vorher += x.min; });
+        var ziel = a.um != null ? a.um : (sun.sunset != null ? sun.sunset + a.sonne : null);
+        if (ziel == null) return null;
+        ab = ziel - vorher;
+        return { min: ab, zurueck: ab + tot, grund: a.grund };
+      }
+      if (sun.dark == null) return null;
+      ab = sun.dark - tot;
+      return { min: ab, zurueck: sun.dark, grund: 'damit ihr vor der Dunkelheit zurück seid' };
+    }
+    // Stationen zum Abhaken: bei Tagestrips die Stopps, bei Ausflugszielen der Ort selbst
+    function stationen(c){
+      var tr = tripVon(c.id);
+      if (tr) {
+        var out = [], cur = 0;
+        tr.stops.forEach(function(x, i){
+          if (x.t === 'stop') out.push({ i: i, label: x.label, off: cur, lat: x.lat, lng: x.lng, q: x.q });
+          cur += x.min;
+        });
+        return out;
+      }
+      var card = exKarte(c);
+      return card ? [{ i: 0, label: c.t, lat: +card.getAttribute('data-lat'), lng: +card.getAttribute('data-lng') }] : [];
+    }
+    // Fuer Entfernungen zaehlt das eigentliche Ziel: die Station mit dem laengsten Aufenthalt
+    function ortVon(c){
+      var tr = tripVon(c.id), best = null;
+      if (tr) {
+        tr.stops.forEach(function(x){ if (x.t === 'stop' && x.lat && x.lng && (!best || x.min > best.min)) best = x; });
+        return best;
+      }
+      var st = stationen(c);
+      return st[0] && st[0].lat ? st[0] : null;
+    }
+    function navLink(x){ return x.lat && x.lng ? 'https://www.google.com/maps/dir/?api=1&destination=' + x.lat + ',' + x.lng : (x.q ? mapsSuche(x.q) : ''); }
+    function entfText(x){ if (!meinOrt || !x || !x.lat) return ''; var km = kmZwischen(meinOrt, x); return kmText(km) + ' km · ca. ' + fahrMin(km) + ' Min.'; }
+    var HAKEN_KEY = 'fuerte-heute-haken';
+    function haken(){ try { return JSON.parse(localStorage.getItem(HAKEN_KEY) || '{}') || {}; } catch(e){ return {}; } }
+    function hakenUmschalten(k){
+      var h = haken();
+      if (h[k]) delete h[k]; else h[k] = 1;
+      try { localStorage.setItem(HAKEN_KEY, JSON.stringify(h)); } catch(e){}
+    }
+    function inselMinJetzt(){ var x = fmtCanary(new Date(Date.now())).split(':'); return (+x[0]) * 60 + (+x[1]); }
+    function packHtml(t, c, mn, titel){
+      var hk = haken();
+      return '<div class="ip-hm-pack"><span class="lbl">🎒 ' + esc(titel) + '</span><div class="chips">' + mn.map(function(x){
+        var k = t.key + '|' + c.id + '|p' + x, an = !!hk[k];
+        return '<button type="button" class="ip-pack' + (an ? ' an' : '') + '" data-ip-haken="' + esc(k) + '" aria-pressed="' + an + '">' + (an ? '✓ ' : '') + esc(x) + '</button>';
+      }).join('') + '</div></div>';
+    }
+    // Heute-Modus: Losfahr-Uhr, naechste Station gross mit Navigation, Stationen zum Abhaken, Mitnehm-Liste
+    function heuteModus(t, c){
+      if (!c) return '';
+      var h = '', lf = losfahren(c, t), st = stationen(c), hk = haken(), mitZeit = lf && lf.min != null;
+      function hk_(x){ return t.key + '|' + c.id + '|s' + x.i; }
+      if (lf && lf.faehre) h += '<div class="ip-hm-uhr"><span class="big">⛴️ Fähre bestimmt den Start</span><small>' + esc(lf.faehre) + '</small></div>';
+      else if (mitZeit) {
+        var spaet = inselMinJetzt() > lf.min && !st.some(function(x){ return hk[hk_(x)]; });
+        h += '<div class="ip-hm-uhr' + (spaet ? ' spaet' : '') + '"><span class="big">🕘 Spätestens ' + fmtClock(lf.min) + ' losfahren</span><small>' +
+          esc(lf.grund) + ' · zurück ca. ' + fmtClock(lf.zurueck) + (spaet ? ' · ihr seid spät dran, lasst unterwegs etwas weg' : '') + '</small></div>';
+      }
+      if (st.length) {
+        var nx = null;
+        st.forEach(function(x){ if (!nx && !hk[hk_(x)]) nx = x; });
+        if (nx) {
+          var nl = navLink(nx), en = entfText(nx), info = [];
+          if (mitZeit) info.push('geplant ca. ' + fmtClock(lf.min + nx.off));
+          if (en) info.push(en + ' von hier');
+          h += '<div class="ip-hm-next"><span class="lbl">Nächste Station</span><b>' + esc(nx.label) + '</b>' + (info.length ? '<small>' + esc(info.join(' · ')) + '</small>' : '') +
+            '<div class="ip-hm-btns">' + (nl ? '<a class="btn" href="' + nl + '" target="_blank" rel="noopener">Navigation starten ↗</a>' : '') +
+            (meinOrt || !nx.lat ? '' : '<button type="button" class="btn btn-outline" data-ip-standort="1">📍 Wie weit ist es?</button>') + '</div></div>';
+        } else {
+          h += '<div class="ip-hm-next"><span class="lbl">Stationen</span><b>🎉 Alle geschafft</b></div>';
+        }
+        if (st.length > 1) h += '<ol class="ip-hm-liste">' + st.map(function(x){
+          var k = hk_(x), an = !!hk[k];
+          return '<li><button type="button" class="ip-hm-haken' + (an ? ' an' : '') + '" data-ip-haken="' + esc(k) + '" aria-pressed="' + an + '"><span class="kasten" aria-hidden="true">' + (an ? '✓' : '') + '</span>' +
+            '<span class="zeit">' + (mitZeit ? fmtClock(lf.min + x.off) : '') + '</span><span class="was">' + esc(x.label) + '</span></button></li>';
+        }).join('') + '</ol>';
+      }
+      var mn = mitnehmen(c);
+      if (mn.length) h += packHtml(t, c, mn, 'Mitnehmen');
+      return h ? '<div class="ip-hm">' + h + '</div>' : '';
+    }
+    var ortAn = false;
+    function tauschen(a, b){
+      var A = TAGE[a], B = TAGE[b], n = 0;
+      if (!A || !B || a === b) return;
+      plan.forEach(function(p){
+        if (p.day === A.key) { p.day = B.key; n++; }
+        else if (p.day === B.key) { p.day = A.key; n++; }
+      });
+      if (!n) { meldung('Beide Tage sind noch leer'); return; }
+      meldung('⇄ ' + WD[A.wd] + ' ' + A.lab + ' und ' + WD[B.wd] + ' ' + B.lab + ' getauscht');
+      geaendert();
+    }
+
     // ---- Darstellung ----
     var tab = 'touren', sel = null, frischUid = null;
     function stil(c){ return c ? '--k:var(--ip-k-' + c.k + ');' + (c.img ? "--img:url('" + c.img + "');" : '') : ''; }
@@ -12443,9 +12673,11 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       var schonDrin = !p && (c.g === 'touren' || c.g === 'ausfluege') && plan.some(function(x){ return x.ref === c.id; });
       var istSel = sel && ((p && sel.uid === p.uid) || (!p && !sel.uid && sel.ref === c.id));
       var cls = 'ip-tile' + (schonDrin ? ' planned' : '') + (istSel ? ' sel' : '') + (p && p.uid === frischUid ? ' pop' : '');
+      var unter = c.s || '';
+      if (!p && ortAn && meinOrt) { var en = entfText(ortVon(c)); if (en) unter = '📍 ' + en; }
       var von = p && p.by && PEOPLE[p.by] ? '<span class="by" title="eingeplant von ' + esc(whoName(p.by)) + '">' + esc(whoName(p.by).charAt(0)) + '</span>' : '';
       return '<button type="button" class="' + cls + '" style="' + stil(c) + '" data-ref="' + esc(c.id) + '"' + (p ? ' data-uid="' + esc(p.uid) + '"' : '') + ' aria-label="' + esc(c.t) + '">' +
-        '<span class="e" aria-hidden="true">' + esc(c.e) + '</span><span class="t">' + esc(c.t) + '</span><span class="s">' + esc(c.s || '') + '</span>' + fl + von + '</button>';
+        '<span class="e" aria-hidden="true">' + esc(c.e) + '</span><span class="t">' + esc(c.t) + '</span><span class="s">' + esc(unter) + '</span>' + fl + von + '</button>';
     }
     function eintraege(key, slot){ return plan.filter(function(p){ return p.day === key && (!slot || p.slot === slot); }); }
     function kacheln(key, slot){ return eintraege(key, slot).map(function(p){ var c = kat(p.ref); return c ? kachel(c, p) : ''; }).join(''); }
@@ -12459,8 +12691,8 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       var keep = el.scrollLeft, hi = heuteIdx();
       el.innerHTML = TAGE.map(function(t){
         var tag = kacheln(t.key, 'tag'), ab = kacheln(t.key, 'abend');
-        return '<section class="ip-tag' + (t.i === hi ? ' heute' : '') + (t.i < hi ? ' vorbei' : '') + '" data-tagidx="' + t.i + '">' +
-          '<div class="ip-tag-h"><div class="l1"><span class="wd">' + WOCHENTAGE[t.wd] + '</span><span class="dt">' + t.lab + '</span></div>' +
+        return '<section class="ip-tag' + (t.i === hi ? ' heute' : '') + (t.i < hi ? ' vorbei' : '') + (sel && sel.tag === t.i ? ' tausch-sel' : '') + '" data-tagidx="' + t.i + '">' +
+          '<div class="ip-tag-h" title="Antippen oder ziehen, um den ganzen Tag zu tauschen"><div class="l1"><span class="wd">' + WOCHENTAGE[t.wd] + '</span><span class="dt">' + t.lab + ' <span class="tausch" aria-hidden="true">⇄</span></span></div>' +
           '<div class="l2"><span>' + (t.i === hi ? '<b>Heute · Tag ' + (t.i + 1) + '</b>' : 'Tag ' + (t.i + 1)) + '</span><span>🏠 ' + t.basis + '</span></div></div>' +
           '<div class="ip-fix">' + fest(t).map(function(f){ return '<span class="ip-fx' + (f.reise ? ' reise' : '') + '">' + esc(f.t) + '</span>'; }).join('') + '</div>' +
           '<div class="ip-zone" data-ip-drop="' + t.key + '|tag"><span class="zl">Tagsüber</span>' + (tag || '<span class="ip-leer">frei</span>') + '</div>' +
@@ -12472,6 +12704,13 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     function ablageZeichnen(){
       var row = $('ip-row'); if (!row) return;
       var l = katListe(tab);
+      if (ortAn && meinOrt && (tab === 'touren' || tab === 'ausfluege')) {
+        l = l.slice().sort(function(a, b){
+          var oa = ortVon(a), ob = ortVon(b);
+          return (oa ? kmZwischen(meinOrt, oa) : 1e9) - (ob ? kmZwischen(meinOrt, ob) : 1e9);
+        });
+      }
+      var ok = $('ip-ort'); if (ok) ok.setAttribute('aria-pressed', ortAn && meinOrt ? 'true' : 'false');
       row.innerHTML = l.length ? l.map(function(c){ return kachel(c, null); }).join('') : '<span class="ip-leer">Noch keine eigenen Kacheln. Unten eine anlegen.</span>';
       $('ip-eigen-form').hidden = tab !== 'eigen';
       document.querySelectorAll('#ip-tabs .ip-tab').forEach(function(b){
@@ -12525,8 +12764,9 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       if (ab.length) unter += (unter ? ' · ' : '') + 'abends ' + ab.map(function(x){ return x.t; }).join(', ');
       var bild = c ? stil(c) : "--k:var(--ip-k-frei);--img:url('images/kachel-strand.webp');";
       var h = '<div class="ip-b"><div class="ip-b-eb">Heute · ' + WOCHENTAGE[t.wd] + ', ' + t.lab + ' · Tag ' + (t.i + 1) + ' von 14</div>' +
-        '<a class="ip-hero" href="#kalender" data-ip-zuheute="1" style="' + bild + '"><div class="he" aria-hidden="true">' + (c ? c.e : '☀️') + '</div><div class="ht">' + esc(titel) + '</div><div class="hs">' + esc(unter) + '</div>' +
+        '<a class="ip-hero" href="#kalender" data-ip-zuheute="1" style="' + bild + '"><div class="he" aria-hidden="true">' + esc(c ? c.e : '☀️') + '</div><div class="ht">' + esc(titel) + '</div><div class="hs">' + esc(unter) + '</div>' +
         (f.length ? '<div class="pills">' + f.slice(0, 4).map(function(x){ return '<span>' + esc(x.t) + '</span>'; }).join('') + '</div>' : '') + '</a>';
+      h += heuteModus(t, c);
       var naechste = TAGE.slice(t.i + 1, t.i + 4);
       if (naechste.length) {
         h += '<div class="ip-b-h">Die nächsten Tage</div><div class="ip-next">' + naechste.map(function(n){
@@ -12534,6 +12774,8 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
           return '<a class="ip-next-r" href="#kalender" data-ip-tag="' + n.i + '"><div class="nd">' + WD[n.wd] + '<b>' + n.dd + '.</b></div><div class="ni" style="' + stil(x) + '">' + (x.img ? '' : esc(x.e)) + '</div><div class="nt">' + esc(x.t) + '<small>' + esc(x.s || '') + '</small></div></a>';
         }).join('') + '</div>';
       }
+      var morgen = TAGE[t.i + 1], cm = morgen && hauptVon(morgen.key)[0], mm = cm ? mitnehmen(cm) : [];
+      if (mm.length) h += packHtml(morgen, cm, mm, 'Für morgen einpacken · ' + cm.t);
       h += '<a class="btn btn-outline ip-b-link" href="#kalender" data-ip-zuheute="1">Plan ansehen und ändern →</a></div>';
       box.innerHTML = h;
     }
@@ -12580,9 +12822,17 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
 
     function waehlen(s){
       sel = s;
-      document.body.classList.toggle('ip-waehlt', !!s);
+      var tagModus = !!s && s.tag != null;
+      document.body.classList.toggle('ip-waehlt', !!s && !tagModus);
+      document.body.classList.toggle('ip-tauscht', tagModus);
       selbar.hidden = !s;
-      if (s) {
+      if (tagModus) {
+        var tt = TAGE[s.tag], bb = selbar.querySelector('.ip-sel-bild');
+        bb.style.cssText = ''; bb.textContent = '⇄';
+        selbar.querySelector('b').textContent = WOCHENTAGE[tt.wd] + ', ' + tt.lab + ' tauschen';
+        selbar.querySelector('.ip-sel-text span').textContent = 'Tippe auf den Tag, mit dem alles getauscht werden soll';
+        selbar.querySelector('.weg').hidden = true;
+      } else if (s) {
         var c = kat(s.ref), p = null;
         if (s.uid) plan.forEach(function(x){ if (x.uid === s.uid) p = x; });
         var t = p && tagVon(p.day), b = selbar.querySelector('.ip-sel-bild');
@@ -12599,8 +12849,15 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     // ---- Ziehen: Maus sofort, Finger nach kurzem Festhalten ----
     var zug = null, klickSperre = false, raf = 0;
     document.addEventListener('pointerdown', function(e){
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      var kopf = e.target.closest('#ip-leiste .ip-tag-h');
+      if (kopf) {
+        zug = { tile: kopf, kopf: true, tagIdx: +kopf.parentNode.getAttribute('data-tagidx'), pid: e.pointerId, sx: e.clientX, sy: e.clientY, x: e.clientX, y: e.clientY, aktiv: false, finger: e.pointerType !== 'mouse' };
+        if (zug.finger) zug.timer = setTimeout(zugStart, 420);
+        return;
+      }
       var k = e.target.closest('.ip-tile[data-ref]');
-      if (!k || (e.pointerType === 'mouse' && e.button !== 0)) return;
+      if (!k) return;
       zug = { tile: k, ref: k.getAttribute('data-ref'), uid: k.getAttribute('data-uid'), pid: e.pointerId, sx: e.clientX, sy: e.clientY, x: e.clientX, y: e.clientY, aktiv: false, finger: e.pointerType !== 'mouse' };
       if (zug.finger) { k.classList.add('pressing'); zug.timer = setTimeout(zugStart, 360); }
     });
@@ -12625,13 +12882,18 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       if (navigator.vibrate) try { navigator.vibrate(12); } catch(e){}
       var g = zug.tile.cloneNode(true);
       g.classList.add('ip-ghost'); g.classList.remove('sel', 'pop', 'planned');
+      if (zug.kopf) g.classList.add('ip-ghost-kopf');
       document.body.appendChild(g); zug.ghost = g;
       zug.tile.classList.add('lifted');
       document.body.classList.add('ip-dragging');
       trash.classList.toggle('zeigen', !!zug.uid);
       zugBewegen(); raf = requestAnimationFrame(zugRollen);
     }
-    function zielUnter(x, y){ var el = document.elementFromPoint(x, y); return el ? el.closest('[data-ip-drop]') : null; }
+    function zielUnter(x, y){
+      var el = document.elementFromPoint(x, y);
+      if (!el) return null;
+      return zug && zug.kopf ? el.closest('#ip-leiste .ip-tag') : el.closest('[data-ip-drop]');
+    }
     function zugBewegen(){
       zug.ghost.style.left = zug.x + 'px'; zug.ghost.style.top = zug.y + 'px';
       var z = zielUnter(zug.x, zug.y);
@@ -12655,6 +12917,13 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       klickSperre = true; setTimeout(function(){ klickSperre = false; }, 60);
     }
     function zugLoslassen(){
+      if (zug.kopf) {
+        var zk = zug.over, von = zug.tagIdx;
+        zugAufraeumen(); zug = null;
+        if (sel) waehlen(null);
+        if (zk) tauschen(von, +zk.getAttribute('data-tagidx')); else alles();
+        return;
+      }
       var z = zug.over, ref = zug.ref, uid = zug.uid;
       zugAufraeumen(); zug = null;
       sel = null; selbar.hidden = true; document.body.classList.remove('ip-waehlt');
@@ -12665,10 +12934,25 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       einplanen(ref, uid, a[0], a[1]);
     }
     function zugAbbrechen(){ if (!zug) return; clearTimeout(zug.timer); zug.tile.classList.remove('pressing'); zug = null; }
+    document.addEventListener('contextmenu', function(e){ if (e.target.closest('#ip-leiste .ip-tag-h')) e.preventDefault(); });
 
     // Antippen, dann Tag antippen
     document.addEventListener('click', function(e){
-      if (klickSperre && e.target.closest('.ip-tile, [data-ip-drop]')) { e.preventDefault(); return; }
+      if (klickSperre && e.target.closest('.ip-tile, [data-ip-drop], .ip-tag')) { e.preventDefault(); return; }
+      // Stationen und Mitnehm-Liste abhaken (Startseite)
+      var hb = e.target.closest('[data-ip-haken]');
+      if (hb) { hakenUmschalten(hb.getAttribute('data-ip-haken')); buehneZeichnen(); return; }
+      if (e.target.closest('[data-ip-standort]')) {
+        standortHolen().then(function(){ alles(); }, function(err){ meldung(standortFehlerText(err)); });
+        return;
+      }
+      // Ganzen Tag tauschen: erst Datum antippen, dann den anderen Tag
+      if (sel && sel.tag != null) {
+        var tg = e.target.closest('#ip-leiste .ip-tag');
+        if (tg) { var b2 = +tg.getAttribute('data-tagidx'), a2 = sel.tag; waehlen(null); if (b2 !== a2) tauschen(a2, b2); return; }
+      }
+      var kopfK = e.target.closest('#ip-leiste .ip-tag-h');
+      if (kopfK && !sel) { waehlen({ tag: +kopfK.parentNode.getAttribute('data-tagidx') }); return; }
       var k = e.target.closest('.ip-tile[data-ref]');
       if (k) {
         var s = { ref: k.getAttribute('data-ref'), uid: k.getAttribute('data-uid') };
@@ -12712,6 +12996,15 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     });
     function knopf(id, fn){ var b = $(id); if (b) b.addEventListener('click', fn); }
     knopf('ip-zuheute', function(){ zuTag(heuteIdx(), true); });
+    knopf('ip-ort', function(){
+      if (ortAn && meinOrt) { ortAn = false; ablageZeichnen(); return; }
+      var b = $('ip-ort'); b.textContent = '📍 Suche Standort …';
+      standortHolen().then(function(){
+        ortAn = true; b.textContent = '📍 Entfernungen ab meinem Standort';
+        if (tab !== 'touren' && tab !== 'ausfluege') tab = 'ausfluege';
+        alles(); meldung('Sortiert nach Entfernung von hier');
+      }, function(err){ b.textContent = '📍 Entfernungen ab meinem Standort'; meldung(standortFehlerText(err)); });
+    });
     knopf('ip-neu', function(){ tab = 'eigen'; ablageZeichnen(); var i2 = $('ip-eigen-text'); if (i2) i2.focus(); });
     knopf('ip-leeren', function(){
       var b = $('ip-leeren'), l = b.querySelector('span');
@@ -12744,7 +13037,8 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
 
     alles();
     if (/^#kalender/.test(location.hash)) setTimeout(function(){ zuTag(heuteIdx(), false); }, 120);
-    return { liste: liste, ausServer: ausServer, render: alles };
+    setInterval(function(){ if (document.visibilityState === 'visible') buehneZeichnen(); }, 60000);
+    return { liste: liste, ausServer: ausServer, render: alles, meldung: meldung };
   })();
 })();
 // ---- Kombi-Rechner auf der Vergleichsseite (seit 26.09.2026) ----
