@@ -1794,13 +1794,13 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
 .jetzt-zeile span { display: inline-flex; gap: 4px; align-items: center; flex: none; }
 .jetzt-zeile .arr { margin-left: auto; color: var(--teal); font-size: 12.5px; }
 .jetzt-zeile[hidden] { display: none; }
-:root:is([data-phase="insel"], [data-phase="danach"]) .jetzt-zeile:not([hidden]) { display: flex; }
-:root:is([data-phase="insel"], [data-phase="danach"]) #home-weather { display: none; }
+.jetzt-zeile { display: none !important; } /* Stephan will den grossen Wetterkasten behalten (04.10.2026) */
+:root[data-phase="danach"] #home-weather { display: none; }
 .nur-insel { display: none; }
 :root:is([data-phase="insel"], [data-phase="danach"]) .nur-insel { display: inline; }
 :root:is([data-phase="insel"], [data-phase="danach"]) .nur-vor { display: none; }
 :root:is([data-phase="insel"], [data-phase="danach"]) #hb-stimmung, :root:is([data-phase="insel"], [data-phase="danach"]) #hb-bereiche { display: none; }
-:root[data-phase="insel"] #home-jetzt { order: 1; }
+:root[data-phase="insel"] #home-weather { order: 1; }
 :root[data-phase="insel"] #hb-heute.hat-tag { order: 2; margin-top: 24px; }
 :root[data-phase="insel"] #hb-lust { order: 3; }
 :root[data-phase="insel"] #home-aktiv { order: 4; }
@@ -1812,11 +1812,6 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
 :root[data-phase="danach"] #home-aktiv { order: 2; }
 #ideen-spontan:empty { display: none; }
 #ideen-spontan .ip-sp { margin-top: 10px; }
-:root:is([data-phase="insel"], [data-phase="danach"]) .page-kopfbild img { height: 64px; }
-:root:is([data-phase="insel"], [data-phase="danach"]) .page-kopfbild + .page-header { padding-top: 12px; padding-bottom: 4px; }
-:root:is([data-phase="insel"], [data-phase="danach"]) .page-header .sub { display: none; }
-:root:is([data-phase="insel"], [data-phase="danach"]) .page-header h1 { font-size: 1.35rem; }
-:root:is([data-phase="insel"], [data-phase="danach"]) .page-header .eyebrow { display: none; }
 .ex-stimmung { margin-bottom: 8px; }
 .ex-stimmung .ex-fbtn { text-decoration: none; color: inherit; }
 .nach-oben { position: fixed; right: 14px; bottom: calc(100px + env(safe-area-inset-bottom, 0px)); z-index: 55; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--border); background: var(--glass); color: var(--teal); font-size: 20px; font-weight: 800; cursor: pointer; box-shadow: var(--shadow); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); -webkit-tap-highlight-color: transparent; }
