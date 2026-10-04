@@ -1776,6 +1776,68 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
 .ip-hero-btns { display: flex; gap: 8px; flex-wrap: wrap; }
 .ip-hero-btns .btn { min-height: 42px; padding: 0 14px; font-size: 14px; }
 :root[data-phase="insel"] #home-todo.alles-fertig { display: none; }
+
+/* ---- Startseite neu sortiert (seit 04.10.2026): Band mit Ring, Jetzt-Zeile, Buehne oben, schmale Seitenkoepfe ---- */
+.hero-ring { display: none; }
+.hero-ring svg { width: 72px; height: 72px; display: block; filter: drop-shadow(0 2px 6px rgba(0,0,0,.35)); }
+.hero-zeile { margin: 2px 0 0; font-size: 12.5px; color: rgba(255,255,255,.92); text-shadow: 0 1px 2px rgba(3,14,20,.55); }
+.hero-zeile[hidden] { display: none; }
+:root:is([data-phase="insel"], [data-phase="danach"]) .hero { min-height: 0; }
+:root:is([data-phase="insel"], [data-phase="danach"]) .hero-inner { padding: 14px 20px 14px; }
+:root:is([data-phase="insel"], [data-phase="danach"]) .hero-card { max-width: none; padding: 6px 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "eb ring" "h1 ring" "zl ring"; column-gap: 14px; align-items: center; }
+:root:is([data-phase="insel"], [data-phase="danach"]) .hero-card #hero-eyebrow { grid-area: eb; margin-bottom: 4px; }
+:root:is([data-phase="insel"], [data-phase="danach"]) .hero-card h1 { grid-area: h1; font-size: clamp(1.45rem, 4.6vw, 2rem); margin: 0; }
+:root:is([data-phase="insel"], [data-phase="danach"]) .hero-card .hero-zeile { grid-area: zl; }
+:root:is([data-phase="insel"], [data-phase="danach"]) .hero-card .hero-ring { grid-area: ring; display: block; }
+:root:is([data-phase="insel"], [data-phase="danach"]) .hero-card #cd-label, :root:is([data-phase="insel"], [data-phase="danach"]) .hero-card #countdown { display: none; }
+.jetzt-zeile { display: none; align-items: center; gap: 10px; padding: 10px 14px; margin-top: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; font-size: 14px; font-weight: 600; color: var(--ink); text-decoration: none; white-space: nowrap; overflow: hidden; }
+.jetzt-zeile span { display: inline-flex; gap: 4px; align-items: center; flex: none; }
+.jetzt-zeile .arr { margin-left: auto; color: var(--teal); font-size: 12.5px; }
+.jetzt-zeile[hidden] { display: none; }
+:root:is([data-phase="insel"], [data-phase="danach"]) .jetzt-zeile:not([hidden]) { display: flex; }
+:root:is([data-phase="insel"], [data-phase="danach"]) #home-weather { display: none; }
+.nur-insel { display: none; }
+:root:is([data-phase="insel"], [data-phase="danach"]) .nur-insel { display: inline; }
+:root:is([data-phase="insel"], [data-phase="danach"]) .nur-vor { display: none; }
+:root:is([data-phase="insel"], [data-phase="danach"]) #hb-stimmung, :root:is([data-phase="insel"], [data-phase="danach"]) #hb-bereiche { display: none; }
+:root[data-phase="insel"] #home-jetzt { order: 1; }
+:root[data-phase="insel"] #hb-heute.hat-tag { order: 2; margin-top: 24px; }
+:root[data-phase="insel"] #hb-lust { order: 3; }
+:root[data-phase="insel"] #home-aktiv { order: 4; }
+:root[data-phase="insel"] #home-cal { order: 5; }
+:root[data-phase="insel"] #home-todo { order: 6; }
+:root[data-phase="danach"] #hb-heute.hat-tag { display: block; order: 1; margin-top: 24px; }
+:root[data-phase="danach"] #home-cal, :root[data-phase="danach"] #home-todo, :root[data-phase="danach"] #home-jetzt { display: none; }
+:root[data-phase="danach"] #hb-lust { order: 3; }
+:root[data-phase="danach"] #home-aktiv { order: 2; }
+#ideen-spontan:empty { display: none; }
+#ideen-spontan .ip-sp { margin-top: 10px; }
+:root:is([data-phase="insel"], [data-phase="danach"]) .page-kopfbild img { height: 64px; }
+:root:is([data-phase="insel"], [data-phase="danach"]) .page-kopfbild + .page-header { padding-top: 12px; padding-bottom: 4px; }
+:root:is([data-phase="insel"], [data-phase="danach"]) .page-header .sub { display: none; }
+:root:is([data-phase="insel"], [data-phase="danach"]) .page-header h1 { font-size: 1.35rem; }
+:root:is([data-phase="insel"], [data-phase="danach"]) .page-header .eyebrow { display: none; }
+.ex-stimmung { margin-bottom: 8px; }
+.ex-stimmung .ex-fbtn { text-decoration: none; color: inherit; }
+.nach-oben { position: fixed; right: 14px; bottom: calc(100px + env(safe-area-inset-bottom, 0px)); z-index: 55; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--border); background: var(--glass); color: var(--teal); font-size: 20px; font-weight: 800; cursor: pointer; box-shadow: var(--shadow); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); -webkit-tap-highlight-color: transparent; }
+.nach-oben[hidden] { display: none; }
+.ip-rb { display: flex; flex-direction: column; gap: 12px; }
+.ip-rb-stat { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.ip-rb-stat div { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 10px; text-align: center; }
+.ip-rb-stat b { display: block; font-family: "JetBrains Mono", monospace; font-size: 22px; }
+.ip-rb-stat small { font-size: 11.5px; color: var(--ink-dim); }
+.ip-rb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.ip-rb-tag { border-radius: 14px; overflow: hidden; background: var(--surface); border: 1px solid var(--border); text-align: left; padding: 0; font: inherit; color: inherit; cursor: pointer; }
+.ip-rb-tag .b { height: 70px; background: var(--muted-bg) center / cover; }
+.ip-rb-tag img { width: 100%; height: 70px; object-fit: cover; display: block; }
+.ip-rb-tag .x { padding: 6px 8px; font-size: 12px; }
+.ip-rb-tag .x b { display: block; font-size: 12.5px; }
+.ip-rb-tag .st { color: var(--gold); letter-spacing: 1px; font-size: 12px; }
+.ip-morgen { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 10px; align-items: center; }
+.ip-morgen .bild { width: 56px; height: 56px; border-radius: 12px; background-color: var(--k, var(--muted-bg)); background-image: var(--img, none); background-size: cover; background-position: center; display: grid; place-items: center; font-size: 22px; }
+.ip-morgen b { display: block; font-size: 16px; line-height: 1.2; }
+.ip-morgen small { color: var(--ink-dim); font-size: 12.5px; }
+@media (min-width: 700px) { .ip-rb-grid { grid-template-columns: repeat(4, 1fr); } }
 </style>
 
 <nav class="topnav">
@@ -1797,8 +1859,10 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       <a class="nav-link" data-page="kosten" href="#kosten">Kosten<span class="nav-badge" id="nav-total-badge"></span></a>
       <a class="nav-link" data-page="packliste" href="#packliste">Packliste<span class="nav-badge nav-badge-muted" id="nav-pack-badge"></span></a>
       <a class="nav-link" data-page="wetter" href="#wetter">Wetter</a>
-      <a class="nav-link" data-page="ausfluege" href="#ausfluege">Ausflüge</a>
-      <a class="nav-link" data-page="kalender" href="#kalender">Kalender</a>
+      <a class="nav-link" data-page="kalender" href="#kalender">Plan</a>
+      <a class="nav-link" data-page="termine" href="#termine">Termine</a>
+      <a class="nav-link" data-page="ausfluege" href="#ausfluege">Ziele</a>
+      <a class="nav-link" data-page="touren" href="#touren">Touren</a>
       <a class="nav-link" data-page="gastro" href="#gastro">Gastro</a>
       <a class="nav-link" data-page="links" href="#links">Links &amp; Tipps</a>
     </div>
@@ -1812,6 +1876,10 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       <div class="hero-card">
         <div class="eyebrow" id="hero-eyebrow">29.09.–12.10.2026 · 13 Nächte</div>
         <h1>Fuerteventura-Trip</h1>
+        <p class="hero-zeile" id="hero-zeile" hidden></p>
+        <div class="hero-ring" id="hero-ring" hidden aria-live="polite">
+          <svg viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="29" fill="rgba(4,16,22,.45)" stroke="rgba(255,255,255,.3)" stroke-width="6"/><circle id="hero-ring-bogen" cx="36" cy="36" r="29" fill="none" stroke="#ffd166" stroke-width="6" stroke-linecap="round" stroke-dasharray="0 182.2" transform="rotate(-90 36 36)"/><text id="hero-ring-n" x="36" y="40" text-anchor="middle" fill="#fff" font-family="JetBrains Mono, monospace" font-size="22" font-weight="700" textLength="" lengthAdjust="spacingAndGlyphs">–</text><text id="hero-ring-l" x="36" y="52" text-anchor="middle" fill="#fff" font-size="8" opacity=".9">Tage</text></svg>
+        </div>
         <p class="sub cd-label" id="cd-label">Abflug in:</p>
         <div class="countdown" id="countdown" aria-label="Countdown bis zum Abflug">
           <div class="cd-box"><span class="cd-n" id="cd-d">–</span><span class="cd-l">Tage</span></div>
@@ -1822,6 +1890,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     </div>
   </div>
   <div class="home-body wrap">
+    <a class="jetzt-zeile" id="home-jetzt" href="#wetter" hidden aria-label="Wetter jetzt, zur Wetterseite"></a>
 
 
     <div class="wx-hero wkopf home-kopf" id="home-weather">
@@ -1877,18 +1946,20 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
         <span class="teaser-peek" id="home-cal-peek"></span>
       </summary>
       <ul class="cal-teaser-list" id="home-cal-list"><li class="cal-teaser-empty">Lade Termine&#8230;</li></ul>
-      <p class="todo-teaser-foot"><a href="#kalender">Ganzer Kalender &#8594;</a></p>
+      <p class="todo-teaser-foot"><a href="#termine">Alle Termine &#8594;</a></p>
     </details>
 
     <div class="home-block" id="hb-lust">
     <div class="peek-head">
-      <h2>Worauf h&#228;ttest du Lust?</h2>
+      <h2><span class="nur-vor">Worauf h&#228;ttest du Lust?</span><span class="nur-insel">&#9889; Ideen f&#252;r heute</span></h2>
       <button type="button" class="peek-shuffle" id="peek-shuffle">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3.5 21 7l-4 3.5"/><path d="M3 7h5.5c2 0 3 1.2 4.2 3"/><path d="M17 13.5 21 17l-4 3.5"/><path d="M3 17h5.5c2 0 3-1.2 4.2-3"/></svg>
         Andere zeigen
       </button>
     </div>
-    <p class="sub" style="margin-top:2px">Ein Querschnitt durch alles, was auf der Insel wartet &#8211; bei jedem Antippen neu gemischt.</p>
+    <p class="sub nur-vor" style="margin-top:2px">Ein Querschnitt durch alles, was auf der Insel wartet &#8211; bei jedem Antippen neu gemischt.</p>
+    <div id="ideen-spontan"></div>
+    <p class="sub nur-insel" style="margin-top:2px">Oder einfach st&#246;bern &#8211; bei jedem Antippen neu gemischt.</p>
     <div class="peek-rail" id="peek-rail"></div>
     </div>
 
@@ -1897,7 +1968,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     <p class="sub" style="margin:-6px 0 16px">Je nach Wetter und Laune – hier geht's direkt zu den passenden Ideen.</p>
     <div class="mood-grid">
       <a class="mood-card" href="#ausfluege" style="--mood-bild:url(images/kachel-strand.webp)"><span class="mood-emoji">🏖️</span><span class="mood-label">Strandtag</span><span class="mood-hint">Grandes Playas, Cofete, Sotavento</span></a>
-      <a class="mood-card" href="#kalender" style="--mood-bild:url(images/kachel-markt.webp)"><span class="mood-emoji">🛍️</span><span class="mood-label">Shopping &amp; Markt</span><span class="mood-hint">Corralejo, Lajares-Markt (Sa.), La Oliva</span></a>
+      <a class="mood-card" href="#termine" style="--mood-bild:url(images/kachel-markt.webp)"><span class="mood-emoji">🛍️</span><span class="mood-label">Shopping &amp; Markt</span><span class="mood-hint">Corralejo, Lajares-Markt (Sa.), La Oliva</span></a>
       <a class="mood-card" href="#ausfluege" style="--mood-bild:url(images/kachel-tour.webp)"><span class="mood-emoji">🚙</span><span class="mood-label">Tour &amp; Ausflug</span><span class="mood-hint">Lobos, Cofete, Betancuria, Dünen</span></a>
       <a class="mood-card" href="#ausfluege" style="--mood-bild:url(images/kachel-drinnen.webp)"><span class="mood-emoji">💨</span><span class="mood-label">Zu windig – lieber drinnen</span><span class="mood-hint">Restaurant-Tipps &amp; Museen</span></a>
     </div>
@@ -2735,7 +2806,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
   <div class="page-kopfbild"><img src="images/kopf-ausfluege.webp" alt="" loading="lazy" decoding="async"></div>
   <div class="page-header wrap">
     <div class="eyebrow">Vor Ort</div>
-    <h1>Ausflüge &amp; Highlights</h1>
+    <h1>Ziele</h1>
     <p class="sub">Einundzwanzig einzelne Ziele quer über die Insel, jeweils mit Fahrzeit ab eurer Unterkunft, realistischem Zeitaufwand, Kosten und einem Tipp aus der Recherche – und auf jeder Karte unter „Praktisch“ Eintritt, Anmeldung, Öffnungszeiten, Ausrüstung und Parken. Mit den Knöpfen unter der Karte filterst du nach Region (Norden / Mitte / Süden) und Art. Dazu elf eigene <a href="#tagestrips">fertige Tagestrips</a>, zwei davon mit der Fähre auf die Nachbarinseln, bei denen du die Abfahrtszeit einstellst und die Seite den ganzen Tag durchrechnet. Märkte, Events &amp; Insider-Tipps stehen auf der <a href="#kalender">Kalender-Seite</a>.</p>
     <div class="basis-wahl" data-basis-wahl></div>
   </div>
@@ -2765,6 +2836,12 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     </section>
 
     <div class="sort-filter-bar">
+      <div class="ex-filter ex-stimmung" id="ex-stimmung" role="group" aria-label="Nach Stimmung">
+        <button type="button" class="ex-fbtn" data-stimmung="strand">🏖️ Strandtag</button>
+        <button type="button" class="ex-fbtn" data-stimmung="kultur">💨 Zu windig – lieber drinnen</button>
+        <a class="ex-fbtn" href="#touren">🚙 Ganze Tour</a>
+        <a class="ex-fbtn" href="#termine">🛍️ Markt</a>
+      </div>
       <div class="ex-filter" id="ex-region-filter" role="group" aria-label="Region">
         <button type="button" class="ex-fbtn active" data-region="">Alle Ziele</button>
         <button type="button" class="ex-fbtn" data-region="nord">&#127968; Norden &#183; bis 30 Min.</button>
@@ -3161,7 +3238,20 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
 </article>
     </div>
 
-    <section class="livemap-box" id="tourenkarte" style="margin-top:44px">
+    <p class="bildnachweis">Bildnachweise (Wikimedia Commons): La Pared – dronepicr, CC BY 2.0 · Tindaya – Jose Mesa, CC BY 2.0 · Lajares (Ermita de San Antonio) – Llez, CC BY-SA 3.0 · Cofete – Xosema, CC BY-SA 4.0 · Puerto del Rosario – Bybbisch94/Christian Gebhardt, CC BY-SA 4.0 · Puertito de los Molinos – Patrice78500, CC BY-SA 4.0 · Aloe-Vera-Feld – Dennis140, CC BY-SA 3.0. · Tourenbilder (Wikimedia Commons): Vegueta – Maria.M Hernández Gómez, CC BY-SA 4.0 · Las Canteras – Uwe Barghaan, CC BY 3.0 · Villa Winter – H. Zell, CC BY-SA 3.0 · Mirador de Cofete – Xosema, CC BY-SA 4.0 · Playa de la Concha – Jarek Prokop, CC BY 3.0 · Faro de Martiño – Ina Widegren, CC BY-SA 2.0 · Morro Velosa – Gerd Eichmann, CC BY 4.0 · Faro del Tostón – Thérèse Gaigé, CC BY-SA 3.0 · Calderón Hondo – Norbert Nagel, CC BY-SA 3.0 · Costa Calma – Klapi, CC BY-SA 4.0 · Popcorn Beach (Maerl) – Erik del Toro Streb, CC BY 4.0 · Majanicho – Alexey Komarov, CC BY-SA 4.0 · Hafen Corralejo – HHSS, CC BY-SA 4.0 · Mercado de Vegueta gemeinfrei. Übrige Fotos: Unsplash, Pexels und eigene Aufnahmen. · Weitere Fotos (Kopfbilder und Kacheln) von Unsplash-Fotografen, frei nutzbar · Wetter-Kopfbilder (Strand mit Isla de Lobos) – Markus Wagner, Unsplash-Lizenz, farblich je nach Wetter angepasst</p>
+  </div>
+</section>
+
+<!-- ============ TOUREN (seit 04.10.2026 eigene Seite) ============ -->
+<section class="page" id="page-touren">
+  <div class="page-kopfbild"><img src="images/kopf-ausfluege.webp" alt="" loading="lazy" decoding="async"></div>
+  <div class="page-header wrap">
+    <div class="eyebrow">Vor Ort</div>
+    <h1>Tagestrips</h1>
+    <p class="sub">Zwölf fertige Touren für einen ganzen oder halben Tag, mit Zeitplan ab eurer Unterkunft und allen Stationen auf der Karte. Was euch gefällt, zieht ihr im Plan auf einen Tag.</p>
+  </div>
+  <div class="wrap">
+    <section class="livemap-box" id="tourenkarte" >
       <div class="livemap-head">
         <h2>&#128506;&#65039; Tourenkarte</h2>
       </div>
@@ -3215,7 +3305,6 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       <div class="trip-grid" id="trip-grid"></div>
     </section>
 
-    <p class="bildnachweis">Bildnachweise (Wikimedia Commons): La Pared – dronepicr, CC BY 2.0 · Tindaya – Jose Mesa, CC BY 2.0 · Lajares (Ermita de San Antonio) – Llez, CC BY-SA 3.0 · Cofete – Xosema, CC BY-SA 4.0 · Puerto del Rosario – Bybbisch94/Christian Gebhardt, CC BY-SA 4.0 · Puertito de los Molinos – Patrice78500, CC BY-SA 4.0 · Aloe-Vera-Feld – Dennis140, CC BY-SA 3.0. · Tourenbilder (Wikimedia Commons): Vegueta – Maria.M Hernández Gómez, CC BY-SA 4.0 · Las Canteras – Uwe Barghaan, CC BY 3.0 · Villa Winter – H. Zell, CC BY-SA 3.0 · Mirador de Cofete – Xosema, CC BY-SA 4.0 · Playa de la Concha – Jarek Prokop, CC BY 3.0 · Faro de Martiño – Ina Widegren, CC BY-SA 2.0 · Morro Velosa – Gerd Eichmann, CC BY 4.0 · Faro del Tostón – Thérèse Gaigé, CC BY-SA 3.0 · Calderón Hondo – Norbert Nagel, CC BY-SA 3.0 · Costa Calma – Klapi, CC BY-SA 4.0 · Popcorn Beach (Maerl) – Erik del Toro Streb, CC BY 4.0 · Majanicho – Alexey Komarov, CC BY-SA 4.0 · Hafen Corralejo – HHSS, CC BY-SA 4.0 · Mercado de Vegueta gemeinfrei. Übrige Fotos: Unsplash, Pexels und eigene Aufnahmen. · Weitere Fotos (Kopfbilder und Kacheln) von Unsplash-Fotografen, frei nutzbar · Wetter-Kopfbilder (Strand mit Isla de Lobos) – Markus Wagner, Unsplash-Lizenz, farblich je nach Wetter angepasst</p>
   </div>
 </section>
 
@@ -3224,13 +3313,13 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
   <div class="page-kopfbild"><img src="images/kopf-kalender.webp" alt="" loading="lazy" decoding="async"></div>
   <div class="page-header wrap">
     <div class="eyebrow">Vor Ort</div>
-    <h1>Kalender</h1>
-    <p class="sub">Unser Plan für die 14 Tage zum Anfassen, darunter alle festen Termine (Märkte, Feste, Shows) und die Top-10-Insider-Tipps.</p>
+    <h1>Unser Plan</h1>
+    <p class="sub">Die 14 Tage zum Anfassen: Touren, Märkte und eigene Termine auf die Tage ziehen. Feste Termine und alle Märkte stehen im Reiter daneben.</p>
   </div>
   <div class="wrap">
     <section class="ip" id="inselplaner" aria-labelledby="ip-titel">
       <div class="ip-kopf">
-        <div class="ip-titelzeile"><h2 id="ip-titel">Unser Plan</h2><span class="ip-sync" id="ip-sync"></span></div>
+        <div class="ip-titelzeile"><h2 id="ip-titel">Unsere 14 Tage</h2><span class="ip-sync" id="ip-sync"></span></div>
         <p class="sub">Touren und eigene Termine auf die Tage legen: Kachel lange gedrückt halten und auf einen Tag ziehen, oder antippen und dann auf den Tag tippen. Märkte, Feste und der Umzug stehen schon fest drin. Ganze Tage tauschen: Datum antippen oder ziehen.</p>
         <div class="ip-tools">
           <button type="button" class="ip-tbtn prim" id="ip-wuerfel"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1.3" class="fi"/><circle cx="12" cy="12" r="1.3" class="fi"/><circle cx="15.5" cy="15.5" r="1.3" class="fi"/></svg><span>Freien Tag füllen</span></button>
@@ -3262,7 +3351,18 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
         <div class="ip-en-lab" id="ip-en-lab"></div>
       </div>
     </section>
-    <h2 class="ip-fest-h">Alle festen Termine</h2>
+  </div>
+</section>
+
+<!-- ============ TERMINE & MÄRKTE (seit 04.10.2026 eigene Seite) ============ -->
+<section class="page" id="page-termine">
+  <div class="page-kopfbild"><img src="images/kopf-kalender.webp" alt="" loading="lazy" decoding="async"></div>
+  <div class="page-header wrap">
+    <div class="eyebrow">Vor Ort</div>
+    <h1>Termine &amp; Märkte</h1>
+    <p class="sub">Was während unserer 14 Tage fest ansteht: Reise und Umzug, Feste und Shows, dazu alle Wochenmärkte mit Zeiten und die Top-10-Insider-Tipps.</p>
+  </div>
+  <div class="wrap">
     <div class="cal-banner">🎉 <span>Fiestas del Rosario in Puerto del Rosario <small>· 25.09.–07.10., die ganze erste Woche · Umzug, Konzerte, Kinderfest</small></span></div>
     <div class="cal-strip">
       <div class="cal-day"><div class="cal-date">29.09.<span class="cal-weekday">Di</span></div><div class="cal-items"><span class="cal-chip cal-chip-trip">✈️ Anreise</span></div></div>
@@ -4896,9 +4996,9 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       <svg viewBox="0 0 24 24" fill="none" class="tab-ico" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11 12 4l8 7"/><path d="M6.5 9.6V19h11V9.6"/></svg>
       <span class="tab-label">Heute</span><span class="tab-badge" id="tabbadge-heute"></span>
     </button>
-    <button type="button" class="tab-btn" data-tab="planen">
-      <svg viewBox="0 0 24 24" fill="none" class="tab-ico" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6.5 6 8.5 9.5 5"/><path d="M4 15.5 6 17.5 9.5 14"/><path d="M13 7h7M13 16h7"/></svg>
-      <span class="tab-label">Planen</span><span class="tab-badge" id="tabbadge-planen"></span>
+    <button type="button" class="tab-btn" data-tab="plan">
+      <svg viewBox="0 0 24 24" fill="none" class="tab-ico" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/><circle cx="12" cy="15.5" r="1.6" fill="currentColor" stroke="none"/></svg>
+      <span class="tab-label">Plan</span><span class="tab-badge" id="tabbadge-plan"></span>
     </button>
     <button type="button" class="tab-btn" data-tab="entdecken">
       <svg viewBox="0 0 24 24" fill="none" class="tab-ico" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.2"/><path d="M15.2 8.8 13.4 13.4 8.8 15.2 10.6 10.6z"/></svg>
@@ -4908,13 +5008,15 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       <svg viewBox="0 0 24 24" fill="none" class="tab-ico" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9.5" r="3.3"/><path d="M9 3.4v1.4M9 14.2v1.4M3.4 9.5h1.4M13.2 9.5h1.4M5.1 5.6l1 1M11.9 12.4l1 1M12.9 5.6l-1 1M6.1 12.4l-1 1"/><path d="M10 19.6h7.2a3 3 0 0 0 .3-6 4.2 4.2 0 0 0-8-1.1"/></svg>
       <span class="tab-label">Wetter</span><span class="tab-badge" id="tabbadge-wetter"></span>
     </button>
-    <button type="button" class="tab-btn" data-tab="mehr">
+    <button type="button" class="tab-btn" data-tab="reise">
       <svg viewBox="0 0 24 24" fill="none" class="tab-ico"><circle cx="5.5" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="18.5" cy="12" r="1.6" fill="currentColor" stroke="none"/></svg>
-      <span class="tab-label">Mehr</span><span class="tab-badge" id="tabbadge-mehr"></span>
+      <span class="tab-label">Reise</span><span class="tab-badge" id="tabbadge-reise"></span>
     </button>
     <button type="button" class="tab-klapp" id="tab-klapp" aria-label="Leiste einklappen"><span></span></button>
   </div>
 </nav>
+
+<button type="button" class="nach-oben" id="nach-oben" hidden aria-label="Nach oben">↑</button>
 
 <!-- ===== Globale Suche ===== -->
 <div class="searchsheet" id="searchsheet" role="dialog" aria-label="Suche">
@@ -5055,23 +5157,27 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
   var DEFAULT_CAR = "autoreisen-basis";
   var FLIGHT = {label: "Condor-Flüge Frankfurt ↔ Fuerteventura", sub: "Gebucht 26.08.2026 · inkl. Menüwahl · 29.09.–12.10.2026, 2 Personen", total: 999.92,
     link: "https://www.condor.com/tcibe/de/mybooking/login"};
-  var pages = ['home','todo','unterkuenfte','vergleich','kosten','wetter','packliste','ausfluege','kalender','gastro','links'];
+  var pages = ['home','todo','unterkuenfte','vergleich','kosten','wetter','packliste','ausfluege','touren','kalender','termine','gastro','links'];
 
   // ---- Bereiche der Tab-Leiste ----
   // Die zehn Seiten stecken in fünf Bereichen; wo mehrere zusammenliegen,
   // erscheint darüber eine Untergliederung statt eigener Tabs.
+  // Seit 04.10.2026 (Startseiten-Konzept): der Inselplaner heisst „Plan" und steht an zweiter Stelle,
+  // die Vor-Reise-Seiten liegen hinten unter „Reise", die Ausfluege sind in Ziele und Touren geteilt.
   var TABS = [
     { id: 'heute',     pages: [{ id: 'home',         label: 'Start' }] },
-    { id: 'planen',    pages: [{ id: 'todo',         label: 'Aufgaben' },
-                               { id: 'unterkuenfte', label: 'Unterkünfte' },
-                               { id: 'vergleich',    label: 'Vergleich' },
-                               { id: 'kosten',       label: 'Kosten' },
+    { id: 'plan',      pages: [{ id: 'kalender',     label: 'Unser Plan' },
+                               { id: 'termine',      label: 'Termine & Märkte' },
                                { id: 'packliste',    label: 'Packliste' }] },
-    { id: 'entdecken', pages: [{ id: 'ausfluege',    label: 'Ausflüge' },
-                               { id: 'gastro',       label: 'Essen & Trinken' },
-                               { id: 'kalender',     label: 'Kalender' }] },
+    { id: 'entdecken', pages: [{ id: 'ausfluege',    label: 'Ziele' },
+                               { id: 'touren',       label: 'Touren' },
+                               { id: 'gastro',       label: 'Essen & Trinken' }] },
     { id: 'wetter',    pages: [{ id: 'wetter',       label: 'Wetter' }] },
-    { id: 'mehr',      pages: [{ id: 'links',        label: 'Links & Tipps' }] }
+    { id: 'reise',     pages: [{ id: 'unterkuenfte', label: 'Unterkünfte' },
+                               { id: 'kosten',       label: 'Kosten' },
+                               { id: 'todo',         label: 'Aufgaben' },
+                               { id: 'vergleich',    label: 'Vergleich' },
+                               { id: 'links',        label: 'Links & Tipps' }] }
   ];
   function tabOfPage(id){
     for (var i = 0; i < TABS.length; i++) {
@@ -5120,7 +5226,9 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
   function segCount(id){
     try {
     if (id === 'unterkuenfte') return document.querySelectorAll('#card-grid .card, .kat-grid .card').length;
-    if (id === 'ausfluege')    return document.querySelectorAll('.ex-card').length + document.querySelectorAll('.trip-card').length;
+    if (id === 'ausfluege')    return document.querySelectorAll('.ex-card').length;
+    if (id === 'touren')       return document.querySelectorAll('.trip-card').length || (typeof TRIPS !== 'undefined' ? TRIPS.length : '');
+    if (id === 'termine')      return document.querySelectorAll('.event-card').length;
     if (id === 'gastro')       return document.querySelectorAll('.rc-card').length;
     if (id === 'todo') {
       var done = todoGetDone(), all = todoAllItems();
@@ -5147,6 +5255,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     if (id === 'kosten') renderKosten();
     if (id === 'unterkuenfte') renderSelectionSummary();
     if (id === 'wetter') renderWeatherEverywhere();
+    if (id === 'kalender' && typeof Planer !== 'undefined' && Planer) { try { Planer.gesehen(); } catch(e){} }
     if (typeof ensureMapFor === 'function') setTimeout(function(){ ensureMapFor(id); }, 60);
     if (typeof updateNavIndicators === 'function') updateNavIndicators();
   }
@@ -5170,8 +5279,8 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       return;
     }
     if (hash === 'tagestrips') {
-      LAST_IN_TAB['entdecken'] = 'ausfluege';
-      showPage('ausfluege', {noScrollTop:true});
+      LAST_IN_TAB['entdecken'] = 'touren';
+      showPage('touren', {noScrollTop:true});
       requestAnimationFrame(function(){
         var el = document.getElementById('tagestrips');
         if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
@@ -5202,7 +5311,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       return;
     }
     if (hash.indexOf('c-') === 0) {
-      LAST_IN_TAB['planen'] = 'unterkuenfte';
+      LAST_IN_TAB['reise'] = 'unterkuenfte';
       showPage('unterkuenfte', {noScrollTop:true});
       requestAnimationFrame(function(){
         var el = document.getElementById(hash);
@@ -5221,6 +5330,14 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
   });
 
   window.addEventListener('hashchange', function(){ go(location.hash); });
+  // „Nach oben" auf langen Seiten (seit 04.10.2026): erscheint ab zwei Bildschirmen Tiefe
+  (function(){
+    var k = document.getElementById('nach-oben'); if (!k) return;
+    var tick2 = false;
+    function pruefen(){ tick2 = false; k.hidden = window.scrollY < innerHeight * 2; }
+    window.addEventListener('scroll', function(){ if (!tick2) { tick2 = true; requestAnimationFrame(pruefen); } }, { passive: true });
+    k.addEventListener('click', function(){ window.scrollTo({ top: 0, behavior: 'smooth' }); });
+  })();
   go(location.hash);
 
   // Leiste im Querformat einklappen (nur dort ist der Pfeil sichtbar)
@@ -5332,6 +5449,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
 
     // --- Wetterkästen (Wetterseite oben und Startseite) ---
     renderWxHero(d);
+    try { renderJetztZeile(); } catch(e){}
 
     renderHomeSun(d);
   }
@@ -5750,6 +5868,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
           wasser: M && M.current ? M.current.sea_surface_temperature : null,
           staub: A && A.current ? A.current.dust : 0
         };
+        try { WASSER_TEMP = kopf.extra.wasser; renderJetztZeile(); } catch(e){}
         malen();
       });
     }
@@ -5928,6 +6047,46 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       if (elC) elC.setAttribute('aria-label', ph.aria);
     }
     heuteKachel(now);
+    heroRing(now);
+  }
+  // Band mit Ring (seit 04.10.2026): auf der Insel zeigt der Kopf statt der drei Kaesten einen
+  // kleinen Ring mit den restlichen Tagen; der Ring leert sich Tag fuer Tag.
+  var heroRingLetzt = '';
+  function heroRing(now){
+    var n = document.getElementById('hero-ring-n'), l = document.getElementById('hero-ring-l'), b = document.getElementById('hero-ring-bogen'), z = document.getElementById('hero-zeile');
+    if (!n) return;
+    var U = 2 * Math.PI * 29, txt, lab, frac, zeile;
+    if (now >= T_DAHEIM) { txt = '✓'; lab = 'daheim'; frac = 0; zeile = '29.09.–12.10.2026 · 14 Tage, 2 Unterkünfte'; }
+    else {
+      // volle Tage wie im alten Zaehler (8 Tage 4 Std. = 8); am Abreisetag selbst steht „Heute"
+      var rest = Math.max(0, Math.floor((T_RUECK - now) / 86400000));
+      var heuteAb = now >= new Date('2026-10-12T00:00:00+01:00').getTime();
+      txt = heuteAb ? 'Heute' : String(rest); lab = heuteAb ? 'Rückflug' : (rest === 1 ? 'Tag' : 'Tage'); frac = Math.min(1, (T_RUECK - now) / (14 * 86400000));
+      zeile = heuteAb ? 'Rückflug heute 15:55 · spätestens 12:45 losfahren' : 'noch ' + rest + (rest === 1 ? ' Tag' : ' Tage') + ' · Rückflug Mo 12.10. 15:55';
+    }
+    var key = txt + lab + zeile;
+    if (key === heroRingLetzt) return;
+    heroRingLetzt = key;
+    n.textContent = txt; l.textContent = lab;
+    n.setAttribute('font-size', txt.length > 2 ? '11' : '22');
+    b.setAttribute('stroke-dasharray', (U * frac).toFixed(1) + ' ' + U.toFixed(1));
+    if (z) { z.textContent = zeile; z.hidden = false; }
+    var r = document.getElementById('hero-ring'); if (r) r.hidden = false;
+  }
+  // Jetzt-Zeile (seit 04.10.2026): Temperatur, Wind, Sonnenuntergang und Wasser in einer Zeile,
+  // der grosse Wetterkasten bleibt der Wetterseite vorbehalten.
+  var WASSER_TEMP = null;
+  function renderJetztZeile(){
+    var el = document.getElementById('home-jetzt');
+    if (!el) return;
+    var d = (typeof WEATHER_STATE !== 'undefined') ? WEATHER_STATE : null;
+    if (!d || !d.current) { el.hidden = true; return; }
+    var c = d.current, now = new Date(), su = sunFor(now);
+    var icon = WMO_ICON[c.weather_code] || (c.is_day ? '☀️' : '🌙');
+    var sonne = (su.sunrise && now < su.sunrise) ? '🌄 ' + fmtCanary(su.sunrise) : '🌅 ' + fmtCanary(su.sunset);
+    el.innerHTML = '<span>' + icon + ' ' + Math.round(c.temperature_2m) + '°</span><span>💨 ' + Math.round(c.wind_speed_10m) + ' km/h</span><span>' + sonne + '</span>' +
+      (WASSER_TEMP != null ? '<span>🌊 ' + String(Math.round(WASSER_TEMP * 10) / 10).replace('.', ',') + '°</span>' : '') + '<span class="arr">Wetter →</span>';
+    el.hidden = false;
   }
 
   // ---- „Heute“-Kachel unter dem Zaehler ----
@@ -7161,6 +7320,16 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
         apply();
       });
     });
+    // Stimmungs-Knoepfe (frueher auf der Startseite): setzen genau eine Kategorie
+    document.querySelectorAll('#ex-stimmung [data-stimmung]').forEach(function(b){
+      b.addEventListener('click', function(){
+        var c = b.getAttribute('data-stimmung'), an = cats.length === 1 && cats[0] === c;
+        cats = an ? [] : [c];
+        document.querySelectorAll('#ex-cat-filter .ex-fbtn').forEach(function(x){ x.classList.toggle('active', cats.indexOf(x.getAttribute('data-cat')) !== -1); });
+        document.querySelectorAll('#ex-stimmung [data-stimmung]').forEach(function(x){ x.classList.toggle('active', !an && x === b); });
+        apply();
+      });
+    });
   })();
 
   initCollection({
@@ -7216,7 +7385,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     var navPP = document.getElementById('nav-kosten-pp');
     if (navPP) {
       var cpp = computeTotal();
-      var planenActive = document.querySelector('.tab-btn[data-tab="planen"]');
+      var planenActive = document.querySelector('.tab-btn[data-tab="reise"]');
       planenActive = !!(planenActive && planenActive.classList.contains('active'));
       if (planenActive && cpp.accs.length > 0) {
         navPP.textContent = (cpp.accs.some(function(a){return a.estimated;}) ? '≈ ' : '') + fmtEuro0(cpp.total/2) + ' €/P.';
@@ -7227,13 +7396,16 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       }
     }
     // offene Aufgaben als Zahl am Bereich „Planen"
-    var tb = document.getElementById('tabbadge-planen');
+    // Offene Aufgaben nur vor der Reise als Zahl am Bereich „Reise" - auf der Insel zaehlt am
+    // Bereich „Plan" nur, was Bilgen neu eingetragen hat (siehe Planer.notizenNeu)
+    var tb = document.getElementById('tabbadge-reise');
     if (tb && typeof todoGetDone === 'function') {
       try {
         var done = todoGetDone(), all = todoAllItems();
         var open = all.filter(function(it){ return !done[it.id]; }).length;
+        var vor = document.documentElement.getAttribute('data-phase') === 'vor';
         tb.textContent = open;
-        tb.classList.toggle('show', open > 0);
+        tb.classList.toggle('show', vor && open > 0);
       } catch(e){}
     }
     var seg = document.querySelector('.segbar-scroll');
@@ -8600,14 +8772,16 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
   // Karten erst aufbauen, wenn ihre Seite geöffnet wird
   var MAP_OF_PAGE = {unterkuenfte: 'acc', ausfluege: 'exc', gastro: 'food'};
   function ensureMapFor(pageId){
+    // Die Tourenkarte hat seit 04.10.2026 ihre eigene Seite ohne weitere Karte
+    if (pageId === 'touren') {
+      if (!LM.tour) { buildMap('tour'); tourChipsZeichnen(); }
+      else setTimeout(function(){ LM.tour.map.invalidateSize(); }, 120);
+      return;
+    }
     var kind = MAP_OF_PAGE[pageId];
     if (!kind) return;
     if (!LM[kind]) buildMap(kind);
     else setTimeout(function(){ LM[kind].map.invalidateSize(); refreshMap(kind); }, 120);
-    if (pageId === 'ausfluege') {
-      if (!LM.tour) { buildMap('tour'); tourChipsZeichnen(); }
-      else setTimeout(function(){ LM.tour.map.invalidateSize(); }, 120);
-    }
   }
   // Tourenkarte: je Tour ein Knopf, dazu "Alle"
   function tourChipsZeichnen(){
@@ -8762,7 +8936,8 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       var it = hit.it;
       if (it.a) { location.hash = '#' + it.a; }
       else {
-        location.hash = '#' + it.p;
+        var pg = it.el && it.el.closest && it.el.closest('.page') ? it.el.closest('.page').id.replace(/^page-/, '') : it.p;
+        location.hash = '#' + pg;
         if (it.el) requestAnimationFrame(function(){
           setTimeout(function(){
             it.el.scrollIntoView({behavior: 'smooth', block: 'center'});
@@ -9073,7 +9248,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
         p.title = anzahl + (anzahl === 1 ? ' ungelesene Notiz' : ' ungelesene Notizen');
       } else if (p) { p.remove(); }
     });
-    var tab = document.querySelector('.tab-btn[data-tab="planen"]');
+    var tab = document.querySelector('.tab-btn[data-tab="reise"]');
     if (tab) {
       var tp = tab.querySelector('.notiz-punkt');
       if (anzahl > 0 && document.documentElement.getAttribute('data-phase') === 'vor') {
@@ -9151,6 +9326,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
   // Aenderungen an der Seite selbst - nicht von Stephan oder Bilgen, sondern
   // an Angebot und Funktion. Stehen gleichberechtigt neben Notizen und Herzen.
   var SEITEN_NEUIGKEITEN = [
+    { at: '2026-10-04T23:00', text: '<b>Startseite und Leiste neu sortiert.</b> Oben ein schmaler Kopf mit Ring („noch 8 Tage“), dann das Wetter in einer Zeile, dann sofort der heutige Plan. Unten heißt der Planer jetzt „Plan“, die Ausflüge sind in Ziele und Touren geteilt, und alles von vor der Reise liegt unter „Reise“. Abends rückt das Tagebuch nach oben.' },
     { at: '2026-10-04T22:00', text: '<b>Märkte stehen jetzt bei jedem Tag im Planer</b> – mit Uhrzeit, antippen genügt. Die Startseite zeigt am Umzugs- und Abreisetag eine Abhak-Liste, bei freien Tagen einen Würfel.' },
     { at: '2026-10-04T20:00', text: '<b>Neu: unser Inselplaner.</b> Oben auf der Kalender-Seite Touren und eigene Termine auf die Tage ziehen, mit Wetter-Ampel, Herzen für eure Wünsche und Tagebuch. Die Startseite zeigt heute, wann ihr losfahren müsst, die Stationen zum Abhaken und einen Spontan-Knopf.' },
     { at: '2026-09-27T10:00', text: '<b>Neuer Wetterkasten auf der Startseite und oben auf der Wetterseite.</b> Das Bild passt jetzt zum Wetter und zur Tageszeit \u2013 Strand bei Sonne, Palmen im Abendlicht, Sternennacht, Regen- oder Gewitterwolken, gelber Dunst bei Calima. Dar\u00fcber ziehen Wolken mit dem echten Wind, bei Regen fallen Tropfen. Rechts die Wassertemperatur, auf der Startseite dazu der Temperaturverlauf von heute und die Gezeiten als Linien. <a href="#wetter">Zum Wetter \u2192</a>' },
@@ -12623,7 +12799,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
 
     // ---- Feste Termine aus der Kalenderleiste ----
     function fest(t){
-      var row = document.querySelectorAll('#page-kalender .cal-strip .cal-day')[t.i], out = [];
+      var row = document.querySelectorAll('.cal-strip .cal-day')[t.i], out = [];
       if (!row) return out;
       row.querySelectorAll('.cal-chip').forEach(function(c){
         if (c.classList.contains('cal-chip-note')) return;
@@ -13080,8 +13256,8 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       l.sort(function(a, b){ return a.punkte - b.punkte; });
       return l.slice(0, 4);
     }
-    function spontanKarte(){
-      var h = '<div class="ip-sp"><div class="ip-sp-kopf"><h3>⚡ Spontan: Was passt noch?</h3><small>' + (meinOrt ? 'ab deinem Standort' : 'ab eurer Unterkunft') + '</small></div>' +
+    function spontanKarte(imBlock){
+      var h = '<div class="ip-sp"><div class="ip-sp-kopf">' + (imBlock ? '<span class="lbl">Wie viel Zeit habt ihr noch?</span>' : '<h3>⚡ Spontan: Was passt noch?</h3>') + '<small>' + (meinOrt ? 'ab deinem Standort' : 'ab eurer Unterkunft') + '</small></div>' +
         '<div class="ip-sp-zeiten">' + [[60, '1 Std.'], [120, '2 Std.'], [180, '3 Std.'], [300, 'halber Tag']].map(function(z){
           return '<button type="button" data-ip-sp="' + z[0] + '" aria-pressed="' + (spZeit === z[0]) + '">' + z[1] + '</button>';
         }).join('') + '</div>';
@@ -13233,11 +13409,46 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       if (x) return { t: x.t.replace(/^\S+\s/, ''), e: x.t.split(' ')[0], k: 'eigen', s: 'fester Termin' };
       return { t: 'Freier Tag', e: '☀️', k: 'frei', s: 'noch nichts geplant' };
     }
+    // Rueckblick nach der Reise (seit 04.10.2026): Tagebuch-Karten, Sterne-Schnitt, Herzen
+    function rueckblickHtml(){
+      var sterne = [], touren = {}, tageMit = 0;
+      TAGE.forEach(function(t){ var e = tbEintraege(t.key), w = Object.keys(e); if (w.length) tageMit++; w.forEach(function(x){ if (e[x].sterne) sterne.push(e[x].sterne); }); });
+      plan.forEach(function(p){ if (p.ref.indexOf('trip-') === 0) touren[p.ref] = 1; });
+      var schnitt = sterne.length ? (sterne.reduce(function(a, b){ return a + b; }, 0) / sterne.length) : 0;
+      var h = '<div class="ip-rb"><div class="ip-b-eb">Das war Fuerteventura · 29.09.–12.10.2026</div>' +
+        '<div class="ip-rb-stat"><div><b>14</b><small>Tage</small></div><div><b>' + (schnitt ? schnitt.toFixed(1).replace('.', ',') : '–') + '</b><small>★ im Schnitt</small></div><div><b>' + Object.keys(touren).length + '</b><small>Touren</small></div></div>' +
+        '<div class="ip-b-h">📔 Euer Tagebuch' + (tageMit < 14 ? ' · ' + (14 - tageMit) + ' Tage ohne Eintrag' : '') + '</div><div class="ip-rb-grid">' + TAGE.map(function(t){
+          var e = tbEintraege(t.key), w = Object.keys(e), c = hauptVon(t.key)[0], best = w.length ? Math.max.apply(null, w.map(function(x){ return e[x].sterne; })) : 0;
+          var titel = c ? c.t : (t.i === 0 ? 'Anreise' : t.key === UMZUG ? 'Umzug' : t.i === 13 ? 'Abreise' : 'Freier Tag');
+          return '<button type="button" class="ip-rb-tag" data-ip-tb="' + t.key + '"><div class="b" style="' + (c && c.img ? "background-image:url('" + c.img + "')" : '') + '"><img data-ip-foto="' + t.key + '" alt="" hidden></div><div class="x"><b>' + WD[t.wd] + ' ' + t.lab + ' · ' + esc(titel) + '</b>' + (best ? '<span class="st">' + sterneText(best) + '</span>' : '<span class="ip-leer">kein Eintrag</span>') + '</div></button>';
+        }).join('') + '</div>';
+      var herzen = [];
+      KAT_ALLE().forEach(function(c){ if (Object.keys(wuensche(c.id)).length) herzen.push(c.t); });
+      if (herzen.length) h += '<div class="card ip-hm"><span class="lbl">❤️ Eure Herzen</span><div class="chips">' + herzen.map(function(x){ return '<span class="ip-pack">' + esc(x) + '</span>'; }).join('') + '</div></div>';
+      h += '<div class="ip-hero-btns"><button type="button" class="btn" data-ip-vorlage="1">Als Vorlage für nächstes Mal merken</button><a class="btn btn-outline" href="#kalender">Plan ansehen →</a></div></div>';
+      return h;
+    }
+    function KAT_ALLE(){ return katListe('touren').concat(katListe('ausfluege'), katListe('frei'), katListe('essen')); }
+    function morgenKarte(t){
+      var m = TAGE[t.i + 1]; if (!m) return '';
+      var c = hauptVon(m.key)[0], mk = maerkteAm(m), lf = c ? losfahren(c, m) : null, mn = c ? mitnehmen(c) : [];
+      var titel = c ? c.t : (m.key === UMZUG ? 'Umzugstag' : m.i === 13 ? 'Abreisetag' : 'Freier Tag');
+      var unter = c ? c.s : (m.key === UMZUG ? 'Auszug bis 11:00 · Einzug ab 15:00' : m.i === 13 ? 'Rückflug 15:55 · spätestens 12:45 los' : (mk.length ? 'noch nichts geplant · ' + mk[0].t + ' in ' + mk[0].ort.split(',')[0] : 'noch nichts geplant – würfeln?'));
+      var h = '<div class="ip-b-eb" style="color:var(--ink-dim)">Morgen · ' + WOCHENTAGE[m.wd] + ', ' + m.lab + '</div><div class="ip-hm"><div class="ip-morgen"><div class="bild" style="' + (c ? stil(c) : '') + '">' + (c && c.img ? '' : esc(c ? c.e : '☀️')) + '</div><div><b>' + esc(titel) + '</b><small>' + esc(unter) + '</small></div></div>';
+      if (lf && lf.min != null) h += '<div class="ip-hm-uhr"><span class="big">🕘 Morgen spätestens ' + fmtClock(lf.min) + ' losfahren</span><small>' + esc(lf.grund) + '</small></div>';
+      else if (lf && lf.faehre) h += '<div class="ip-hm-uhr"><span class="big">⛴️ Fähre bestimmt den Start</span><small>' + esc(lf.faehre) + '</small></div>';
+      if (mn.length) h += packHtml(m, c, mn, 'Heute Abend einpacken');
+      if (!c && m.key !== UMZUG && m.i !== 13) h += '<div class="ip-hero-btns"><button type="button" class="btn" data-ip-wuerfel="1">🎲 Für morgen würfeln</button></div>';
+      return h + '</div>';
+    }
     function buehneZeichnen(){
       var box = $('hb-heute'); if (!box) return;
       var hi = heuteIdx();
-      box.classList.toggle('hat-tag', hi >= 0 && hi <= 13);
-      if (hi < 0 || hi > 13) { box.innerHTML = ''; return; }
+      box.classList.toggle('hat-tag', hi >= 0);
+      var sp = $('ideen-spontan');
+      if (hi > 13) { box.innerHTML = rueckblickHtml(); fotosEinsetzen(box); if (sp) sp.innerHTML = ''; return; }
+      if (sp) sp.innerHTML = hi >= 0 ? spontanKarte(true) : '';
+      if (hi < 0) { box.innerHTML = ''; return; }
       var t = TAGE[hi], haupt = hauptVon(t.key), c = haupt[0], ab = abendVon(t.key), f = fest(t);
       var mkHeute = maerkteAm(t);
       var titel = c ? c.t : 'Freier Tag', unter = c ? c.s : (mkHeute.length ? 'Noch nichts geplant · heute wäre ' + mkHeute[0].t + ' in ' + mkHeute[0].ort : 'Noch nichts geplant');
@@ -13250,13 +13461,13 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       var bild = c ? stil(c) : sonder ? "--k:var(--ip-k-eigen);--img:url('" + sonder.img + "');" : "--k:var(--ip-k-frei);--img:url('images/kachel-strand.webp');";
       var wsH = wxStufe(t.key);
       if (wsH) f = [{ t: (WMO_ICON[wsH.w.code] || '') + ' ' + Math.round(wsH.w.tmax) + '° · Wind ' + Math.round(wsH.w.wind) + ' km/h' + (wsH.stufe === 'rot' ? ' · ⚠️' : wsH.stufe === 'gelb' ? ' · Wetter beachten' : '') }].concat(f);
+      var abend = inselMinJetzt() >= 17 * 60;
       var h = '<div class="ip-b"><div class="ip-b-eb">Heute · ' + WOCHENTAGE[t.wd] + ', ' + t.lab + ' · Tag ' + (t.i + 1) + ' von 14</div>' +
+        (abend ? tagebuchKarte(t) + morgenKarte(t) : '') +
         '<a class="ip-hero" href="#kalender" data-ip-zuheute="1" style="' + bild + '"><div class="he" aria-hidden="true">' + esc(c ? c.e : sonder ? sonder.e : '☀️') + '</div><div class="ht">' + esc(titel) + '</div><div class="hs">' + esc(unter) + '</div>' +
         (f.length ? '<div class="pills">' + f.slice(0, 4).map(function(x){ return '<span>' + esc(x.t) + '</span>'; }).join('') + '</div>' : '') + '</a>';
-      h += heuteModus(t, c);
-      if (wsH && wsH.hinweise.length) h += '<div class="ip-hinweise">' + wsH.hinweise.map(function(x){ return '<div class="ip-hw ' + (x.l === 'rot' ? 'bad' : x.l === 'gelb' ? 'good' : 'info') + '">' + esc(x.m) + '</div>'; }).join('') + '</div>';
-      h += spontanKarte();
-      h += tagebuchKarte(t);
+      if (!abend) h += heuteModus(t, c);
+      if (wsH && wsH.hinweise.length && !abend) h += '<div class="ip-hinweise">' + wsH.hinweise.map(function(x){ return '<div class="ip-hw ' + (x.l === 'rot' ? 'bad' : x.l === 'gelb' ? 'good' : 'info') + '">' + esc(x.m) + '</div>'; }).join('') + '</div>';
       var naechste = TAGE.slice(t.i + 1, t.i + 4);
       if (naechste.length) {
         h += '<div class="ip-b-h">Die nächsten Tage</div><div class="ip-next">' + naechste.map(function(n){
@@ -13269,7 +13480,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
         }).join('') + '</div>';
       }
       var morgen = TAGE[t.i + 1], cm = morgen && hauptVon(morgen.key)[0], mm = cm ? mitnehmen(cm) : [];
-      if (mm.length) h += packHtml(morgen, cm, mm, 'Für morgen einpacken · ' + cm.t);
+      if (mm.length && !abend) h += packHtml(morgen, cm, mm, 'Für morgen einpacken · ' + cm.t);
       h += '<a class="btn btn-outline ip-b-link" href="#kalender" data-ip-zuheute="1">Plan ansehen und ändern →</a></div>';
       box.innerHTML = h;
       fotosEinsetzen(box);
@@ -13461,6 +13672,10 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       if (e.target.closest('[data-ip-wuerfel]')) { wuerfeln(Math.max(0, heuteIdx())); return; }
       var tbk = e.target.closest('[data-ip-tb]');
       if (tbk) { tbOeffnen(tbk.getAttribute('data-ip-tb')); return; }
+      if (e.target.closest('[data-ip-vorlage]')) {
+        try { localStorage.setItem('fuerte-plan-vorlage', JSON.stringify({ gemerkt: Date.now(), plan: plan })); } catch(e3){}
+        meldung('Plan als Vorlage gemerkt – beim nächsten Fuerte-Urlaub ist er der Startpunkt'); return;
+      }
       if (e.target.closest('[data-ip-standort]')) {
         standortHolen().then(function(){ alles(); }, function(err){ meldung(standortFehlerText(err)); });
         return;
@@ -13551,8 +13766,18 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     wetterLaden();
     setInterval(function(){ if (document.visibilityState === 'visible' && (!wx || Date.now() - wx.at > 3 * 3600000)) wetterLaden(); }, 600000);
     // Neue Notizen (Herzen, Tagebuch) vom Server: nur neu zeichnen, wenn sich dort etwas geaendert hat
-    var ipNotizStand = '';
+    var ipNotizStand = '', GESEHEN_PLAN_KEY = 'fuerte-plan-gesehen';
+    // Rote Zahl am Bereich „Plan": nur, was Bilgen seit dem letzten Blick auf den Plan neu eingetragen hat
+    function planBadge(){
+      var seit = 0; try { seit = +localStorage.getItem(GESEHEN_PLAN_KEY) || 0; } catch(e){}
+      var me = whoAmI(), n = 0;
+      Object.keys(notes || {}).forEach(function(k){ if (k.indexOf('ip:') !== 0) return; (notes[k] || []).forEach(function(x){ if (!x.offen && x.by !== me && (x.at || 0) > seit) n++; }); });
+      var b = document.getElementById('tabbadge-plan');
+      if (b) { b.textContent = n > 9 ? '9+' : String(n); b.classList.toggle('show', n > 0 && !/^#kalender/.test(location.hash)); }
+    }
+    function gesehen(){ try { localStorage.setItem(GESEHEN_PLAN_KEY, String(Date.now())); } catch(e){} planBadge(); }
     function notizenNeu(){
+      planBadge();
       var st = Object.keys(notes || {}).filter(function(k){ return k.indexOf('ip:') === 0; }).sort().map(function(k){
         return k + ':' + (notes[k] || []).map(function(n){ return n.by + n.at + (n.text || '').length; }).join(',');
       }).join('|');
@@ -13567,7 +13792,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       var c = kat(String(slug).replace(/^ip:w:/, ''));
       return c ? c.t : slug;
     }
-    return { liste: liste, ausServer: ausServer, render: alles, meldung: meldung, notizenNeu: notizenNeu, name: name };
+    return { liste: liste, ausServer: ausServer, render: alles, meldung: meldung, notizenNeu: notizenNeu, name: name, gesehen: gesehen };
   })();
 })();
 // ---- Kombi-Rechner auf der Vergleichsseite (seit 26.09.2026) ----
