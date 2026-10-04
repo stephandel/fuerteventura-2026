@@ -1704,6 +1704,63 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
 .ip-b > .ip-hm-pack { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 12px; }
 .lm-ort { width: 36px; height: 36px; border-radius: 8px; border: 2px solid rgba(0,0,0,.2); background: #fff; color: #1c1a17; font-size: 18px; line-height: 1; cursor: pointer; display: grid; place-items: center; padding: 0; }
 .lm-ort.laedt { opacity: .5; }
+
+/* Inselplaner Stufe 3 (seit 04.10.2026): Wetter-Ampel, Wunschliste, Spontan, Tagebuch */
+.ip-tag-h .l3 { margin-top: 3px; }
+.ip-wx { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 600; color: var(--ink); padding: 2px 8px 2px 6px; border-radius: 999px; background: var(--surface); border: 1px solid var(--border); }
+.ip-wx::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--good); flex: none; }
+.ip-wx.gelb::before { background: var(--gold); }
+.ip-wx.rot::before { background: var(--bad); }
+.ip-wx.leer { color: var(--ink-dim); font-weight: 500; }
+.ip-wx.leer::before { background: var(--border); }
+.ip-tile .wh { position: absolute; right: 7px; bottom: 7px; font-size: 11px; line-height: 1; letter-spacing: -1px; }
+.ip-tile .wh + .s, .ip-tile:has(.wh) .s { padding-right: 26px; }
+.ip-sel-btns .wunsch { background: var(--surface-2); }
+.ip-sel-btns .wunsch.an { background: var(--bad-bg); color: var(--bad); border-color: transparent; }
+.ip-sp { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.ip-sp-kopf { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.ip-sp-kopf h3 { margin: 0; font-size: 17px; }
+.ip-sp-kopf small { color: var(--ink-dim); font-size: 12.5px; }
+.ip-sp-zeiten { display: flex; gap: 6px; flex-wrap: wrap; }
+.ip-sp-zeiten button { border: 1px solid var(--border); background: var(--surface-2); color: var(--ink); border-radius: 999px; padding: 8px 13px; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+.ip-sp-zeiten button[aria-pressed="true"] { background: var(--teal); color: var(--teal-ink); border-color: var(--teal); }
+.ip-sp-liste { display: flex; flex-direction: column; gap: 8px; }
+.ip-sp-v { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 10px; align-items: start; }
+.ip-sp-v .bild { width: 56px; height: 56px; border-radius: 12px; background: var(--muted-bg) center / cover no-repeat; }
+.ip-sp-v b { display: block; font-size: 15px; line-height: 1.2; }
+.ip-sp-v small { display: block; color: var(--ink-dim); font-size: 12.5px; line-height: 1.35; margin-top: 2px; }
+.ip-sp-v .knoepfe { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.ip-sp-v .knoepfe .btn { min-height: 36px; padding: 0 11px; font-size: 13px; }
+.ip-sp-leer { color: var(--ink-dim); font-size: 14px; }
+.ip-tb { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+.ip-tb h3 { margin: 0; font-size: 17px; }
+.ip-tb-eintrag { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 10px; align-items: baseline; font-size: 14px; }
+.ip-tb-eintrag .wer { font-weight: 700; }
+.ip-tb-eintrag .st { color: var(--gold); letter-spacing: 1px; }
+.ip-tb-eintrag p { grid-column: 1 / -1; margin: 0; color: var(--ink); }
+.ip-tb-foto { width: 100%; max-height: 260px; object-fit: cover; border-radius: 12px; display: block; }
+.ip-erinnerung { display: flex; flex-direction: column; gap: 5px; border-radius: 12px; padding: 7px; background: color-mix(in srgb, var(--gold) 10%, transparent); border: 1px solid color-mix(in srgb, var(--gold) 35%, transparent); font-size: 12px; cursor: pointer; text-align: left; font: inherit; color: var(--ink); width: 100%; }
+.ip-erinnerung img { width: 100%; height: 86px; object-fit: cover; border-radius: 8px; display: block; }
+.ip-erinnerung .st { color: var(--gold); font-size: 12px; letter-spacing: 1px; }
+.ip-erinnerung .tx { font-size: 12px; line-height: 1.3; color: var(--ink-dim); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.ip-erinnerung img[hidden], .ip-tb-foto[hidden], .ip-tb-karte .vorschau[hidden] { display: none; }
+.ip-hm-liste.ohne-zeit .ip-hm-haken { grid-template-columns: 24px minmax(0, 1fr); }
+.ip-hm-liste.ohne-zeit .zeit { display: none; }
+.ip-tb-knopf { border: 1px dashed var(--border); background: none; color: var(--ink-dim); border-radius: 10px; padding: 6px 8px; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; text-align: left; }
+.ip-tb-ov { position: fixed; inset: 0; z-index: 120; background: rgba(10,14,16,.5); display: flex; align-items: flex-end; justify-content: center; padding: 12px; padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)); }
+@media (min-width: 640px) { .ip-tb-ov { align-items: center; } }
+.ip-tb-karte { background: var(--surface); color: var(--ink); border-radius: 22px; width: 100%; max-width: 480px; max-height: calc(100vh - 40px); overflow-y: auto; padding: 18px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 24px 60px -20px rgba(0,0,0,.5); }
+.ip-tb-karte h3 { margin: 0; }
+.ip-sterne { display: flex; gap: 4px; }
+.ip-sterne button { border: 0; background: none; font-size: 30px; line-height: 1; cursor: pointer; color: var(--border); padding: 2px; }
+.ip-sterne button.an { color: var(--gold); }
+.ip-tb-karte textarea { width: 100%; min-height: 96px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface-2); color: var(--ink); padding: 10px 12px; font: inherit; font-size: 16px; resize: vertical; }
+.ip-tb-karte .zeile { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.ip-tb-karte .vorschau { max-width: 100%; max-height: 200px; border-radius: 12px; object-fit: cover; }
+.ip-tb-karte .andere { background: var(--surface-2); border-radius: 12px; padding: 10px 12px; font-size: 14px; }
+.ip-tb-karte .hinweis { font-size: 12.5px; color: var(--ink-dim); }
+.ip-tb-karte .knoepfe { display: flex; gap: 8px; justify-content: flex-end; }
+.ip-tb-karte .knoepfe .btn { min-height: 42px; padding: 0 16px; font-size: 14.5px; }
 </style>
 
 <nav class="topnav">
@@ -8973,6 +9030,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     var seit = gelesenStand();
     var out = [];
     Object.keys(notes || {}).forEach(function(slug){
+      if (slug.indexOf('ip:') === 0) return;  // Wunschliste und Tagebuch des Inselplaners
       (notes[slug] || []).forEach(function(n){
         if (n.offen) return;
         if (me && n.by === me) return;        // eigene zaehlen nicht
@@ -9073,6 +9131,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
   // Aenderungen an der Seite selbst - nicht von Stephan oder Bilgen, sondern
   // an Angebot und Funktion. Stehen gleichberechtigt neben Notizen und Herzen.
   var SEITEN_NEUIGKEITEN = [
+    { at: '2026-10-04T20:00', text: '<b>Neu: unser Inselplaner.</b> Oben auf der Kalender-Seite Touren und eigene Termine auf die Tage ziehen, mit Wetter-Ampel, Herzen für eure Wünsche und Tagebuch. Die Startseite zeigt heute, wann ihr losfahren müsst, die Stationen zum Abhaken und einen Spontan-Knopf.' },
     { at: '2026-09-27T10:00', text: '<b>Neuer Wetterkasten auf der Startseite und oben auf der Wetterseite.</b> Das Bild passt jetzt zum Wetter und zur Tageszeit \u2013 Strand bei Sonne, Palmen im Abendlicht, Sternennacht, Regen- oder Gewitterwolken, gelber Dunst bei Calima. Dar\u00fcber ziehen Wolken mit dem echten Wind, bei Regen fallen Tropfen. Rechts die Wassertemperatur, auf der Startseite dazu der Temperaturverlauf von heute und die Gezeiten als Linien. <a href="#wetter">Zum Wetter \u2192</a>' },
     { at: '2026-09-27T09:00', text: '<b>Die Wetterseite ist aufger\u00e4umt.</b> Die Liste \u201eDie n\u00e4chsten 7 Tage\u201c und die Kacheln sind weg \u2013 alles steht jetzt im Wetter-Tool: Wetter-Symbol mit Hoch und Tief je Tag, die <b>echte Wassertemperatur</b> (oben im Kasten und als eigene Linie), der Mond mit Uhrzeit von Vollmond und Neumond, und unter dem Diagramm <b>Tipps zum Tag</b>: wann Strandwetter ist, wann Kitewind, wann Ebbe f\u00fcr Popcorn Beach, den Weg zum Leuchtturm in El Cotillo und die Lagune am Risco del Paso. Neu ist auch der <b>Zeitraffer</b>: \u25b6 vorn neben Webcam, Satellit und Regen spielt die letzten Stunden ab. <a href="#wetter">Zum Wetter \u2192</a>' },
     { at: '2026-09-26T17:00', text: '<b>Alle Entfernungen gelten jetzt ab eurer Unterkunft.</b> Ausfl\u00fcge, Tagestrips (Hin- und R\u00fcckfahrt) und alle 52 Restaurants rechnen ab Oasis Duna oder Renacer Zen statt ab dem Ortszentrum \u2013 von der Villa aus sind es z.\u00a0B. 10 statt 6 Minuten zum Hafen. \u201eAutomatisch\u201c nimmt bis zum 06.10. die Oasis Duna, danach das Renacer Zen. Umschalten geht oben auf den Seiten und im Zahnrad-Men\u00fc; auf den Karten stehen beide H\u00e4user als \uD83C\uDFE0. <a href="#ausfluege">Zu den Ausfl\u00fcgen \u2192</a>' },
@@ -9103,9 +9162,10 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       ev.push({ typ: 'seite', at: new Date(n.at).getTime(), text: n.text });
     });
     Object.keys(notes || {}).forEach(function(slug){
+      var typ = slug.indexOf('ip:w:') === 0 ? 'wunsch' : slug.indexOf('ip:tb:') === 0 ? 'tagebuch' : 'notiz';
       (notes[slug] || []).forEach(function(n){
         if (n.offen) return;
-        ev.push({ typ: 'notiz', wer: n.by, at: n.at || 0, slug: slug, text: n.text });
+        ev.push({ typ: typ, wer: n.by, at: n.at || 0, slug: slug, text: n.text });
       });
     });
     Object.keys((shared && shared.favs) || {}).forEach(function(slug){
@@ -9143,7 +9203,8 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       ziel.innerHTML = '<li class="aktiv-leer">Noch nichts passiert. Sobald einer von euch etwas markiert oder eine Notiz schreibt, steht es hier.</li>';
       return;
     }
-    var SYM = { notiz: '💬', herz: '❤️', aus: '🙈', wahl: '✅', haken: '☑️', seite: '✨' };
+    var SYM = { notiz: '💬', herz: '❤️', aus: '🙈', wahl: '✅', haken: '☑️', seite: '✨', wunsch: '💖', tagebuch: '📔' };
+    var ipName = function(slug){ try { return Planer ? Planer.name(slug) : slug; } catch(e){ return slug; } };
     var me = whoAmI();
     var peek = document.getElementById('home-aktiv-peek');
     var textVon = function(html){ var d = document.createElement('div'); d.innerHTML = html; return d.textContent.trim(); };
@@ -9155,6 +9216,8 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       var ich = (e.wer === me), wer = ich ? 'Du' : whoName(e.wer), hat = ich ? 'hast' : 'hat';
       if (e.typ === 'notiz') return wer + ' ' + hat + ' zu ' + nameVon(e.slug) + ' geschrieben';
       if (e.typ === 'herz') return wer + ' ' + (ich ? 'magst' : 'mag') + ' ' + nameVon(e.slug);
+      if (e.typ === 'wunsch') return wer + ' ' + (ich ? 'wünschst dir' : 'wünscht sich') + ' ' + ipName(e.slug);
+      if (e.typ === 'tagebuch') return wer + ' ' + hat + ' ins Tagebuch geschrieben (' + ipName(e.slug) + ')';
       if (e.typ === 'aus') return wer + ' ' + hat + ' ' + nameVon(e.slug) + ' ausgeblendet';
       if (e.typ === 'haken') return wer + ' ' + hat + ' „' + todoTitel(e.slug) + '“ abgehakt';
       return wer + ' ' + hat + ' ' + nameVon(e.slug) + ' als Unterkunft gewählt';
@@ -9173,6 +9236,8 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       var was;
       if (e.typ === 'notiz') was = wer + (ich ? ' hast' : ' hat') + ' zu <b>' + escapeHtml(nameVon(e.slug)) + '</b> geschrieben: „' + escapeHtml((e.text || '').slice(0, 90)) + '“';
       else if (e.typ === 'herz') was = wer + ' ' + (ich ? 'magst' : 'mag') + ' <b>' + escapeHtml(nameVon(e.slug)) + '</b>';
+      else if (e.typ === 'wunsch') was = wer + ' ' + (ich ? 'wünschst dir' : 'wünscht sich') + ' <b>' + escapeHtml(ipName(e.slug)) + '</b>';
+      else if (e.typ === 'tagebuch') was = wer + ' ' + hat + ' ins Tagebuch geschrieben (<b>' + escapeHtml(ipName(e.slug)) + '</b>): „' + escapeHtml(String(e.text || '').replace(/^★\d\s?/, '').slice(0, 90)) + '“';
       else if (e.typ === 'aus') was = wer + ' ' + hat + ' <b>' + escapeHtml(nameVon(e.slug)) + '</b> ausgeblendet';
       else if (e.typ === 'haken') was = wer + ' ' + hat + ' „<b>' + escapeHtml(todoTitel(e.slug)) + '</b>“ abgehakt';
       else was = wer + ' ' + hat + ' <b>' + escapeHtml(nameVon(e.slug)) + '</b> als Unterkunft gewählt';
@@ -9184,6 +9249,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
   function renderAllNotes(){
     document.querySelectorAll('.notes-box').forEach(renderNotes);
     try { zeichneNotizPunkt(); vielleichtAlsGelesen(); renderAktiv(); } catch(e){}
+    try { if (typeof Planer !== 'undefined' && Planer) Planer.notizenNeu(); } catch(e){}
   }
   function showNoteError(slug, msg){
     var box = document.querySelector('.notes-box[data-notes="' + slug + '"]');
@@ -12640,7 +12706,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
         } else {
           h += '<div class="ip-hm-next"><span class="lbl">Stationen</span><b>🎉 Alle geschafft</b></div>';
         }
-        if (st.length > 1) h += '<ol class="ip-hm-liste">' + st.map(function(x){
+        if (st.length > 1) h += '<ol class="ip-hm-liste' + (mitZeit ? '' : ' ohne-zeit') + '">' + st.map(function(x){
           var k = hk_(x), an = !!hk[k];
           return '<li><button type="button" class="ip-hm-haken' + (an ? ' an' : '') + '" data-ip-haken="' + esc(k) + '" aria-pressed="' + an + '"><span class="kasten" aria-hidden="true">' + (an ? '✓' : '') + '</span>' +
             '<span class="zeit">' + (mitZeit ? fmtClock(lf.min + x.off) : '') + '</span><span class="was">' + esc(x.label) + '</span></button></li>';
@@ -12650,6 +12716,280 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       if (mn.length) h += packHtml(t, c, mn, 'Mitnehmen');
       return h ? '<div class="ip-hm">' + h + '</div>' : '';
     }
+    // ---- Stufe 3 (seit 04.10.2026) ----
+    // Wetter-Ampel: Vorhersage (Open-Meteo), Wellen und Saharastaub je Tag, zwischengespeichert fuer unterwegs
+    var WX_KEY = 'fuerte-plan-wetter', wx = null;
+    try { wx = JSON.parse(localStorage.getItem(WX_KEY) || 'null'); } catch(e){}
+    function wetterLaden(){
+      var LL = 'latitude=28.729694&longitude=-13.86715&timezone=Atlantic%2FCanary';
+      function hol(u){ return fetch(u).then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; }); }
+      Promise.all([
+        hol('https://api.open-meteo.com/v1/forecast?' + LL + '&daily=weather_code,temperature_2m_max,precipitation_probability_max,wind_speed_10m_max,uv_index_max&forecast_days=10'),
+        hol('https://marine-api.open-meteo.com/v1/marine?' + LL + '&daily=wave_height_max&forecast_days=10'),
+        hol('https://air-quality-api.open-meteo.com/v1/air-quality?' + LL + '&hourly=dust&forecast_days=5')
+      ]).then(function(r){
+        var f = r[0], m = r[1], a = r[2];
+        if (!f || !f.daily) return;
+        var tage = {};
+        f.daily.time.forEach(function(k, j){
+          tage[k] = { code: f.daily.weather_code[j], tmax: f.daily.temperature_2m_max[j], regen: f.daily.precipitation_probability_max[j],
+                      wind: f.daily.wind_speed_10m_max[j], uv: f.daily.uv_index_max[j] };
+        });
+        if (m && m.daily) m.daily.time.forEach(function(k, j){ if (tage[k]) tage[k].welle = m.daily.wave_height_max[j]; });
+        if (a && a.hourly) a.hourly.time.forEach(function(t, j){
+          var k = t.slice(0, 10), v = a.hourly.dust[j];
+          if (tage[k] && v != null) tage[k].staub = Math.max(tage[k].staub || 0, v);
+        });
+        wx = { at: Date.now(), tage: tage };
+        try { localStorage.setItem(WX_KEY, JSON.stringify(wx)); } catch(e){}
+        alles();
+      });
+    }
+    var FAEHRE_REFS = ['trip-lobos', 'trip-lanzarote', 'trip-grancanaria', 'ex:isla-de-lobos'];
+    var STRAND_REFS = ['f-strand', 'trip-sotavento', 'trip-norden'];
+    var DRAUSSEN_REFS = ['trip-vulkane', 'trip-westen', 'trip-sueden', 'trip-vegan'];
+    var SUNSET_REFS = ['f-sunset', 'trip-norden'];
+    function wxTag(key){ return wx && wx.tage ? wx.tage[key] || null : null; }
+    function ampel(c, w){
+      var cat = (exKarte(c) || { getAttribute: function(){ return ''; } }).getAttribute('data-cat') || '';
+      var r = [];
+      function add(l, m){ r.push({ l: l, m: m }); }
+      var regen = w.regen || 0, wind = w.wind || 0;
+      if (FAEHRE_REFS.indexOf(c.id) >= 0) {
+        if (w.welle != null && w.welle >= 2.5) add('rot', 'Wellen bis ' + kmText(w.welle) + ' m – die Fähre kann ausfallen.');
+        else if (w.welle != null && w.welle >= 1.8) add('gelb', 'Wellen bis ' + kmText(w.welle) + ' m – unruhige Überfahrt.');
+        if (wind >= 50) add('gelb', 'Sturmböen bis ' + Math.round(wind) + ' km/h.');
+      }
+      if (c.id === 'trip-emtb') {
+        if (wind >= 45) add('rot', 'Wind bis ' + Math.round(wind) + ' km/h – auf dem Rad kaum fahrbar.');
+        else if (wind >= 35) add('gelb', 'Wind bis ' + Math.round(wind) + ' km/h – kräftiger Gegenwind.');
+      }
+      var strand = STRAND_REFS.indexOf(c.id) >= 0 || /strand/.test(cat);
+      var draussen = strand || DRAUSSEN_REFS.indexOf(c.id) >= 0 || /natur|aktiv|aussicht/.test(cat) || c.id === 'trip-emtb';
+      if (strand && wind >= 45) add('gelb', 'Wind bis ' + Math.round(wind) + ' km/h – am Strand fliegt der Sand.');
+      if (!strand && draussen && wind >= 50 && c.id !== 'trip-emtb') add('gelb', 'Stürmisch (bis ' + Math.round(wind) + ' km/h), oben auf den Bergen erst recht.');
+      if (draussen && regen >= 50) add('gelb', 'Regenrisiko ' + regen + ' %.');
+      if (draussen && w.staub != null && w.staub >= 150) add('gelb', 'Calima (Saharastaub) – diesig, Fernsicht schlecht.');
+      if (SUNSET_REFS.indexOf(c.id) >= 0 && w.code === 3) add('gelb', 'Bedeckt – der Sonnenuntergang versteckt sich vielleicht.');
+      if (strand && w.uv != null && w.uv >= 8 && !r.length) add('info', 'UV-Index ' + Math.round(w.uv) + ' – Sonnencreme und Schatten.');
+      return r;
+    }
+    function wxStufe(key){
+      var w = wxTag(key); if (!w) return null;
+      var st = 'gruen', liste = [];
+      eintraege(key).forEach(function(p){
+        var c = kat(p.ref); if (!c) return;
+        ampel(c, w).forEach(function(x){ liste.push(x); if (x.l === 'rot') st = 'rot'; else if (x.l === 'gelb' && st !== 'rot') st = 'gelb'; });
+      });
+      return { w: w, stufe: st, hinweise: liste };
+    }
+    function wxChip(key){
+      var s2 = wxStufe(key);
+      if (!s2) return '<span class="ip-wx leer" title="Vorhersage reicht noch nicht so weit">Wetter folgt</span>';
+      var w = s2.w;
+      return '<span class="ip-wx ' + s2.stufe + '" title="Wetter-Ampel für das, was an dem Tag geplant ist">' + (WMO_ICON[w.code] || '') + ' ' + Math.round(w.tmax) + '° · 💨 ' + Math.round(w.wind) + '</span>';
+    }
+
+    // Wunschliste: Herzen als Notizen 'ip:w:<ref>' (gemeinsam, ohne Server-Aenderung)
+    function wunschSlug(ref){ return 'ip:w:' + ref; }
+    function wuensche(ref){
+      var l = (typeof notes !== 'undefined' && notes[wunschSlug(ref)]) || [], wer = {};
+      l.forEach(function(n){ if (PEOPLE[n.by]) wer[n.by] = n; });
+      return wer;
+    }
+    function wunschUmschalten(ref){
+      var me = whoAmI();
+      if (!me) { askWho(true); return; }
+      var meins = wuensche(ref)[me];
+      if (meins) removeNote(wunschSlug(ref), meins.id); else addNote(wunschSlug(ref), '♥');
+    }
+
+    // Tagebuch: je Person ein Eintrag als Notiz 'ip:tb:<tag>' mit '★n Text'; Foto nur auf diesem Geraet
+    function tbSlug(key){ return 'ip:tb:' + key; }
+    function tbEintraege(key){
+      var l = (typeof notes !== 'undefined' && notes[tbSlug(key)]) || [], wer = {};
+      l.forEach(function(n){
+        if (!PEOPLE[n.by]) return;
+        var m = /^★(\d)\s?([\s\S]*)$/.exec(n.text || '');
+        wer[n.by] = { id: n.id, sterne: m ? +m[1] : 0, text: m ? m[2] : (n.text || ''), at: n.at };
+      });
+      return wer;
+    }
+    function sterneText(n){ return n ? '★★★★★'.slice(0, n) + '☆☆☆☆☆'.slice(0, 5 - n) : ''; }
+    var fotoDb = null, fotoUrls = {};
+    function fotoOeffnen(){
+      if (fotoDb) return fotoDb;
+      fotoDb = new Promise(function(ok, nein){
+        try {
+          var rq = indexedDB.open('fuerte-tagebuch', 1);
+          rq.onupgradeneeded = function(){ rq.result.createObjectStore('fotos'); };
+          rq.onsuccess = function(){ ok(rq.result); };
+          rq.onerror = function(){ nein(rq.error); };
+        } catch(e){ nein(e); }
+      });
+      return fotoDb;
+    }
+    function fotoHolen(key){
+      if (fotoUrls[key] !== undefined) return Promise.resolve(fotoUrls[key]);
+      return fotoOeffnen().then(function(db){
+        return new Promise(function(ok){
+          var rq = db.transaction('fotos').objectStore('fotos').get(key);
+          rq.onsuccess = function(){ fotoUrls[key] = rq.result ? URL.createObjectURL(rq.result) : null; ok(fotoUrls[key]); };
+          rq.onerror = function(){ ok(null); };
+        });
+      }).catch(function(){ return null; });
+    }
+    function fotoSpeichern(key, blob){
+      return fotoOeffnen().then(function(db){
+        return new Promise(function(ok){
+          var tx = db.transaction('fotos', 'readwrite');
+          if (blob) tx.objectStore('fotos').put(blob, key); else tx.objectStore('fotos').delete(key);
+          tx.oncomplete = function(){ if (fotoUrls[key]) URL.revokeObjectURL(fotoUrls[key]); fotoUrls[key] = blob ? URL.createObjectURL(blob) : null; ok(); };
+          tx.onerror = function(){ ok(); };
+        });
+      }).catch(function(){});
+    }
+    // Foto verkleinern (max. 1200 px), damit der Speicher nicht volllaeuft
+    function fotoVerkleinern(file){
+      return new Promise(function(ok){
+        var img = new Image(), url = URL.createObjectURL(file);
+        img.onload = function(){
+          var f = Math.min(1, 1200 / Math.max(img.width, img.height)), cv = document.createElement('canvas');
+          cv.width = Math.round(img.width * f); cv.height = Math.round(img.height * f);
+          cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+          URL.revokeObjectURL(url);
+          cv.toBlob(function(b){ ok(b || file); }, 'image/jpeg', 0.82);
+        };
+        img.onerror = function(){ URL.revokeObjectURL(url); ok(file); };
+        img.src = url;
+      });
+    }
+    function fotosEinsetzen(root){
+      (root || document).querySelectorAll('img[data-ip-foto]').forEach(function(im){
+        fotoHolen(im.getAttribute('data-ip-foto')).then(function(u){ if (u) { im.src = u; im.hidden = false; } });
+      });
+    }
+    function erinnerungHtml(t){
+      var e = tbEintraege(t.key), wer = Object.keys(e), me = whoAmI() || 'stephan';
+      var foto = '<img data-ip-foto="' + t.key + '" alt="" hidden>';
+      if (!wer.length) return '<button type="button" class="ip-tb-knopf" data-ip-tb="' + t.key + '">📔 Tagebuch schreiben</button>' + '<span hidden>' + foto + '</span>';
+      var best = Math.max.apply(null, wer.map(function(w){ return e[w].sterne; }));
+      var txt = (e[me] || e[wer[0]]).text;
+      return '<button type="button" class="ip-erinnerung" data-ip-tb="' + t.key + '">' + foto + '<span class="st">' + sterneText(best) + '</span><span class="tx">' + esc(txt) + '</span></button>';
+    }
+    function tbOeffnen(key){
+      var t = tagVon(key); if (!t) return;
+      var me = whoAmI();
+      if (!me) { askWho(true); return; }
+      var e = tbEintraege(key), mein = e[me] || { sterne: 0, text: '' }, andere = e[otherPerson()];
+      var sterne = mein.sterne, neuesFoto = undefined;
+      var ov = document.createElement('div');
+      ov.className = 'ip-tb-ov';
+      ov.innerHTML = '<div class="ip-tb-karte" role="dialog" aria-modal="true" aria-labelledby="ip-tb-t">' +
+        '<h3 id="ip-tb-t">📔 ' + WOCHENTAGE[t.wd] + ', ' + t.lab + ' · Tag ' + (t.i + 1) + '</h3>' +
+        '<div class="ip-sterne" role="group" aria-label="Wie war der Tag?">' + [1, 2, 3, 4, 5].map(function(n){ return '<button type="button" data-n="' + n + '" aria-label="' + n + ' Sterne">★</button>'; }).join('') + '</div>' +
+        '<textarea maxlength="400" placeholder="Ein, zwei Sätze zum Tag …"></textarea>' +
+        '<div class="zeile"><label class="btn btn-outline">📷 Foto wählen<input type="file" accept="image/*" hidden></label><button type="button" class="btn btn-outline foto-weg" hidden>Foto entfernen</button></div>' +
+        '<img class="vorschau" alt="" hidden>' +
+        '<p class="hinweis">Sterne und Text seht ihr beide. Das Foto bleibt nur auf diesem Handy.</p>' +
+        (andere ? '<div class="andere"><b>' + esc(whoName(otherPerson())) + '</b> <span style="color:var(--gold)">' + sterneText(andere.sterne) + '</span><br>' + esc(andere.text) + '</div>' : '') +
+        '<div class="knoepfe"><button type="button" class="btn btn-outline ab">Abbrechen</button><button type="button" class="btn ok">Speichern</button></div></div>';
+      document.body.appendChild(ov);
+      var ta = ov.querySelector('textarea'), vs = ov.querySelector('.vorschau'), weg = ov.querySelector('.foto-weg');
+      ta.value = mein.text;
+      function sterneZeigen(){ ov.querySelectorAll('.ip-sterne button').forEach(function(b){ b.classList.toggle('an', +b.getAttribute('data-n') <= sterne); }); }
+      sterneZeigen();
+      fotoHolen(key).then(function(u){ if (u) { vs.src = u; vs.hidden = false; weg.hidden = false; } });
+      ov.querySelector('.ip-sterne').addEventListener('click', function(ev){ var b = ev.target.closest('button'); if (b) { sterne = +b.getAttribute('data-n'); sterneZeigen(); } });
+      ov.querySelector('input[type=file]').addEventListener('change', function(ev){
+        var f = ev.target.files && ev.target.files[0]; if (!f) return;
+        fotoVerkleinern(f).then(function(b){ neuesFoto = b; vs.src = URL.createObjectURL(b); vs.hidden = false; weg.hidden = false; });
+      });
+      weg.addEventListener('click', function(){ neuesFoto = null; vs.hidden = true; weg.hidden = true; });
+      function zu(){ ov.remove(); }
+      ov.addEventListener('click', function(ev){ if (ev.target === ov) zu(); });
+      ov.querySelector('.ab').addEventListener('click', zu);
+      ov.querySelector('.ok').addEventListener('click', function(){
+        var txt = ta.value.replace(/\s+/g, ' ').trim().slice(0, 400);
+        var neu = (sterne || txt) ? '★' + sterne + ' ' + txt : '';
+        var alt = e[me];
+        var altText = alt ? '★' + alt.sterne + ' ' + alt.text : '';
+        if (neu !== altText.trim() && neu.trim() !== altText.trim()) {
+          if (alt) removeNote(tbSlug(key), alt.id);
+          if (neu) addNote(tbSlug(key), neu);
+        }
+        var fertig = function(){ zu(); alles(); meldung('Tagebuch gespeichert'); };
+        if (neuesFoto !== undefined) fotoSpeichern(key, neuesFoto).then(fertig); else fertig();
+      });
+      setTimeout(function(){ ta.focus(); }, 50);
+    }
+    function tagebuchKarte(t){
+      var e = tbEintraege(t.key), wer = Object.keys(e);
+      if (!wer.length && inselMinJetzt() < 17 * 60) return '';
+      var h = '<div class="ip-tb"><h3>📔 ' + (wer.length ? 'Euer Tag im Tagebuch' : 'Wie war euer Tag?') + '</h3><img class="ip-tb-foto" data-ip-foto="' + t.key + '" alt="" hidden>';
+      wer.forEach(function(w){ h += '<div class="ip-tb-eintrag"><span class="wer">' + esc(whoName(w)) + '</span><span class="st">' + sterneText(e[w].sterne) + '</span>' + (e[w].text ? '<p>' + esc(e[w].text) + '</p>' : '') + '</div>'; });
+      var me = whoAmI();
+      h += '<button type="button" class="btn ' + (e[me] ? 'btn-outline' : '') + ' ip-b-link" data-ip-tb="' + t.key + '">' + (e[me] ? 'Meinen Eintrag ändern' : 'Sterne, Satz und Foto eintragen') + '</button></div>';
+      return h;
+    }
+
+    // Spontan-Knopf: was passt jetzt noch in die freie Zeit? (Ausflugsziele, Fahrt hin und zurueck)
+    var spZeit = 0;
+    function spontanVorschlaege(min){
+      var jetzt = inselMinJetzt(), sun = tripSunMinutes(new Date(Date.now())), hi = heuteIdx();
+      var heuteKey = TAGE[hi] ? TAGE[hi].key : '';
+      var l = [];
+      document.querySelectorAll('#page-ausfluege .ex-card[data-id]').forEach(function(card){
+        if (card.classList.contains('is-hidden')) return;
+        var c = kat('ex:' + card.getAttribute('data-id')); if (!c) return;
+        var stay = +card.getAttribute('data-stay') || 60, ziel = { lat: +card.getAttribute('data-lat'), lng: +card.getAttribute('data-lng') };
+        var fahrt = meinOrt && ziel.lat ? fahrMin(kmZwischen(meinOrt, ziel)) : (+card.getAttribute('data-drive') || 20);
+        var vorOrt = Math.min(stay, min - 2 * fahrt);
+        if (vorOrt < Math.min(45, stay * 0.6)) return;
+        var cat = card.getAttribute('data-cat') || '';
+        // Lobos braucht eine Genehmigung, Maerkte gibt es nur an ihrem Wochentag
+        if (c.id === 'ex:isla-de-lobos') return;
+        if (/markt|mercado|market/i.test(c.id) && TAGE[hi]) {
+          var woerter = c.t.split(/[\s()]+/).filter(function(x){ return x.length >= 4 && !/^(Markt|Corralejo)$/i.test(x); });
+          if (!fest(TAGE[hi]).some(function(f){ return woerter.some(function(x){ return f.t.indexOf(x) >= 0; }); })) return;
+        }
+        // Wetter-Ampel: bei Rot weglassen, bei Gelb nach hinten
+        var wh = wxTag(heuteKey), amp = wh ? ampel(c, wh) : [];
+        if (amp.some(function(x){ return x.l === 'rot'; })) return;
+        var zurueck = jetzt + 2 * fahrt + vorOrt;
+        if (/strand|natur|aktiv|aussicht/.test(cat) && sun.dark != null && jetzt + fahrt + vorOrt > sun.dark) return;
+        var punkte = (+card.getAttribute('data-rank') || 30);
+        if (amp.some(function(x){ return x.l === 'gelb'; })) punkte += 25;
+        var w = wuensche(c.id); punkte -= Object.keys(w).length * 15;
+        if (plan.some(function(p){ return p.ref === c.id && p.day < heuteKey; })) punkte += 40;
+        if (plan.some(function(p){ return p.ref === c.id && p.day === heuteKey; })) return;
+        l.push({ c: c, fahrt: fahrt, vorOrt: vorOrt, zurueck: zurueck, punkte: punkte, ziel: ziel, herzen: Object.keys(w).length, kurz: vorOrt < stay });
+      });
+      l.sort(function(a, b){ return a.punkte - b.punkte; });
+      return l.slice(0, 4);
+    }
+    function spontanKarte(){
+      var h = '<div class="ip-sp"><div class="ip-sp-kopf"><h3>⚡ Spontan: Was passt noch?</h3><small>' + (meinOrt ? 'ab deinem Standort' : 'ab eurer Unterkunft') + '</small></div>' +
+        '<div class="ip-sp-zeiten">' + [[60, '1 Std.'], [120, '2 Std.'], [180, '3 Std.'], [300, 'halber Tag']].map(function(z){
+          return '<button type="button" data-ip-sp="' + z[0] + '" aria-pressed="' + (spZeit === z[0]) + '">' + z[1] + '</button>';
+        }).join('') + '</div>';
+      var jz = inselMinJetzt(), sz = tripSunMinutes(new Date(Date.now()));
+      var nacht = sz.sunrise != null && sz.dark != null && (jz < sz.sunrise || jz > sz.dark - 30);
+      if (spZeit && nacht) {
+        h += '<p class="ip-sp-leer">Draußen ist es dunkel – die Ausflugsziele lohnen sich erst morgen wieder. Jetzt eher etwas essen oder trinken gehen?</p><a class="btn btn-outline ip-b-link" href="#gastro">Zur Gastro-Seite →</a>';
+      } else if (spZeit) {
+        var l = spontanVorschlaege(spZeit);
+        if (!l.length) h += '<p class="ip-sp-leer">Dafür reicht die Zeit gerade nicht – oder es wird vorher dunkel. Vielleicht ein Strandspaziergang vor der Tür?</p>';
+        else h += '<div class="ip-sp-liste">' + l.map(function(v){
+          return '<div class="ip-sp-v"><span class="bild" style="background-image:url(\'' + esc(v.c.img || '') + '\')"></span><div><b>' + (v.herzen ? '❤️ ' : '') + esc(v.c.t) + '</b>' +
+            '<small>' + v.fahrt + ' Min. hin · ' + String(fmtDuration(v.vorOrt)).trim() + (v.kurz ? ' (kurz)' : '') + ' vor Ort · zurück ca. ' + fmtClock(v.zurueck) + '</small>' +
+            '<div class="knoepfe"><a class="btn" href="' + navLink(v.ziel) + '" target="_blank" rel="noopener">Los ↗</a><button type="button" class="btn btn-outline" data-ip-sp-plan="' + esc(v.c.id) + '">Für heute einplanen</button></div></div></div>';
+        }).join('') + '</div>';
+        if (!meinOrt) h += '<button type="button" class="btn btn-outline ip-b-link" data-ip-standort="1">📍 Lieber ab meinem Standort rechnen</button>';
+      }
+      return h + '</div>';
+    }
+
     var ortAn = false;
     function tauschen(a, b){
       var A = TAGE[a], B = TAGE[b], n = 0;
@@ -12675,15 +13015,18 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       var cls = 'ip-tile' + (schonDrin ? ' planned' : '') + (istSel ? ' sel' : '') + (p && p.uid === frischUid ? ' pop' : '');
       var unter = c.s || '';
       if (!p && ortAn && meinOrt) { var en = entfText(ortVon(c)); if (en) unter = '📍 ' + en; }
+      var wl = Object.keys(wuensche(c.id)), herz = wl.length ? '<span class="wh" title="' + esc(wl.map(whoName).join(' und ')) + (wl.length > 1 ? ' wünschen' : ' wünscht') + ' sich das">' + (wl.length > 1 ? '❤️❤️' : '❤️') + '</span>' : '';
       var von = p && p.by && PEOPLE[p.by] ? '<span class="by" title="eingeplant von ' + esc(whoName(p.by)) + '">' + esc(whoName(p.by).charAt(0)) + '</span>' : '';
       return '<button type="button" class="' + cls + '" style="' + stil(c) + '" data-ref="' + esc(c.id) + '"' + (p ? ' data-uid="' + esc(p.uid) + '"' : '') + ' aria-label="' + esc(c.t) + '">' +
-        '<span class="e" aria-hidden="true">' + esc(c.e) + '</span><span class="t">' + esc(c.t) + '</span><span class="s">' + esc(unter) + '</span>' + fl + von + '</button>';
+        '<span class="e" aria-hidden="true">' + esc(c.e) + '</span><span class="t">' + esc(c.t) + '</span><span class="s">' + esc(unter) + '</span>' + fl + von + herz + '</button>';
     }
     function eintraege(key, slot){ return plan.filter(function(p){ return p.day === key && (!slot || p.slot === slot); }); }
     function kacheln(key, slot){ return eintraege(key, slot).map(function(p){ var c = kat(p.ref); return c ? kachel(c, p) : ''; }).join(''); }
     function hinweise(key){
       var h = [];
       eintraege(key).forEach(function(p){ pruefen(p).forEach(function(x){ h.push(x); }); });
+      var ws = wxStufe(key);
+      if (ws) ws.hinweise.forEach(function(x){ h.push({ l: x.l === 'rot' ? 'bad' : x.l === 'gelb' ? 'good' : 'info', m: (x.l === 'info' ? '☀️ ' : '🌦 ') + x.m }); });
       return h.length ? '<div class="ip-hinweise">' + h.map(function(x){ return '<div class="ip-hw ' + x.l + '">' + esc(x.m) + '</div>'; }).join('') + '</div>' : '';
     }
     function leisteZeichnen(){
@@ -12693,13 +13036,14 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
         var tag = kacheln(t.key, 'tag'), ab = kacheln(t.key, 'abend');
         return '<section class="ip-tag' + (t.i === hi ? ' heute' : '') + (t.i < hi ? ' vorbei' : '') + (sel && sel.tag === t.i ? ' tausch-sel' : '') + '" data-tagidx="' + t.i + '">' +
           '<div class="ip-tag-h" title="Antippen oder ziehen, um den ganzen Tag zu tauschen"><div class="l1"><span class="wd">' + WOCHENTAGE[t.wd] + '</span><span class="dt">' + t.lab + ' <span class="tausch" aria-hidden="true">⇄</span></span></div>' +
-          '<div class="l2"><span>' + (t.i === hi ? '<b>Heute · Tag ' + (t.i + 1) + '</b>' : 'Tag ' + (t.i + 1)) + '</span><span>🏠 ' + t.basis + '</span></div></div>' +
+          '<div class="l2"><span>' + (t.i === hi ? '<b>Heute · Tag ' + (t.i + 1) + '</b>' : 'Tag ' + (t.i + 1)) + '</span><span>🏠 ' + t.basis + '</span></div><div class="l3">' + wxChip(t.key) + '</div></div>' +
           '<div class="ip-fix">' + fest(t).map(function(f){ return '<span class="ip-fx' + (f.reise ? ' reise' : '') + '">' + esc(f.t) + '</span>'; }).join('') + '</div>' +
           '<div class="ip-zone" data-ip-drop="' + t.key + '|tag"><span class="zl">Tagsüber</span>' + (tag || '<span class="ip-leer">frei</span>') + '</div>' +
           '<div class="ip-zone abend" data-ip-drop="' + t.key + '|abend"><span class="zl">Abends</span>' + ab + '</div>' +
-          hinweise(t.key) + '</section>';
+          hinweise(t.key) + (t.i <= hi ? erinnerungHtml(t) : '') + '</section>';
       }).join('');
       el.scrollLeft = keep;
+      fotosEinsetzen(el);
     }
     function ablageZeichnen(){
       var row = $('ip-row'); if (!row) return;
@@ -12709,6 +13053,10 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
           var oa = ortVon(a), ob = ortVon(b);
           return (oa ? kmZwischen(meinOrt, oa) : 1e9) - (ob ? kmZwischen(meinOrt, ob) : 1e9);
         });
+      }
+      else if (tab !== 'eigen') {
+        l = l.map(function(c, j){ return { c: c, j: j, h: Object.keys(wuensche(c.id)).length }; })
+             .sort(function(a, b){ return (b.h - a.h) || (a.j - b.j); }).map(function(x){ return x.c; });
       }
       var ok = $('ip-ort'); if (ok) ok.setAttribute('aria-pressed', ortAn && meinOrt ? 'true' : 'false');
       row.innerHTML = l.length ? l.map(function(c){ return kachel(c, null); }).join('') : '<span class="ip-leer">Noch keine eigenen Kacheln. Unten eine anlegen.</span>';
@@ -12763,14 +13111,20 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       if (haupt.length > 1) unter = 'dazu ' + haupt.slice(1).map(function(x){ return x.t; }).join(', ');
       if (ab.length) unter += (unter ? ' · ' : '') + 'abends ' + ab.map(function(x){ return x.t; }).join(', ');
       var bild = c ? stil(c) : "--k:var(--ip-k-frei);--img:url('images/kachel-strand.webp');";
+      var wsH = wxStufe(t.key);
+      if (wsH) f = [{ t: (WMO_ICON[wsH.w.code] || '') + ' ' + Math.round(wsH.w.tmax) + '° · Wind ' + Math.round(wsH.w.wind) + ' km/h' + (wsH.stufe === 'rot' ? ' · ⚠️' : wsH.stufe === 'gelb' ? ' · Wetter beachten' : '') }].concat(f);
       var h = '<div class="ip-b"><div class="ip-b-eb">Heute · ' + WOCHENTAGE[t.wd] + ', ' + t.lab + ' · Tag ' + (t.i + 1) + ' von 14</div>' +
         '<a class="ip-hero" href="#kalender" data-ip-zuheute="1" style="' + bild + '"><div class="he" aria-hidden="true">' + esc(c ? c.e : '☀️') + '</div><div class="ht">' + esc(titel) + '</div><div class="hs">' + esc(unter) + '</div>' +
         (f.length ? '<div class="pills">' + f.slice(0, 4).map(function(x){ return '<span>' + esc(x.t) + '</span>'; }).join('') + '</div>' : '') + '</a>';
       h += heuteModus(t, c);
+      if (wsH && wsH.hinweise.length) h += '<div class="ip-hinweise">' + wsH.hinweise.map(function(x){ return '<div class="ip-hw ' + (x.l === 'rot' ? 'bad' : x.l === 'gelb' ? 'good' : 'info') + '">' + esc(x.m) + '</div>'; }).join('') + '</div>';
+      h += spontanKarte();
+      h += tagebuchKarte(t);
       var naechste = TAGE.slice(t.i + 1, t.i + 4);
       if (naechste.length) {
         h += '<div class="ip-b-h">Die nächsten Tage</div><div class="ip-next">' + naechste.map(function(n){
-          var x = hoehepunkt(n);
+          var x = hoehepunkt(n), wn = wxTag(n.key), wsN = wxStufe(n.key);
+          if (wn) x = { t: x.t, e: x.e, k: x.k, img: x.img, s: (x.s ? x.s + ' · ' : '') + (WMO_ICON[wn.code] || '') + ' ' + Math.round(wn.tmax) + '°' + (wsN && wsN.stufe !== 'gruen' ? ' · ⚠️ Wetter' : '') };
           return '<a class="ip-next-r" href="#kalender" data-ip-tag="' + n.i + '"><div class="nd">' + WD[n.wd] + '<b>' + n.dd + '.</b></div><div class="ni" style="' + stil(x) + '">' + (x.img ? '' : esc(x.e)) + '</div><div class="nt">' + esc(x.t) + '<small>' + esc(x.s || '') + '</small></div></a>';
         }).join('') + '</div>';
       }
@@ -12778,6 +13132,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       if (mm.length) h += packHtml(morgen, cm, mm, 'Für morgen einpacken · ' + cm.t);
       h += '<a class="btn btn-outline ip-b-link" href="#kalender" data-ip-zuheute="1">Plan ansehen und ändern →</a></div>';
       box.innerHTML = h;
+      fotosEinsetzen(box);
     }
 
     function alles(){
@@ -12811,7 +13166,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     // Auswahl-Leiste unten (Antippen, dann Tag antippen)
     var selbar = document.createElement('div');
     selbar.className = 'ip-selbar'; selbar.hidden = true; selbar.setAttribute('role', 'status');
-    selbar.innerHTML = '<div class="ip-sel-bild" aria-hidden="true"></div><div class="ip-sel-text"><b></b><span></span></div><div class="ip-sel-btns"><button type="button" class="weg">🗑 Entfernen</button><button type="button" class="ab">Fertig</button></div>';
+    selbar.innerHTML = '<div class="ip-sel-bild" aria-hidden="true"></div><div class="ip-sel-text"><b></b><span></span></div><div class="ip-sel-btns"><button type="button" class="wunsch">🤍 Wunsch</button><button type="button" class="weg">🗑 Entfernen</button><button type="button" class="ab">Fertig</button></div>';
     var trash = document.createElement('div');
     trash.className = 'ip-trash'; trash.setAttribute('data-ip-drop', 'trash'); trash.textContent = '🗑 Hier loslassen zum Entfernen';
     var toastEl = document.createElement('div');
@@ -12832,7 +13187,11 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
         selbar.querySelector('b').textContent = WOCHENTAGE[tt.wd] + ', ' + tt.lab + ' tauschen';
         selbar.querySelector('.ip-sel-text span').textContent = 'Tippe auf den Tag, mit dem alles getauscht werden soll';
         selbar.querySelector('.weg').hidden = true;
+        selbar.querySelector('.wunsch').hidden = true;
       } else if (s) {
+        var wb = selbar.querySelector('.wunsch'), mw = !!wuensche(s.ref)[whoAmI()];
+        wb.hidden = s.ref.indexOf('e:') === 0;
+        wb.classList.toggle('an', mw); wb.textContent = mw ? '❤️ Wunsch' : '🤍 Wunsch';
         var c = kat(s.ref), p = null;
         if (s.uid) plan.forEach(function(x){ if (x.uid === s.uid) p = x; });
         var t = p && tagVon(p.day), b = selbar.querySelector('.ip-sel-bild');
@@ -12844,6 +13203,13 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       leisteZeichnen(); ablageZeichnen();
     }
     selbar.querySelector('.ab').addEventListener('click', function(){ waehlen(null); });
+    selbar.querySelector('.wunsch').addEventListener('click', function(){
+      if (!sel || !sel.ref) return;
+      wunschUmschalten(sel.ref);
+      var mw = !!wuensche(sel.ref)[whoAmI()], wb = selbar.querySelector('.wunsch');
+      wb.classList.toggle('an', mw); wb.textContent = mw ? '❤️ Wunsch' : '🤍 Wunsch';
+      meldung(mw ? 'Auf deiner Wunschliste' : 'Von deiner Wunschliste genommen');
+    });
     selbar.querySelector('.weg').addEventListener('click', function(){ if (sel && sel.uid) { var u = sel.uid; sel = null; entfernen(u); } waehlen(null); });
 
     // ---- Ziehen: Maus sofort, Finger nach kurzem Festhalten ----
@@ -12942,6 +13308,16 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       // Stationen und Mitnehm-Liste abhaken (Startseite)
       var hb = e.target.closest('[data-ip-haken]');
       if (hb) { hakenUmschalten(hb.getAttribute('data-ip-haken')); buehneZeichnen(); return; }
+      var spb = e.target.closest('[data-ip-sp]');
+      if (spb) { var zz = +spb.getAttribute('data-ip-sp'); spZeit = spZeit === zz ? 0 : zz; buehneZeichnen(); return; }
+      var spp = e.target.closest('[data-ip-sp-plan]');
+      if (spp) {
+        var hi2 = heuteIdx(); if (!TAGE[hi2]) return;
+        einplanen(spp.getAttribute('data-ip-sp-plan'), null, TAGE[hi2].key, inselMinJetzt() >= 18 * 60 ? 'abend' : 'tag');
+        spZeit = 0; buehneZeichnen(); return;
+      }
+      var tbk = e.target.closest('[data-ip-tb]');
+      if (tbk) { tbOeffnen(tbk.getAttribute('data-ip-tb')); return; }
       if (e.target.closest('[data-ip-standort]')) {
         standortHolen().then(function(){ alles(); }, function(err){ meldung(standortFehlerText(err)); });
         return;
@@ -13038,7 +13414,26 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     alles();
     if (/^#kalender/.test(location.hash)) setTimeout(function(){ zuTag(heuteIdx(), false); }, 120);
     setInterval(function(){ if (document.visibilityState === 'visible') buehneZeichnen(); }, 60000);
-    return { liste: liste, ausServer: ausServer, render: alles, meldung: meldung };
+    wetterLaden();
+    setInterval(function(){ if (document.visibilityState === 'visible' && (!wx || Date.now() - wx.at > 3 * 3600000)) wetterLaden(); }, 600000);
+    // Neue Notizen (Herzen, Tagebuch) vom Server: nur neu zeichnen, wenn sich dort etwas geaendert hat
+    var ipNotizStand = '';
+    function notizenNeu(){
+      var st = Object.keys(notes || {}).filter(function(k){ return k.indexOf('ip:') === 0; }).sort().map(function(k){
+        return k + ':' + (notes[k] || []).map(function(n){ return n.by + n.at + (n.text || '').length; }).join(',');
+      }).join('|');
+      if (st === ipNotizStand) return;
+      ipNotizStand = st;
+      if (zug && zug.aktiv) return;
+      alles();
+    }
+    function name(slug){
+      var m = /^ip:tb:(\d{4}-\d{2}-\d{2})$/.exec(slug);
+      if (m) { var tt = tagVon(m[1]); return tt ? WD[tt.wd] + ' ' + tt.lab : m[1]; }
+      var c = kat(String(slug).replace(/^ip:w:/, ''));
+      return c ? c.t : slug;
+    }
+    return { liste: liste, ausServer: ausServer, render: alles, meldung: meldung, notizenNeu: notizenNeu, name: name };
   })();
 })();
 // ---- Kombi-Rechner auf der Vergleichsseite (seit 26.09.2026) ----
