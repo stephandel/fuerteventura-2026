@@ -215,7 +215,18 @@
     var TIPPS = cfg.tipps || [];
     // Zeitraffer-Knopf in der Bildleiste statt des ▶ im Satellitenbild; Knöpfe mit „Jetzt“ in der Mitte
     var FILM_LEISTE = !!cfg.filmLeiste;
-    var KNOEPFE_MITTIG = !!cfg.knoepfeMittig;
+    // Einfarbige Symbole für die Knöpfe (statt Emojis), Farbe = Schriftfarbe des Knopfs
+    var SYMBOL = {
+      frisch: '<path d="M20 12a8 8 0 1 1-2.35-5.65"/><path d="M20 4v5h-5"/>',
+      menu:   '<path d="M4 7h16M4 12h16M4 17h16"/>',
+      chevl:  '<path d="M14.5 6l-6 6 6 6"/>',
+      chevr:  '<path d="M9.5 6l6 6-6 6"/>',
+      lupe:   '<circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.3-4.3"/>',
+      plus:   '<path d="M12 6v12M6 12h12"/>',
+      minus:  '<path d="M6 12h12"/>',
+      ziel:   '<circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="1.8" fill="currentColor" stroke="none"/>'
+    };
+    function ico(name){ return '<svg class="mg-i" viewBox="0 0 24 24" aria-hidden="true" focusable="false">' + SYMBOL[name] + '</svg>'; }
 
     // Welche Zeilen stehen zur Verfügung, in welcher Reihenfolge
     var ANGEBOT = (cfg.zeilen && cfg.zeilen.length ? cfg.zeilen : ZEILEN_STANDARD)
@@ -833,6 +844,18 @@
         el.zeit.innerHTML = '<b>' + pad2(dt.getDate()) + '.' + pad2(dt.getMonth() + 1) + '. · ' +
           pad2(dt.getHours()) + ':' + pad2(dt.getMinutes()) + '</b> <span class="mg-rel">' + rel + '</span>';
 
+        // Jetzt-Knopf: zeigt den Abstand ("+14 h") und ruht, wenn der Strich schon auf jetzt steht
+        var aufJetzt = Math.abs(diff) < 0.5;
+        var jb = document.getElementById(kid('jetzt')), jr = document.getElementById(kid('jrel'));
+        if (jr) jr.textContent = aufJetzt ? '' : (diff < 0 ? '−' : '+') + relKurz(Math.abs(diff));
+        if (jb) jb.disabled = aufJetzt;
+        // Rand-Pfeile: liegt "jetzt" außerhalb des sichtbaren Bereichs, zeigt ein Pfeil die Richtung
+        var halb = el.scroll.clientWidth / 2 / pxH;
+        var rpl = document.getElementById(kid('rpl')), rpr = document.getElementById(kid('rpr'));
+        if (rpl) rpl.classList.toggle('is-da', idxJetzt < f - halb + 0.5);
+        if (rpr) rpr.classList.toggle('is-da', idxJetzt > f + halb - 0.5);
+        sichtMitte();
+
         var links = Math.max(0, Math.min(geo.n - 1, f - el.scroll.clientWidth / 2 / pxH + 0.5));
         var dtL = new Date(daten.t0.getTime() + Math.floor(links) * 3600000);
         datumsLabelsPruefen();
@@ -872,6 +895,17 @@
       }, 16);
     }
 
+    // Das Diagramm ist auf dem Handy höher als der Bildschirm. Rand-Pfeile und Zoom-Hinweis
+    // sollen dort stehen, wo man gerade hinschaut: in der Mitte des sichtbaren Ausschnitts.
+    function sichtMitte(){
+      if (!el.wrap) return;
+      var r = el.wrap.getBoundingClientRect(), H = global.innerHeight || r.height;
+      var oben = Math.max(r.top, 0), unten = Math.min(r.bottom, H);
+      var mitte = (unten > oben) ? (oben + unten) / 2 - r.top : r.height / 2;
+      mitte = Math.max(48, Math.min(r.height - 48, mitte));
+      el.wrap.style.setProperty('--mg-sicht-mitte', Math.round(mitte) + 'px');
+    }
+
     function wertlinienSetzen(f){
       geo.zeilen.forEach(function(g){
         if (!g.z.wertlinie) return;
@@ -897,6 +931,22 @@
       zeichnen(false);
       zentrieren(mitte, false);
       zoomKnoepfe();
+      zoomHinweis();
+    }
+    // Kurz eingeblendet: "1 Tag im Bild" - man weiß immer, wie viel man gerade sieht
+    var hinweisTimer = 0;
+    function zoomHinweis(){
+      var h = document.getElementById(kid('zoomhinweis'));
+      if (!h || !el.scroll) return;
+      var std = el.scroll.clientWidth / pxH, t;
+      if (std < 30) t = Math.round(std) + ' Stunden im Bild';
+      else {
+        var tg = Math.round(std / 12) / 2;
+        t = (tg === 1 ? '1 Tag' : String(tg).replace('.', ',') + ' Tage') + ' im Bild';
+      }
+      h.textContent = t; h.classList.add('is-da');
+      clearTimeout(hinweisTimer);
+      hinweisTimer = setTimeout(function(){ h.classList.remove('is-da'); }, 900);
     }
     function zoomKnoepfe(){
       var k = ZOOMS.indexOf(zoom);
@@ -1013,6 +1063,12 @@
       if (h < 36) return Math.round(h) + ' Std.';
       var t = Math.round(h / 24); return t + (t === 1 ? ' Tag' : ' Tagen');
     }
+    // Knappe Form für den Jetzt-Knopf: "14 h", "3 Tage"
+    function relKurz(h){
+      if (h < 1) return Math.round(h * 60) + ' Min.';
+      if (h < 36) return Math.round(h) + ' h';
+      var t = Math.round(h / 24); return t + (t === 1 ? ' Tag' : ' Tage');
+    }
     function wmoIcon(c, tag){ if (!tag && (c === 0 || c === 1)) return '🌙'; return WMO_ICON[c] || '🌤️'; }
     function melde(t){ if (el.zeit) { el.zeit.innerHTML = '<span class="mg-rel">' + esc(t) + '</span>'; el.werte.innerHTML = ''; } }
 
@@ -1088,7 +1144,7 @@
         el.camText.innerHTML = zukunft
           ? 'Für die Zukunft gibt es noch kein Bild – das entsteht erst, wenn die Stunde da ist.'
           : (webcam.speicher ? 'Für diese Zeit liegt kein Bild vor.'
-             : 'Vergangene Stunden erscheinen hier, sobald der Bildspeicher eingerichtet ist. Das Bild der laufenden Stunde siehst du über „Jetzt zentrieren“.');
+             : 'Vergangene Stunden erscheinen hier, sobald der Bildspeicher eingerichtet ist. Das Bild der laufenden Stunde siehst du über „Jetzt“.');
         return;
       }
       el.cam.classList.remove('is-leer');
@@ -1355,21 +1411,28 @@
           '<div class="mg-scroll" id="' + kid('scroll') + '"><div class="mg-svgwrap" id="' + kid('svgwrap') + '"></div></div>' +
           '<div class="mg-achse" id="' + kid('achse') + '"></div>' +
           '<div class="mg-cursor" aria-hidden="true"></div>' +
+          // Rand-Pfeile: erscheinen, wenn "jetzt" aus dem Bild gewischt ist, und führen zurück
+          '<button type="button" class="mg-randpfeil mg-randpfeil-l" id="' + kid('rpl') + '" aria-label="Zurück zu jetzt" title="Zurück zu jetzt">' + ico('chevl') + ico('ziel') + '</button>' +
+          '<button type="button" class="mg-randpfeil mg-randpfeil-r" id="' + kid('rpr') + '" aria-label="Zurück zu jetzt" title="Zurück zu jetzt">' + ico('ziel') + ico('chevr') + '</button>' +
+          // Zoom: kleines − 🔍 + in der Ecke des Diagramms (dazu Zwei-Finger-Geste und Strg+Mausrad)
+          '<div class="mg-ecke">' +
+            '<button type="button" class="mg-btn" id="' + kid('zoomraus') + '" aria-label="Herauszoomen: mehr Tage zeigen" title="Mehr Tage zeigen">' + ico('minus') + '</button>' +
+            '<span class="mg-ecke-lupe" aria-hidden="true">' + ico('lupe') + '</span>' +
+            '<button type="button" class="mg-btn" id="' + kid('zoomrein') + '" aria-label="Hineinzoomen: weniger Stunden zeigen" title="Genauer zeigen">' + ico('plus') + '</button>' +
+          '</div>' +
+          '<div class="mg-zoomhinweis" id="' + kid('zoomhinweis') + '" aria-live="polite"></div>' +
         '</div>' +
-        // Knöpfe direkt unter dem Diagramm, die Tipps zum Tag stehen unten
+        // Knopfleiste direkt unter dem Diagramm: ↻ links, ‹ Jetzt › als Gruppe in der Mitte, ☰ rechts.
+        // Sie haftet unten am Bildschirm, solange das Tool im Bild ist (CSS: position sticky).
         '<div class="mg-knoepfe">' +
-          (KNOEPFE_MITTIG ? '<button type="button" class="mg-btn mg-btn-frisch" id="' + kid('frisch') + '" aria-label="Werte auffrischen" title="Werte neu holen">↻</button>' : '') +
-          '<button type="button" class="mg-btn" id="' + kid('zurueck') + '" aria-label="Einen Tag zurück">‹</button>' +
-          '<button type="button" class="mg-btn mg-btn-jetzt" id="' + kid('jetzt') + '">Jetzt<span class="mg-jz"> zentrieren</span></button>' +
-          '<button type="button" class="mg-btn" id="' + kid('vor') + '" aria-label="Einen Tag vor">›</button>' +
-          (KNOEPFE_MITTIG ? '' : '<button type="button" class="mg-btn mg-btn-frisch" id="' + kid('frisch') + '" aria-label="Werte auffrischen" title="Werte neu holen">↻</button>') +
-          '<span class="mg-zoom">' +
-            '<button type="button" class="mg-btn" id="' + kid('zoomraus') + '" aria-label="Herauszoomen: mehr Tage zeigen" title="Mehr Tage zeigen">−</button>' +
-            '<span class="mg-zoom-lupe" aria-hidden="true">🔍</span>' +
-            '<button type="button" class="mg-btn" id="' + kid('zoomrein') + '" aria-label="Hineinzoomen: weniger Stunden zeigen" title="Genauer zeigen">+</button>' +
-          '</span>' +
+          '<button type="button" class="mg-btn mg-btn-frisch" id="' + kid('frisch') + '" aria-label="Werte auffrischen" title="Werte neu holen">' + ico('frisch') + '</button>' +
+          '<div class="mg-mitte"><div class="mg-gruppe">' +
+            '<button type="button" class="mg-btn" id="' + kid('zurueck') + '" aria-label="Einen Tag zurück" title="Einen Tag zurück">' + ico('chevl') + '</button>' +
+            '<button type="button" class="mg-btn mg-btn-jetzt" id="' + kid('jetzt') + '" title="Zu jetzt springen und Werte neu holen"><span class="mg-jt">Jetzt</span><span class="mg-jrel" id="' + kid('jrel') + '"></span></button>' +
+            '<button type="button" class="mg-btn" id="' + kid('vor') + '" aria-label="Einen Tag vor" title="Einen Tag vor">' + ico('chevr') + '</button>' +
+          '</div></div>' +
           '<span class="mg-zeilenwahl">' +
-            '<button type="button" class="mg-btn" id="' + kid('zbtn') + '" aria-expanded="false" title="Welche Zeilen anzeigen?">☰</button>' +
+            '<button type="button" class="mg-btn" id="' + kid('zbtn') + '" aria-expanded="false" aria-label="Welche Zeilen anzeigen?" title="Welche Zeilen anzeigen?">' + ico('menu') + '</button>' +
             '<div class="mg-zeilen-panel" id="' + kid('zpanel') + '" hidden><h4>Welche Zeilen?</h4></div>' +
           '</span>' +
         '</div>' +
@@ -1385,7 +1448,7 @@
           '<div class="mg-cam-text" id="' + kid('camtext') + '"></div></div>' +
         (FILM_LEISTE ? '<div class="mg-film" id="' + kid('film') + '" hidden></div>' : '') +
         '<div class="mg-tipps" id="' + kid('tipps') + '" hidden></div>' +
-        '<div class="mg-foot"><span>← Wischen → · Auswahl in der Mitte · Antippen holt die Stelle in die Mitte</span><span id="' + kid('quelle') + '"></span></div>';
+        '<div class="mg-foot"><span>← Wischen → · Antippen holt die Stelle in die Mitte · Doppeltipp springt zu jetzt · Zwei Finger zoomen</span><span id="' + kid('quelle') + '"></span></div>';
 
       el.scroll  = document.getElementById(kid('scroll'));
       el.svgWrap = document.getElementById(kid('svgwrap'));
@@ -1445,6 +1508,8 @@
       sortierenImDiagramm();
 
       el.scroll.addEventListener('scroll', anzeigen, { passive: true });
+      global.addEventListener('scroll', sichtMitte, { passive: true });
+      global.addEventListener('resize', sichtMitte);
       // Wer selbst ins Diagramm greift, übernimmt - der Zeitraffer hört auf
       ['pointerdown', 'wheel', 'touchstart'].forEach(function(t){
         el.scroll.addEventListener(t, function(){ if (zf.aktiv) zfBeenden(false); }, { passive: true });
@@ -1461,16 +1526,51 @@
           if (b.getAttribute('data-ende')) zfBeenden(true);
         });
       }
+      // Zu jetzt springen und dabei gleich neue Werte holen - vom Knopf, vom Rand-Pfeil und per Doppeltipp
+      // Erst sanft hinscrollen, dann nachladen: kommen die neuen Werte mitten im
+      // Scrollen an, bleibt das Diagramm sonst irgendwo auf halbem Weg stehen.
+      var jetztTimer = 0;
+      function zuJetzt(){
+        zentrieren(idxJetzt, true);
+        clearTimeout(jetztTimer);
+        jetztTimer = setTimeout(function(){ jetztTimer = 0; auffrischen(false); }, document.hidden ? 0 : 650);
+      }
+      // Einmal tippen setzt den Strich dorthin, zweimal schnell tippen springt zu jetzt.
+      // Der einfache Tipp wartet deshalb kurz, ob ein zweiter folgt.
+      var tippTimer = 0;
       el.scroll.addEventListener('click', function(ev){
         if (!geo) return;
+        if (tippTimer) { clearTimeout(tippTimer); tippTimer = 0; zuJetzt(); return; }
         var r = el.scroll.getBoundingClientRect();
-        zentrieren((ev.clientX - r.left + el.scroll.scrollLeft - geo.padL) / pxH, true);
+        var idx = (ev.clientX - r.left + el.scroll.scrollLeft - geo.padL) / pxH;
+        tippTimer = setTimeout(function(){ tippTimer = 0; zentrieren(idx, true); }, 280);
       });
-      document.getElementById(kid('jetzt')).addEventListener('click', function(){
-        zentrieren(idxJetzt, true);
-        auffrischen(false);               // beim Sprung auf "jetzt" gleich neue Werte holen
-      });
+      document.getElementById(kid('jetzt')).addEventListener('click', zuJetzt);
+      document.getElementById(kid('rpl')).addEventListener('click', zuJetzt);
+      document.getElementById(kid('rpr')).addEventListener('click', zuJetzt);
       document.getElementById(kid('frisch')).addEventListener('click', function(){ auffrischen(true); });
+
+      // Zoom-Gesten: zwei Finger auseinander/zusammen (Handy) und Strg + Mausrad (Laptop).
+      // Je Stufe genügt eine deutliche Bewegung; danach zählt der Abstand neu.
+      var kneif = null;
+      function fingerAbstand(ev){ var a = ev.touches[0], b = ev.touches[1]; return Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY); }
+      el.scroll.addEventListener('touchstart', function(ev){ if (ev.touches.length === 2) kneif = fingerAbstand(ev); }, { passive: true });
+      el.scroll.addEventListener('touchmove', function(ev){
+        if (ev.touches.length !== 2 || kneif === null) return;
+        ev.preventDefault();                           // die Seite soll dabei nicht mitzoomen
+        var d = fingerAbstand(ev), q = d / kneif;
+        if (q > 1.25) { zoomen(-1); kneif = d; }
+        else if (q < 0.8) { zoomen(1); kneif = d; }
+      }, { passive: false });
+      ['touchend', 'touchcancel'].forEach(function(t){ el.scroll.addEventListener(t, function(ev){ if (ev.touches.length < 2) kneif = null; }, { passive: true }); });
+      var radSperre = 0;
+      el.scroll.addEventListener('wheel', function(ev){
+        if (!ev.ctrlKey && !ev.metaKey) return;
+        ev.preventDefault();
+        if (radSperre) return;
+        radSperre = setTimeout(function(){ radSperre = 0; }, 250);
+        zoomen(ev.deltaY > 0 ? 1 : -1);
+      }, { passive: false });
       document.getElementById(kid('zurueck')).addEventListener('click', function(){ zentrieren(idxAusScroll() - 24, true); });
       document.getElementById(kid('vor')).addEventListener('click', function(){ zentrieren(idxAusScroll() + 24, true); });
       document.getElementById(kid('zoomraus')).addEventListener('click', function(){ zoomen(1); });
@@ -1524,6 +1624,12 @@
       btn.addEventListener('click', function(ev){
         ev.stopPropagation();
         var zu = panel.hidden;
+        // Die Leiste haftet unten am Bildschirm - ist dort kein Platz, klappt das Menü nach oben auf
+        if (zu) {
+          panel.hidden = false;                       // erst zeigen, dann messen
+          var r = btn.getBoundingClientRect(), unten = (global.innerHeight || 0) - r.bottom;
+          panel.classList.toggle('is-oben', unten < panel.offsetHeight + 12 && r.top > unten);
+        }
         panel.hidden = !zu;
         btn.setAttribute('aria-expanded', String(zu));
       });

@@ -20,6 +20,11 @@
   /* Wie weit die Datumsfahne beim Scrollen vom oberen Rand bleibt
      (z. B. Höhe einer festen Menüleiste der Seite) */
   --mg-haft-oben: 0px;
+  /* Wie weit die Knopfleiste beim Scrollen vom unteren Rand bleibt
+     (z. B. Höhe einer festen Fußleiste der Seite) */
+  --mg-haft-unten: 0px;
+  /* Eckenrundung der Knöpfe: "sanft" (Stephans Wahl 05.10.2026) */
+  --mg-r: 11px;
 
   background: var(--mg-flaeche);
   border: 1px solid var(--mg-rand);
@@ -70,31 +75,41 @@
 .mg-wz { grid-area: z; padding-left: 16px; margin-top: -3px; line-height: 1.25; font-size: 11.5px; color: var(--mg-text-still); text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 .mg-wz:empty { display: none; }
 
-/* Knöpfe als Leiste unter Diagramm und Bild - auf dem Handy nah am Daumen */
-.mg-knoepfe { position: relative; display: flex; justify-content: center; gap: 6px; padding: 10px 14px 4px; }
-.mg-btn-jetzt { flex: 0 1 220px; }
-/* Zoom: − 🔍 + als zusammenhängendes Paar */
-.mg-zoom { display: flex; align-items: center; gap: 0; }
-.mg-zoom .mg-btn { min-width: 34px; padding: 0 8px; font-size: 17px; }
-.mg-zoom .mg-btn:first-child { border-radius: 11px 0 0 11px; }
-.mg-zoom .mg-btn:last-child { border-radius: 0 11px 11px 0; }
-.mg-zoom-lupe { display: flex; align-items: center; justify-content: center; min-height: 40px; padding: 0 3px; font-size: 12px; border-top: 1px solid var(--mg-rand); border-bottom: 1px solid var(--mg-rand); background: var(--mg-flaeche2); }
+/* ---- Knopfleiste unter dem Diagramm (Stephans Wahl vom 05.10.2026) ----
+   ↻ links außen, ‹ Jetzt › als Gruppe in einem Rahmen in der Mitte, ☰ rechts außen.
+   Die Leiste haftet unten am Bildschirm, bis das Tool aus dem Bild ist; auf dem
+   Handy bleibt sie so immer unterm Daumen. */
+.mg-knoepfe { position: sticky; bottom: var(--mg-haft-unten); z-index: 7; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 8px;
+  padding: 8px 14px; background: var(--mg-flaeche); border-top: 1px solid var(--mg-rand); border-bottom: 1px solid var(--mg-rand); }
+.mg-mitte { display: flex; justify-content: center; min-width: 0; }
+/* Ein Rahmen pro Gruppe: die Knöpfe darin ohne eigenen Rand, Trennstriche dazwischen */
+.mg-gruppe { display: inline-flex; align-items: stretch; border: 1px solid var(--mg-rand); border-radius: var(--mg-r); overflow: hidden; background: var(--mg-flaeche2); }
+.mg-gruppe .mg-btn { border: 0; border-radius: 0; background: transparent; }
+.mg-gruppe > * + * { border-left: 1px solid var(--mg-rand); }
+/* Jetzt: nur fetter als die anderen, dazu der Abstand zur Stelle ("+14 h") */
+.mg-btn-jetzt { min-width: 118px; padding: 0 14px; gap: 7px; font-weight: 700; }
+.mg-jrel { font-family: var(--mg-mono); font-size: 12.5px; font-weight: 600; color: var(--mg-text-still); }
+.mg-jrel:empty { display: none; }
+/* Jetzt ruht, wenn der Strich schon auf jetzt steht: blass, aber die Trennstriche bleiben */
+.mg-gruppe .mg-btn:disabled { opacity: 1; }
+.mg-gruppe .mg-btn:disabled > * { opacity: 0.4; }
 .mg-btn:disabled { opacity: 0.35; cursor: default; }
-@media (max-width: 480px) { .mg-knoepfe { gap: 4px; padding-left: 8px; padding-right: 8px; } .mg-knoepfe .mg-btn { padding: 0 8px; } .mg-jz { display: none; } }
-.mg-btn { min-height: 40px; min-width: 40px; padding: 0 12px; border-radius: 11px; border: 1px solid var(--mg-rand); background: var(--mg-flaeche2); color: var(--mg-text); font: 600 13.5px/1 var(--mg-serif); cursor: pointer; -webkit-tap-highlight-color: transparent; }
+@media (max-width: 480px) { .mg-knoepfe { gap: 6px; padding-left: 8px; padding-right: 8px; } .mg-btn-jetzt { min-width: 104px; padding: 0 10px; } }
+.mg-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 40px; min-width: 40px; padding: 0 12px; border-radius: var(--mg-r); border: 1px solid var(--mg-rand); background: var(--mg-flaeche2); color: var(--mg-text); font: 600 13.5px/1 var(--mg-serif); cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .mg-btn:active { transform: scale(0.97); }
-.mg-btn-jetzt { border-color: var(--mg-akzent); color: var(--mg-akzent); }
-.mg-btn-frisch { font-size: 17px; line-height: 1; }
+/* Einfarbige Symbole in der Schriftfarbe des Knopfs */
+.mg-i { display: block; width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
 .mg-btn-frisch.is-laedt { color: var(--mg-akzent); }
-.mg-btn-frisch.is-laedt::before { content: ""; }
 @keyframes mg-dreht { to { transform: rotate(360deg); } }
-.mg-btn-frisch.is-laedt { animation: mg-dreht 0.9s linear infinite; }
-@media (prefers-reduced-motion: reduce) { .mg-btn-frisch.is-laedt { animation: none; opacity: 0.5; } }
+.mg-btn-frisch.is-laedt .mg-i { animation: mg-dreht 0.9s linear infinite; }
+@media (prefers-reduced-motion: reduce) { .mg-btn-frisch.is-laedt .mg-i { animation: none; opacity: 0.5; } }
 
 /* ---- Zeilenauswahl ---- */
 .mg-zeilenwahl { position: relative; }
 .mg-zeilen-panel { position: absolute; right: 0; top: calc(100% + 6px); z-index: 30; background: var(--mg-flaeche); border: 1px solid var(--mg-rand); border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); padding: 8px; min-width: 232px; max-width: calc(100vw - 32px); max-height: min(62vh, 470px); overflow-y: auto; -webkit-overflow-scrolling: touch; }
 .mg-zeilen-panel[hidden] { display: none; }
+/* Haftet die Leiste unten am Bildschirm, klappt das Menü nach oben auf */
+.mg-zeilen-panel.is-oben { top: auto; bottom: calc(100% + 6px); }
 .mg-zeilen-panel h4 { margin: 4px 8px 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--mg-text-still); }
 .mg-zeilen-panel label { display: flex; align-items: center; gap: 10px; padding: 7px 8px; border-radius: 9px; cursor: pointer; font-size: 13.5px; min-height: 40px; }
 .mg-zeilen-panel label:hover { background: var(--mg-flaeche2); }
@@ -145,7 +160,9 @@
 
 /* ---- Diagrammfläche ---- */
 .mg-wrap { position: relative; border-top: 1px solid var(--mg-rand); border-bottom: 1px solid var(--mg-rand); }
-.mg-scroll { overflow-x: auto; overflow-y: hidden; scrollbar-width: none; -webkit-overflow-scrolling: touch; cursor: grab; overscroll-behavior-x: contain; }
+/* touch-action: Wischen in beide Richtungen bleibt, aber Zwei-Finger- und Doppeltipp-Zoom
+   der Seite sind aus - die Gesten gehören hier dem Diagramm */
+.mg-scroll { overflow-x: auto; overflow-y: hidden; scrollbar-width: none; -webkit-overflow-scrolling: touch; cursor: grab; overscroll-behavior-x: contain; touch-action: pan-x pan-y; }
 .mg-scroll::-webkit-scrollbar { display: none; }
 .mg-svgwrap { position: relative; }
 .mg-svg { display: block; }
@@ -159,6 +176,29 @@
 .mg-ax-datum { position: absolute; left: 0; padding: 0 10px 0 8px; display: flex; align-items: center; background: var(--mg-flaeche); font-size: 12px; font-weight: 700; color: var(--mg-text); white-space: nowrap; border-radius: 0 6px 6px 0; }
 .mg-cursor { position: absolute; top: 0; bottom: 0; left: 50%; width: 0; border-left: 2px solid var(--mg-text); opacity: 0.85; pointer-events: none; }
 .mg-cursor::before { content: ""; position: absolute; top: 0; left: -6px; border: 5px solid transparent; border-top: 7px solid var(--mg-text); }
+
+/* ---- Schwebende Helfer im Diagramm ---- */
+/* Zoom-Ecke: − 🔍 + rechts unten über der Zeitachse, halb durchsichtig */
+.mg-ecke { position: absolute; right: 8px; bottom: 30px; z-index: 3; display: inline-flex; align-items: stretch; border: 1px solid var(--mg-rand); border-radius: var(--mg-r); overflow: hidden;
+  background: rgba(27,33,36,0.5); background: color-mix(in srgb, var(--mg-flaeche) 50%, transparent); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
+.mg-ecke .mg-btn { min-height: 30px; min-width: 32px; padding: 0 7px; border: 0; border-radius: 0; background: transparent; }
+.mg-ecke .mg-btn .mg-i { width: 15px; height: 15px; }
+.mg-ecke-lupe { display: inline-flex; align-items: center; padding: 0 5px; color: var(--mg-text-still); }
+.mg-ecke-lupe .mg-i { width: 13px; height: 13px; }
+.mg-ecke > * + * { border-left: 1px solid var(--mg-rand); }
+/* Rand-Pfeil zurück zu jetzt: erscheint nur, wenn "jetzt" aus dem Bild gewischt ist */
+.mg-randpfeil { position: absolute; top: var(--mg-sicht-mitte, 50%); transform: translateY(-50%); z-index: 3; display: none; align-items: center; min-height: 36px; padding: 0 7px; gap: 1px;
+  border: 1px solid var(--mg-rand); border-radius: var(--mg-r); color: var(--mg-text); cursor: pointer; -webkit-tap-highlight-color: transparent;
+  background: rgba(27,33,36,0.88); background: color-mix(in srgb, var(--mg-flaeche) 88%, transparent); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+.mg-randpfeil .mg-i { width: 16px; height: 16px; }
+.mg-randpfeil-l { left: 52px; }   /* rechts neben der Werte-Achse */
+.mg-randpfeil-r { right: 8px; }
+.mg-randpfeil.is-da { display: inline-flex; }
+/* Hinweis beim Zoomen: "1 Tag im Bild", kurz eingeblendet */
+.mg-zoomhinweis { position: absolute; left: 50%; top: var(--mg-sicht-mitte, 50%); transform: translate(-50%, -50%); z-index: 4; padding: 7px 12px; border-radius: 8px; white-space: nowrap;
+  background: var(--mg-text); color: var(--mg-flaeche); font: 600 13px/1 var(--mg-serif); opacity: 0; pointer-events: none; transition: opacity 0.25s; }
+.mg-zoomhinweis.is-da { opacity: 0.92; }
+@media (prefers-reduced-motion: reduce) { .mg-zoomhinweis { transition: none; } }
 .mg-foot { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding: 8px 14px 10px; font-size: 11.5px; color: var(--mg-text-still); }
 
 /* ---- Innereien der Zeichnung ---- */

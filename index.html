@@ -21,8 +21,8 @@
 <meta name="apple-mobile-web-app-title" content="Fuerteventura">
 <link rel="stylesheet" href="vendor/leaflet.css">
 <script defer src="vendor/leaflet.js"></script>
-<link rel="stylesheet" href="Wetter%20Tool/meteogramm.css?v=20261005a">
-<script defer src="Wetter%20Tool/meteogramm.js?v=20261005a"></script>
+<link rel="stylesheet" href="Wetter%20Tool/meteogramm.css?v=20261005c">
+<script defer src="Wetter%20Tool/meteogramm.js?v=20261005c"></script>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
 <link rel="apple-touch-icon" sizes="167x167" href="images/apple-touch-icon-167.png">
@@ -10310,8 +10310,12 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     function start(){
       if (!window.Meteogramm || !document.getElementById('meteogramm')) return;
       // Die Datumsfahne des Wetter-Tools haftet beim Scrollen direkt unter der Menüleiste
-      var mgZiel = document.getElementById('meteogramm'), nav = document.querySelector('nav.topnav');
-      function fahnenAbstand(){ if (nav) mgZiel.style.setProperty('--mg-haft-oben', nav.offsetHeight + 'px'); }
+      // … und die Knopfleiste haftet unten, knapp über der festen Fußleiste (Heute · Plan · …)
+      var mgZiel = document.getElementById('meteogramm'), nav = document.querySelector('nav.topnav'), fuss = document.querySelector('.tabbar-inner');
+      function fahnenAbstand(){
+        if (nav) mgZiel.style.setProperty('--mg-haft-oben', nav.offsetHeight + 'px');
+        if (fuss) { var r = fuss.getBoundingClientRect(); mgZiel.style.setProperty('--mg-haft-unten', Math.max(0, Math.round(window.innerHeight - r.top) + 6) + 'px'); }
+      }
       fahnenAbstand(); window.addEventListener('resize', fahnenAbstand);
       try {
         var zw = localStorage.getItem('fuerte-mg-zeilen');
@@ -10336,7 +10340,6 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
         zeilenStandard: ['sonne','temp','wind','regen','uv','welle','tide','wasser','staub'],
         tagesSymbol: true,        // Wetter-Symbol, Hoch und Tief je Tag im Diagramm (ersetzt die 7-Tage-Liste)
         mond: true,               // Mondphase im Tagesfuß der Sonnenzeile
-        knoepfeMittig: true,      // ↻ ‹ Jetzt zentrieren › ☰
         filmLeiste: true,         // Zeitraffer mit Play/Pause in der Bildleiste
         // Tipps zum Tag – Orte und Regeln aus unseren Ausflugstexten (Flag Beach, Popcorn Beach,
         // Leuchtturm El Cotillo, Lagune Risco del Paso: bei Hochwasser ist dort Meer)

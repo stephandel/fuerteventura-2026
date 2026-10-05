@@ -47,16 +47,25 @@ Mehr braucht es nicht. Alles Weitere ist wahlfrei.
 | `mond` | `true`: dritte Zeile im Tagesfuß der Sonnenzeile mit der Mondphase; bei Neumond, Viertel und Vollmond mit Uhrzeit (Rechnung nach Meeus) | `false` |
 | `tipps` | Liste von Regeln für „was der Tag bringt“ unter dem Diagramm, siehe unten | keine |
 | `filmLeiste` | `true`: Zeitraffer statt des ▶ im Satellitenbild – Play/Pause vorn in der Bildleiste, siehe unten | `false` |
-| `knoepfeMittig` | `true`: ↻ steht links außen (↻ ‹ Jetzt zentrieren › ☰), damit „Jetzt zentrieren“ mittig sitzt | `false` |
+| `knoepfeMittig` | ohne Wirkung (seit 05.10.2026 steht ↻ immer links, ‹ Jetzt › in der Mitte, ☰ rechts) | – |
 
 Rückgabe: `{ neu(), auffrischen(), zeichnen(), zeigeOrt(id), abbauen() }`.
 
 ## Bedienung
 
-- **Wischen** verschiebt die Zeit, **Antippen** holt eine Stelle in die Mitte.
+- **Wischen** verschiebt die Zeit, **Antippen** holt eine Stelle in die Mitte,
+  **Doppeltipp** springt zu jetzt.
 - **‹ ›** springen einen Tag zurück oder vor.
-- **Jetzt zentrieren** springt auf die aktuelle Stunde **und holt frische Werte**.
+- **Jetzt** springt auf die aktuelle Stunde **und holt frische Werte**. Der Knopf zeigt,
+  wie weit die gewählte Stelle von jetzt entfernt ist („+14 h“), und ruht (blass), wenn
+  der Strich schon auf jetzt steht.
 - **↻** holt frische Werte, ohne die gewählte Stelle zu verlassen.
+- **Zoom:** kleines − 🔍 + rechts unten im Diagramm; auf dem Handy auch mit zwei Fingern,
+  am Laptop mit Strg (bzw. ⌘) + Mausrad. Beim Zoomen erscheint kurz „1 Tag im Bild“.
+- **Rand-Pfeil ◎:** ist „jetzt“ aus dem Bild gewischt, erscheint am Diagrammrand ein Pfeil
+  zurück. Antippen springt zu jetzt.
+- Die **Knopfleiste** (↻ · ‹ Jetzt › · ☰) haftet unten am Bildschirm, solange das Tool im
+  Bild ist. Abstand zu einer festen Fußleiste der Seite: CSS-Variable `--mg-haft-unten`.
 - **📷 Webcam · 🛰️ Satellit · 🌧️ Regen** schalten das Bild über dem Diagramm um.
   Satellit und Regen folgen der gewählten Zeit: wischt man zurück, wandert auch
   das Satellitenbild zurück. **▶** spielt die letzten zwei Stunden als Film.

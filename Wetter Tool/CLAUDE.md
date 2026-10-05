@@ -45,7 +45,7 @@ Stephan hat zwei Konzept-Seiten als Claude-Artifacts bekommen und will daran **w
   Presets „So ist es heute“, „Claudes Vorschlag“ (Jetzt mittig, nur Rand, Türkis, Lupe halbdurchsichtig
   rechts unten im Diagramm + Zwei-Finger-Zoom, Extras) und „Claude pur“ (7-Tage-Übersichtskarte statt
   Pfeilen). Stephans Auswahl landet per „Auswahl speichern“ in der Artifact-Datenbank
-  (`ArtifactData` get, collection `konzept`, doc `knopfleiste`). Noch nicht entschieden.
+  (`ArtifactData` get, collection `konzept`, doc `knopfleiste`). **Entschieden und umgesetzt 05.10.** (siehe unten).
 
 Weiterarbeiten: Artifact per `read` mit der URL holen, ändern, mit `url` republishen; die Kopie in
 `konzepte/` mitziehen (Seitengerüst `<!doctype html>` bleibt nur in der Repo-Kopie).
@@ -58,6 +58,18 @@ Keine – alle entschieden (siehe unten).
 
 ## Entschieden
 
+- **Knopfleiste neu (05.10.2026, live, Version `20261005c`):** Stephans Wahl aus dem Baukasten: Anordnung *mitte*
+  (↻ links, ‹ Jetzt › als Gruppe in einem Rahmen `.mg-gruppe` in der Mitte, ☰ rechts; Raster `auto 1fr auto`), Ecken sanft
+  (`--mg-r: 11px`), Jetzt nur fett (kein Türkis mehr) mit Abstand „+14 h“ (`.mg-jrel`, `relKurz()`), Jetzt ruht (`disabled`)
+  wenn der Strich auf jetzt steht. Zoom als `.mg-ecke` (− 🔍 +) rechts unten im Diagramm, halb durchsichtig; dazu
+  Zwei-Finger-Geste (touchmove, je Stufe ab 25 % Abstandänderung) und Strg/⌘+Mausrad; `.mg-scroll` hat `touch-action: pan-x pan-y`.
+  Extras: Rand-Pfeil `.mg-randpfeil` (links neben der Achse / rechts), Doppeltipp = jetzt (Einzeltipp wartet 280 ms),
+  Zoom-Hinweis „3 Tage im Bild“ (900 ms), beide stehen in der Mitte des *sichtbaren* Ausschnitts (`--mg-sicht-mitte`,
+  `sichtMitte()` bei Seiten-Scroll). Leiste haftet unten (`position: sticky; bottom: var(--mg-haft-unten)`; `../index.html`
+  setzt die Variable auf die Höhe der Fußleiste + 6 px); das ☰-Menü klappt nach oben auf, wenn unten kein Platz ist
+  (`is-oben`, gemessen beim Öffnen). Alle Zeichen als Inline-SVG (`ico()`/`SYMBOL`), keine Emojis mehr in der Leiste.
+  **Fallstrick behoben:** „Zu jetzt“ scrollt sanft und lädt erst 650 ms später nach (`zuJetzt()`), sonst blieb das Diagramm
+  auf halbem Weg stehen, wenn die Werte mitten im Scrollen ankamen. `knoepfeMittig` ist ohne Wirkung.
 - **Zeile Saharastaub (05.10.2026, live):** `staub` im Katalog (`luft: true`, `farbskala: 'staub'`, Helfer `staubText`/`staubFarbe`),
   eigene Abfrage `air-quality-api.open-meteo.com` (`hourly=dust`, höchstens 7 Tage voraus – der 8. Tag bleibt leer) nur bei
   sichtbarer Zeile (`braucheStaub()`); Nachladen beim Einschalten über `neuZeichnenNachWahl`. Skala mindestens 0–200, Striche
