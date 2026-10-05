@@ -47,6 +47,14 @@ Stephan hat zwei Konzept-Seiten als Claude-Artifacts bekommen und will daran **w
   Pfeilen). Stephans Auswahl landet per „Auswahl speichern“ in der Artifact-Datenbank
   (`ArtifactData` get, collection `konzept`, doc `knopfleiste`). **Entschieden und umgesetzt 05.10.** (siehe unten).
 
+- **Kopfteil-Baukasten (05.10.2026 abends, offen):** Reiter + Fahne + Werteliste kompakter. Artifact
+  https://claude.ai/artifact/SaafPAzNcUMMEdWcsWF9KG · Quelle `konzepte/kopfteil-baukasten.html`. Gruppen: Reiter
+  (zwei/eine/menue), Fahne (zwei/eine/klein), Spalten (eine/zwei/raster/zeile), Dichte (luftig/dicht/eng), Zusatz
+  (alle/wichtig/keine), Umfang (alle/klug/klappe/wenige), Extras (paare/fahnedicht/flach). Maßband misst die Kopfhöhe
+  gegen „heute“ (650 px) und den iPhone-Bildschirm (≈ 680 px). Preset „Claudes Vorschlag“ = eine/eine/zwei/dicht/wichtig/
+  klug + paare, fahnedicht → 218 px (−66 %). Auswahl landet in `ArtifactData` get, collection `konzept`, doc `kopfteil`
+  (oder Stephan fügt den „Schlüssel“ im Chat ein). **Stephans Entscheidung steht aus.**
+
 Weiterarbeiten: Artifact per `read` mit der URL holen, ändern, mit `url` republishen; die Kopie in
 `konzepte/` mitziehen (Seitengerüst `<!doctype html>` bleibt nur in der Repo-Kopie).
 Fallstrick aus dem Bau: Scroll-Bereiche in Grid-Eltern brauchen `min-width: 0`, sonst wächst das
@@ -54,7 +62,7 @@ Diagramm endlos in die Breite.
 
 ## Offene Entscheidungen von Stephan
 
-Keine – alle entschieden (siehe unten).
+- Kopfteil kompakter (Baukasten vom 05.10. abends, siehe oben). Umsetzung erst nach seiner Wahl.
 
 ## Entschieden
 

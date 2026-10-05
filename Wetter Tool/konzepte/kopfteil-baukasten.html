@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Kopfteil Baukasten</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&display=swap">
+<style>
+  /* Aufbau: links das nachgebaute Handy (haftet), rechts die Schalter. Farben wie auf der Fuerteventura-Seite. */
+  :root {
+    --bg: #edece7; --surface: #f9f8f5; --surface2: #eeece6; --border: #d4d1c8;
+    --ink: #1b2124; --dim: #6b6a62; --teal: #1f9aa1; --gold: #b5741f; --ok: #2f8f5b;
+    --shadow: 0 1px 3px rgba(20,25,30,.12);
+    --mono: Arial, Helvetica, sans-serif;
+    --sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { color-scheme: dark; --bg: #131718; --surface: #1b2124; --surface2: #202729; --border: #303836; --ink: #ede9e0; --dim: #b4ac9c; --teal: #4bc4cb; --gold: #e0a84a; --ok: #6fcf97; --shadow: 0 1px 3px rgba(0,0,0,.35); }
+  }
+  :root[data-theme="dark"] { color-scheme: dark; --bg: #131718; --surface: #1b2124; --surface2: #202729; --border: #303836; --ink: #ede9e0; --dim: #b4ac9c; --teal: #4bc4cb; --gold: #e0a84a; --ok: #6fcf97; --shadow: 0 1px 3px rgba(0,0,0,.35); }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 500 14px/1.45 var(--sans); }
+  button { font: inherit; color: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  button:focus-visible, textarea:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  svg.i { width: 1.1em; height: 1.1em; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; display: block; }
+
+  .seite { max-width: 1120px; margin: 0 auto; padding-block: 22px 60px; padding-inline: 16px; }
+  .kopf { display: grid; gap: 6px; margin-bottom: 18px; }
+  .kopf .ueber { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
+  .kopf h1 { margin: 0; font-size: clamp(22px, 3.4vw, 30px); font-weight: 700; letter-spacing: -.01em; text-wrap: balance; }
+  .kopf p { margin: 0; max-width: 62ch; color: var(--dim); }
+
+  .buehne { display: grid; grid-template-columns: minmax(0, 400px) minmax(0, 1fr); gap: 26px; align-items: start; }
+  @media (max-width: 860px) { .buehne { grid-template-columns: minmax(0, 1fr); gap: 14px; } }
+
+  /* ---- Vorschau (haftet beim Scrollen) ---- */
+  .vorschau { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; display: grid; gap: 10px; padding-top: 6px; background: var(--bg); }
+  @media (max-width: 860px) { .vorschau { padding-bottom: 8px; box-shadow: 0 14px 12px -12px rgba(0,0,0,.35); } }
+  .presets { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .preset { border: 1px solid var(--border); background: var(--surface); border-radius: 7px; padding: 7px 12px; font-weight: 600; font-size: 13px; }
+  .preset:hover { border-color: var(--ink); }
+  .handy { width: 100%; max-width: 390px; margin: 0 auto; height: min(600px, 66vh); overflow-y: auto; overflow-x: hidden; border: 1px solid var(--border); border-radius: 22px; background: var(--bg); scrollbar-width: none; }
+  .handy::-webkit-scrollbar { display: none; }
+  @media (max-width: 860px) { .handy { height: min(470px, 48vh); } }
+  .probier { text-align: center; font-size: 12px; color: var(--dim); margin: 0; }
+
+  /* Maßband: wie hoch der Kopf ist, verglichen mit heute und mit dem Bildschirm */
+  .mass { display: grid; gap: 6px; max-width: 390px; margin: 0 auto; width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); font-size: 12.5px; }
+  .mass .z { display: grid; grid-template-columns: 78px minmax(0, 1fr) 58px; gap: 8px; align-items: center; }
+  .mass .z b { font-weight: 600; }
+  .mass .balken { position: relative; height: 10px; border-radius: 5px; background: var(--surface2); overflow: hidden; }
+  .mass .balken i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 5px; background: var(--dim); }
+  .mass .z.ist .balken i { background: var(--teal); }
+  .mass .px { text-align: right; font-family: var(--mono); font-weight: 700; font-variant-numeric: tabular-nums; }
+  .mass .fazit { font-size: 12px; color: var(--dim); }
+  .mass .fazit b { color: var(--ok); font-weight: 700; }
+
+  /* ---- Schalter ---- */
+  .panel { display: grid; gap: 14px; }
+  .gruppe { padding: 12px 14px 13px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); box-shadow: var(--shadow); }
+  .gruppe h3 { margin: 0 0 2px; font-size: 14px; font-weight: 700; }
+  .gruppe .frage { margin: 0 0 10px; font-size: 12.5px; color: var(--dim); }
+  .opts { display: grid; gap: 6px; }
+  .opt { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 10px; align-items: start; text-align: left; padding: 8px 10px; border: 1px solid var(--border); border-radius: 9px; background: transparent; }
+  .opt:hover { border-color: var(--ink); }
+  .opt.is-on { border-color: var(--teal); background: color-mix(in srgb, var(--teal) 10%, transparent); }
+  .opt .punkt { width: 16px; height: 16px; margin-top: 2px; border-radius: 50%; border: 2px solid var(--border); }
+  .opt.multi .punkt { border-radius: 4px; }
+  .opt.is-on .punkt { border-color: var(--teal); background: var(--teal); box-shadow: inset 0 0 0 3px var(--surface); }
+  .opt .name { font-weight: 600; }
+  .opt .name .emp { margin-left: 6px; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--teal); font-weight: 700; }
+  .opt .text { font-size: 12.5px; color: var(--dim); }
+  .opt .spar { font-family: var(--mono); font-size: 11.5px; color: var(--ok); font-weight: 700; }
+
+  .ablage { display: grid; gap: 10px; padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); }
+  .ablage h3 { margin: 0; font-size: 14px; }
+  .zusammen { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 12px; font-size: 13px; }
+  .zusammen span:nth-child(odd) { color: var(--dim); }
+  textarea { width: 100%; min-height: 64px; padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface2); color: var(--ink); font: inherit; resize: vertical; }
+  .knoepfe { display: flex; gap: 8px; flex-wrap: wrap; }
+  .knopf { padding: 9px 14px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface2); font-weight: 600; }
+  .knopf.prim { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+  .knopf:disabled { opacity: .5; cursor: default; }
+  .status { margin: 0; min-height: 1.4em; font-size: 12.5px; color: var(--dim); }
+  details { border: 1px solid var(--border); border-radius: 12px; background: var(--surface); padding: 10px 14px; }
+  details summary { cursor: pointer; font-weight: 600; }
+  details ul { margin: 8px 0 0; padding-left: 18px; font-size: 12.5px; color: var(--dim); }
+  details li b { color: var(--ink); font-weight: 600; }
+
+  /* ================= Das nachgebaute Wetter-Tool (helles Thema der Seite) ================= */
+  .m { --s: #f8f8f4; --s2: #eeeee6; --b: #d7d6c9; --t: #1c1a17; --d: #5b564c; --teal2: #0f6e76; --page: #e9ebe6;
+       background: var(--page); color: var(--t); font-family: var(--sans); padding-bottom: 30px; }
+  :root[data-theme="dark"] .m { --s: #1b2124; --s2: #202729; --b: #303836; --t: #ede9e0; --d: #b4ac9c; --teal2: #4bc4cb; --page: #131718; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .m { --s: #1b2124; --s2: #202729; --b: #303836; --t: #ede9e0; --d: #b4ac9c; --teal2: #4bc4cb; --page: #131718; } }
+  .m-nav { display: flex; align-items: center; justify-content: space-between; height: 52px; padding: 0 14px; background: var(--s); border-bottom: 1px solid var(--b); font-weight: 700; color: var(--gold); }
+  .m-nav span { display: inline-flex; gap: 8px; }
+  .m-nav i { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--b); background: var(--s2); }
+  .mg { margin: 10px 8px 0; background: var(--s); border: 1px solid var(--b); border-radius: 18px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+
+  .mg-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; padding: 12px 14px 2px; }
+  .mg-tabs { display: inline-flex; gap: 2px; background: var(--s2); border: 1px solid var(--b); border-radius: 12px; padding: 3px; }
+  .mg-tab { min-height: 36px; padding: 0 12px; border: 0; border-radius: 9px; background: transparent; color: var(--d); font: 600 13.5px/1 var(--sans); white-space: nowrap; }
+  .mg-tab.on { background: var(--s); color: var(--t); box-shadow: 0 1px 3px rgba(0,0,0,.18); }
+  .mg-tabs-modell .mg-tab { font-family: var(--mono); font-size: 11.5px; padding: 0 10px; }
+  .mg-top.voll .mg-tabs { width: 100%; justify-content: space-between; }
+  .mg-top.voll .mg-tab { flex: 1 1 0; }
+  .mg-modellchip { display: inline-flex; align-items: center; gap: 4px; min-height: 30px; padding: 0 9px; border: 1px solid var(--b); border-radius: 9px; background: var(--s2); font: 600 11.5px/1 var(--mono); color: var(--d); }
+  .r-flach .mg-tabs { background: transparent; border: 0; padding: 0; gap: 0; }
+  .r-flach .mg-tab { min-height: 30px; border-radius: 0; border-bottom: 2px solid transparent; box-shadow: none; }
+  .r-flach .mg-tab.on { background: transparent; border-bottom-color: var(--teal2); }
+  .r-flach .mg-tabs-modell .mg-tab { min-height: 24px; }
+
+  .mg-fahne { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 14px 8px; position: relative; }
+  .mg-fahne::before { content: ""; position: absolute; left: 50%; bottom: 0; width: 2px; height: 10px; margin-left: -1px; background: var(--t); opacity: .85; }
+  .mg-zeit { display: inline-flex; align-items: baseline; gap: 8px; padding: 5px 12px; border-radius: 8px; background: var(--t); color: var(--s); font: 700 1rem/1.3 var(--mono); }
+  .mg-zeit small { font-family: var(--sans); font-size: 12.5px; font-weight: 600; opacity: .72; }
+  .mg-zeit .lage { font-family: var(--sans); font-weight: 600; font-size: 13px; opacity: .9; margin-left: 4px; padding-left: 10px; border-left: 1px solid rgba(255,255,255,.35); }
+  .f-klein .mg-zeit .lage { border-left-color: var(--b); }
+  .mg-lage { display: flex; align-items: center; gap: 7px; font-size: 14px; color: var(--d); min-height: 22px; }
+  .mg-lage .ic { font-size: 1.15rem; line-height: 1; }
+  .f-klein .mg-zeit { background: transparent; color: var(--t); padding: 0; font-size: 15px; }
+  .f-klein .mg-zeit small, .f-klein .mg-zeit .lage { color: var(--d); opacity: 1; }
+  .f-dicht .mg-fahne { padding: 6px 14px 2px; gap: 3px; }
+  .f-dicht .mg-fahne::before { display: none; }
+
+  /* Werteliste "am Strich" (bisher) */
+  .mg-werte { position: relative; display: grid; grid-template-columns: 1fr; padding: 0 14px; }
+  .mg-werte::before { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; margin-left: -1px; border-left: 2px solid var(--t); opacity: .85; }
+  /* Eine Zeile = Bezeichnung links (.mg-wl) und rechts ein Block (.mg-wr) mit Wert (.mg-wv) und Zusatz (.mg-wz) */
+  .mg-w { display: grid; grid-template-columns: 1fr 1fr; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--b); min-width: 0; }
+  .mg-w:last-of-type { border-bottom: 0; }
+  .mg-wl { text-align: right; padding-right: 16px; font-size: 12.5px; color: var(--d); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mg-wr { display: grid; padding-left: 16px; min-width: 0; }
+  .mg-wv { font-family: var(--mono); font-size: 14.5px; font-weight: 700; white-space: nowrap; }
+  .mg-wv small { font-size: .78em; font-weight: 600; color: var(--d); margin-left: 2px; }
+  .mg-wz { margin-top: -2px; line-height: 1.25; font-size: 11.5px; color: var(--d); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mg-wr .sep { color: var(--d); font-size: 12px; }
+  .mg-w.paar .mg-wr { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 6px; }
+  .mg-w.paar .mg-wz { margin: 0; }
+  .mg-w.paar .mg-wl { white-space: normal; line-height: 1.2; }
+  /* Dichte */
+  .d-dicht .mg-w { padding: 4px 0; align-items: baseline; }
+  .d-dicht .mg-wr { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 6px; }
+  .d-dicht .mg-wz { margin: 0; }
+  .d-eng .mg-w { padding: 2px 0; border-bottom: 0; align-items: baseline; }
+  .d-eng .mg-wr { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 6px; }
+  .d-eng .mg-wl { font-size: 12px; } .d-eng .mg-wv { font-size: 13px; } .d-eng .mg-wz { margin: 0; font-size: 11px; }
+  .d-eng .mg-werte { padding-top: 4px; padding-bottom: 4px; }
+  /* Zwei Spalten am Strich (wie auf dem Laptop) */
+  .s-zwei .mg-werte { grid-template-columns: 1fr 1fr; column-gap: 0; }
+  .s-zwei .mg-werte::before { display: none; }
+  .s-zwei .mg-w:nth-of-type(odd) { border-right: 2px solid var(--t); }
+  .s-zwei .mg-w:nth-last-of-type(2):nth-of-type(odd) { border-bottom: 0; }
+  .s-zwei .mg-wl { padding-right: 10px; } .s-zwei .mg-wr { padding-left: 10px; }
+  .s-zwei .mg-wv { font-size: 13.5px; }
+  /* Raster: 3 je Zeile, Wert oben, Bezeichnung darunter, ohne Strich */
+  .s-raster .mg-werte { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px 8px; padding: 8px 14px 4px; }
+  .s-raster .mg-werte::before { display: none; }
+  .s-raster .mg-w { grid-template-columns: 1fr; grid-template-areas: "r" "l"; padding: 4px 0 2px; border: 0 !important; }
+  .s-raster .mg-wl { grid-area: l; text-align: center; padding: 0; font-size: 11px; }
+  .s-raster .mg-wr { grid-area: r; display: flex; flex-direction: column; align-items: center; padding: 0; }
+  .s-raster .mg-wv { font-size: 16px; }
+  .s-raster .mg-wz { margin: 0; font-size: 10.5px; }
+  .s-raster .mg-w.paar { grid-column: span 3; }
+  .s-raster .mg-w.paar .mg-wr { flex-direction: row; justify-content: center; flex-wrap: wrap; gap: 0 6px; align-items: baseline; }
+  /* Fließtext */
+  .s-zeile .mg-werte { display: block; padding: 6px 14px 8px; font-size: 13px; line-height: 1.6; }
+  .s-zeile .mg-werte::before { display: none; }
+  .s-zeile .mg-w { display: inline; padding: 0; border: 0 !important; }
+  .s-zeile .mg-w::after { content: " · "; color: var(--d); }
+  .s-zeile .mg-w:last-of-type::after { content: ""; }
+  .s-zeile .mg-wl, .s-zeile .mg-wr, .s-zeile .mg-wv, .s-zeile .mg-wz { display: inline; padding: 0; margin: 0; white-space: normal; font-size: inherit; }
+  .s-zeile .mg-wl::after, .s-zeile .mg-wv::after { content: " "; }
+  .s-zeile .mg-wv { font-size: 13.5px; }
+  .mg-mehr { display: block; width: 100%; margin: 0; padding: 7px 0; border: 0; background: transparent; color: var(--teal2); font: 600 12.5px var(--sans); }
+
+  /* Diagramm-Anfang (fest gezeichnet) */
+  .mg-diagramm { margin-top: 2px; border-top: 1px solid var(--b); border-bottom: 1px solid var(--b); }
+  .mg-band { display: flex; justify-content: space-between; padding: 4px 10px 0; font-size: 12px; font-weight: 700; }
+  .mg-band span:last-child { color: var(--d); font-weight: 600; }
+  .mg-diagramm canvas { display: block; width: 100%; height: 150px; }
+  .mg-knoepfe { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 8px; padding: 8px 14px; border-bottom: 1px solid var(--b); }
+  .mg-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 40px; min-width: 40px; padding: 0 12px; border-radius: 11px; border: 1px solid var(--b); background: var(--s2); color: var(--t); font: 600 13.5px/1 var(--sans); }
+  .mg-gruppe { display: inline-flex; border: 1px solid var(--b); border-radius: 11px; overflow: hidden; background: var(--s2); justify-self: center; }
+  .mg-gruppe .mg-btn { border: 0; border-radius: 0; background: transparent; }
+  .mg-gruppe > * + * { border-left: 1px solid var(--b); }
+  .mg-gruppe .jetzt { min-width: 118px; font-weight: 700; opacity: .4; }
+  .mg-rest { padding: 12px 14px 20px; color: var(--d); font-size: 12.5px; }
+  .mg-rest .cam { height: 120px; border-radius: 12px; background: linear-gradient(180deg, #b9d6e8, #e6d9b8); border: 1px solid var(--b); margin-bottom: 8px; }
+  .marke { position: absolute; left: 0; right: 0; border-top: 2px dashed var(--gold); pointer-events: none; }
+  .marke span { position: absolute; right: 8px; top: -18px; font-size: 10.5px; font-weight: 700; color: var(--gold); background: var(--page); padding: 1px 6px; border-radius: 4px; }
+  .handy-inner { position: relative; }
+</style>
+</head>
+<body>
+
+<div class="seite">
+  <header class="kopf">
+    <div class="ueber">Wetter-Tool · Konzept vom 05.10.2026</div>
+    <h1>Kopfteil kompakter: Reiter, Fahne und Werteliste</h1>
+    <p>Links das nachgebaute Handy mit den echten Werten von heute Abend, rechts die Schalter. Jede Wahl ändert das Bild sofort; das Maßband zeigt, wie viel Höhe du sparst. Unten speichern oder als Text in den Chat kopieren.</p>
+  </header>
+
+  <div class="buehne">
+    <div class="vorschau">
+      <div class="presets">
+        <button class="preset" type="button" data-preset="bisher">So ist es heute</button>
+        <button class="preset" type="button" data-preset="claude">Claudes Vorschlag</button>
+        <button class="preset" type="button" data-preset="knapp">So knapp wie möglich</button>
+      </div>
+      <div class="mass" id="mass"></div>
+      <div class="handy" id="handy"><div class="handy-inner" id="handyInner"></div></div>
+      <p class="probier">Das Handy lässt sich scrollen. Die gestrichelte Linie zeigt, wo auf einem iPhone der Bildschirm endet.</p>
+    </div>
+
+    <div>
+      <div class="panel" id="panel"></div>
+      <div class="ablage" style="margin-top:14px">
+        <h3>Deine Auswahl</h3>
+        <div class="zusammen" id="zusammen"></div>
+        <label for="notiz" style="font-size:12.5px;color:var(--dim)">Anmerkung für Claude (freiwillig)</label>
+        <textarea id="notiz" placeholder="z. B. „Die Fahne darf ruhig bleiben, aber die Liste muss kürzer“"></textarea>
+        <div class="knoepfe">
+          <button class="knopf prim" type="button" id="speichern">Auswahl speichern</button>
+          <button class="knopf" type="button" id="kopieren">Als Text kopieren</button>
+        </div>
+        <p class="status" id="status"></p>
+      </div>
+      <details style="margin-top:14px">
+        <summary>Für die Umsetzung: was jede gewählte Option technisch bedeutet</summary>
+        <ul id="technik"></ul>
+      </details>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  // ---------- Die Werte von heute Abend (05.10.2026, 22:26, Corralejo) ----------
+  // wichtig: der Zusatz bleibt auch bei "nur die wichtigen"; klug: ob der Wert um diese Uhrzeit/Lage etwas sagt
+  var ZEILEN = [
+    { id: 'temp',   name: 'Temperatur', wert: '24', einheit: '°',      zusatz: 'gefühlt 27°',    wichtig: true,  klug: true,  kurz: true },
+    { id: 'tide',   name: 'Tide',       wert: '+0,3', einheit: 'm',    zusatz: 'fällt',          wichtig: true,  klug: true,  kurz: true },
+    { id: 'wasser', name: 'Wasser',     wert: '24,5', einheit: '°',    zusatz: '',               wichtig: false, klug: true,  kurz: true },
+    { id: 'sonne',  name: 'Sonne',      wert: '0', einheit: 'min',     zusatz: '',               wichtig: false, klug: false, kurz: false },
+    { id: 'welle',  name: 'Wellen',     wert: '1,2', einheit: 'm',     zusatz: '',               wichtig: false, klug: true,  kurz: false },
+    { id: 'regen',  name: 'Regen',      wert: '0,0', einheit: 'mm',    zusatz: '0 % Wahrsch.',   wichtig: false, klug: false, kurz: false },
+    { id: 'uv',     name: 'UV',         wert: '0,0', einheit: '',      zusatz: 'niedrig',        wichtig: false, klug: false, kurz: false },
+    { id: 'wolken', name: 'Bewölkung',  wert: '8', einheit: '%',       zusatz: 'wolkenlos',      wichtig: false, klug: false, kurz: false },
+    { id: 'wind',   name: 'Wind',       wert: '11', einheit: 'km/h',   zusatz: 'Böen 23 · N',    wichtig: true,  klug: true,  kurz: true },
+    { id: 'staub',  name: 'Staub',      wert: '38', einheit: 'µg/m³',  zusatz: 'klar',           wichtig: false, klug: false, kurz: false },
+    { id: 'feuchte',name: 'Feuchte',    wert: '77', einheit: '%',      zusatz: '',               wichtig: false, klug: true,  kurz: false }
+  ];
+  var PAARE = [['temp'], ['wind'], ['tide', 'wasser'], ['welle'], ['sonne', 'uv'], ['regen', 'wolken'], ['staub', 'feuchte']];
+
+  // ---------- Die Schalter ----------
+  var GRUPPEN = [
+    { id: 'reiter', titel: 'Reiter oben (Orte und Wettermodell)', frage: 'Zwei Reiter-Zeilen kosten rund 100 Pixel, bevor überhaupt ein Wert zu sehen ist.', opt: [
+      { id: 'zwei',  name: 'Zwei Zeilen (bisher)', text: 'Orte oben, Modelle darunter.', spar: '', tech: 'Bisher.' },
+      { id: 'eine',  name: 'Eine Zeile', emp: true, text: 'Orte als Reiter, das Modell als kleines Feld „Mix ▾“ rechts daneben. Antippen klappt die vier Modelle auf.', tech: '.mg-top ohne Umbruch; Modell-Reiter durch einen <button> mit Aufklapp-Liste (wie der Kamera-Wechsel) ersetzen; Auswahl bleibt in merkSchreiben(\'modell\').' },
+      { id: 'menue', name: 'Nur die Orte', text: 'Das Modell wandert ins ☰-Menü unter die Zeilenauswahl. Man wechselt es selten.', tech: 'Modell-Reiter in das Zeilen-Panel verschieben (eigener Abschnitt „Wettermodell“); MODELLE-Reiter nicht mehr malen.' }
+    ]},
+    { id: 'fahne', titel: 'Fahne (Datum, Uhrzeit, Wetterlage)', frage: 'Die Fahne bleibt beim Scrollen oben kleben. Je niedriger sie ist, desto mehr Diagramm bleibt sichtbar.', opt: [
+      { id: 'zwei',  name: 'Zwei Zeilen (bisher)', text: 'Schwarzer Kasten mit Datum und Uhrzeit, darunter Symbol und Wetterlage.', spar: '', tech: 'Bisher.' },
+      { id: 'eine',  name: 'Eine Zeile', emp: true, text: 'Datum, Uhrzeit, „jetzt“ und die Wetterlage zusammen im Kasten.', tech: '.mg-lage in den .mg-zeit-Kasten ziehen (inline), Symbol 1 em; ~26 px gespart.' },
+      { id: 'klein', name: 'Nur Text', text: 'Wie eine Zeile, aber ohne schwarzen Kasten. Ruhiger, aber beim Scrollen weniger auffällig.', tech: '.mg-zeit ohne Hintergrund, Schrift 15 px; Schatten der haftenden Fahne bleibt.' }
+    ]},
+    { id: 'spalten', titel: 'Anordnung der Werte', frage: 'Elf Zeilen untereinander sind 540 Pixel. Nebeneinander halbiert sich das.', opt: [
+      { id: 'eine',   name: 'Eine Spalte am Strich (bisher)', text: 'Bezeichnung links, Wert rechts, der Strich dazwischen.', spar: '', tech: 'Bisher.' },
+      { id: 'zwei',   name: 'Zwei Spalten am Strich', emp: true, text: 'Wie auf dem Laptop: zwei Paare je Zeile, der Strich läuft zwischen ihnen hindurch.', tech: '.mg-werte { grid-template-columns: 1fr 1fr } auch unter 560 px; Bezeichnungen enger (padding 10 px), Wert 13,5 px.' },
+      { id: 'raster', name: 'Raster, drei je Zeile', text: 'Wert groß, Bezeichnung klein darunter, kein Strich. Am kompaktesten, aber ohne die Linie zum Diagramm.', tech: '.mg-werte als 3-spaltiges Raster, .mg-wert mit Bereichen "v" "l" "z"; ::before-Strich aus.' },
+      { id: 'zeile',  name: 'Fließtext', text: 'Alles in einem Satz: „Temperatur 24° gefühlt 27° · Tide +0,3 m fällt · …“. Sehr flach, aber schwerer zu überfliegen.', tech: 'zelleHtml() liefert <span>-Ketten, .mg-werte als Block mit „ · “-Trennern (::after).' }
+    ]},
+    { id: 'dichte', titel: 'Zeilenhöhe', frage: 'Die zweite Zeile unter dem Wert (gefühlt, Böen, Wahrscheinlichkeit) kostet je Zeile 14 Pixel.', opt: [
+      { id: 'luftig', name: 'Luftig (bisher)', text: 'Zusatz unter dem Wert, 6 px Luft oben und unten.', spar: '', tech: 'Bisher.' },
+      { id: 'dicht',  name: 'Dicht', emp: true, text: 'Zusatz neben dem Wert statt darunter, 4 px Luft.', tech: '.mg-wert mit nur einer Zeile „l v“; .mg-wz inline hinter .mg-wv; padding 4px 0.' },
+      { id: 'eng',    name: 'Sehr dicht', text: 'Kleinere Schrift (13 px), keine Trennlinien, 2 px Luft.', tech: 'Wie „Dicht“, dazu border-bottom aus, Schrift 12/13 px.' }
+    ]},
+    { id: 'zusatz', titel: 'Zusatzangaben', frage: '„0 % Wahrsch.“, „niedrig“ oder „wolkenlos“ wiederholen oft nur, was die Zahl schon sagt.', opt: [
+      { id: 'alle',    name: 'Alle (bisher)', text: 'gefühlt, fällt, Wahrscheinlichkeit, niedrig, wolkenlos, Böen, klar.', spar: '', tech: 'Bisher.' },
+      { id: 'wichtig', name: 'Nur die wichtigen', emp: true, text: 'Behalten: gefühlt, Böen mit Richtung, Tide steigt/fällt. Weg: Wahrscheinlichkeit bei 0 %, „niedrig“, „wolkenlos“, „klar“.', tech: 'Je Zeile im KATALOG ein Kennzeichen zusatz: \'wichtig\'|\'nie\'; zelle() lässt Wörter weg, die nur die Zahl wiederholen (Regen-% nur ab 10 %).' },
+      { id: 'keine',   name: 'Keine', text: 'Nur Zahl und Einheit. Die Details stehen ja im Diagramm.', tech: 'zelle() ohne Zusatz.' }
+    ]},
+    { id: 'umfang', titel: 'Welche Werte überhaupt', frage: 'Um 22 Uhr sagen Sonne, UV, Regen (0 mm) und Bewölkung (8 %) nichts. Die Liste könnte das wissen.', opt: [
+      { id: 'alle',   name: 'Alle gewählten Zeilen (bisher)', text: 'Jede Zeile des Diagramms bekommt ihren Wert, heute elf.', spar: '', tech: 'Bisher.' },
+      { id: 'klug',   name: 'Nur was gerade zählt', emp: true, text: 'Nachts keine Sonne und kein UV, Regen nur wenn welcher kommt, Staub erst ab 50, Bewölkung erst ab 20 %. Jetzt wären das sechs Zeilen.', tech: 'Je Zeile im KATALOG eine Funktion zaehlt(wert, daten, i): Sonne/UV nur bei daten.tag[i], Regen ab 0,1 mm oder 30 %, Staub ab 50, Wolken ab 20 %. Fallen Zeilen weg, nicht umsortieren.' },
+      { id: 'klappe', name: 'Die ersten fünf, Rest auf Tipp', text: 'Fünf Zeilen stehen, „6 weitere“ klappt den Rest auf. Was oben steht, bestimmt die Reihenfolge im ☰-Menü.', tech: 'anzeigen() malt die ersten 5 von sichtbareZeilen(); Knopf .mg-mehr schaltet die Klasse is-auf (gemerkt im Browser).' },
+      { id: 'wenige', name: 'Feste Kurzliste', text: 'Immer nur Temperatur, Wind, Tide, Wasser. Alles andere liest man im Diagramm ab.', tech: 'Einbau-Einstellung werteKurz: [\'temp\',\'wind\',\'tide\',\'wasser\'].' }
+    ]},
+    { id: 'extras', titel: 'Extras', frage: 'Kleine Dinge, die zusätzlich Platz sparen. Mehrere wählbar.', multi: true, opt: [
+      { id: 'paare',      name: 'Verwandtes in eine Zeile', emp: true, text: 'Tide und Wasser, Sonne und UV, Regen und Bewölkung, Staub und Feuchte teilen sich je eine Zeile.', tech: 'PAARE-Liste im Einbau; anzeigen() fasst die Zellen eines Paars in ein .mg-wert mit zwei Werten zusammen.' },
+      { id: 'fahnedicht', name: 'Fahne näher an die Liste', emp: true, text: 'Weniger Luft über und unter der Fahne, der kurze Strich entfällt.', tech: '.mg-readout padding 6px 14px 2px; ::before-Stummel aus.' },
+      { id: 'flach',      name: 'Reiter flacher', text: 'Orte als schlichter Text mit Unterstrich statt Kästen. Spart 8 Pixel je Reiterzeile.', tech: '.mg-tabs ohne Rahmen/Fläche, .mg-tab min-height 30 px, aktiver Reiter mit border-bottom in Türkis.' }
+    ]}
+  ];
+  var BISHER = { reiter: 'zwei', fahne: 'zwei', spalten: 'eine', dichte: 'luftig', zusatz: 'alle', umfang: 'alle', extras: [] };
+  var PRESETS = {
+    bisher: BISHER,
+    claude: { reiter: 'eine', fahne: 'eine', spalten: 'zwei', dichte: 'dicht', zusatz: 'wichtig', umfang: 'klug', extras: ['paare', 'fahnedicht'] },
+    knapp:  { reiter: 'menue', fahne: 'klein', spalten: 'raster', dichte: 'eng', zusatz: 'keine', umfang: 'wenige', extras: ['fahnedicht', 'flach'] }
+  };
+  var wahl = JSON.parse(JSON.stringify(BISHER));
+  var SICHTBAR = 680;      // iPhone: 844 px minus Menüleiste oben und Fußleiste unten
+  var basisHoehe = 0, mehrAuf = false;
+
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function optName(g, o){ var grp = GRUPPEN.filter(function(x){ return x.id === g; })[0]; var op = grp.opt.filter(function(x){ return x.id === o; })[0]; return op ? op.name : o; }
+  function hat(x){ return wahl.extras.indexOf(x) >= 0; }
+
+  // ---------- Das nachgebaute Tool ----------
+  function zelle(z){
+    var zus = z.zusatz;
+    if (wahl.zusatz === 'keine') zus = '';
+    else if (wahl.zusatz === 'wichtig' && !z.wichtig) zus = '';
+    return '<span class="mg-wv">' + z.wert + (z.einheit ? '<small>' + esc(z.einheit) + '</small>' : '') + '</span>' + (zus ? '<span class="mg-wz">' + esc(zus) + '</span>' : '');
+  }
+  function welcheZeilen(){
+    var l = ZEILEN.slice();
+    if (wahl.umfang === 'klug') l = l.filter(function(z){ return z.klug; });
+    if (wahl.umfang === 'wenige') l = l.filter(function(z){ return z.kurz; });
+    return l;
+  }
+  function werteHtml(){
+    var liste = welcheZeilen(), rows = [], rest = 0;
+    if (hat('paare')) {
+      PAARE.forEach(function(p){
+        var m = p.map(function(id){ return liste.filter(function(z){ return z.id === id; })[0]; }).filter(Boolean);
+        if (!m.length) return;
+        rows.push({ label: m.map(function(z){ return z.name; }).join(' · '), html: m.map(zelle).join('<span class="sep">·</span>'), paar: m.length > 1 });
+      });
+    } else {
+      liste.forEach(function(z){ rows.push({ label: z.name, html: zelle(z), paar: false }); });
+    }
+    if (wahl.umfang === 'klappe' && rows.length > 5 && !mehrAuf) { rest = rows.length - 5; rows = rows.slice(0, 5); }
+    var h = rows.map(function(r){
+      return '<div class="mg-w' + (r.paar ? ' paar' : '') + '"><span class="mg-wl">' + esc(r.label) + '</span><span class="mg-wr">' + r.html + '</span></div>';
+    }).join('');
+    if (rest) h += '<button class="mg-mehr" type="button" id="mmehr">' + rest + ' weitere Werte ▾</button>';
+    else if (wahl.umfang === 'klappe' && mehrAuf) h += '<button class="mg-mehr" type="button" id="mmehr">weniger ▴</button>';
+    return h;
+  }
+  function reiterHtml(){
+    var orte = '<div class="mg-tabs"><button class="mg-tab on" type="button">Corralejo</button><button class="mg-tab" type="button">El Cotillo</button><button class="mg-tab" type="button">Sotavento</button></div>';
+    var modelle = '<div class="mg-tabs mg-tabs-modell"><button class="mg-tab on" type="button">Mix</button><button class="mg-tab" type="button">ECMWF</button><button class="mg-tab" type="button">ICON</button><button class="mg-tab" type="button">GFS</button></div>';
+    if (wahl.reiter === 'zwei') return '<div class="mg-top voll">' + orte + modelle + '</div>';
+    if (wahl.reiter === 'eine') return '<div class="mg-top">' + orte + '<span class="mg-modellchip">Mix <svg class="i"><path d="M6 9l6 6 6-6"/></svg></span></div>';
+    return '<div class="mg-top voll">' + orte + '</div>';
+  }
+  function fahneHtml(){
+    var zeit = '05.10. · 22:26', rel = 'jetzt', lage = '🌙 klar';
+    if (wahl.fahne === 'zwei') return '<div class="mg-fahne"><span class="mg-zeit">' + zeit + ' <small>' + rel + '</small></span><span class="mg-lage"><span class="ic">🌙</span>klar</span></div>';
+    return '<div class="mg-fahne"><span class="mg-zeit">' + zeit + ' <small>' + rel + '</small><span class="lage">' + lage + '</span></span></div>';
+  }
+  function knoepfeHtml(){
+    return '<div class="mg-knoepfe"><button class="mg-btn" type="button"><svg class="i"><path d="M20 12a8 8 0 1 1-2.35-5.65"/><path d="M20 4v5h-5"/></svg></button>' +
+      '<div class="mg-gruppe"><button class="mg-btn" type="button"><svg class="i"><path d="M14.5 6l-6 6 6 6"/></svg></button><button class="mg-btn jetzt" type="button">Jetzt</button><button class="mg-btn" type="button"><svg class="i"><path d="M9.5 6l6 6-6 6"/></svg></button></div>' +
+      '<button class="mg-btn" type="button"><svg class="i"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></div>';
+  }
+  function mockMalen(){
+    var inner = document.getElementById('handyInner');
+    var klassen = ['m', 's-' + wahl.spalten, 'd-' + wahl.dichte, 'f-' + wahl.fahne];
+    if (hat('fahnedicht')) klassen.push('f-dicht');
+    if (hat('flach')) klassen.push('r-flach');
+    inner.className = 'handy-inner ' + klassen.join(' ');
+    inner.innerHTML =
+      '<div class="m-nav"><span>🐦 Fuerteventura</span><span><i></i><i></i></span></div>' +
+      '<div class="mg" id="mmg">' + reiterHtml() + fahneHtml() +
+        '<div class="mg-werte">' + werteHtml() + '</div>' +
+        '<div class="mg-diagramm" id="mdiag"><div class="mg-band"><span>Heute ☀️ 29° / 22°</span><span>Di 06.10. ⛅ 28° / 22°</span></div><canvas id="mcanvas" width="372" height="150"></canvas></div>' +
+        knoepfeHtml() +
+        '<div class="mg-rest"><div class="cam"></div>Webcam · Satellit · Regen und „Was der Tag bringt“ folgen hier wie bisher.</div>' +
+      '</div>' +
+      '<div class="marke" id="marke"><span>Bildschirm-Ende iPhone</span></div>';
+    var mehr = document.getElementById('mmehr');
+    if (mehr) mehr.addEventListener('click', function(){ mehrAuf = !mehrAuf; mockMalen(); });
+    diagrammMalen();
+    messen();
+  }
+  function diagrammMalen(){
+    var c = document.getElementById('mcanvas'); if (!c) return;
+    var g = c.getContext('2d'), W = c.width, H = c.height;
+    var cs = getComputedStyle(c.parentNode);
+    g.clearRect(0, 0, W, H);
+    g.fillStyle = cs.getPropertyValue('--s2').trim() || '#eee'; g.fillRect(0, 0, W, 22);
+    g.fillStyle = cs.getPropertyValue('--d').trim(); g.font = '700 11px ' + getComputedStyle(document.body).fontFamily; g.fillText('● Sonnenschein  in min', 10, 15);
+    // Nacht grau links, Tag hell rechts
+    g.fillStyle = 'rgba(120,120,120,.25)'; g.fillRect(0, 22, 186, H - 22);
+    g.fillStyle = '#e9b949';
+    for (var x = 196; x < W; x += 9) g.fillRect(x, 60, 6, H - 62);
+    g.strokeStyle = cs.getPropertyValue('--t').trim(); g.lineWidth = 2; g.globalAlpha = .85;
+    g.beginPath(); g.moveTo(W / 2, 0); g.lineTo(W / 2, H); g.stroke(); g.globalAlpha = 1;
+  }
+  function messen(){
+    var mg = document.getElementById('mmg'), d = document.getElementById('mdiag');
+    var h = d.offsetTop - mg.offsetTop;
+    var nav = document.querySelector('.m-nav').offsetHeight;
+    document.getElementById('marke').style.top = (nav + SICHTBAR) + 'px';
+    if (!basisHoehe) basisHoehe = h;
+    var max = Math.max(basisHoehe, SICHTBAR, h);
+    var frei = SICHTBAR - h;
+    var fazit = frei > 0
+      ? 'Vom Diagramm bleiben <b>' + frei + ' px</b> auf dem ersten Bildschirm sichtbar' + (basisHoehe > h ? ', ' + Math.round((1 - h / basisHoehe) * 100) + ' % niedriger als heute.' : '.')
+      : 'Das Diagramm beginnt erst <b style="color:var(--gold)">' + (-frei) + ' px</b> unter dem Bildschirmrand.';
+    document.getElementById('mass').innerHTML =
+      '<div class="z"><b>Heute</b><div class="balken"><i style="width:' + (basisHoehe / max * 100) + '%"></i></div><span class="px">' + basisHoehe + ' px</span></div>' +
+      '<div class="z ist"><b>Diese Wahl</b><div class="balken"><i style="width:' + (h / max * 100) + '%"></i></div><span class="px">' + h + ' px</span></div>' +
+      '<div class="z"><b>Bildschirm</b><div class="balken"><i style="width:' + (SICHTBAR / max * 100) + '%;background:var(--gold)"></i></div><span class="px">≈ ' + SICHTBAR + ' px</span></div>' +
+      '<div class="fazit">' + fazit + '</div>';
+  }
+
+  // ---------- Schalter malen ----------
+  var panel = document.getElementById('panel');
+  function panelBauen(){
+    panel.innerHTML = GRUPPEN.map(function(g){
+      return '<section class="gruppe"><h3>' + esc(g.titel) + '</h3><p class="frage">' + esc(g.frage) + '</p><div class="opts">' +
+        g.opt.map(function(o){
+          return '<button class="opt' + (g.multi ? ' multi' : '') + '" type="button" data-g="' + g.id + '" data-o="' + o.id + '" aria-pressed="false"><span class="punkt"></span><span><span class="name">' + esc(o.name) + (o.emp ? '<span class="emp">Empfehlung</span>' : '') + '</span><br><span class="text">' + esc(o.text) + '</span></span></button>';
+        }).join('') + '</div></section>';
+    }).join('');
+    panel.addEventListener('click', function(ev){
+      var b = ev.target.closest('.opt'); if (!b) return;
+      var g = b.getAttribute('data-g'), o = b.getAttribute('data-o');
+      var grp = GRUPPEN.filter(function(x){ return x.id === g; })[0];
+      if (grp.multi) { var i = wahl[g].indexOf(o); if (i >= 0) wahl[g].splice(i, 1); else wahl[g].push(o); }
+      else wahl[g] = o;
+      allesNeu(); merkLokal();
+    });
+  }
+  function panelZeigen(){
+    panel.querySelectorAll('.opt').forEach(function(b){
+      var g = b.getAttribute('data-g'), o = b.getAttribute('data-o');
+      var an = Array.isArray(wahl[g]) ? wahl[g].indexOf(o) >= 0 : wahl[g] === o;
+      b.classList.toggle('is-on', an); b.setAttribute('aria-pressed', an ? 'true' : 'false');
+    });
+    document.getElementById('zusammen').innerHTML = GRUPPEN.map(function(g){
+      var w = Array.isArray(wahl[g.id]) ? (wahl[g.id].length ? wahl[g.id].map(function(o){ return optName(g.id, o); }).join(', ') : 'keine') : optName(g.id, wahl[g.id]);
+      return '<span>' + esc(g.titel.replace(/ \(.*\)$/, '')) + '</span><span>' + esc(w) + '</span>';
+    }).join('');
+    var t = '';
+    GRUPPEN.forEach(function(g){
+      (Array.isArray(wahl[g.id]) ? wahl[g.id] : [wahl[g.id]]).forEach(function(oid){
+        var o = g.opt.filter(function(x){ return x.id === oid; })[0]; if (!o) return;
+        t += '<li><b>' + esc(g.titel.replace(/ \(.*\)$/, '')) + ' – ' + esc(o.name) + ':</b> ' + esc(o.tech) + '</li>';
+      });
+    });
+    t += '<li><b>Allgemein:</b> Alles in meteogramm.js/.css, Versionskennung hochzählen; Laptop (≥ 560 px) behält zwei Spalten; die Laptop-Breite prüfen, damit nichts umbricht.</li>';
+    document.getElementById('technik').innerHTML = t;
+  }
+  function allesNeu(){ mockMalen(); panelZeigen(); }
+
+  // ---------- Speichern: geteilte Ablage (db) oder Browser ----------
+  var db = null, DOC = 'konzept/kopfteil';
+  function auswahlText(){
+    var s = 'Kopfteil – meine Auswahl (' + new Date().toLocaleString('de-DE') + ')\n';
+    GRUPPEN.forEach(function(g){
+      var w = Array.isArray(wahl[g.id]) ? (wahl[g.id].length ? wahl[g.id].map(function(o){ return optName(g.id, o); }).join(', ') : 'keine') : optName(g.id, wahl[g.id]);
+      s += '- ' + g.titel.replace(/ \(.*\)$/, '') + ': ' + w + '\n';
+    });
+    var n = document.getElementById('notiz').value.trim();
+    if (n) s += 'Anmerkung: ' + n + '\n';
+    s += 'Schlüssel: ' + JSON.stringify(wahl);
+    return s;
+  }
+  function status(t){ document.getElementById('status').textContent = t; }
+  function merkLokal(){ try { localStorage.setItem('kopfteil', JSON.stringify({ wahl: wahl, notiz: document.getElementById('notiz').value })); } catch(e){} }
+  function uebernehmen(s){
+    var w = JSON.parse(JSON.stringify(BISHER));
+    Object.keys(w).forEach(function(k){ if (s.wahl && s.wahl[k] != null) w[k] = s.wahl[k]; });
+    wahl = w; document.getElementById('notiz').value = s.notiz || '';
+  }
+  function ladeLokal(){ try { var s = JSON.parse(localStorage.getItem('kopfteil') || 'null'); if (s && s.wahl) { uebernehmen(s); return true; } } catch(e){} return false; }
+  function speichern(){
+    var knopf = document.getElementById('speichern');
+    var daten = { wahl: wahl, notiz: document.getElementById('notiz').value, text: auswahlText(), zeit: new Date().toISOString() };
+    merkLokal();
+    if (!db) { status('Im Browser gemerkt. Damit Claude es liest: „Als Text kopieren“ und im Chat einfügen.'); return; }
+    knopf.disabled = true;
+    db.doc(DOC).set(daten).then(function(){
+      status('Gespeichert um ' + new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) + ' Uhr. Claude kann deine Auswahl jetzt direkt lesen.');
+    }, function(e){
+      status('Speichern in der geteilten Ablage ging nicht (' + (e && e.code || 'Fehler') + '). Im Browser ist es gemerkt – nutze „Als Text kopieren“.');
+    }).then(function(){ knopf.disabled = false; });
+  }
+  function kopieren(){
+    var t = auswahlText();
+    function fallback(){
+      var ta = document.getElementById('notiz'); var alt = ta.value; ta.value = t; ta.select();
+      try { document.execCommand('copy'); } catch(e){}
+      ta.value = alt; status('Text steht markiert im Feld – kopieren mit Strg/⌘+C.');
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(function(){ status('Text kopiert. Einfach im Chat einfügen.'); }, fallback);
+    else fallback();
+  }
+  function dbStarten(){
+    if (!window.claude || typeof window.claude.use !== 'function') return;
+    window.claude.use('db').then(function(ns){
+      if (!ns) return;
+      db = ns;
+      return db.doc(DOC).get().then(function(snap){
+        if (snap.exists) { uebernehmen(snap.data()); allesNeu(); status('Deine letzte gespeicherte Auswahl ist geladen.'); }
+      });
+    }).catch(function(){});
+  }
+
+  // ---------- Start ----------
+  panelBauen();
+  document.querySelectorAll('.preset').forEach(function(b){
+    b.addEventListener('click', function(){ wahl = JSON.parse(JSON.stringify(PRESETS[b.getAttribute('data-preset')])); mehrAuf = false; allesNeu(); merkLokal(); });
+  });
+  document.getElementById('speichern').addEventListener('click', speichern);
+  document.getElementById('kopieren').addEventListener('click', kopieren);
+  document.getElementById('notiz').addEventListener('input', merkLokal);
+  // Erst „heute“ messen, damit das Maßband eine Vergleichsbasis hat, dann die gemerkte Wahl zeigen
+  mockMalen();
+  if (ladeLokal()) allesNeu(); else panelZeigen();
+  dbStarten();
+  var mm = window.matchMedia('(prefers-color-scheme: dark)'); if (mm.addEventListener) mm.addEventListener('change', diagrammMalen);
+})();
+</script>
+
+</body>
+</html>
