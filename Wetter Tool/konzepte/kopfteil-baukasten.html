@@ -53,10 +53,10 @@
     .preset .lang { display: none; } .preset .kurz { display: inline; }
     .handy { height: min(250px, 30vh); border-radius: 14px; }
     .probier { display: none; }
-    .mass { padding: 6px 10px; gap: 0; }
-    .mass .z, .mass .fazit { display: none; }
-    .mass .kurz { display: block; font-size: 12px; text-align: center; }
-    .mass .kurz b { font-weight: 700; color: var(--teal); }
+    .vorschau .mass { padding: 6px 10px; gap: 0; }
+    .vorschau .mass .z, .vorschau .mass .fazit { display: none; }
+    .vorschau .mass .kurz { display: block; font-size: 12px; text-align: center; }
+    .vorschau .mass .kurz b { font-weight: 700; color: var(--teal); }
   }
 
   /* Maßband: wie hoch der Kopf ist, verglichen mit heute und mit dem Bildschirm */
@@ -119,7 +119,9 @@
   .mg-tabs-modell .mg-tab { font-family: var(--mono); font-size: 11.5px; padding: 0 10px; }
   .mg-top.voll .mg-tabs { width: 100%; justify-content: space-between; }
   .mg-top.voll .mg-tab { flex: 1 1 0; }
-  .mg-modellchip { display: inline-flex; align-items: center; gap: 4px; min-height: 30px; padding: 0 9px; border: 1px solid var(--b); border-radius: 9px; background: var(--s2); font: 600 11.5px/1 var(--mono); color: var(--d); }
+  .mg-top.eins { flex-wrap: nowrap; }
+  .mg-top.eins .mg-tab { padding: 0 9px; font-size: 13px; }
+  .mg-modellchip { display: inline-flex; align-items: center; gap: 3px; min-height: 30px; padding: 0 7px; flex: none; border: 1px solid var(--b); border-radius: 9px; background: var(--s2); font: 600 11.5px/1 var(--mono); color: var(--d); }
   .r-flach .mg-tabs { background: transparent; border: 0; padding: 0; gap: 0; }
   .r-flach .mg-tab { min-height: 30px; border-radius: 0; border-bottom: 2px solid transparent; box-shadow: none; }
   .r-flach .mg-tab.on { background: transparent; border-bottom-color: var(--teal2); }
@@ -166,7 +168,7 @@
   .s-zwei .mg-werte::before { display: none; }
   .s-zwei .mg-w:nth-of-type(odd) { border-right: 2px solid var(--t); }
   .s-zwei .mg-w:nth-last-of-type(2):nth-of-type(odd) { border-bottom: 0; }
-  .s-zwei .mg-wl { padding-right: 10px; } .s-zwei .mg-wr { padding-left: 10px; }
+  .s-zwei .mg-wl { padding-right: 8px; font-size: 12px; } .s-zwei .mg-wr { padding-left: 8px; }
   .s-zwei .mg-wv { font-size: 13.5px; }
   /* Raster: 3 je Zeile, Wert oben, Bezeichnung darunter, ohne Strich */
   .s-raster .mg-werte { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px 8px; padding: 8px 14px 4px; }
@@ -359,7 +361,7 @@
     var orte = '<div class="mg-tabs"><button class="mg-tab on" type="button">Corralejo</button><button class="mg-tab" type="button">El Cotillo</button><button class="mg-tab" type="button">Sotavento</button></div>';
     var modelle = '<div class="mg-tabs mg-tabs-modell"><button class="mg-tab on" type="button">Mix</button><button class="mg-tab" type="button">ECMWF</button><button class="mg-tab" type="button">ICON</button><button class="mg-tab" type="button">GFS</button></div>';
     if (wahl.reiter === 'zwei') return '<div class="mg-top voll">' + orte + modelle + '</div>';
-    if (wahl.reiter === 'eine') return '<div class="mg-top">' + orte + '<span class="mg-modellchip">Mix <svg class="i"><path d="M6 9l6 6 6-6"/></svg></span></div>';
+    if (wahl.reiter === 'eine') return '<div class="mg-top eins">' + orte + '<span class="mg-modellchip">Mix <svg class="i"><path d="M6 9l6 6 6-6"/></svg></span></div>';
     return '<div class="mg-top voll">' + orte + '</div>';
   }
   function fahneHtml(){
