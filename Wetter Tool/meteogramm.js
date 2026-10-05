@@ -34,7 +34,8 @@
   //   vorher    Summenwert der vergangenen Stunde (Balken linksbündig setzen)
   //   meer      braucht die Meeres-Abfrage
   var KATALOG = {
-    sonne:   { titel:'Sonnenschein', kurz:'Sonne', einheit:'min', art:'balken', feld:'sonne', farbe:'#e6c245',
+    // zaehlt(): ob der Wert in der Werteliste gerade etwas aussagt (nachts keine Sonne, kein Regen bei 0 mm …)
+    sonne:   { titel:'Sonnenschein', kurz:'Sonne', einheit:'min', art:'balken', feld:'sonne', farbe:'#e6c245', zaehlt:function(v, d, i){ return !!d.tag[i]; },
                min:0, max:60, ticks:[0,30,60], vorher:true, icon:'☀️', tagesinfo:true,
                fmt:function(v){ return Math.round(v) + ' min'; },
                zelle:function(v){ return { wert: Math.round(v), einheit: 'min' }; } },
@@ -50,14 +51,14 @@
                  if (d && d.windrichtung[i] != null) zu += (zu ? ' · ' : '') + HIMMEL[Math.round(d.windrichtung[i] / 45) % 8];
                  return { wert: Math.round(v), einheit: 'km/h', zusatz: zu };
                } },
-    regen:   { titel:'Niederschlag', kurz:'Regen', einheit:'mm; Wahrsch. %', art:'balken', feld:'regen_mm', feld2:null, farbe:'#4f8fd0',
+    regen:   { titel:'Niederschlag', kurz:'Regen', einheit:'mm; Wahrsch. %', art:'balken', feld:'regen_mm', feld2:null, farbe:'#4f8fd0', zaehlt:function(v, d, i){ return v >= 0.1 || (d.regen_pct && d.regen_pct[i] >= 30); },
                min:0, vorher:true, icon:'💧', prozentlinie:'regen_pct',
                fmt:function(v){ return dez(v, 1) + ' mm'; },
                zelle:function(v, v2, d, i){
                  return { wert: dez(v, 1), einheit: 'mm',
                           zusatz: (d && d.regen_pct[i] != null) ? Math.round(d.regen_pct[i]) + ' % Wahrsch.' : '' };
                } },
-    uv:      { titel:'UV-Index', kurz:'UV', einheit:'', art:'balken', feld:'uv', farbe:'#d98032',
+    uv:      { titel:'UV-Index', kurz:'UV', einheit:'', art:'balken', feld:'uv', farbe:'#d98032', zaehlt:function(v, d, i){ return !!d.tag[i]; },
                min:0, ticks:[0,4,8], icon:'🔆', farbskala:'uv',
                fmt:function(v){ return dez(v, 1) + ' (' + uvText(v) + ')'; },
                zelle:function(v){ return { wert: dez(v, 1), einheit: '', zusatz: uvText(v) }; } },
@@ -65,7 +66,7 @@
                min:0, max:100, ticks:[0,50,100], icon:'💦',
                fmt:function(v){ return Math.round(v) + ' %'; },
                zelle:function(v){ return { wert: Math.round(v), einheit: '%' }; } },
-    wolken:  { titel:'Bewölkung', einheit:'%', art:'balken', feld:'wolken', farbe:'#9aa7b4',
+    wolken:  { titel:'Bewölkung', einheit:'%', art:'balken', feld:'wolken', farbe:'#9aa7b4', zaehlt:function(v){ return v >= 20; },
                min:0, max:100, ticks:[0,50,100], icon:'☁️',
                fmt:function(v){ return Math.round(v) + ' %'; },
                zelle:function(v){ return { wert: Math.round(v), einheit: '%', zusatz: v < 15 ? 'wolkenlos' : v < 50 ? 'heiter' : v < 85 ? 'wolkig' : 'bedeckt' }; } },
@@ -84,7 +85,7 @@
                zelle:function(v){ return { wert: dez(v, 1), einheit: '°' }; } },
     // Saharastaub (Calima): Wüstenstaub in der Luft, eigene Abfrage bei Open-Meteo (Luftqualität, CAMS).
     // Unter 50 klar, ab 50 leichter Dunst, ab 150 Calima, ab 300 starke Calima.
-    staub:   { titel:'Saharastaub (Calima)', kurz:'Staub', einheit:'µg/m³', art:'balken', feld:'staub', farbe:'#c49a5a',
+    staub:   { titel:'Saharastaub (Calima)', kurz:'Staub', einheit:'µg/m³', art:'balken', feld:'staub', farbe:'#c49a5a', zaehlt:function(v){ return v >= 50; },
                min:0, luft:true, icon:'🌫️', farbskala:'staub',
                fmt:function(v){ return Math.round(v) + ' µg/m³ (' + staubText(v) + ')'; },
                zelle:function(v){ return { wert: Math.round(v), einheit: 'µg/m³', zusatz: staubText(v) }; } }
@@ -166,6 +167,10 @@
     if (!wurzel) { console.warn('Meteogramm: Ziel nicht gefunden'); return null; }
 
     var ORTE = cfg.orte && cfg.orte.length ? cfg.orte : [{ id:'ort', name:'Ort', lat:52.52, lon:13.405 }];
+    // Werteliste (Stephans Wahl 05.10.2026): nur zeigen, was gerade etwas aussagt (werteKlug),
+    // und Verwandtes in einer Zeile (wertePaare: Tide · Wasser, Sonne · UV, Regen · Bewölkung, Staub · Feuchte)
+    var WERTE_KLUG = cfg.werteKlug !== false;
+    var WERTE_PAARE = cfg.wertePaare || [['tide', 'wasser'], ['sonne', 'uv'], ['regen', 'wolken'], ['staub', 'feuchte']];
     var MODELLE = cfg.modelle && cfg.modelle.length ? cfg.modelle : MODELLE_STANDARD;
     var KAMERAS = cfg.kameras || {};
     // Je Ort eine Kamera oder eine Liste. Jede bekommt eine Kennung - sie ist
@@ -221,6 +226,7 @@
       menu:   '<path d="M4 7h16M4 12h16M4 17h16"/>',
       chevl:  '<path d="M14.5 6l-6 6 6 6"/>',
       chevr:  '<path d="M9.5 6l6 6-6 6"/>',
+      chevd:  '<path d="M6 9.5l6 6 6-6"/>',
       lupe:   '<circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.3-4.3"/>',
       plus:   '<path d="M12 6v12M6 12h12"/>',
       minus:  '<path d="M6 12h12"/>',
@@ -879,17 +885,30 @@
           ? '<span class="mg-lage-i">' + wmoIcon(code, daten.tag[iR]) + '</span>' + esc(WMO_TEXT[code] || '')
           : '';
 
-        var zellen = sichtbareZeilen().map(function(z){
+        // Erst je Zeile die Zelle rechnen, dann Verwandtes zu einer Zeile zusammenfassen
+        var zellenJe = {}, reihen = [];
+        sichtbareZeilen().forEach(function(z){
           var w = wertBei(z, f);
-          if (w.v == null) return '';
+          if (w.v == null) return;
+          if (WERTE_KLUG && z.zaehlt && !z.zaehlt(w.v, daten, iR)) return;
           var steigt = null;
           if (z.id === 'tide') { var w2 = wertBei(z, Math.min(geo.n - 1, f + 1)); steigt = w2.v != null ? w2.v > w.v : null; }
           var c = z.zelle ? z.zelle(w.v, w.v2, daten, iR, steigt) : { wert: z.fmt(w.v, w.v2), einheit: '' };
-          return zelleHtml(z.kurz || z.titel, c, z.farbe);
+          zellenJe[z.id] = { titel: z.kurz || z.titel, c: c, farbe: z.farbe };
+          reihen.push(z.id);
         });
         if (daten.wasser[iR] != null && anZeilen.indexOf('wasser') < 0) {
-          zellen.push(zelleHtml('Wasser', { wert: Math.round(daten.wasser[iR]), einheit: '°' }, '#3fa9c9'));
+          zellenJe.wasser = { titel: 'Wasser', c: { wert: Math.round(daten.wasser[iR]), einheit: '°' }, farbe: '#3fa9c9' };
+          reihen.push('wasser');
         }
+        var fertig = {}, zellen = [];
+        reihen.forEach(function(id){
+          if (fertig[id]) return;
+          var paar = WERTE_PAARE.filter(function(p){ return p.indexOf(id) >= 0; })[0] || [id];
+          var teile = paar.filter(function(x){ return zellenJe[x] && !fertig[x]; });
+          teile.forEach(function(x){ fertig[x] = true; });
+          zellen.push(zelleHtml(teile.map(function(x){ return zellenJe[x].titel; }).join(' · '), teile.map(function(x){ return zellenJe[x].c; }), zellenJe[teile[0]].farbe));
+        });
         el.werte.innerHTML = zellen.join('');
         wertlinienSetzen(f);
         tippsZeigen(f);
@@ -1044,11 +1063,15 @@
       return '';
     }
 
-    function zelleHtml(titel, c, farbe){
+    // Eine Zeile der Werteliste: Bezeichnung links, rechts ein oder mehrere Werte (je Wert Zahl, Einheit, Zusatz)
+    function zelleHtml(titel, teile, farbe){
+      if (!Array.isArray(teile)) teile = [teile];
       return '<div class="mg-wert" style="--c:' + farbe + '">' +
         '<span class="mg-wl">' + esc(titel) + '</span>' +
-        '<span class="mg-wv">' + c.wert + (c.einheit ? '<small>' + esc(c.einheit) + '</small>' : '') + '</span>' +
-        '<span class="mg-wz">' + esc(c.zusatz || '') + '</span></div>';
+        '<span class="mg-wr">' + teile.map(function(c){
+          return '<span class="mg-wv">' + c.wert + (c.einheit ? '<small>' + esc(c.einheit) + '</small>' : '') + '</span>' +
+            (c.zusatz ? '<span class="mg-wz">' + esc(c.zusatz) + '</span>' : '');
+        }).join('<span class="mg-sep">·</span>') + '</span></div>';
     }
 
     // Datum im Diagramm verstecken, solange es unter der festen Achse läge -
@@ -1402,12 +1425,15 @@
       wurzel.innerHTML =
         '<div class="mg-top">' +
           '<div class="mg-tabs" id="' + kid('orte') + '" role="tablist" aria-label="Ort"></div>' +
-          '<div class="mg-tabs mg-tabs-modell" id="' + kid('modelle') + '" role="tablist" aria-label="Wettermodell"></div>' +
+          // Wettermodell als kleines Feld "Mix ▾" rechts neben den Orten; Antippen klappt die Liste auf
+          '<span class="mg-modell" id="' + kid('modelle') + '">' +
+            '<button type="button" class="mg-modell-btn" id="' + kid('mbtn') + '" aria-expanded="false" aria-haspopup="listbox" title="Wettermodell wählen"></button>' +
+            '<div class="mg-modell-panel" id="' + kid('mpanel') + '" role="listbox" aria-label="Wettermodell" hidden></div>' +
+          '</span>' +
         '</div>' +
-        // Datum und Uhrzeit als Fahne oben am Auswahl-Strich; sie bleibt beim Scrollen stehen
+        // Datum, Uhrzeit und Wetterlage als Fahne oben am Auswahl-Strich; sie bleibt beim Scrollen stehen
         '<div class="mg-readout">' +
-          '<div class="mg-zeit" id="' + kid('zeit') + '"></div>' +
-          '<div class="mg-lage" id="' + kid('lage') + '"></div>' +
+          '<div class="mg-zeit"><span id="' + kid('zeit') + '"></span><span class="mg-lage" id="' + kid('lage') + '"></span></div>' +
         '</div>' +
         '<div class="mg-werte" id="' + kid('werte') + '"></div>' +
         '<div class="mg-wrap" id="' + kid('wrap') + '">' +
@@ -1506,7 +1532,7 @@
       if (ORTE.length < 2) document.getElementById(kid('orte')).style.display = 'none';
       if (MODELLE.length < 2) document.getElementById(kid('modelle')).style.display = 'none';
       reiter(kid('orte'), ORTE, function(){ return ort; }, function(id){ if (zf.aktiv) zfBeenden(false); ort = id; merkSchreiben('ort', id); laden(); });
-      reiter(kid('modelle'), MODELLE, function(){ return modell; }, function(id){ modell = id; merkSchreiben('modell', id); quelleText(); laden(); });
+      modellWahl();
       zeilenPanel();
       sortierenImDiagramm();
 
@@ -1607,6 +1633,35 @@
         var b = ev.target.closest('.mg-tab'); if (!b) return;
         setz(b.getAttribute('data-id')); malen();
       });
+    }
+
+    // Wettermodell: Feld "Mix ▾" mit Aufklapp-Liste (Name, Langname, Hinweis)
+    function modellWahl(){
+      var btn = document.getElementById(kid('mbtn')), panel = document.getElementById(kid('mpanel'));
+      if (!btn || !panel) return;
+      function malen(){
+        var m = modellObj();
+        btn.innerHTML = esc(m.name) + ' ' + ico('chevd');
+        btn.title = 'Wettermodell: ' + m.lang;
+        panel.innerHTML = MODELLE.map(function(e){
+          return '<button type="button" role="option" class="mg-modell-opt' + (e.id === modell ? ' is-on' : '') + '" data-id="' + esc(e.id) + '" aria-selected="' + (e.id === modell) + '">' +
+            '<b>' + esc(e.name) + '</b><span>' + esc(e.lang || '') + (e.hinweis ? ' – ' + esc(e.hinweis) : '') + '</span></button>';
+        }).join('');
+      }
+      function zu(){ panel.hidden = true; btn.setAttribute('aria-expanded', 'false'); }
+      malen();
+      btn.addEventListener('click', function(ev){
+        ev.stopPropagation();
+        var auf = panel.hidden;
+        panel.hidden = !auf; btn.setAttribute('aria-expanded', String(auf));
+      });
+      panel.addEventListener('click', function(ev){
+        ev.stopPropagation();
+        var b = ev.target.closest('.mg-modell-opt'); if (!b) return;
+        modell = b.getAttribute('data-id'); merkSchreiben('modell', modell);
+        malen(); zu(); quelleText(); laden();
+      });
+      document.addEventListener('click', zu);
     }
 
     function zeilenPanel(){

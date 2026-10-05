@@ -53,7 +53,7 @@ Stephan hat zwei Konzept-Seiten als Claude-Artifacts bekommen und will daran **w
   (alle/wichtig/keine), Umfang (alle/klug/klappe/wenige), Extras (paare/fahnedicht/flach). Maßband misst die Kopfhöhe
   gegen „heute“ (650 px) und den iPhone-Bildschirm (≈ 680 px). Preset „Claudes Vorschlag“ = eine/eine/zwei/dicht/wichtig/
   klug + paare, fahnedicht → 218 px (−66 %). Auswahl landet in `ArtifactData` get, collection `konzept`, doc `kopfteil`
-  (oder Stephan fügt den „Schlüssel“ im Chat ein). **Stephans Entscheidung steht aus.**
+  (oder Stephan fügt den „Schlüssel“ im Chat ein). **Entschieden und umgesetzt 05.10. spät (siehe unten).**
 
 Weiterarbeiten: Artifact per `read` mit der URL holen, ändern, mit `url` republishen; die Kopie in
 `konzepte/` mitziehen (Seitengerüst `<!doctype html>` bleibt nur in der Repo-Kopie).
@@ -62,10 +62,19 @@ Diagramm endlos in die Breite.
 
 ## Offene Entscheidungen von Stephan
 
-- Kopfteil kompakter (Baukasten vom 05.10. abends, siehe oben). Umsetzung erst nach seiner Wahl.
+Keine – alle entschieden (siehe unten).
 
 ## Entschieden
 
+- **Kopfteil kompakt (05.10.2026 spät, live, Version `20261005e`):** Stephans Wahl aus dem Kopfteil-Baukasten:
+  `reiter: eine` + `flach` (Orte als flache Reiter mit Unterstrich, Modell als Feld „Mix ▾“ = `.mg-modell`, Aufklapp-Liste
+  `modellWahl()` mit Name/Langname/Hinweis; `reiter()` nur noch für die Orte), `fahne: eine` + `fahnedicht` (Wetterlage
+  `#lage` steckt jetzt **im** `.mg-zeit`-Kasten, `.mg-readout` padding 6/4, kein Strich-Stummel mehr), `spalten: zwei`
+  (`.mg-werte` immer 2 Spalten, der Strich läuft zwischen den Spalten), `dichte: dicht` (Zeile = `.mg-wl` + `.mg-wr`
+  mit Wert `.mg-wv` und Zusatz `.mg-wz` nebeneinander, 4 px Luft), `zusatz: alle`, `umfang: klug` (`werteKlug`, je Zeile
+  `zaehlt(v, daten, i)` im KATALOG: Sonne/UV nur bei `daten.tag[i]`, Regen ab 0,1 mm oder 30 %, Wolken ab 20 %, Staub ab 50),
+  `paare` (`wertePaare`, `zelleHtml(titel, [zellen], farbe)` fasst Tide · Wasser usw. in eine Zeile, getrennt durch `.mg-sep`).
+  Ergebnis auf dem iPhone: Kopf 184 px statt 650 px. Sicherung der Werteliste-Logik vorher: Commit 2215cd2.
 - **Knopfleiste neu (05.10.2026, live, Version `20261005c`):** Stephans Wahl aus dem Baukasten: Anordnung *mitte*
   (↻ links, ‹ Jetzt › als Gruppe in einem Rahmen `.mg-gruppe` in der Mitte, ☰ rechts; Raster `auto 1fr auto`), Ecken sanft
   (`--mg-r: 11px`), Jetzt nur fett (kein Türkis mehr) mit Abstand „+14 h“ (`.mg-jrel`, `relKurz()`), Jetzt ruht (`disabled`)

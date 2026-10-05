@@ -38,42 +38,52 @@
 }
 
 /* ---- Kopfbereich: Orte, Modelle, Zeilenauswahl ---- */
-.mg-top { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; padding: 12px 14px 0; }
-.mg-tabs { display: inline-flex; gap: 2px; background: var(--mg-flaeche2); border: 1px solid var(--mg-rand); border-radius: 12px; padding: 3px; }
-.mg-tab { min-height: 36px; padding: 0 12px; border: 0; border-radius: 9px; background: transparent; color: var(--mg-text-still); font: 600 13.5px/1 var(--mg-serif); cursor: pointer; white-space: nowrap; -webkit-tap-highlight-color: transparent; }
-.mg-tab.is-on { background: var(--mg-flaeche); color: var(--mg-text); box-shadow: 0 1px 3px rgba(0,0,0,0.18); }
-.mg-tabs-modell .mg-tab { font-family: var(--mg-mono); font-size: 12px; padding: 0 10px; }
-
-.mg-top { padding-bottom: 2px; }
-.mg-tabs-modell .mg-tab { font-size: 11.5px; }
+/* Eine Zeile (Stephans Wahl 05.10.2026): Orte als flache Reiter mit Unterstrich,
+   rechts daneben das Wettermodell als kleines Feld "Mix ▾" mit Aufklapp-Liste. */
+.mg-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 14px 0; }
+.mg-tabs { display: inline-flex; gap: 0; min-width: 0; }
+.mg-tab { min-height: 32px; padding: 0 10px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--mg-text-still); font: 600 13.5px/1 var(--mg-serif); cursor: pointer; white-space: nowrap; -webkit-tap-highlight-color: transparent; }
+.mg-tab.is-on { color: var(--mg-text); border-bottom-color: var(--mg-akzent); }
+.mg-modell { position: relative; flex: none; }
+.mg-modell-btn { display: inline-flex; align-items: center; gap: 3px; min-height: 30px; padding: 0 7px 0 9px; border: 1px solid var(--mg-rand); border-radius: 9px; background: var(--mg-flaeche2); color: var(--mg-text-still); font: 600 11.5px/1 var(--mg-mono); cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.mg-modell-btn .mg-i { width: 14px; height: 14px; }
+.mg-modell-panel { position: absolute; right: 0; top: calc(100% + 6px); z-index: 30; display: grid; gap: 2px; min-width: 250px; max-width: calc(100vw - 32px); padding: 6px; background: var(--mg-flaeche); border: 1px solid var(--mg-rand); border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+.mg-modell-panel[hidden] { display: none; }
+.mg-modell-opt { display: grid; gap: 1px; text-align: left; padding: 7px 9px; border: 0; border-radius: 8px; background: transparent; color: var(--mg-text); font: 500 12.5px/1.3 var(--mg-serif); cursor: pointer; }
+.mg-modell-opt b { font-family: var(--mg-mono); font-size: 12.5px; }
+.mg-modell-opt span { color: var(--mg-text-still); font-size: 11.5px; }
+.mg-modell-opt:hover { background: var(--mg-flaeche2); }
+.mg-modell-opt.is-on { background: var(--mg-flaeche2); box-shadow: inset 2px 0 0 var(--mg-akzent); }
 
 /* ---- Datumsfahne am oberen Ende des Auswahl-Strichs ----
    Bleibt beim Scrollen der Seite oben stehen, damit man immer sieht,
    zu welcher Stunde die Werte gehören. */
 .mg-readout { position: sticky; top: var(--mg-haft-oben); z-index: 6; display: flex; flex-direction: column; align-items: center; min-width: 0;
-  padding: 10px 14px 8px; background: var(--mg-flaeche); border-radius: 0 0 12px 12px; box-shadow: 0 10px 14px -10px rgba(0,0,0,.55); }
-/* kurzes Strichstück von der Fahne hinunter zur Werteliste */
-.mg-readout::before { content: ""; position: absolute; left: 50%; bottom: 0; width: 2px; height: 10px; margin-left: -1px; background: var(--mg-text); opacity: .85; }
+  padding: 6px 14px 4px; background: var(--mg-flaeche); border-radius: 0 0 12px 12px; box-shadow: 0 10px 14px -10px rgba(0,0,0,.55); }
+/* Eine Zeile (Stephans Wahl 05.10.2026): Datum, Uhrzeit, Abstand und Wetterlage zusammen im Kasten */
 .mg-zeit { display: inline-flex; align-items: baseline; gap: 8px; flex-wrap: wrap; justify-content: center; padding: 5px 12px; border-radius: 8px;
   background: var(--mg-text); color: var(--mg-flaeche); font-family: var(--mg-mono); font-size: 1rem; font-weight: 700; }
 .mg-rel { font-family: var(--mg-serif); font-size: 12.5px; font-weight: 600; color: var(--mg-flaeche); opacity: .72; }
-/* Wetterlage unter Datum und Uhrzeit */
-.mg-lage { display: flex; align-items: center; justify-content: center; gap: 7px; margin: 6px 0 0; font-size: 14px; color: var(--mg-text-still); min-height: 22px; }
-.mg-lage-i { font-size: 1.15rem; line-height: 1; }
+.mg-lage { display: inline-flex; align-items: baseline; gap: 5px; margin-left: 2px; padding-left: 10px; border-left: 1px solid var(--mg-flaeche); font: 600 13px/1.2 var(--mg-serif); color: var(--mg-flaeche); opacity: .9; }
+.mg-lage:empty { display: none; }
+.mg-lage-i { font-size: 1rem; line-height: 1; margin-right: 4px; }
 
 /* Die Werte "am Strich": der Auswahl-Strich läuft senkrecht durch die Liste,
    links davon die Bezeichnung, rechts Zahl und Zusatz darunter. Keine Kästen,
    keine Farben, nur eine feine Linie zwischen den Zeilen. */
-.mg-werte { position: relative; display: grid; grid-template-columns: 1fr; padding: 0 14px; }
+/* Stephans Wahl 05.10.2026: zwei Spalten auch auf dem Handy, dichte Zeilen (Zusatz neben
+   dem Wert), Verwandtes in einer Zeile (Tide · Wasser). Der Strich läuft zwischen den Spalten. */
+.mg-werte { position: relative; display: grid; grid-template-columns: 1fr 1fr; padding: 2px 14px; }
 .mg-werte::before { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; margin-left: -1px; border-left: 2px solid var(--mg-text); opacity: .85; }
-.mg-wert { display: grid; grid-template-columns: 1fr 1fr; grid-template-areas: "l v" "l z"; align-items: start; column-gap: 0;
-  padding: 6px 0; border-bottom: 1px solid var(--mg-rand); min-width: 0; }
-.mg-wert:last-child { border-bottom: 0; }
-.mg-wl { grid-area: l; align-self: center; text-align: right; padding-right: 16px; font-size: 12.5px; color: var(--mg-text-still); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.mg-wv { grid-area: v; padding-left: 16px; font-family: var(--mg-mono); font-size: 14.5px; font-weight: 700; color: var(--mg-text); white-space: nowrap; }
+.mg-wert { display: grid; grid-template-columns: 1fr 1fr; align-items: baseline; column-gap: 0;
+  padding: 4px 0; border-bottom: 1px solid var(--mg-rand); min-width: 0; }
+.mg-wert:nth-last-child(-n+2):nth-child(odd), .mg-wert:last-child { border-bottom: 0; }
+.mg-wl { text-align: right; padding-right: 8px; font-size: 12px; line-height: 1.2; color: var(--mg-text-still); min-width: 0; overflow-wrap: anywhere; }
+.mg-wr { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 6px; padding-left: 8px; min-width: 0; }
+.mg-wv { font-family: var(--mg-mono); font-size: 13.5px; font-weight: 700; color: var(--mg-text); white-space: nowrap; }
 .mg-wv small { font-size: 0.78em; font-weight: 600; color: var(--mg-text-still); margin-left: 2px; }
-.mg-wz { grid-area: z; padding-left: 16px; margin-top: -3px; line-height: 1.25; font-size: 11.5px; color: var(--mg-text-still); text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
-.mg-wz:empty { display: none; }
+.mg-wz { line-height: 1.25; font-size: 11.5px; color: var(--mg-text-still); }
+.mg-sep { color: var(--mg-text-still); font-size: 12px; }
 
 /* ---- Knopfleiste unter dem Diagramm (Stephans Wahl vom 05.10.2026) ----
    ↻ links außen, ‹ Jetzt › als Gruppe in einem Rahmen in der Mitte, ☰ rechts außen.
@@ -232,9 +242,8 @@
 .mg-svg .mg-sortziel { stroke: var(--mg-akzent); stroke-width: 3; }
 
 @media (max-width: 560px) {
-  .mg-top { flex-direction: column; }
-  .mg-tabs { width: 100%; }
-  .mg-tab { flex: 1; text-align: center; }
+  .mg-tabs { flex: 1 1 auto; }
+  .mg-tab { flex: 1; padding: 0 6px; text-align: center; font-size: 13px; }
   .mg-zeilenwahl { position: static; }
   .mg-zeilen-panel { left: 14px; right: 14px; min-width: 0; max-width: none; }
 }
