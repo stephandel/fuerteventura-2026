@@ -62,7 +62,8 @@ Keine – alle entschieden (siehe unten).
   (↻ links, ‹ Jetzt › als Gruppe in einem Rahmen `.mg-gruppe` in der Mitte, ☰ rechts; Raster `auto 1fr auto`), Ecken sanft
   (`--mg-r: 11px`), Jetzt nur fett (kein Türkis mehr) mit Abstand „+14 h“ (`.mg-jrel`, `relKurz()`), Jetzt ruht (`disabled`)
   wenn der Strich auf jetzt steht. Zoom als `.mg-ecke` (− 🔍 +) rechts unten im Diagramm, halb durchsichtig; dazu
-  Zwei-Finger-Geste (touchmove, je Stufe ab 25 % Abstandänderung) und Strg/⌘+Mausrad; `.mg-scroll` hat `touch-action: pan-x pan-y`.
+  Zwei-Finger-Geste (touchmove, je feiner Stufe ab 12 % Abstandänderung; `ZOOMS` hat seit 05.10. abends 9 Stufen mit
+  Zwischenwerten 1,4 / 0,7 / 0,35 / 0,18 – Geste und Mausrad nehmen jede Stufe, die Knöpfe springen zwei) und Strg/⌘+Mausrad; `.mg-scroll` hat `touch-action: pan-x pan-y`.
   Extras: Rand-Pfeil `.mg-randpfeil` (links neben der Achse / rechts), Doppeltipp = jetzt (Einzeltipp wartet 280 ms),
   Zoom-Hinweis „3 Tage im Bild“ (900 ms), beide stehen in der Mitte des *sichtbaren* Ausschnitts (`--mg-sicht-mitte`,
   `sichtMitte()` bei Seiten-Scroll). Leiste haftet unten (`position: sticky; bottom: var(--mg-haft-unten)`; `../index.html`
