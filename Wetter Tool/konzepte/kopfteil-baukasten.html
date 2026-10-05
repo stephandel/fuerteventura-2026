@@ -45,11 +45,13 @@
   .handy::-webkit-scrollbar { display: none; }
   .probier { text-align: center; font-size: 12px; color: var(--dim); margin: 0; }
   /* Auf dem Handy muss die haftende Vorschau flach bleiben, sonst sieht man die Schalter nicht */
-  .mass .kurz { display: none; }
+  .mass .kurz, .preset .kurz { display: none; }
   @media (max-width: 860px) {
     .vorschau { gap: 6px; padding-top: 4px; }
-    .preset { padding: 5px 9px; font-size: 12px; }
-    .handy { height: min(300px, 36vh); border-radius: 14px; }
+    .presets { flex-wrap: nowrap; gap: 6px; }
+    .preset { padding: 5px 8px; font-size: 12px; white-space: nowrap; }
+    .preset .lang { display: none; } .preset .kurz { display: inline; }
+    .handy { height: min(250px, 30vh); border-radius: 14px; }
     .probier { display: none; }
     .mass { padding: 6px 10px; gap: 0; }
     .mass .z, .mass .fazit { display: none; }
@@ -217,9 +219,9 @@
   <div class="buehne">
     <div class="vorschau">
       <div class="presets">
-        <button class="preset" type="button" data-preset="bisher">So ist es heute</button>
-        <button class="preset" type="button" data-preset="claude">Claudes Vorschlag</button>
-        <button class="preset" type="button" data-preset="knapp">So knapp wie möglich</button>
+        <button class="preset" type="button" data-preset="bisher"><span class="lang">So ist es heute</span><span class="kurz">Heute</span></button>
+        <button class="preset" type="button" data-preset="claude"><span class="lang">Claudes Vorschlag</span><span class="kurz">Claudes Vorschlag</span></button>
+        <button class="preset" type="button" data-preset="knapp"><span class="lang">So knapp wie möglich</span><span class="kurz">Ganz knapp</span></button>
       </div>
       <div class="mass" id="mass"></div>
       <div class="handy" id="handy"><div class="handy-inner" id="handyInner"></div></div>
