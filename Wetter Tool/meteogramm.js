@@ -242,7 +242,9 @@
     var el = {}, daten = null, cache = {}, geo = null, altT0 = null, datenNr = 0;
     var pxH = 26, idxJetzt = 0, sammler = 0, camAktuell = null;
     // Zoom: 1 = normal (gut ein Tag im Bild), kleiner = mehr Tage auf einmal
-    var ZOOMS = [2, 1, 0.5, 0.25, 0.125];
+    // Zoom-Stufen: die Knöpfe springen je zwei Stufen (2 / 1 / ½ / ¼ / ⅛), die
+    // Zwei-Finger-Geste nimmt auch die Zwischenstufen - so fühlt sie sich feiner an.
+    var ZOOMS = [2, 1.4, 1, 0.7, 0.5, 0.35, 0.25, 0.18, 0.125];
     var zoom = parseFloat(merkLesen('zoom', '1'));
     if (ZOOMS.indexOf(zoom) < 0) zoom = 1;
     var datumPlatz = 104;
@@ -921,9 +923,10 @@
       });
     }
 
-    function zoomen(richtung){
-      var k = ZOOMS.indexOf(zoom) + richtung;
-      if (k < 0 || k >= ZOOMS.length) return;
+    function zoomen(richtung, fein){
+      var k0 = ZOOMS.indexOf(zoom), k = k0 + richtung * (fein ? 1 : 2);
+      k = Math.max(0, Math.min(ZOOMS.length - 1, k));
+      if (k === k0) return;
       // Nicht weiter herauszoomen, wenn schon alles ins Bild passt
       if (richtung > 0 && geo && (geo.n - 1) * pxH < el.scroll.clientWidth * 0.8) return;
       var mitte = idxAusScroll();
@@ -1559,8 +1562,8 @@
         if (ev.touches.length !== 2 || kneif === null) return;
         ev.preventDefault();                           // die Seite soll dabei nicht mitzoomen
         var d = fingerAbstand(ev), q = d / kneif;
-        if (q > 1.25) { zoomen(-1); kneif = d; }
-        else if (q < 0.8) { zoomen(1); kneif = d; }
+        if (q > 1.12) { zoomen(-1, true); kneif = d; }
+        else if (q < 0.89) { zoomen(1, true); kneif = d; }
       }, { passive: false });
       ['touchend', 'touchcancel'].forEach(function(t){ el.scroll.addEventListener(t, function(ev){ if (ev.touches.length < 2) kneif = null; }, { passive: true }); });
       var radSperre = 0;
@@ -1569,7 +1572,7 @@
         ev.preventDefault();
         if (radSperre) return;
         radSperre = setTimeout(function(){ radSperre = 0; }, 250);
-        zoomen(ev.deltaY > 0 ? 1 : -1);
+        zoomen(ev.deltaY > 0 ? 1 : -1, true);
       }, { passive: false });
       document.getElementById(kid('zurueck')).addEventListener('click', function(){ zentrieren(idxAusScroll() - 24, true); });
       document.getElementById(kid('vor')).addEventListener('click', function(){ zentrieren(idxAusScroll() + 24, true); });

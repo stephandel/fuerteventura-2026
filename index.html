@@ -22,7 +22,7 @@
 <link rel="stylesheet" href="vendor/leaflet.css">
 <script defer src="vendor/leaflet.js"></script>
 <link rel="stylesheet" href="Wetter%20Tool/meteogramm.css?v=20261005c">
-<script defer src="Wetter%20Tool/meteogramm.js?v=20261005c"></script>
+<script defer src="Wetter%20Tool/meteogramm.js?v=20261005d"></script>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
 <link rel="apple-touch-icon" sizes="167x167" href="images/apple-touch-icon-167.png">
@@ -1805,8 +1805,9 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
 :root:is([data-phase="insel"], [data-phase="danach"]) .hero-card h1 { font-size: clamp(1.8rem, 7vw, 2.5rem); margin: 0; }
 :root:is([data-phase="insel"], [data-phase="danach"]) .hero-card .hero-tage { display: flex; }
 :root:is([data-phase="insel"], [data-phase="danach"]) .hero-card .hero-zeile, :root:is([data-phase="insel"], [data-phase="danach"]) .hero-card .hero-ring, :root:is([data-phase="insel"], [data-phase="danach"]) .hero-card #cd-label, :root:is([data-phase="insel"], [data-phase="danach"]) .hero-card #countdown { display: none; }
-.hero-tage { display: none; list-style: none; margin: 12px 0 0; padding: 0 3px; gap: 3px; justify-content: center; width: 100%; max-width: 340px; box-sizing: border-box; }
-.hero-tage li { flex: 1 1 0; max-width: 22px; height: 13px; border-radius: 3px; background: rgba(214,205,180,.72); color: rgba(40,34,20,.78); font: 700 8px/13px "JetBrains Mono", monospace; text-align: center; font-variant-numeric: tabular-nums; }
+/* Breite nach Stephans Skizze vom 05.10.: etwa so breit wie der Titel „Fuerteventura-Trip“ */
+.hero-tage { display: none; list-style: none; margin: 12px 0 0; padding: 0; gap: 2px; justify-content: center; width: 100%; max-width: 222px; box-sizing: border-box; }
+.hero-tage li { flex: 1 1 0; max-width: 22px; min-width: 0; height: 13px; border-radius: 3px; background: rgba(214,205,180,.72); color: rgba(40,34,20,.78); font: 700 8px/13px "JetBrains Mono", monospace; text-align: center; font-variant-numeric: tabular-nums; }
 .hero-tage li.vorbei { background: #f2cb5e; }
 .hero-tage li.heute { background: #86f0e2; color: #0a2224; font-size: 9.5px; transform: scale(1.3); box-shadow: 0 0 0 1.5px rgba(255,255,255,.6); position: relative; z-index: 1; }
 .jetzt-zeile { display: none; align-items: center; gap: 10px; padding: 10px 14px; margin-top: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; font-size: 14px; font-weight: 600; color: var(--ink); text-decoration: none; white-space: nowrap; overflow: hidden; }
