@@ -1769,6 +1769,19 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
 .ip-mk .zt { margin-left: auto; font-family: "JetBrains Mono", monospace; font-size: 10.5px; color: var(--ink-dim); white-space: nowrap; }
 .ip-mk .plus { color: var(--ochre); font-weight: 800; }
 .ip-mk:active { transform: scale(.98); }
+/* Calima-Karte auf der Wetterseite */
+.calima-jetzt { display: flex; align-items: center; gap: 10px; margin-top: 14px; padding: 10px 14px; border-radius: 12px; background: var(--good-bg); color: var(--good); font-size: 14px; font-weight: 600; }
+.calima-jetzt.gelb { background: var(--warn-bg); color: var(--warn); }
+.calima-jetzt.rot { background: var(--bad-bg); color: var(--bad); }
+.calima-jetzt small { font-weight: 500; opacity: .85; }
+.calima-tage { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 10px; }
+.calima-tage div { text-align: center; border-radius: 10px; padding: 8px 2px; font-size: 11px; line-height: 1.25; background: var(--good-bg); color: var(--good); }
+.calima-tage div.gelb { background: var(--warn-bg); color: var(--warn); }
+.calima-tage div.rot { background: var(--bad-bg); color: var(--bad); }
+.calima-tage div.leer { background: var(--muted-bg); color: var(--ink-dim); }
+.calima-tage b { display: block; font-size: 13px; }
+.calima-tage small { display: block; opacity: .8; }
+.ip-calima { font-size: 11px; color: var(--warn); font-weight: 700; padding: 2px 0; }
 .cal-banner { display: flex; gap: 10px; align-items: center; margin-top: 16px; padding: 10px 14px; border-radius: 12px; background: var(--warn-bg); color: var(--warn); font-size: 14px; font-weight: 600; }
 .cal-banner small { font-weight: 500; opacity: .85; }
 .mk-heute { display: inline-block; margin-left: 6px; font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 999px; background: var(--good-bg); color: var(--good); vertical-align: 1px; }
@@ -2662,6 +2675,26 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       </div>
     </details>
 
+    <div class="tide-box" id="calima-box">
+      <h2>🌫️ Calima – der Saharastaub</h2>
+      <p class="sub">Calima heißt auf den Kanaren der Ostwind aus der Sahara: Er bringt feinen Wüstenstaub, der Himmel wird milchig-gelb, die Fernsicht schwindet, oft wird es ein paar Grad heißer und die Luft sehr trocken. Meist dauert es 1–4 Tage. Im Oktober kommt es seltener vor als im Winter und Frühjahr, ist aber möglich.</p>
+      <div class="calima-jetzt" id="calima-jetzt">Lade Staubwerte…</div>
+      <div class="calima-tage" id="calima-tage"></div>
+      <p class="dim" style="font-size:12px;margin-top:8px">Vorhersage des Feinstaubs (Wüstenstaub in µg/m³, Tageshöchstwert) für Corralejo, bis zu 7 Tage im Voraus (weiter hinten fehlen manchmal Werte), Quelle Open-Meteo / Copernicus CAMS. Unter 50 klar, ab 50 leichter Dunst, ab 150 Calima, ab 300 starke Calima.</p>
+      <h3 style="margin:18px 0 6px;font-size:15px">So verhaltet ihr euch bei Calima</h3>
+      <div class="check-grid">
+        <div class="check-row"><span class="check-icon good">🪟</span><span class="check-label">Fenster und Türen zu, besonders nachts – sonst liegt morgens Staub auf allem</span></div>
+        <div class="check-row"><span class="check-icon good">💧</span><span class="check-label">Viel trinken, die Luft ist extrem trocken; Augentropfen und Nasenspray helfen</span></div>
+        <div class="check-row"><span class="check-icon good">🏃</span><span class="check-label">Keine Anstrengung draußen: Wandern, E-MTB und lange Strandtage verschieben</span></div>
+        <div class="check-row"><span class="check-icon good">🚗</span><span class="check-label">Auto langsamer und mit Licht fahren – die Sicht kann unter 1 km fallen</span></div>
+        <div class="check-row"><span class="check-icon good">🏊</span><span class="check-label">Pool oder Meer gehen trotzdem, aber im Schatten bleiben: Die Sonne brennt durch den Dunst</span></div>
+        <div class="check-row"><span class="check-icon warn">✈️</span><span class="check-label">Bei sehr starker Calima können Flüge ausfallen – am Abreisetag morgens den Flugstatus prüfen</span></div>
+      </div>
+      <h3 style="margin:18px 0 6px;font-size:15px">Was an einem Calima-Tag trotzdem schön ist</h3>
+      <p class="sub">Alles, was drinnen oder im Ort stattfindet. Im Inselplaner werden diese Ideen an Calima-Tagen automatisch unter dem Tag angeboten.</p>
+      <div class="link-grid" id="calima-ideen"></div>
+    </div>
+
     <div class="tide-box live-weather-box">
       <h2>📹 Live-Webcams</h2>
       <p class="sub">Das Bild der laufenden Stunde siehst du oben im Wetterverlauf unter <strong>📷 Webcam</strong>, samt Rückblick auf die vergangenen Stunden. Hier die Kameras mit bewegtem Bild als Direktlinks — die Videos lassen sich nicht einbetten, die Anbieter sperren das.</p>
@@ -2761,7 +2794,8 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
 <li class="pack-item"><label><input type="checkbox" data-id="sonne-2"> Lippenpflege mit LSF</label></li>
 <li class="pack-item"><label><input type="checkbox" data-id="sonne-3"> Sonnenbrille mit gutem UV-Schutz</label></li>
 <li class="pack-item"><label><input type="checkbox" data-id="sonne-4"> Reiseapotheke: Schmerzmittel, Pflaster, Mittel gegen Sonnenbrand/Reiseübelkeit</label></li>
-<li class="pack-item"><label><input type="checkbox" data-id="sonne-5"> Persönliche Medikamente in ausreichender Menge</label></li></ul>
+<li class="pack-item"><label><input type="checkbox" data-id="sonne-5"> Persönliche Medikamente in ausreichender Menge</label></li>
+<li class="pack-item"><label><input type="checkbox" data-id="sonne-6"> Für Calima-Tage (Saharastaub): Augentropfen, Nasenspray, bei empfindlichen Atemwegen eine FFP2-Maske</label></li></ul>
 </div>
 <div class="pack-card">
   <h3>🏖️ Strand &amp; Aktivität</h3>
@@ -9337,6 +9371,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
   // Aenderungen an der Seite selbst - nicht von Stephan oder Bilgen, sondern
   // an Angebot und Funktion. Stehen gleichberechtigt neben Notizen und Herzen.
   var SEITEN_NEUIGKEITEN = [
+    { at: '2026-10-05T12:00', text: '<b>Die Seite hat jetzt einen Plan für Calima.</b> Auf der Wetterseite eine eigene Karte: was der Saharastaub ist, Staub-Vorhersage für 7 Tage, Verhaltenstipps und Ideen für drinnen. Der Inselplaner bietet an Calima-Tagen diese Ideen direkt unter dem Tag an, die Startseite warnt, wenn morgen Calima kommt. In der Packliste stehen Augentropfen und Nasenspray.' },
     { at: '2026-10-04T23:00', text: '<b>Startseite und Leiste neu sortiert.</b> Oben ein schmaler Kopf mit Ring („noch 8 Tage“), dann das Wetter in einer Zeile, dann sofort der heutige Plan. Unten heißt der Planer jetzt „Plan“, die Ausflüge sind in Ziele und Touren geteilt, und alles von vor der Reise liegt unter „Reise“. Abends rückt das Tagebuch nach oben.' },
     { at: '2026-10-04T22:00', text: '<b>Märkte stehen jetzt bei jedem Tag im Planer</b> – mit Uhrzeit, antippen genügt. Die Startseite zeigt am Umzugs- und Abreisetag eine Abhak-Liste, bei freien Tagen einen Würfel.' },
     { at: '2026-10-04T20:00', text: '<b>Neu: unser Inselplaner.</b> Oben auf der Kalender-Seite Touren und eigene Termine auf die Tage ziehen, mit Wetter-Ampel, Herzen für eure Wünsche und Tagebuch. Die Startseite zeigt heute, wann ihr losfahren müsst, die Stationen zum Abhaken und einen Spontan-Knopf.' },
@@ -13012,7 +13047,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       Promise.all([
         hol('https://api.open-meteo.com/v1/forecast?' + LL + '&daily=weather_code,temperature_2m_max,precipitation_probability_max,wind_speed_10m_max,uv_index_max&forecast_days=10'),
         hol('https://marine-api.open-meteo.com/v1/marine?' + LL + '&daily=wave_height_max&forecast_days=10'),
-        hol('https://air-quality-api.open-meteo.com/v1/air-quality?' + LL + '&hourly=dust&forecast_days=5')
+        hol('https://air-quality-api.open-meteo.com/v1/air-quality?' + LL + '&hourly=dust&forecast_days=7')
       ]).then(function(r){
         var f = r[0], m = r[1], a = r[2];
         if (!f || !f.daily) return;
@@ -13326,6 +13361,9 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       eintraege(key).forEach(function(p){ pruefen(p).forEach(function(x){ h.push(x); }); });
       var ws = wxStufe(key);
       if (ws) ws.hinweise.forEach(function(x){ h.push({ l: x.l === 'rot' ? 'bad' : x.l === 'gelb' ? 'good' : 'info', m: (x.l === 'info' ? '☀️ ' : '🌦 ') + x.m }); });
+      // Calima gilt fuer den ganzen Tag, auch wenn nichts Draussen-Taugliches geplant ist
+      var wC = wxTag(key);
+      if (wC && wC.staub != null && wC.staub >= 150 && !h.some(function(x){ return /Calima/.test(x.m); })) h.push({ l: 'good', m: '🌫 Calima (Saharastaub) erwartet – Fenster zu, viel trinken, nichts Anstrengendes draußen.' });
       var gesehen = {};
       h = h.filter(function(x){ if (gesehen[x.m]) return false; gesehen[x.m] = true; return true; });
       return h.length ? '<div class="ip-hinweise">' + h.map(function(x){ return '<div class="ip-hw ' + x.l + '">' + esc(x.m) + '</div>'; }).join('') + '</div>' : '';
@@ -13337,6 +13375,17 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       if (!l.length) return '';
       return '<div class="ip-maerkte">' + l.map(function(m){
         return '<button type="button" class="ip-mk" data-ip-markt="m:' + m.id + '|' + t.key + '" title="' + esc(m.t + ', ' + m.ort + ' – ' + m.was) + '"><span class="plus">＋</span><span>🏪 <b>' + esc(m.kurz) + '</b></span><span class="zt">' + esc(m.abend ? 'ab ' + m.von : m.von + '–' + m.bis) + '</span></button>';
+      }).join('') + '</div>';
+    }
+    // Calima-Tag: drinnen-taugliche Ideen als gestrichelte Zeile, Antippen legt sie in den Plan (gleiche Mechanik wie die Maerkte)
+    function calimaVorschlaege(t, hi){
+      if (t.i < hi || typeof CALIMA_IDEEN === 'undefined') return '';
+      var w = wxTag(t.key); if (!w || w.staub == null || w.staub < 150) return '';
+      var l = CALIMA_IDEEN.filter(function(i){ return kat(i.ref) && !plan.some(function(p){ return p.day === t.key && p.ref === i.ref; }); }).slice(0, 4);
+      if (!l.length) return '';
+      return '<div class="ip-maerkte"><div class="ip-calima">🌫️ Calima-Tag · besser drinnen oder im Ort:</div>' + l.map(function(i){
+        var c = kat(i.ref);
+        return '<button type="button" class="ip-mk" data-ip-markt="' + i.ref + '|' + t.key + '" title="' + esc(i.t + ' – ' + i.s) + '"><span class="plus">＋</span><span>' + i.e + ' <b>' + esc(i.t) + '</b></span></button>';
       }).join('') + '</div>';
     }
     function marktTabelle(){
@@ -13356,7 +13405,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
           '<div class="ip-tag-h" title="Antippen oder ziehen, um den ganzen Tag zu tauschen"><div class="l1"><span class="wd">' + WOCHENTAGE[t.wd] + '</span><span class="dt">' + t.lab + ' <span class="tausch" aria-hidden="true">⇄</span></span></div>' +
           '<div class="l2"><span>' + (t.i === hi ? '<b>Heute · Tag ' + (t.i + 1) + '</b>' : 'Tag ' + (t.i + 1)) + '</span><span>🏠 ' + t.basis + '</span></div><div class="l3">' + wxChip(t.key) + '</div></div>' +
           '<div class="ip-fix">' + fest(t).map(function(f){ return '<span class="ip-fx' + (f.reise ? ' reise' : '') + '">' + esc(f.t) + '</span>'; }).join('') + '</div>' +
-          marktVorschlaege(t, hi) +
+          marktVorschlaege(t, hi) + calimaVorschlaege(t, hi) +
           '<div class="ip-zone" data-ip-drop="' + t.key + '|tag"><span class="zl">Tagsüber</span>' + (tag || '<span class="ip-leer">frei</span>') + '</div>' +
           '<div class="ip-zone abend" data-ip-drop="' + t.key + '|abend"><span class="zl">Abends</span>' + ab + '</div>' +
           hinweise(t.key) + (t.i <= hi ? erinnerungHtml(t) : '') + '</section>';
@@ -13479,6 +13528,10 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
         (f.length ? '<div class="pills">' + f.slice(0, 4).map(function(x){ return '<span>' + esc(x.t) + '</span>'; }).join('') + '</div>' : '') + '</a>';
       if (!abend) h += heuteModus(t, c);
       if (wsH && wsH.hinweise.length && !abend) h += '<div class="ip-hinweise">' + wsH.hinweise.map(function(x){ return '<div class="ip-hw ' + (x.l === 'rot' ? 'bad' : x.l === 'gelb' ? 'good' : 'info') + '">' + esc(x.m) + '</div>'; }).join('') + '</div>';
+      // Calima heute oder morgen: eigener Hinweis, unabhaengig vom Plan
+      var wHeute = wxTag(t.key), wMorgen = TAGE[t.i + 1] ? wxTag(TAGE[t.i + 1].key) : null;
+      if (wHeute && wHeute.staub >= 150 && !(wsH && wsH.hinweise.some(function(x){ return /Calima/.test(x.m); }))) h += '<div class="ip-hinweise"><div class="ip-hw good">🌫️ Heute Calima (Saharastaub bis ' + Math.round(wHeute.staub) + ' µg/m³) – Fenster zu, viel trinken, nichts Anstrengendes draußen. Ideen stehen im Planer unter dem Tag.</div></div>';
+      else if (wMorgen && wMorgen.staub >= 150) h += '<div class="ip-hinweise"><div class="ip-hw good">🌫️ Morgen kommt Calima (Saharastaub bis ' + Math.round(wMorgen.staub) + ' µg/m³) – heute noch raus, morgen lieber drinnen oder im Ort. <a href="#wetter" style="color:inherit">Was Calima ist →</a></div></div>';
       var naechste = TAGE.slice(t.i + 1, t.i + 4);
       if (naechste.length) {
         h += '<div class="ip-b-h">Die nächsten Tage</div><div class="ip-next">' + naechste.map(function(n){
@@ -13837,5 +13890,68 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
   // Der Rahmen ist oft schon fertig geladen, bevor dieses Skript laeuft
   try { if (f.contentDocument && f.contentDocument.readyState === 'complete' && f.contentDocument.body) start(); } catch(e){}
   new MutationObserver(thema).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+})();
+</script>
+<script>
+// Calima-Karte auf der Wetterseite: 7-Tage-Staubvorhersage (Open-Meteo Luftqualitaet) und Ideen fuer Calima-Tage.
+// CALIMA_IDEEN wird auch vom Inselplaner genutzt (dort als Vorschlag unter Tagen mit viel Staub).
+var CALIMA_IDEEN = [
+  { ref: 'f-pool',                            e: '🛟', t: 'Pool & Faulenzen',          s: 'an der Unterkunft, im Schatten', href: '#kalender' },
+  { ref: 'f-spa',                             e: '💆', t: 'Massage / Spa',             s: 'zwei Stunden Ruhe', href: '#kalender' },
+  { ref: 'ex:museo-del-queso-majorero',       e: '🧀', t: 'Käsemuseum Antigua',        s: 'drinnen, mit Verkostung', ex: 'museo-del-queso-majorero' },
+  { ref: 'ex:la-oliva-casa-de-los-coroneles', e: '🏛️', t: 'Casa de los Coroneles',     s: 'Herrenhaus in La Oliva', ex: 'la-oliva-casa-de-los-coroneles' },
+  { ref: 'ex:antigua-windm-hlenmuseum',       e: '🌬️', t: 'Windmühlenmuseum Antigua',  s: 'Museum und Garten', ex: 'antigua-windm-hlenmuseum' },
+  { ref: 'ex:aloe-vera-finca-canarias',       e: '🌵', t: 'Aloe-Vera-Farm',            s: 'Führung und Laden, La Oliva', ex: 'aloe-vera-finca-canarias' },
+  { ref: 'trip-rosario-shopping',             e: '🛍️', t: 'Rosario-Shopping',          s: 'Las Rotondas, klimatisiert', href: '#touren' },
+  { ref: 'g-gelato',                          e: '🍨', t: 'Eis bei Vrebac',            s: 'Puerto del Rosario', href: '#gastro' }
+];
+function calimaStufe(v){ return v == null ? 'leer' : v >= 300 ? 'rot' : v >= 150 ? 'rot' : v >= 50 ? 'gelb' : 'gruen'; }
+function calimaText(v){ return v == null ? 'keine Daten' : v >= 300 ? 'starke Calima' : v >= 150 ? 'Calima' : v >= 50 ? 'leichter Dunst' : 'klar'; }
+(function(){
+  var box = document.getElementById('calima-box'); if (!box) return;
+  var WDK = ['So','Mo','Di','Mi','Do','Fr','Sa'];
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]; }); }
+  // Ideen
+  var ideen = document.getElementById('calima-ideen');
+  if (ideen) {
+    ideen.innerHTML = CALIMA_IDEEN.map(function(i){
+      return '<a class="link-card" href="' + (i.href || '#ausfluege') + '"' + (i.ex ? ' data-calima-ex="' + i.ex + '"' : '') + '><strong>' + i.e + ' ' + esc(i.t) + '</strong><span>' + esc(i.s) + '</span></a>';
+    }).join('');
+    ideen.addEventListener('click', function(e){
+      var a = e.target.closest('[data-calima-ex]'); if (!a) return;
+      var id = a.getAttribute('data-calima-ex');
+      setTimeout(function(){
+        var el = document.querySelector('.ex-card[data-id="' + id + '"]');
+        if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.style.outline = '3px solid var(--teal)'; el.style.outlineOffset = '2px'; setTimeout(function(){ el.style.outline = ''; }, 1800); }
+      }, 350);
+    });
+  }
+  // Vorhersage
+  var jetzt = document.getElementById('calima-jetzt'), tage = document.getElementById('calima-tage'), geladen = 0;
+  function laden(){
+    if (Date.now() - geladen < 30 * 60 * 1000) return;
+    geladen = Date.now();
+    fetch('https://air-quality-api.open-meteo.com/v1/air-quality?latitude=28.729694&longitude=-13.86715&current=dust&hourly=dust&forecast_days=7&timezone=Atlantic%2FCanary')
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(a){
+        if (!a || !a.hourly) throw new Error('leer');
+        var m = {}, reihe = [];
+        a.hourly.time.forEach(function(t, j){ var k = t.slice(0, 10), v = a.hourly.dust[j]; if (!(k in m)) { m[k] = v; reihe.push(k); } else if (v != null) m[k] = Math.max(m[k] || 0, v); });
+        var akt = a.current ? a.current.dust : null, st = calimaStufe(akt);
+        if (jetzt) {
+          jetzt.className = 'calima-jetzt ' + (st === 'leer' ? '' : st);
+          jetzt.innerHTML = '<span style="font-size:22px">' + (st === 'rot' ? '🌫️' : st === 'gelb' ? '🌁' : '☀️') + '</span><span>Jetzt: ' + calimaText(akt) + (akt != null ? ' <small>· ' + Math.round(akt) + ' µg/m³ Wüstenstaub</small>' : '') + '</span>';
+        }
+        if (tage) {
+          tage.innerHTML = reihe.slice(0, 7).map(function(k, i){
+            var v = m[k], d = new Date(k + 'T12:00:00'), s2 = calimaStufe(v);
+            return '<div class="' + s2 + '" title="' + esc(calimaText(v)) + '"><small>' + (i === 0 ? 'heute' : WDK[d.getDay()] + ' ' + d.getDate() + '.') + '</small><b>' + (v == null ? '–' : Math.round(v)) + '</b><small>' + (s2 === 'rot' ? '🌫️ Calima' : s2 === 'gelb' ? 'Dunst' : 'klar') + '</small></div>';
+          }).join('');
+        }
+      })
+      .catch(function(){ if (jetzt) { jetzt.className = 'calima-jetzt'; jetzt.textContent = 'Staubwerte gerade nicht erreichbar.'; } });
+  }
+  laden();
+  window.addEventListener('hashchange', function(){ if (/^#wetter/.test(location.hash)) laden(); });
 })();
 </script>
