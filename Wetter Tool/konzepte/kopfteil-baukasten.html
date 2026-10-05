@@ -43,8 +43,19 @@
   .preset:hover { border-color: var(--ink); }
   .handy { width: 100%; max-width: 390px; margin: 0 auto; height: min(600px, 66vh); overflow-y: auto; overflow-x: hidden; border: 1px solid var(--border); border-radius: 22px; background: var(--bg); scrollbar-width: none; }
   .handy::-webkit-scrollbar { display: none; }
-  @media (max-width: 860px) { .handy { height: min(470px, 48vh); } }
   .probier { text-align: center; font-size: 12px; color: var(--dim); margin: 0; }
+  /* Auf dem Handy muss die haftende Vorschau flach bleiben, sonst sieht man die Schalter nicht */
+  .mass .kurz { display: none; }
+  @media (max-width: 860px) {
+    .vorschau { gap: 6px; padding-top: 4px; }
+    .preset { padding: 5px 9px; font-size: 12px; }
+    .handy { height: min(300px, 36vh); border-radius: 14px; }
+    .probier { display: none; }
+    .mass { padding: 6px 10px; gap: 0; }
+    .mass .z, .mass .fazit { display: none; }
+    .mass .kurz { display: block; font-size: 12px; text-align: center; }
+    .mass .kurz b { font-weight: 700; color: var(--teal); }
+  }
 
   /* Maßband: wie hoch der Kopf ist, verglichen mit heute und mit dem Bildschirm */
   .mass { display: grid; gap: 6px; max-width: 390px; margin: 0 auto; width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); font-size: 12.5px; }
@@ -408,7 +419,8 @@
       '<div class="z"><b>Heute</b><div class="balken"><i style="width:' + (basisHoehe / max * 100) + '%"></i></div><span class="px">' + basisHoehe + ' px</span></div>' +
       '<div class="z ist"><b>Diese Wahl</b><div class="balken"><i style="width:' + (h / max * 100) + '%"></i></div><span class="px">' + h + ' px</span></div>' +
       '<div class="z"><b>Bildschirm</b><div class="balken"><i style="width:' + (SICHTBAR / max * 100) + '%;background:var(--gold)"></i></div><span class="px">≈ ' + SICHTBAR + ' px</span></div>' +
-      '<div class="fazit">' + fazit + '</div>';
+      '<div class="fazit">' + fazit + '</div>' +
+      '<div class="kurz">Kopf: <b>' + h + ' px</b> statt ' + basisHoehe + ' px' + (basisHoehe > h ? ' (−' + Math.round((1 - h / basisHoehe) * 100) + ' %)' : '') + ' · Diagramm sichtbar: <b>' + Math.max(0, frei) + ' px</b></div>';
   }
 
   // ---------- Schalter malen ----------
