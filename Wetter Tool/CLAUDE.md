@@ -5,7 +5,7 @@ findet unten alles, um nahtlos weiterzumachen. Die Bedienung und Einstellungen d
 `README.md`, ausführlichere Hintergründe im Gedächtnis des Projekts (Notizen `fuerte-meteogramm`,
 `fuerte-webcams`, `fuerte-satellitenbilder`, `fuerte-mondbild`, `fuerte-offene-punkte`).
 
-Stand: **28.09.2026**
+Stand: **05.10.2026**
 
 ## Für wen
 
@@ -57,6 +57,12 @@ Diagramm endlos in die Breite.
 Keine – alle entschieden (siehe unten).
 
 ## Entschieden
+
+- **Zeile Saharastaub (05.10.2026, live):** `staub` im Katalog (`luft: true`, `farbskala: 'staub'`, Helfer `staubText`/`staubFarbe`),
+  eigene Abfrage `air-quality-api.open-meteo.com` (`hourly=dust`, höchstens 7 Tage voraus – der 8. Tag bleibt leer) nur bei
+  sichtbarer Zeile (`braucheStaub()`); Nachladen beim Einschalten über `neuZeichnenNachWahl`. Skala mindestens 0–200, Striche
+  bei 50/150 (ab 400: 150/300). In `../index.html` in `zeilen` und `zeilenStandard`, bestehende Auswahl bekommt sie einmalig
+  dazu (`fuerte-mg-staub-neu`), Version `20261005a`. Gehört zum Calima-Plan der Seite (Karte auf der Wetterseite, Planer, Startseite).
 
 - **Zoom & Linien (28.09.2026, live):** Knopfpaar − 🔍 + in der Knopfleiste, Stufen 2 / 1 / ½ / ¼ / ⅛ (gemerkt im Browser, `zoom`); beim Herauszoomen werden Beschriftungen ausgedünnt. Tide: gepunktete Linie über die Hochwasser-Spitzen (`huelle`). Tide und Wasser: waagerechte Linie auf Höhe des gewählten Werts plus Zahl an der Achse (`wertlinie`). Auf Handys ≤480 px heißt der Knopf nur „Jetzt“.
 - **Reihenfolge (28.09.2026, live):** Knopfleiste (↻ ‹ Jetzt zentrieren › ☰) direkt unter dem Diagramm, darunter Webcam/Satellit/Regen, ganz unten „Was der Tag bringt“. Das ☰-Menü klappt deshalb nach unten auf.

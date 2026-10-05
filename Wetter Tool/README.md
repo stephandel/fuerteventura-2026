@@ -1,7 +1,7 @@
 # Meteogramm
 
 Mehrere Wetterdiagramme übereinander mit einer gemeinsamen Zeitachse — Sonnenschein,
-Temperatur, Wind, Niederschlag, UV, Luftfeuchte, Bewölkung, Luftdruck, Wellen, Tide.
+Temperatur, Wind, Niederschlag, UV, Luftfeuchte, Bewölkung, Luftdruck, Wellen, Tide, Saharastaub.
 Man wischt die Zeit unter einer feststehenden Auswahl-Linie hindurch; oben stehen
 Datum, Uhrzeit und alle Werte an dieser Stelle. Welche Zeilen erscheinen und in
 welcher Reihenfolge, lässt sich einstellen.
@@ -76,7 +76,7 @@ Auswahl und Reihenfolge merkt sich das Gerät.
 
 ## Verfügbare Zeilen
 
-`sonne` · `temp` · `wind` · `regen` · `uv` · `feuchte` · `wolken` · `druck` · `welle` · `tide` · `wasser`
+`sonne` · `temp` · `wind` · `regen` · `uv` · `feuchte` · `wolken` · `druck` · `welle` · `tide` · `wasser` · `staub`
 
 Besonderheiten:
 
@@ -87,6 +87,7 @@ Besonderheiten:
 - **uv** — Balken in den üblichen Ampelfarben (grün bis violett).
 - **wasser** — Wassertemperatur als Linie; die Skala umfasst mindestens 3 Grad, damit kleine Schwankungen nicht riesig wirken.
 - **welle**, **tide**, **wasser** — brauchen die Meeres-Abfrage; werden nur geholt, wenn eine der beiden sichtbar ist. Hoch- und Niedrigwasser sind mit Uhrzeit beschriftet.
+- **staub** — Saharastaub (Calima) als Balken in µg/m³, eingefärbt nach Stufe: unter 50 klar (sand), ab 50 leichter Dunst (ocker), ab 150 Calima (orange), ab 300 starke Calima (braun). Die Skala reicht mindestens bis 200, damit die Calima-Schwelle immer im Bild ist. Braucht die Luftqualitäts-Abfrage von Open-Meteo (CAMS), die höchstens 7 Tage voraus reicht; wird nur geholt, wenn die Zeile sichtbar ist.
 
 **UV-Index:** ECMWF und ICON rechnen ihn nicht. Fehlt er, holt der Baustein ihn
 einzeln aus der besten Mischung und schreibt das in die Fußzeile.

@@ -21,8 +21,8 @@
 <meta name="apple-mobile-web-app-title" content="Fuerteventura">
 <link rel="stylesheet" href="vendor/leaflet.css">
 <script defer src="vendor/leaflet.js"></script>
-<link rel="stylesheet" href="Wetter%20Tool/meteogramm.css?v=20260928d">
-<script defer src="Wetter%20Tool/meteogramm.js?v=20260928d"></script>
+<link rel="stylesheet" href="Wetter%20Tool/meteogramm.css?v=20261005a">
+<script defer src="Wetter%20Tool/meteogramm.js?v=20261005a"></script>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
 <link rel="apple-touch-icon" sizes="167x167" href="images/apple-touch-icon-167.png">
@@ -10317,6 +10317,10 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
         var zw = localStorage.getItem('fuerte-mg-zeilen');
         if (zw && zw.indexOf('wasser') < 0 && !localStorage.getItem('fuerte-mg-wasser-neu')) localStorage.setItem('fuerte-mg-zeilen', zw + ',wasser');
         localStorage.setItem('fuerte-mg-wasser-neu', '1');
+        // Seit 05.10.2026: Zeile Saharastaub (Calima) – wer schon eine Auswahl gespeichert hat, bekommt sie einmalig dazu
+        var zs = localStorage.getItem('fuerte-mg-zeilen');
+        if (zs && zs.indexOf('staub') < 0 && !localStorage.getItem('fuerte-mg-staub-neu')) localStorage.setItem('fuerte-mg-zeilen', zs + ',staub');
+        localStorage.setItem('fuerte-mg-staub-neu', '1');
       } catch(e){}
       window.FUERTE_MG = window.Meteogramm.einbauen({
         ziel: '#meteogramm',
@@ -10328,8 +10332,8 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
           { id: 'cotillo',   name: 'El Cotillo', lat: 28.6855, lon: -14.0110, meer: { lat: 28.69,   lon: -14.03   } },
           { id: 'sotavento', name: 'Sotavento',  lat: 28.1560, lon: -14.2275, meer: { lat: 28.145,  lon: -14.21   } }
         ],
-        zeilen: ['sonne','temp','wind','regen','uv','feuchte','wolken','welle','tide','wasser'],
-        zeilenStandard: ['sonne','temp','wind','regen','uv','welle','tide','wasser'],
+        zeilen: ['sonne','temp','wind','regen','uv','feuchte','wolken','welle','tide','wasser','staub'],
+        zeilenStandard: ['sonne','temp','wind','regen','uv','welle','tide','wasser','staub'],
         tagesSymbol: true,        // Wetter-Symbol, Hoch und Tief je Tag im Diagramm (ersetzt die 7-Tage-Liste)
         mond: true,               // Mondphase im Tagesfuß der Sonnenzeile
         knoepfeMittig: true,      // ↻ ‹ Jetzt zentrieren › ☰

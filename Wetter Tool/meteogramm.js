@@ -81,7 +81,13 @@
                zelle:function(v, v2, d, i, steigt){ return { wert: (v > 0 ? '+' : '') + dez(v, 1), einheit: 'm', zusatz: steigt == null ? '' : (steigt ? 'steigt' : 'fällt') }; } },
     wasser:  { titel:'Wassertemperatur', kurz:'Wasser', einheit:'°C', art:'linie', feld:'wasser', farbe:'#3f8fd6',
                glatt:true, wertlinie:true, meer:true, icon:'🌡️', fmt:function(v){ return dez(v, 1) + '°'; },
-               zelle:function(v){ return { wert: dez(v, 1), einheit: '°' }; } }
+               zelle:function(v){ return { wert: dez(v, 1), einheit: '°' }; } },
+    // Saharastaub (Calima): Wüstenstaub in der Luft, eigene Abfrage bei Open-Meteo (Luftqualität, CAMS).
+    // Unter 50 klar, ab 50 leichter Dunst, ab 150 Calima, ab 300 starke Calima.
+    staub:   { titel:'Saharastaub (Calima)', kurz:'Staub', einheit:'µg/m³', art:'balken', feld:'staub', farbe:'#c49a5a',
+               min:0, luft:true, icon:'🌫️', farbskala:'staub',
+               fmt:function(v){ return Math.round(v) + ' µg/m³ (' + staubText(v) + ')'; },
+               zelle:function(v){ return { wert: Math.round(v), einheit: 'µg/m³', zusatz: staubText(v) }; } }
   };
 
   var ZEILEN_STANDARD = ['sonne','temp','wind','regen','uv','feuchte','wolken','welle','tide'];
@@ -98,6 +104,8 @@
   function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
   function uvText(v){ return v < 3 ? 'niedrig' : v < 6 ? 'mäßig' : v < 8 ? 'hoch' : v < 11 ? 'sehr hoch' : 'extrem'; }
   function uvFarbe(v){ return v < 3 ? '#4a9a5e' : v < 6 ? '#d4b63c' : v < 8 ? '#d98032' : v < 11 ? '#c0504a' : '#9b59b6'; }
+  function staubText(v){ return v < 50 ? 'klar' : v < 150 ? 'leichter Dunst' : v < 300 ? 'Calima' : 'starke Calima'; }
+  function staubFarbe(v){ return v < 50 ? '#d8c89f' : v < 150 ? '#d2a24a' : v < 300 ? '#c8702a' : '#8e4418'; }
 
   // ---------- Mond ----------
 
@@ -282,6 +290,8 @@
       return sichtbareZeilen().some(function(z){ return z.meer; }) ||
         tippsFuerOrt().some(function(t){ return t.art === 'ebbe'; });
     }
+    // Die Staub-Abfrage (Luftqualität) nur, wenn die Zeile zu sehen ist
+    function braucheStaub(){ return sichtbareZeilen().some(function(z){ return z.luft; }); }
 
     // opts.still     = ohne "Lade ..."-Text, die Anzeige bleibt stehen
     // opts.behalten  = nach dem Laden wieder an dieselbe Stelle, statt auf "jetzt"
@@ -306,9 +316,15 @@
         '&hourly=sea_level_height_msl,wave_height,sea_surface_temperature&past_days=' + TAGE_VORHER +
         '&forecast_days=' + TAGE_VORAUS + '&timezone=' + tz;
 
+      // Saharastaub: die Luftqualitäts-Abfrage reicht höchstens 7 Tage voraus
+      var urlA = 'https://air-quality-api.open-meteo.com/v1/air-quality?latitude=' + o.lat + '&longitude=' + o.lon +
+        '&hourly=dust&past_days=' + TAGE_VORHER + '&forecast_days=' + Math.min(7, TAGE_VORAUS) + '&timezone=' + tz;
+
       var hole = [ fetch(urlW).then(function(r){ return r.json(); }) ];
       hole.push(braucheMeer() ? fetch(urlM).then(function(r){ return r.json(); }).catch(function(){ return null; })
                               : Promise.resolve(null));
+      hole.push(braucheStaub() ? fetch(urlA).then(function(r){ return r.json(); }).catch(function(){ return null; })
+                               : Promise.resolve(null));
 
       Promise.all(hole).then(function(res){
         var w = res[0];
@@ -316,14 +332,14 @@
         // Nicht jedes Modell rechnet den UV-Index. Fehlt er, holen wir ihn
         // einzeln aus der besten Mischung - sonst bliebe die Zeile leer.
         var uvLeer = !w.hourly.uv_index || w.hourly.uv_index.every(function(v){ return v == null; });
-        if (!uvLeer) return [w, res[1], null];
+        if (!uvLeer) return [w, res[1], null, res[2]];
         var urlU = 'https://api.open-meteo.com/v1/forecast?latitude=' + o.lat + '&longitude=' + o.lon +
           '&hourly=uv_index&past_days=' + TAGE_VORHER + '&forecast_days=' + TAGE_VORAUS + '&timezone=' + tz;
         return fetch(urlU).then(function(r){ return r.json(); })
-          .then(function(u){ return [w, res[1], u]; })
-          .catch(function(){ return [w, res[1], null]; });
+          .then(function(u){ return [w, res[1], u, res[2]]; })
+          .catch(function(){ return [w, res[1], null, res[2]]; });
       }).then(function(alles){
-        daten = aufbereiten(alles[0], alles[1], alles[2]);
+        daten = aufbereiten(alles[0], alles[1], alles[2], alles[3]);
         cache[key] = { at: Date.now(), daten: daten };
         nachLaden(opts);
       }).catch(function(e){
@@ -333,12 +349,12 @@
       });
     }
 
-    function aufbereiten(w, mm, uvExtra){
+    function aufbereiten(w, mm, uvExtra, luft){
       var H = w.hourly, n = H.time.length;
       var d = { zeit: H.time, t0: new Date(H.time[0]), uvErsatz: false,
                 sonne:[], temp:[], gefuehlt:[], wind:[], boe:[], windrichtung:[],
                 regen_mm:[], regen_pct:[], uv:[], feuchte:[], wolken:[], druck:[],
-                code:[], tag:[], welle:[], tide:[], wasser:[], sonnenauf:[], sonnenunter:[] };
+                code:[], tag:[], welle:[], tide:[], wasser:[], staub:[], sonnenauf:[], sonnenunter:[] };
       var uvQuelle = H.uv_index;
       if (uvExtra && uvExtra.hourly && uvExtra.hourly.uv_index) {
         var kU = {}; uvExtra.hourly.time.forEach(function(t, i){ kU[t] = uvExtra.hourly.uv_index[i]; });
@@ -370,6 +386,10 @@
         d.tide.push(mi == null ? null : M.sea_level_height_msl[mi]);
         d.wasser.push(mi == null ? null : M.sea_surface_temperature[mi]);
       }
+      // Saharastaub stundenweise anhängen (die Luftqualität hat ein eigenes Zeitraster)
+      var A = luft && luft.hourly && luft.hourly.dust ? luft.hourly : null, kA = {};
+      if (A) for (var a = 0; a < A.time.length; a++) kA[A.time[a]] = A.dust[a];
+      for (var b = 0; b < n; b++) d.staub.push(A && kA[H.time[b]] != null ? kA[H.time[b]] : null);
       if (w.daily) { d.sonnenauf = w.daily.sunrise || []; d.sonnenunter = w.daily.sunset || []; }
       d.tage = tageBauen(d);
       d.nr = ++datenNr;
@@ -503,6 +523,8 @@
       if (z.id === 'uv')    { hi = Math.max(8, Math.ceil(hi)); }
       if (z.id === 'druck') { lo = Math.floor(lo) - 1; hi = Math.ceil(hi) + 1; }
       if (z.id === 'tide')  { var a = Math.max(Math.abs(lo), Math.abs(hi), 0.5); a = Math.ceil(a * 2) / 2; lo = -a; hi = a; }
+      // Staub: die Calima-Schwelle (150) soll immer im Bild sein, bei viel Staub wächst die Skala in 100er-Schritten
+      if (z.id === 'staub') { hi = Math.max(200, Math.ceil(hi / 100) * 100); }
       // Das Meer ändert seine Temperatur nur langsam - enger Ausschnitt (mindestens 1 Grad, in halben Graden), damit die Kurve sichtbar schwankt
       if (z.id === 'wasser') { lo = Math.floor((lo - 0.1) * 2) / 2; hi = Math.ceil((hi + 0.1) * 2) / 2; while (hi - lo < 1) { lo -= 0.5; if (hi - lo < 1) hi += 0.5; } }
       if (hi === lo) hi = lo + 1;
@@ -510,6 +532,7 @@
       if (!ticks) {
         if (z.id === 'temp') { ticks = []; for (var t = lo + 1; t <= hi - 1; t += (hi - lo > 12 ? 4 : 2)) ticks.push(t); }
         else if (z.id === 'tide') ticks = [lo, 0, hi];
+        else if (z.id === 'staub') ticks = hi > 400 ? [150, 300] : [50, 150];
         else if (z.id === 'wasser') { var sw = hi - lo > 2 ? 1 : 0.5; ticks = []; for (var tw = Math.ceil((lo + 0.01) / sw) * sw; tw < hi - 0.01; tw += sw) ticks.push(tw); }
         else ticks = [lo, (lo + hi) / 2, hi];
       }
@@ -639,7 +662,7 @@
             s.push('<rect class="mg-balken2" x="' + bx + '" y="' + y2 + '" width="' + bw + '" height="' + (g.y0 + g.h - y2) + '" fill="' + z.farbe + '"/>');
           }
           var y1 = g.yv(Math.min(F[i], g.s.hi));
-          var farbe = z.farbskala === 'uv' ? uvFarbe(F[i]) : z.farbe;
+          var farbe = z.farbskala === 'uv' ? uvFarbe(F[i]) : z.farbskala === 'staub' ? staubFarbe(F[i]) : z.farbe;
           s.push('<rect class="mg-balken" x="' + bx + '" y="' + y1 + '" width="' + bw + '" height="' + Math.max(0, g.y0 + g.h - y1) + '" fill="' + farbe + '"/>');
         }
       } else {
@@ -1566,7 +1589,8 @@
     // eine Meereszeile dazukam, die fehlenden Daten nachholen.
     function neuZeichnenNachWahl(){
       var fehlt = sichtbareZeilen().some(function(z){
-        return z.meer && (!daten || !daten.welle.some(function(v){ return v != null; }));
+        return (z.meer && (!daten || !daten.welle.some(function(v){ return v != null; }))) ||
+               (z.luft && (!daten || !daten.staub || !daten.staub.some(function(v){ return v != null; })));
       });
       if (fehlt) { cache = {}; laden({ still: true, behalten: true }); return; }
       var alt = geo ? idxAusScroll() : null;
@@ -1696,6 +1720,7 @@
       if (!el.quelle) return;
       var t = 'Open-Meteo · ' + modellObj().lang;
       if (braucheMeer()) t += ' · Meer & Tide: Open-Meteo Marine';
+      if (braucheStaub()) t += ' · Saharastaub: Open-Meteo Luftqualität (CAMS)';
       if (daten && daten.uvErsatz) t += ' · UV aus der besten Mischung';
       el.quelle.textContent = t;
     }
