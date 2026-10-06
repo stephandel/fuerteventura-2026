@@ -39,11 +39,11 @@
                min:0, max:60, ticks:[0,30,60], vorher:true, icon:'☀️', tagesinfo:true,
                fmt:function(v){ return Math.round(v) + ' min'; },
                zelle:function(v){ return { wert: Math.round(v), einheit: 'min' }; } },
-    temp:    { titel:'Temperatur', einheit:'°C', art:'linie', feld:'temp', feld2:'gefuehlt', farbe:'#ef8a5c',
+    temp:    { titel:'Temperatur', einheit:'°C', art:'linie', feld:'temp', feld2:'gefuehlt', farbe:'#ef8a5c', wertlinie:true,
                extrema:'tag', icon:'🌡️',
                fmt:function(v, v2){ return Math.round(v) + '°' + (v2 != null ? ' (gefühlt ' + Math.round(v2) + '°)' : ''); },
                zelle:function(v, v2){ return { wert: Math.round(v), einheit: '°', zusatz: v2 != null ? 'gefühlt ' + Math.round(v2) + '°' : '' }; } },
-    wind:    { titel:'Wind', einheit:'km/h', art:'balken', feld:'wind', feld2:'boe', farbe:'#7fb3d9',
+    wind:    { titel:'Wind', einheit:'km/h', art:'balken', feld:'wind', feld2:'boe', farbe:'#7fb3d9', wertlinie:true,
                min:0, icon:'💨', pfeile:'windrichtung',
                fmt:function(v, v2){ return Math.round(v) + (v2 != null ? ' (Böen ' + Math.round(v2) + ')' : '') + ' km/h'; },
                zelle:function(v, v2, d, i){
@@ -58,22 +58,22 @@
                  return { wert: dez(v, 1), einheit: 'mm',
                           zusatz: (d && d.regen_pct[i] != null) ? Math.round(d.regen_pct[i]) + ' % Wahrsch.' : '' };
                } },
-    uv:      { titel:'UV-Index', kurz:'UV', einheit:'', art:'balken', feld:'uv', farbe:'#d98032', zaehlt:function(v, d, i){ return !!d.tag[i]; },
+    uv:      { titel:'UV-Index', kurz:'UV', einheit:'', art:'balken', feld:'uv', farbe:'#d98032', wertlinie:true, zaehlt:function(v, d, i){ return !!d.tag[i]; },
                min:0, ticks:[0,4,8], icon:'🔆', farbskala:'uv',
                fmt:function(v){ return dez(v, 1) + ' (' + uvText(v) + ')'; },
                zelle:function(v){ return { wert: dez(v, 1), einheit: '', zusatz: uvText(v) }; } },
-    feuchte: { titel:'Rel. Luftfeuchte', kurz:'Feuchte', einheit:'%', art:'linie', feld:'feuchte', farbe:'#68c8e0',
+    feuchte: { titel:'Rel. Luftfeuchte', kurz:'Feuchte', einheit:'%', art:'linie', feld:'feuchte', farbe:'#68c8e0', wertlinie:true,
                min:0, max:100, ticks:[0,50,100], icon:'💦',
                fmt:function(v){ return Math.round(v) + ' %'; },
                zelle:function(v){ return { wert: Math.round(v), einheit: '%' }; } },
-    wolken:  { titel:'Bewölkung', einheit:'%', art:'balken', feld:'wolken', farbe:'#9aa7b4', zaehlt:function(v){ return v >= 20; },
+    wolken:  { titel:'Bewölkung', einheit:'%', art:'balken', feld:'wolken', farbe:'#9aa7b4', wertlinie:true, zaehlt:function(v){ return v >= 20; },
                min:0, max:100, ticks:[0,50,100], icon:'☁️',
                fmt:function(v){ return Math.round(v) + ' %'; },
                zelle:function(v){ return { wert: Math.round(v), einheit: '%', zusatz: v < 15 ? 'wolkenlos' : v < 50 ? 'heiter' : v < 85 ? 'wolkig' : 'bedeckt' }; } },
-    druck:   { titel:'Luftdruck', einheit:'hPa', art:'linie', feld:'druck', farbe:'#c3a6d8',
+    druck:   { titel:'Luftdruck', einheit:'hPa', art:'linie', feld:'druck', farbe:'#c3a6d8', wertlinie:true,
                icon:'🧭', fmt:function(v){ return Math.round(v) + ' hPa'; },
                zelle:function(v){ return { wert: Math.round(v), einheit: 'hPa' }; } },
-    welle:   { titel:'Wellen', einheit:'m', art:'linie', feld:'welle', farbe:'#6fc9b8',
+    welle:   { titel:'Wellen', einheit:'m', art:'linie', feld:'welle', farbe:'#6fc9b8', wertlinie:true,
                min:0, meer:true, icon:'🌊', fmt:function(v){ return dez(v, 1) + ' m'; },
                zelle:function(v){ return { wert: dez(v, 1), einheit: 'm' }; } },
     tide:    { titel:'Tide', einheit:'m', art:'linie', feld:'tide', farbe:'#4bc4cb',
@@ -85,7 +85,7 @@
                zelle:function(v){ return { wert: dez(v, 1), einheit: '°' }; } },
     // Saharastaub (Calima): Wüstenstaub in der Luft, eigene Abfrage bei Open-Meteo (Luftqualität, CAMS).
     // Unter 50 klar, ab 50 leichter Dunst, ab 150 Calima, ab 300 starke Calima.
-    staub:   { titel:'Saharastaub (Calima)', kurz:'Staub', einheit:'µg/m³', art:'balken', feld:'staub', farbe:'#c49a5a', zaehlt:function(v){ return v >= 50; },
+    staub:   { titel:'Saharastaub (Calima)', kurz:'Staub', einheit:'µg/m³', art:'balken', feld:'staub', farbe:'#c49a5a', wertlinie:true, zaehlt:function(v){ return v >= 50; },
                min:0, luft:true, icon:'🌫️', farbskala:'staub',
                fmt:function(v){ return Math.round(v) + ' µg/m³ (' + staubText(v) + ')'; },
                zelle:function(v){ return { wert: Math.round(v), einheit: 'µg/m³', zusatz: staubText(v) }; } }
@@ -736,6 +736,8 @@
 
       // Waagerechte Linie auf Höhe des gewählten Werts (Lage wird beim Wischen nachgeführt)
       if (z.wertlinie) s.push('<line class="mg-wertlinie" id="' + kid('wl-' + z.id) + '" x1="' + x(0) + '" x2="' + x(n - 1) + '" y1="0" y2="0" stroke="' + z.farbe + '" visibility="hidden"/>');
+      // Punkt auf der Kurve an der gewählten Stelle (nur bei Linien, nicht bei Balken)
+      if (z.wertlinie && z.art !== 'balken') s.push('<circle class="mg-wertpunkt" id="' + kid('wp-' + z.id) + '" r="3.5" fill="' + z.farbe + '" visibility="hidden"/>');
 
       // Tages-Fußzeile unter der Sonnenzeile
       if (z.tagesinfo && g.extra && 24 * pxH >= 60) {
@@ -886,31 +888,32 @@
           ? '<span class="mg-lage-i">' + wmoIcon(code, daten.tag[iR]) + '</span>' + esc(WMO_TEXT[code] || '')
           : '';
 
-        // Erst je Zeile die Zelle rechnen, dann Verwandtes zu einer Zeile zusammenfassen
-        var zellenJe = {}, reihen = [];
-        sichtbareZeilen().forEach(function(z){
+        // Schmale Zeile im Kopf (06.10.2026): nur, was im Diagramm nicht an der Achse abzulesen ist -
+        // Zeilen ohne Wertlinie (Sonne, Regen) sowie "gefühlt" und "Böen", die sonst verloren gingen.
+        var zellen = [], sicht = sichtbareZeilen();
+        sicht.forEach(function(z){
+          if (z.wertlinie) return;
           var w = wertBei(z, f);
           if (w.v == null) return;
           if (WERTE_KLUG && z.zaehlt && !z.zaehlt(w.v, daten, iR)) return;
-          var steigt = null;
-          if (z.id === 'tide') { var w2 = wertBei(z, Math.min(geo.n - 1, f + 1)); steigt = w2.v != null ? w2.v > w.v : null; }
-          var c = z.zelle ? z.zelle(w.v, w.v2, daten, iR, steigt) : { wert: z.fmt(w.v, w.v2), einheit: '' };
-          zellenJe[z.id] = { titel: z.kurz || z.titel, c: c, farbe: z.farbe };
-          reihen.push(z.id);
+          var c = z.zelle ? z.zelle(w.v, w.v2, daten, iR, null) : { wert: z.fmt(w.v, w.v2), einheit: '' };
+          zellen.push(zelleHtml(z.kurz || z.titel, c, z.farbe));
+        });
+        sicht.forEach(function(z){
+          var w;
+          if (z.id === 'temp') { w = wertBei(z, f); if (w.v2 != null) zellen.push(zelleHtml('gefühlt', { wert: Math.round(w.v2), einheit: '°' }, z.farbe)); }
+          if (z.id === 'wind') {
+            w = wertBei(z, f);
+            var r = daten.windrichtung && daten.windrichtung[iR] != null ? HIMMEL[Math.round(daten.windrichtung[iR] / 45) % 8] : '';
+            if (w.v2 != null) zellen.push(zelleHtml('Böen', { wert: Math.round(w.v2), einheit: 'km/h', zusatz: r }, z.farbe));
+            else if (r) zellen.push(zelleHtml('Wind aus', { wert: r, einheit: '' }, z.farbe));
+          }
         });
         if (daten.wasser[iR] != null && anZeilen.indexOf('wasser') < 0) {
-          zellenJe.wasser = { titel: 'Wasser', c: { wert: Math.round(daten.wasser[iR]), einheit: '°' }, farbe: '#3fa9c9' };
-          reihen.push('wasser');
+          zellen.push(zelleHtml('Wasser', { wert: Math.round(daten.wasser[iR]), einheit: '°' }, '#3fa9c9'));
         }
-        var fertig = {}, zellen = [];
-        reihen.forEach(function(id){
-          if (fertig[id]) return;
-          var paar = WERTE_PAARE.filter(function(p){ return p.indexOf(id) >= 0; })[0] || [id];
-          var teile = paar.filter(function(x){ return zellenJe[x] && !fertig[x]; });
-          teile.forEach(function(x){ fertig[x] = true; });
-          zellen.push(zelleHtml(teile.map(function(x){ return zellenJe[x].titel; }).join(' · '), teile.map(function(x){ return zellenJe[x].c; }), zellenJe[teile[0]].farbe));
-        });
         el.werte.innerHTML = zellen.join('');
+        el.werte.hidden = !zellen.length;
         wertlinienSetzen(f);
         tippsZeigen(f);
         bildZeigen(f);
@@ -933,11 +936,18 @@
         if (!g.z.wertlinie) return;
         var linie = document.getElementById(kid('wl-' + g.z.id)), marke = document.getElementById(kid('wlw-' + g.z.id));
         if (!linie || !marke) return;
-        var w = wertBei(g.z, f);
-        if (w.v == null) { linie.setAttribute('visibility', 'hidden'); marke.hidden = true; return; }
+        var w = wertBei(g.z, f), punkt = document.getElementById(kid('wp-' + g.z.id));
+        if (w.v == null) { linie.setAttribute('visibility', 'hidden'); marke.hidden = true; if (punkt) punkt.setAttribute('visibility', 'hidden'); return; }
         var yy = g.yv(Math.max(g.s.lo, Math.min(g.s.hi, w.v)));
+        var xx = geo.padL + f * pxH;
+        // Linie wie bei Marea: von der Achse bis zum Punkt an der gewählten Stelle
+        linie.setAttribute('x1', el.scroll.scrollLeft); linie.setAttribute('x2', xx);
         linie.setAttribute('y1', yy); linie.setAttribute('y2', yy); linie.setAttribute('visibility', 'visible');
-        marke.textContent = g.z.id === 'tide' ? dez(w.v, 2) : dez(w.v, 1);
+        if (punkt) { punkt.setAttribute('cx', xx); punkt.setAttribute('cy', yy); punkt.setAttribute('visibility', 'visible'); }
+        // Zahl an der Achse, so formatiert wie in der Werteliste (Tide mit zwei Stellen)
+        var iR = Math.max(0, Math.min(geo.n - 1, Math.round(f)));
+        var c = g.z.id === 'tide' ? { wert: dez(w.v, 2) } : (g.z.zelle ? g.z.zelle(w.v, w.v2, daten, iR, null) : { wert: dez(w.v, 1) });
+        marke.textContent = String(c.wert);
         marke.style.top = Math.max(g.y0 - 2, Math.min(g.y0 + g.h - 12, yy - 8)) + 'px';
         marke.hidden = false;
       });
@@ -1435,8 +1445,9 @@
         // Datum, Uhrzeit und Wetterlage als Fahne oben am Auswahl-Strich; sie bleibt beim Scrollen stehen
         '<div class="mg-readout">' +
           '<div class="mg-zeit"><span id="' + kid('zeit') + '"></span><span class="mg-lage" id="' + kid('lage') + '"></span></div>' +
+          // darunter die schmale Zeile mit den Werten, die im Diagramm keine Achsen-Zahl haben
+          '<div class="mg-werte" id="' + kid('werte') + '"></div>' +
         '</div>' +
-        '<div class="mg-werte" id="' + kid('werte') + '"></div>' +
         '<div class="mg-wrap" id="' + kid('wrap') + '">' +
           '<div class="mg-scroll" id="' + kid('scroll') + '"><div class="mg-svgwrap" id="' + kid('svgwrap') + '"></div></div>' +
           '<div class="mg-achse" id="' + kid('achse') + '"></div>' +
@@ -1444,12 +1455,13 @@
           // Rand-Pfeile: erscheinen, wenn "jetzt" aus dem Bild gewischt ist, und führen zurück
           '<button type="button" class="mg-randpfeil mg-randpfeil-l" id="' + kid('rpl') + '" aria-label="Zurück zu jetzt" title="Zurück zu jetzt">' + ico('chevl') + ico('ziel') + '</button>' +
           '<button type="button" class="mg-randpfeil mg-randpfeil-r" id="' + kid('rpr') + '" aria-label="Zurück zu jetzt" title="Zurück zu jetzt">' + ico('ziel') + ico('chevr') + '</button>' +
-          // Zoom: kleines − 🔍 + in der Ecke des Diagramms (dazu Zwei-Finger-Geste und Strg+Mausrad)
-          '<div class="mg-ecke">' +
+          // Zoom: kleines − 🔍 + rechts unten (dazu Zwei-Finger-Geste und Strg+Mausrad). Der Halter haftet
+          // am unteren Bildrand über der Knopfleiste, solange das Diagramm länger ist als der Bildschirm.
+          '<div class="mg-ecke-halter"><div class="mg-ecke">' +
             '<button type="button" class="mg-btn" id="' + kid('zoomraus') + '" aria-label="Herauszoomen: mehr Tage zeigen" title="Mehr Tage zeigen">' + ico('minus') + '</button>' +
             '<span class="mg-ecke-lupe" aria-hidden="true">' + ico('lupe') + '</span>' +
             '<button type="button" class="mg-btn" id="' + kid('zoomrein') + '" aria-label="Hineinzoomen: weniger Stunden zeigen" title="Genauer zeigen">' + ico('plus') + '</button>' +
-          '</div>' +
+          '</div></div>' +
           '<div class="mg-zoomhinweis" id="' + kid('zoomhinweis') + '" aria-live="polite"></div>' +
         '</div>' +
         // Knopfleiste direkt unter dem Diagramm: ↻ links, ‹ Jetzt › als Gruppe in der Mitte, ☰ rechts.

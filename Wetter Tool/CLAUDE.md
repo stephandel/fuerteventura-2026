@@ -66,6 +66,15 @@ Keine – alle entschieden (siehe unten).
 
 ## Entschieden
 
+- **Wertlinie überall + schmaler Kopf (06.10.2026, live, Version `20261006a`):** Vorbild Marea (marea.ooo): beim
+  Wischen wandert ein Punkt auf der Kurve, von der Achse bis zum Punkt läuft eine gestrichelte Linie, die Zahl steht an
+  der Achse. Jetzt für alle Zeilen außer Sonne und Regen (`wertlinie:true` im KATALOG; Balkenzeilen ohne Punkt);
+  `wertlinienSetzen()` setzt x1 = scrollLeft, x2 = Cursor, Punkt `.mg-wertpunkt`, Achsenzahl aus `zelle().wert`
+  (Tide 2 Stellen). Der Kopf ist nur noch die haftende Fahne plus **eine schmale Zeile** `.mg-werte` (jetzt **in**
+  `.mg-readout`) mit dem, was keine Achsenzahl hat: Sonne, Regen, „gefühlt“, „Böen“ + Richtung (und Wasser, falls
+  nicht als Zeile gewählt). `wertePaare`/`werteKlug` sind damit praktisch ohne Wirkung, bleiben aber im Code.
+  Die Zoom-Lupe sitzt in `.mg-ecke-halter { position: sticky; bottom: calc(var(--mg-haft-unten) + 64px); height: 0 }`
+  am Ende von `.mg-wrap` und bleibt so am unteren Bildrand über der Knopfleiste stehen. Kopf auf dem iPhone: 134 px.
 - **Kopfteil kompakt (05.10.2026 spät, live, Version `20261005e`):** Stephans Wahl aus dem Kopfteil-Baukasten:
   `reiter: eine` + `flach` (Orte als flache Reiter mit Unterstrich, Modell als Feld „Mix ▾“ = `.mg-modell`, Aufklapp-Liste
   `modellWahl()` mit Name/Langname/Hinweis; `reiter()` nur noch für die Orte), `fahne: eine` + `fahnedicht` (Wetterlage

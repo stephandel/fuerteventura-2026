@@ -71,18 +71,17 @@
 /* Die Werte "am Strich": der Auswahl-Strich läuft senkrecht durch die Liste,
    links davon die Bezeichnung, rechts Zahl und Zusatz darunter. Keine Kästen,
    keine Farben, nur eine feine Linie zwischen den Zeilen. */
-/* Stephans Wahl 05.10.2026: zwei Spalten auch auf dem Handy, dichte Zeilen (Zusatz neben
-   dem Wert), Verwandtes in einer Zeile (Tide · Wasser). Der Strich läuft zwischen den Spalten. */
-.mg-werte { position: relative; display: grid; grid-template-columns: 1fr 1fr; padding: 2px 14px; }
-.mg-werte::before { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; margin-left: -1px; border-left: 2px solid var(--mg-text); opacity: .85; }
-.mg-wert { display: grid; grid-template-columns: 1fr 1fr; align-items: baseline; column-gap: 0;
-  padding: 4px 0; border-bottom: 1px solid var(--mg-rand); min-width: 0; }
-.mg-wert:nth-last-child(-n+2):nth-child(odd), .mg-wert:last-child { border-bottom: 0; }
-.mg-wl { text-align: right; padding-right: 8px; font-size: 12px; line-height: 1.2; color: var(--mg-text-still); min-width: 0; overflow-wrap: anywhere; }
-.mg-wr { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 6px; padding-left: 8px; min-width: 0; }
-.mg-wv { font-family: var(--mg-mono); font-size: 13.5px; font-weight: 700; color: var(--mg-text); white-space: nowrap; }
+/* Seit 06.10.2026: eine schmale Zeile in der haftenden Fahne. Hier stehen nur die Werte, die im
+   Diagramm keine Zahl an der Achse haben (Sonne, Regen, gefühlt, Böen). Alles andere liest man
+   an der Wertlinie ab. */
+.mg-werte { display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline; gap: 2px 12px; padding: 5px 0 1px; min-width: 0; }
+.mg-werte[hidden] { display: none; }
+.mg-wert { display: inline-flex; align-items: baseline; gap: 4px; min-width: 0; }
+.mg-wl { font-size: 11.5px; color: var(--mg-text-still); white-space: nowrap; }
+.mg-wr { display: inline-flex; align-items: baseline; gap: 0 5px; min-width: 0; }
+.mg-wv { font-family: var(--mg-mono); font-size: 13px; font-weight: 700; color: var(--mg-text); white-space: nowrap; }
 .mg-wv small { font-size: 0.78em; font-weight: 600; color: var(--mg-text-still); margin-left: 2px; }
-.mg-wz { line-height: 1.25; font-size: 11.5px; color: var(--mg-text-still); }
+.mg-wz { font-size: 11px; color: var(--mg-text-still); white-space: nowrap; }
 .mg-sep { color: var(--mg-text-still); font-size: 12px; }
 
 /* ---- Knopfleiste unter dem Diagramm (Stephans Wahl vom 05.10.2026) ----
@@ -189,7 +188,10 @@
 
 /* ---- Schwebende Helfer im Diagramm ---- */
 /* Zoom-Ecke: − 🔍 + rechts unten über der Zeitachse, halb durchsichtig */
-.mg-ecke { position: absolute; right: 8px; bottom: 30px; z-index: 3; display: inline-flex; align-items: stretch; border: 1px solid var(--mg-rand); border-radius: var(--mg-r); overflow: hidden;
+/* Der Halter steht am Ende des Diagramm-Blocks und haftet am unteren Bildrand (über der Knopfleiste),
+   solange das Diagramm nach unten über den Bildschirm hinausragt. */
+.mg-ecke-halter { position: sticky; bottom: calc(var(--mg-haft-unten) + 64px); z-index: 3; height: 0; }
+.mg-ecke { position: absolute; right: 8px; bottom: 8px; display: inline-flex; align-items: stretch; border: 1px solid var(--mg-rand); border-radius: var(--mg-r); overflow: hidden;
   background: rgba(27,33,36,0.5); background: color-mix(in srgb, var(--mg-flaeche) 50%, transparent); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
 .mg-ecke .mg-btn { min-height: 30px; min-width: 32px; padding: 0 7px; border: 0; border-radius: 0; background: transparent; }
 .mg-ecke .mg-btn .mg-i { width: 15px; height: 15px; }
@@ -220,6 +222,7 @@
 .mg-svg .mg-grid { stroke: var(--mg-rand); stroke-width: 1; }
 .mg-svg .mg-huelle { fill: none; stroke-width: 1.2; stroke-dasharray: 1.5 3.5; stroke-linecap: round; opacity: 0.8; }
 .mg-svg .mg-wertlinie { stroke-width: 1; stroke-dasharray: 2 3; opacity: 0.9; }
+.mg-svg .mg-wertpunkt { stroke: var(--mg-flaeche); stroke-width: 1.5; }
 .mg-svg .mg-tag { stroke: var(--mg-text-still); stroke-width: 1; opacity: 0.6; }
 .mg-svg .mg-balken { opacity: 0.9; }
 .mg-svg .mg-balken2 { opacity: 0.32; }

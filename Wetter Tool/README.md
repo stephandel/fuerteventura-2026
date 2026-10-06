@@ -59,9 +59,11 @@ Rückgabe: `{ neu(), auffrischen(), zeichnen(), zeigeOrt(id), abbauen() }`.
   (Antippen klappt die vier Modelle mit Erklärung auf).
 - **Fahne** darunter: Datum, Uhrzeit, Abstand zu jetzt und Wetterlage in einer Zeile. Sie
   bleibt beim Scrollen oben stehen.
-- **Werteliste** in zwei Spalten am Strich, Zusatz (gefühlt, Böen) neben dem Wert.
-  Verwandtes teilt sich eine Zeile (Tide · Wasser). Es stehen immer alle gewählten
-  Zeilen da (mit `werteKlug: true` nur die, die gerade etwas aussagen).
+- **Werte im Diagramm:** An der gewählten Stelle sitzt auf jeder Kurve ein Punkt, von der
+  Achse läuft eine gestrichelte Linie dorthin, und die Zahl steht an der Achse (wie bei
+  Marea). Nur Sonne und Regen haben das nicht.
+- **Schmale Zeile** unter der Fahne: die Werte, die keine Zahl an der Achse haben (Sonne,
+  Regen, gefühlt, Böen mit Richtung). Sie bleibt mit der Fahne oben stehen.
 - **Wischen** verschiebt die Zeit, **Antippen** holt eine Stelle in die Mitte,
   **Doppeltipp** springt zu jetzt.
 - **‹ ›** springen einen Tag zurück oder vor.
@@ -69,7 +71,7 @@ Rückgabe: `{ neu(), auffrischen(), zeichnen(), zeigeOrt(id), abbauen() }`.
   wie weit die gewählte Stelle von jetzt entfernt ist („+14 h“), und ruht (blass), wenn
   der Strich schon auf jetzt steht.
 - **↻** holt frische Werte, ohne die gewählte Stelle zu verlassen.
-- **Zoom:** kleines − 🔍 + rechts unten im Diagramm; auf dem Handy auch mit zwei Fingern,
+- **Zoom:** kleines − 🔍 + rechts unten, bleibt am unteren Bildrand über der Knopfleiste stehen; auf dem Handy auch mit zwei Fingern,
   am Laptop mit Strg (bzw. ⌘) + Mausrad. Beim Zoomen erscheint kurz „1 Tag im Bild“.
 - **Rand-Pfeil ◎:** ist „jetzt“ aus dem Bild gewischt, erscheint am Diagrammrand ein Pfeil
   zurück. Antippen springt zu jetzt.
