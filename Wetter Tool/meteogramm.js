@@ -167,9 +167,10 @@
     if (!wurzel) { console.warn('Meteogramm: Ziel nicht gefunden'); return null; }
 
     var ORTE = cfg.orte && cfg.orte.length ? cfg.orte : [{ id:'ort', name:'Ort', lat:52.52, lon:13.405 }];
-    // Werteliste (Stephans Wahl 05.10.2026): nur zeigen, was gerade etwas aussagt (werteKlug),
-    // und Verwandtes in einer Zeile (wertePaare: Tide · Wasser, Sonne · UV, Regen · Bewölkung, Staub · Feuchte)
-    var WERTE_KLUG = cfg.werteKlug !== false;
+    // Werteliste: Verwandtes in einer Zeile (wertePaare: Tide · Wasser, Sonne · UV, Regen · Bewölkung, Staub · Feuchte).
+    // werteKlug: true würde nur zeigen, was gerade etwas aussagt - Stephan will aber immer alle Werte sehen (06.10.2026),
+    // deshalb ist das aus, solange es niemand einschaltet.
+    var WERTE_KLUG = cfg.werteKlug === true;
     var WERTE_PAARE = cfg.wertePaare || [['tide', 'wasser'], ['sonne', 'uv'], ['regen', 'wolken'], ['staub', 'feuchte']];
     var MODELLE = cfg.modelle && cfg.modelle.length ? cfg.modelle : MODELLE_STANDARD;
     var KAMERAS = cfg.kameras || {};

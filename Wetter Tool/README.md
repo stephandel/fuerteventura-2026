@@ -48,7 +48,7 @@ Mehr braucht es nicht. Alles Weitere ist wahlfrei.
 | `tipps` | Liste von Regeln für „was der Tag bringt“ unter dem Diagramm, siehe unten | keine |
 | `filmLeiste` | `true`: Zeitraffer statt des ▶ im Satellitenbild – Play/Pause vorn in der Bildleiste, siehe unten | `false` |
 | `knoepfeMittig` | ohne Wirkung (seit 05.10.2026 steht ↻ immer links, ‹ Jetzt › in der Mitte, ☰ rechts) | – |
-| `werteKlug` | `false`: die Werteliste zeigt immer alle Zeilen. Sonst nur, was gerade etwas aussagt: Sonne und UV nur am Tag, Regen erst ab 0,1 mm oder 30 %, Bewölkung ab 20 %, Saharastaub ab 50 µg/m³ | `true` |
+| `werteKlug` | `true`: die Werteliste zeigt nur, was gerade etwas aussagt (Sonne und UV nur am Tag, Regen erst ab 0,1 mm oder 30 %, Bewölkung ab 20 %, Saharastaub ab 50 µg/m³). Sonst stehen immer alle Zeilen da | `false` |
 | `wertePaare` | Welche Zeilen sich in der Werteliste eine Zeile teilen | Tide · Wasser, Sonne · UV, Regen · Bewölkung, Staub · Feuchte |
 
 Rückgabe: `{ neu(), auffrischen(), zeichnen(), zeigeOrt(id), abbauen() }`.
@@ -60,8 +60,8 @@ Rückgabe: `{ neu(), auffrischen(), zeichnen(), zeigeOrt(id), abbauen() }`.
 - **Fahne** darunter: Datum, Uhrzeit, Abstand zu jetzt und Wetterlage in einer Zeile. Sie
   bleibt beim Scrollen oben stehen.
 - **Werteliste** in zwei Spalten am Strich, Zusatz (gefühlt, Böen) neben dem Wert.
-  Verwandtes teilt sich eine Zeile (Tide · Wasser), und es steht nur da, was gerade
-  etwas aussagt (nachts keine Sonne, kein UV; Regen nur, wenn welcher kommt).
+  Verwandtes teilt sich eine Zeile (Tide · Wasser). Es stehen immer alle gewählten
+  Zeilen da (mit `werteKlug: true` nur die, die gerade etwas aussagen).
 - **Wischen** verschiebt die Zeit, **Antippen** holt eine Stelle in die Mitte,
   **Doppeltipp** springt zu jetzt.
 - **‹ ›** springen einen Tag zurück oder vor.

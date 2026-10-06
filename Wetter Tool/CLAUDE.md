@@ -75,6 +75,8 @@ Keine – alle entschieden (siehe unten).
   `zaehlt(v, daten, i)` im KATALOG: Sonne/UV nur bei `daten.tag[i]`, Regen ab 0,1 mm oder 30 %, Wolken ab 20 %, Staub ab 50),
   `paare` (`wertePaare`, `zelleHtml(titel, [zellen], farbe)` fasst Tide · Wasser usw. in eine Zeile, getrennt durch `.mg-sep`).
   Ergebnis auf dem iPhone: Kopf 184 px statt 650 px. Sicherung der Werteliste-Logik vorher: Commit 2215cd2.
+  **Nachtrag 06.10.:** Stephan will **immer alle Werte** sehen, nichts Dynamisches – `werteKlug` ist seit Version
+  `20261005f` standardmäßig aus (`cfg.werteKlug === true` schaltet es ein). Die `zaehlt()`-Funktionen bleiben im Katalog.
 - **Knopfleiste neu (05.10.2026, live, Version `20261005c`):** Stephans Wahl aus dem Baukasten: Anordnung *mitte*
   (↻ links, ‹ Jetzt › als Gruppe in einem Rahmen `.mg-gruppe` in der Mitte, ☰ rechts; Raster `auto 1fr auto`), Ecken sanft
   (`--mg-r: 11px`), Jetzt nur fett (kein Türkis mehr) mit Abstand „+14 h“ (`.mg-jrel`, `relKurz()`), Jetzt ruht (`disabled`)
