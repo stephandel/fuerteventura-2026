@@ -66,6 +66,12 @@ Keine – alle entschieden (siehe unten).
 
 ## Entschieden
 
+- **Sonnenschein aus der Sonnenkraft (06.10.2026, live, Version `20261006b`):** Open-Meteos `sunshine_duration` zählt
+  fast jede helle Stunde voll (Schwelle auf den Stundenmittelwert → „Zaun“ aus 60-Minuten-Balken, Tagessumme ≈ Tageslänge).
+  Jetzt rechnet `sonneMinuten(direkt, terr)`: `direct_radiation` / (`terrestrial_radiation` × 0,7^(Luftmasse^0,678) × 0,75),
+  Luftmasse nach Kasten-Young, gedeckelt auf 60 min; Faktor 0,75 so geeicht, dass ECMWF bei 0 % Wolken ≈ 60 min liefert.
+  Beide Felder stehen in der Stundenabfrage; fehlen sie, gilt der alte Open-Meteo-Wert. Tagessumme im Sonnenfuß folgt
+  automatisch. Probe 06.10.: ECMWF (klar) 9,4 h, ICON (wolkig) 6,7 h – WeatherPro zeigte 8,9 h. Hinweis in `quelleText()`.
 - **Wertlinie überall + schmaler Kopf (06.10.2026, live, Version `20261006a`):** Vorbild Marea (marea.ooo): beim
   Wischen wandert ein Punkt auf der Kurve, von der Achse bis zum Punkt läuft eine gestrichelte Linie, die Zahl steht an
   der Achse. Jetzt für alle Zeilen außer Sonne und Regen (`wertlinie:true` im KATALOG; Balkenzeilen ohne Punkt);

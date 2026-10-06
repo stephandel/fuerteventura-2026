@@ -327,7 +327,7 @@
       var tz = encodeURIComponent(zeitzone());
       var stunden = 'temperature_2m,apparent_temperature,relative_humidity_2m,cloud_cover,' +
         'precipitation,precipitation_probability,sunshine_duration,uv_index,pressure_msl,' +
-        'wind_speed_10m,wind_gusts_10m,wind_direction_10m,weather_code,is_day';
+        'wind_speed_10m,wind_gusts_10m,wind_direction_10m,weather_code,is_day,direct_radiation,terrestrial_radiation';
       var urlW = 'https://api.open-meteo.com/v1/forecast?latitude=' + o.lat + '&longitude=' + o.lon +
         '&hourly=' + stunden + '&daily=sunrise,sunset&past_days=' + TAGE_VORHER +
         '&forecast_days=' + TAGE_VORAUS + '&timezone=' + tz + '&models=' + m.id;
@@ -383,7 +383,10 @@
       }
       function nimm(feld, i){ return H[feld] ? H[feld][i] : null; }
       for (var i = 0; i < n; i++) {
-        d.sonne.push(nimm('sunshine_duration', i) == null ? null : H.sunshine_duration[i] / 60);
+        // Sonnenminuten aus der Sonnenkraft (direkte Strahlung im Verhältnis zum klaren Himmel);
+        // nur wenn das Modell keine Strahlung liefert, die grobe Alles-oder-nichts-Zahl von Open-Meteo
+        var sm = sonneMinuten(nimm('direct_radiation', i), nimm('terrestrial_radiation', i));
+        d.sonne.push(sm != null ? sm : (nimm('sunshine_duration', i) == null ? null : H.sunshine_duration[i] / 60));
         d.temp.push(nimm('temperature_2m', i));
         d.gefuehlt.push(nimm('apparent_temperature', i));
         d.wind.push(nimm('wind_speed_10m', i));
@@ -481,6 +484,22 @@
         var o = ortsZeit(z), e = karte[o.tag];
         if (e) { var art = Math.round((k - Math.floor(k)) * 4) % 4; e.mond.ereignis = MOND_EREIGNIS[art]; e.mond.icon = MOND_ICON[art * 2]; e.mond.uhr = o.uhr; }
       }
+    }
+
+    // Sonnenschein je Stunde in Minuten (seit 06.10.2026): Anteil der direkten Strahlung an dem,
+    // was bei klarem Himmel möglich wäre. Open-Meteo zählt sonst jede Stunde voll, sobald die Sonne
+    // überhaupt Schatten wirft - deshalb stand dort fast immer 60, auch bei dichten Wolken.
+    // Klarer Himmel: Strahlung am oberen Rand der Atmosphäre (terrestrial) mal Durchlässigkeit der Luft
+    // (0,7 hoch Luftmasse^0,678, Kasten-Young-Luftmasse), mal 0,75 für Dunst und Feuchte über dem Meer
+    // (so geeicht, dass das ECMWF-Modell bei 0 % Wolken auf 60 Minuten kommt).
+    function sonneMinuten(direkt, terr){
+      if (direkt == null || terr == null) return null;
+      if (terr < 5) return 0;
+      var cosz = Math.min(1, terr / 1361), z = Math.acos(cosz) * 180 / Math.PI;
+      var am = 1 / (cosz + 0.50572 * Math.pow(96.07995 - z, -1.6364));
+      var klar = terr * Math.pow(0.7, Math.pow(am, 0.678)) * 0.75;
+      if (klar < 10) return 0;
+      return Math.round(60 * Math.max(0, Math.min(1, direkt / klar)));
     }
 
     function idxFuer(dt){ return (dt.getTime() - daten.t0.getTime()) / 3600000; }
@@ -1899,6 +1918,7 @@
       if (braucheMeer()) t += ' · Meer & Tide: Open-Meteo Marine';
       if (braucheStaub()) t += ' · Saharastaub: Open-Meteo Luftqualität (CAMS)';
       if (daten && daten.uvErsatz) t += ' · UV aus der besten Mischung';
+      t += ' · Sonne: Sonnenkraft (direkte Strahlung zu klarem Himmel)';
       el.quelle.textContent = t;
     }
 

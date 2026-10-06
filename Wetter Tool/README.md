@@ -59,6 +59,9 @@ Rückgabe: `{ neu(), auffrischen(), zeichnen(), zeigeOrt(id), abbauen() }`.
   (Antippen klappt die vier Modelle mit Erklärung auf).
 - **Fahne** darunter: Datum, Uhrzeit, Abstand zu jetzt und Wetterlage in einer Zeile. Sie
   bleibt beim Scrollen oben stehen.
+- **Sonnenschein** ist die Sonnenkraft je Stunde: direkte Strahlung im Verhältnis zu dem,
+  was bei klarem Himmel möglich wäre, als Minuten von 60. Wolken drücken den Wert sichtbar,
+  anders als bei der amtlichen Zählung, die fast jede helle Stunde voll wertet.
 - **Werte im Diagramm:** An der gewählten Stelle sitzt auf jeder Kurve ein Punkt, von der
   Achse läuft eine gestrichelte Linie dorthin, und die Zahl steht an der Achse (wie bei
   Marea). Nur Sonne und Regen haben das nicht.
