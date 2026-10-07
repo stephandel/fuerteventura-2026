@@ -98,6 +98,15 @@ button { font-family: inherit; }
 
 /* ---- nav ---- */
 nav.topnav { position: sticky; top: 0; z-index: 50; background: var(--surface); border-bottom: 1px solid var(--border); padding-top: env(safe-area-inset-top, 0px); }
+/* Safari-Logik auf der Wetterseite (07.10.2026): beim Scrollen nach unten gleiten Kopfzeile und
+   Fußleiste aus dem Bild, beim Scrollen nach oben kommen sie zurück. Das Wetter-Tool haftet dann
+   mit Fahne und Knopfleiste direkt am Bildschirmrand. */
+nav.topnav, .tabbar { transition: transform .28s ease; }
+html.leisten-weg nav.topnav { transform: translateY(-105%); }
+html.leisten-weg .tabbar { transform: translateY(115%); }
+html.leisten-weg #meteogramm { --mg-haft-oben: 0px !important; --mg-haft-unten: calc(env(safe-area-inset-bottom, 0px) + 6px) !important; }
+html.leisten-weg .nach-oben { bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
+@media (prefers-reduced-motion: reduce) { nav.topnav, .tabbar { transition: none; } }
 body { padding-bottom: env(safe-area-inset-bottom, 0px); }
 .navwrap { max-width: 1180px; margin: 0 auto; padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 .brand { font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif; font-weight: 700; letter-spacing: -0.015em; font-size: 1.05rem; color: var(--gold, #c9962b); text-decoration: none; display: flex; gap: 7px; align-items: center; }
@@ -10318,6 +10327,30 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
         if (fuss) { var r = fuss.getBoundingClientRect(); mgZiel.style.setProperty('--mg-haft-unten', Math.max(0, Math.round(window.innerHeight - r.top) + 6) + 'px'); }
       }
       fahnenAbstand(); window.addEventListener('resize', fahnenAbstand);
+
+      // Safari-Logik: Auf der Wetterseite gleiten Kopfzeile und Fußleiste beim Scrollen nach unten
+      // aus dem Bild und kommen beim Scrollen nach oben zurück (CSS-Klasse leisten-weg am <html>).
+      (function leistenBeimScrollen(){
+        var letzteY = window.scrollY, weg = false, strecke = 0, tick = 0;
+        var wetterSeite = document.getElementById('page-wetter');
+        function setzen(neu){
+          if (neu === weg) return;
+          weg = neu; document.documentElement.classList.toggle('leisten-weg', weg);
+        }
+        function pruefen(){
+          tick = 0;
+          var y = window.scrollY, d = y - letzteY; letzteY = y;
+          if (!wetterSeite || !wetterSeite.classList.contains('active')) { setzen(false); return; }
+          if (y < 80) { strecke = 0; setzen(false); return; }
+          // Erst nach einem klaren Stück in eine Richtung umschalten, kein Flackern bei kleinen Rucklern
+          strecke = (d > 0) === (strecke > 0) ? strecke + d : d;
+          if (strecke > 24) setzen(true);
+          else if (strecke < -24) setzen(false);
+        }
+        window.addEventListener('scroll', function(){ if (!tick) tick = requestAnimationFrame(pruefen); }, { passive: true });
+        // Beim Wechsel auf eine andere Seite sofort wieder zeigen
+        window.addEventListener('hashchange', function(){ strecke = 0; setzen(false); });
+      })();
       try {
         var zw = localStorage.getItem('fuerte-mg-zeilen');
         if (zw && zw.indexOf('wasser') < 0 && !localStorage.getItem('fuerte-mg-wasser-neu')) localStorage.setItem('fuerte-mg-zeilen', zw + ',wasser');
