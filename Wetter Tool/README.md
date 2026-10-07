@@ -78,7 +78,10 @@ Rückgabe: `{ neu(), auffrischen(), zeichnen(), zeigeOrt(id), abbauen() }`.
   am Laptop mit Strg (bzw. ⌘) + Mausrad. Beim Zoomen erscheint kurz „1 Tag im Bild“.
 - **Rand-Pfeil ◎:** ist „jetzt“ aus dem Bild gewischt, erscheint am Diagrammrand ein Pfeil
   zurück. Antippen springt zu jetzt.
-- Die **Knopfleiste** (↻ · ‹ Jetzt › · ☰) haftet unten am Bildschirm, solange das Tool im
+- **Vollbild ⤢** (Knopf in der Leiste oder zweimal auf die Lupe tippen): die Seite kann über
+  die Einstellung `vollbild: function(an){…}` ihre eigenen Leisten ausblenden; zurück geht es
+  mit demselben Knopf, dem Doppeltipp oder dem × oben rechts.
+- Die **Knopfleiste** (↻ · ‹ Jetzt › · ⤢ · ☰) haftet unten am Bildschirm, solange das Tool im
   Bild ist. Abstand zu einer festen Fußleiste der Seite: CSS-Variable `--mg-haft-unten`.
 - **📷 Webcam · 🛰️ Satellit · 🌧️ Regen** schalten das Bild über dem Diagramm um.
   Satellit und Regen folgen der gewählten Zeit: wischt man zurück, wandert auch

@@ -171,6 +171,10 @@
     // werteKlug: true würde nur zeigen, was gerade etwas aussagt - Stephan will aber immer alle Werte sehen (06.10.2026),
     // deshalb ist das aus, solange es niemand einschaltet.
     var WERTE_KLUG = cfg.werteKlug === true;
+    // Vollbild (07.10.2026): Knopf in der Leiste oder Doppeltipp auf die Lupe. Die Seite kann über
+    // cfg.vollbild(an) ihre eigenen Leisten ausblenden; der Baustein selbst setzt die Klasse mg-vollbild.
+    var VOLLBILD_CB = typeof cfg.vollbild === 'function' ? cfg.vollbild : null;
+    var vollbild = false;
     var WERTE_PAARE = cfg.wertePaare || [['tide', 'wasser'], ['sonne', 'uv'], ['regen', 'wolken'], ['staub', 'feuchte']];
     var MODELLE = cfg.modelle && cfg.modelle.length ? cfg.modelle : MODELLE_STANDARD;
     var KAMERAS = cfg.kameras || {};
@@ -228,6 +232,9 @@
       chevl:  '<path d="M14.5 6l-6 6 6 6"/>',
       chevr:  '<path d="M9.5 6l6 6-6 6"/>',
       chevd:  '<path d="M6 9.5l6 6 6-6"/>',
+      voll:   '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
+      vollaus:'<path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/>',
+      x:      '<path d="M6 6l12 12M18 6L6 18"/>',
       lupe:   '<circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.3-4.3"/>',
       plus:   '<path d="M12 6v12M6 12h12"/>',
       minus:  '<path d="M6 12h12"/>',
@@ -1478,7 +1485,7 @@
           // am unteren Bildrand über der Knopfleiste, solange das Diagramm länger ist als der Bildschirm.
           '<div class="mg-ecke-halter"><div class="mg-ecke">' +
             '<button type="button" class="mg-btn" id="' + kid('zoomraus') + '" aria-label="Herauszoomen: mehr Tage zeigen" title="Mehr Tage zeigen">' + ico('minus') + '</button>' +
-            '<span class="mg-ecke-lupe" aria-hidden="true">' + ico('lupe') + '</span>' +
+            '<button type="button" class="mg-ecke-lupe" id="' + kid('lupe') + '" aria-label="Vollbild: zweimal tippen" title="Zweimal tippen: Vollbild an/aus">' + ico('lupe') + '</button>' +
             '<button type="button" class="mg-btn" id="' + kid('zoomrein') + '" aria-label="Hineinzoomen: weniger Stunden zeigen" title="Genauer zeigen">' + ico('plus') + '</button>' +
           '</div></div>' +
           '<div class="mg-zoomhinweis" id="' + kid('zoomhinweis') + '" aria-live="polite"></div>' +
@@ -1492,11 +1499,15 @@
             '<button type="button" class="mg-btn mg-btn-jetzt" id="' + kid('jetzt') + '" title="Zu jetzt springen und Werte neu holen"><span class="mg-jt">Jetzt</span><span class="mg-jrel" id="' + kid('jrel') + '"></span></button>' +
             '<button type="button" class="mg-btn" id="' + kid('vor') + '" aria-label="Einen Tag vor" title="Einen Tag vor">' + ico('chevr') + '</button>' +
           '</div></div>' +
+          '<span class="mg-rechts">' +
+          '<button type="button" class="mg-btn mg-btn-voll" id="' + kid('voll') + '" aria-pressed="false" aria-label="Vollbild" title="Vollbild: Kopf- und Fußleiste der Seite ausblenden">' + ico('voll') + '</button>' +
           '<span class="mg-zeilenwahl">' +
             '<button type="button" class="mg-btn" id="' + kid('zbtn') + '" aria-expanded="false" aria-label="Welche Zeilen anzeigen?" title="Welche Zeilen anzeigen?">' + ico('menu') + '</button>' +
             '<div class="mg-zeilen-panel" id="' + kid('zpanel') + '" hidden><h4>Welche Zeilen?</h4></div>' +
-          '</span>' +
+          '</span></span>' +
         '</div>' +
+        // Im Vollbild: × oben rechts am Bildschirm führt zurück
+        '<button type="button" class="mg-vollbild-x" id="' + kid('vollx') + '" aria-label="Vollbild beenden" title="Vollbild beenden" hidden>' + ico('x') + '</button>' +
         (ANSICHTEN.length > 1 ? '<div class="mg-ansichten" id="' + kid('ansichten') + '" role="tablist" aria-label="Bildansicht"></div>' : '') +
         (KARTE ? '<div class="mg-karte" id="' + kid('karte') + '" hidden>' +
           '<img class="mg-k-basis" id="' + kid('kbasis') + '" alt="Satellitenbild" decoding="async">' +
@@ -1611,6 +1622,16 @@
       document.getElementById(kid('rpr')).addEventListener('click', zuJetzt);
       document.getElementById(kid('frisch')).addEventListener('click', function(){ auffrischen(true); });
 
+      // Vollbild: Knopf, × oben rechts, Doppeltipp auf die Lupe
+      document.getElementById(kid('voll')).addEventListener('click', function(){ vollbildSetzen(!vollbild); });
+      document.getElementById(kid('vollx')).addEventListener('click', function(){ vollbildSetzen(false); });
+      var lupeTipp = 0;
+      document.getElementById(kid('lupe')).addEventListener('click', function(){
+        var jetzt = Date.now();
+        if (jetzt - lupeTipp < 350) { lupeTipp = 0; vollbildSetzen(!vollbild); }
+        else lupeTipp = jetzt;
+      });
+
       // Zoom-Gesten: zwei Finger auseinander/zusammen (Handy) und Strg + Mausrad (Laptop).
       // Je Stufe genügt eine deutliche Bewegung; danach zählt der Abstand neu.
       var kneif = null;
@@ -1665,6 +1686,20 @@
         var b = ev.target.closest('.mg-tab'); if (!b) return;
         setz(b.getAttribute('data-id')); malen();
       });
+    }
+
+    // Vollbild an/aus: Klasse am Baustein, Knopf-Symbol, × einblenden, Seite benachrichtigen
+    function vollbildSetzen(an){
+      an = !!an;
+      if (an === vollbild) return;
+      vollbild = an;
+      wurzel.classList.toggle('mg-vollbild', an);
+      var b = document.getElementById(kid('voll')), x = document.getElementById(kid('vollx'));
+      if (b) { b.innerHTML = ico(an ? 'vollaus' : 'voll'); b.setAttribute('aria-pressed', String(an)); b.title = an ? 'Vollbild beenden' : 'Vollbild: Kopf- und Fußleiste der Seite ausblenden'; }
+      if (x) x.hidden = !an;
+      if (VOLLBILD_CB) { try { VOLLBILD_CB(an); } catch(e){} }
+      // Die haftende Fahne rutscht beim Umschalten nach oben - das Diagramm soll dabei an Ort und Stelle bleiben
+      setTimeout(function(){ sichtMitte(); zoomKnoepfe(); }, 320);
     }
 
     // Wettermodell: Feld "Mix ▾" mit Aufklapp-Liste (Name, Langname, Hinweis)
@@ -1943,6 +1978,7 @@
 
     return {
       neu: function(){ cache = {}; laden(); },
+      vollbild: function(an){ vollbildSetzen(an); },
       zeichnen: function(){ zeichnen(false); },
       zeigeOrt: function(id){ if (ORTE.some(function(o){ return o.id === id; })) { ort = id; merkSchreiben('ort', id); laden(); } },
       auffrischen: function(){ auffrischen(true); },

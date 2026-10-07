@@ -21,8 +21,8 @@
 <meta name="apple-mobile-web-app-title" content="Fuerteventura">
 <link rel="stylesheet" href="vendor/leaflet.css">
 <script defer src="vendor/leaflet.js"></script>
-<link rel="stylesheet" href="Wetter%20Tool/meteogramm.css?v=20261006a">
-<script defer src="Wetter%20Tool/meteogramm.js?v=20261006b"></script>
+<link rel="stylesheet" href="Wetter%20Tool/meteogramm.css?v=20261007a">
+<script defer src="Wetter%20Tool/meteogramm.js?v=20261007a"></script>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
 <link rel="apple-touch-icon" sizes="167x167" href="images/apple-touch-icon-167.png">
@@ -98,16 +98,16 @@ button { font-family: inherit; }
 
 /* ---- nav ---- */
 nav.topnav { position: sticky; top: 0; z-index: 50; background: var(--surface); border-bottom: 1px solid var(--border); padding-top: env(safe-area-inset-top, 0px); }
-/* Safari-Logik auf der Wetterseite (07.10.2026): beim Scrollen nach unten gleiten Kopfzeile und
-   Fußleiste aus dem Bild, beim Scrollen nach oben kommen sie zurück. Das Wetter-Tool haftet dann
-   mit Fahne und Knopfleiste direkt am Bildschirmrand. */
+/* Vollbild des Wetter-Tools (07.10.2026, ersetzt die Scroll-Automatik vom selben Tag): Knopf ⤢ in der
+   Knopfleiste oder Doppeltipp auf die Lupe blenden Kopfzeile und Fußleiste aus; × oben rechts, der Knopf
+   oder der Doppeltipp holen sie zurück. Fahne und Knopfleiste haften dann direkt am Bildschirmrand. */
 nav.topnav, .tabbar { transition: transform .28s ease; }
-html.leisten-weg nav.topnav { transform: translateY(-105%); }
-html.leisten-weg .tabbar { transform: translateY(115%); }
-html.leisten-weg #meteogramm { --mg-haft-oben: env(safe-area-inset-top, 0px) !important; --mg-haft-unten: calc(env(safe-area-inset-bottom, 0px) + 6px) !important; }
+html.vollbild nav.topnav { transform: translateY(-105%); }
+html.vollbild .tabbar { transform: translateY(115%); }
+html.vollbild #meteogramm { --mg-haft-oben: env(safe-area-inset-top, 0px) !important; --mg-haft-unten: 0px !important; }
 /* Oben bleibt der Streifen für Notch und Uhrzeit frei und wird abgedeckt, damit das Diagramm nicht darunter durchscheint */
-html.leisten-weg body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; height: env(safe-area-inset-top, 0px); background: var(--surface); z-index: 49; pointer-events: none; }
-html.leisten-weg .nach-oben { bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
+html.vollbild body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; height: env(safe-area-inset-top, 0px); background: var(--surface); z-index: 49; pointer-events: none; }
+html.vollbild .nach-oben { display: none; }
 @media (prefers-reduced-motion: reduce) { nav.topnav, .tabbar { transition: none; } }
 body { padding-bottom: env(safe-area-inset-bottom, 0px); }
 .navwrap { max-width: 1180px; margin: 0 auto; padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
@@ -10330,29 +10330,8 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       }
       fahnenAbstand(); window.addEventListener('resize', fahnenAbstand);
 
-      // Safari-Logik: Auf der Wetterseite gleiten Kopfzeile und Fußleiste beim Scrollen nach unten
-      // aus dem Bild und kommen beim Scrollen nach oben zurück (CSS-Klasse leisten-weg am <html>).
-      (function leistenBeimScrollen(){
-        var letzteY = window.scrollY, weg = false, strecke = 0, tick = 0;
-        var wetterSeite = document.getElementById('page-wetter');
-        function setzen(neu){
-          if (neu === weg) return;
-          weg = neu; document.documentElement.classList.toggle('leisten-weg', weg);
-        }
-        function pruefen(){
-          tick = 0;
-          var y = window.scrollY, d = y - letzteY; letzteY = y;
-          if (!wetterSeite || !wetterSeite.classList.contains('active')) { setzen(false); return; }
-          if (y < 80) { strecke = 0; setzen(false); return; }
-          // Erst nach einem klaren Stück in eine Richtung umschalten, kein Flackern bei kleinen Rucklern
-          strecke = (d > 0) === (strecke > 0) ? strecke + d : d;
-          if (strecke > 24) setzen(true);
-          else if (strecke < -24) setzen(false);
-        }
-        window.addEventListener('scroll', function(){ if (!tick) tick = requestAnimationFrame(pruefen); }, { passive: true });
-        // Beim Wechsel auf eine andere Seite sofort wieder zeigen
-        window.addEventListener('hashchange', function(){ strecke = 0; setzen(false); });
-      })();
+      // Vollbild des Wetter-Tools: beim Wechsel auf eine andere Seite immer beenden
+      window.addEventListener('hashchange', function(){ if (window.FUERTE_MG) window.FUERTE_MG.vollbild(false); });
       try {
         var zw = localStorage.getItem('fuerte-mg-zeilen');
         if (zw && zw.indexOf('wasser') < 0 && !localStorage.getItem('fuerte-mg-wasser-neu')) localStorage.setItem('fuerte-mg-zeilen', zw + ',wasser');
@@ -10377,6 +10356,8 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
         tagesSymbol: true,        // Wetter-Symbol, Hoch und Tief je Tag im Diagramm (ersetzt die 7-Tage-Liste)
         mond: true,               // Mondphase im Tagesfuß der Sonnenzeile
         filmLeiste: true,         // Zeitraffer mit Play/Pause in der Bildleiste
+        // Vollbild: die Seite blendet Kopfzeile und Fußleiste aus (CSS-Klasse vollbild am <html>)
+        vollbild: function(an){ document.documentElement.classList.toggle('vollbild', an); },
         // Tipps zum Tag – Orte und Regeln aus unseren Ausflugstexten (Flag Beach, Popcorn Beach,
         // Leuchtturm El Cotillo, Lagune Risco del Paso: bei Hochwasser ist dort Meer)
         tipps: [

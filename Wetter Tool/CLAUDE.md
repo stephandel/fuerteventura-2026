@@ -66,12 +66,15 @@ Keine – alle entschieden (siehe unten).
 
 ## Entschieden
 
-- **Safari-Logik auf der Wetterseite (07.10.2026, live):** Scrollen nach unten (ab 80 px, nach 24 px klarer Strecke)
-  blendet Kopfzeile `nav.topnav` und Fußleiste `.tabbar` per `transform` aus (Klasse `leisten-weg` am `<html>`, Block
-  `leistenBeimScrollen()` in `../index.html` neben `fahnenAbstand()`); Scrollen nach oben oder Seitenwechsel (hashchange)
-  holt sie zurück. `html.leisten-weg #meteogramm` setzt `--mg-haft-oben` und `--mg-haft-unten` auf die Safe-Area-Ränder (oben Notch/Uhrzeit, abgedeckt per `body::before`)
-  (`!important`, damit es den Inline-Wert aus `fahnenAbstand()` schlägt). Gewinn auf dem iPhone ≈ 165 px. Nur Wetterseite;
-  Stephan will es ggf. später auf alle Seiten ausdehnen.
+- **Vollbild statt Safari-Logik (07.10.2026, live, Version `20261007a`):** Die Scroll-Automatik vom Vormittag ist
+  wieder raus (Stephan: lieber bewusst schalten). Jetzt: Knopf ⤢ `.mg-btn-voll` in der Knopfleiste (rechts neben der
+  Jetzt-Gruppe, vor ☰; Raster `minmax(max-content,1fr) auto minmax(max-content,1fr)`, Rechtsgruppe `.mg-rechts`),
+  **Doppeltipp auf die Lupe** (`#lupe` ist jetzt ein Button, 350 ms) und im Vollbild ein **× oben rechts**
+  (`.mg-vollbild-x`, fixed). `vollbildSetzen(an)` setzt `mg-vollbild` am Baustein und ruft `cfg.vollbild(an)`;
+  `../index.html` schaltet damit die Klasse `vollbild` am `<html>`: Kopfzeile/Fußleiste per `transform` weg,
+  `--mg-haft-oben` = Safe-Area oben (Streifen für Notch/Uhrzeit per `body::before` abgedeckt), `--mg-haft-unten` = 0,
+  Knopfleiste bekommt `padding-bottom` + Safe-Area unten und sitzt ganz am Bildschirmrand („so tief wie möglich“),
+  Lupe rutscht entsprechend mit. Seitenwechsel (hashchange) beendet das Vollbild (`FUERTE_MG.vollbild(false)`).
 - **Sonnenschein aus der Sonnenkraft (06.10.2026, live, Version `20261006b`):** Open-Meteos `sunshine_duration` zählt
   fast jede helle Stunde voll (Schwelle auf den Stundenmittelwert → „Zaun“ aus 60-Minuten-Balken, Tagessumme ≈ Tageslänge).
   Jetzt rechnet `sonneMinuten(direkt, terr)`: `direct_radiation` / (`terrestrial_radiation` × 0,7^(Luftmasse^0,678) × 0,75),

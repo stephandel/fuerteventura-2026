@@ -88,9 +88,19 @@
    ↻ links außen, ‹ Jetzt › als Gruppe in einem Rahmen in der Mitte, ☰ rechts außen.
    Die Leiste haftet unten am Bildschirm, bis das Tool aus dem Bild ist; auf dem
    Handy bleibt sie so immer unterm Daumen. */
-.mg-knoepfe { position: sticky; bottom: var(--mg-haft-unten); z-index: 7; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 8px;
+.mg-knoepfe { position: sticky; bottom: var(--mg-haft-unten); z-index: 7; display: grid; grid-template-columns: minmax(max-content, 1fr) auto minmax(max-content, 1fr); align-items: center; gap: 8px;
   padding: 8px 14px; background: var(--mg-flaeche); border-top: 1px solid var(--mg-rand); border-bottom: 1px solid var(--mg-rand); }
 .mg-mitte { display: flex; justify-content: center; min-width: 0; }
+.mg-rechts { display: inline-flex; justify-content: flex-end; gap: 8px; }
+/* ---- Vollbild (07.10.2026): Knopf ⤢ in der Leiste, × oben rechts, Leiste ganz unten am Bildschirmrand ---- */
+.mg-vollbild-x { position: fixed; top: calc(env(safe-area-inset-top, 0px) + 8px); right: 10px; z-index: 80; display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50%;
+  border: 1px solid var(--mg-rand); color: var(--mg-text); cursor: pointer; -webkit-tap-highlight-color: transparent;
+  background: rgba(27,33,36,0.85); background: color-mix(in srgb, var(--mg-flaeche) 85%, transparent); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+.mg-vollbild-x[hidden] { display: none; }
+.mg-vollbild-x .mg-i { width: 20px; height: 20px; }
+.mg-vollbild .mg-knoepfe { padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px)); border-bottom: 0; }
+.mg-vollbild .mg-ecke-halter { bottom: calc(var(--mg-haft-unten) + 64px + env(safe-area-inset-bottom, 0px)); }
+.mg-ecke-lupe { cursor: pointer; border: 0; background: transparent; -webkit-tap-highlight-color: transparent; }
 /* Ein Rahmen pro Gruppe: die Knöpfe darin ohne eigenen Rand, Trennstriche dazwischen */
 .mg-gruppe { display: inline-flex; align-items: stretch; border: 1px solid var(--mg-rand); border-radius: var(--mg-r); overflow: hidden; background: var(--mg-flaeche2); }
 .mg-gruppe .mg-btn { border: 0; border-radius: 0; background: transparent; }
@@ -103,7 +113,7 @@
 .mg-gruppe .mg-btn:disabled { opacity: 1; }
 .mg-gruppe .mg-btn:disabled > * { opacity: 0.4; }
 .mg-btn:disabled { opacity: 0.35; cursor: default; }
-@media (max-width: 480px) { .mg-knoepfe { gap: 6px; padding-left: 8px; padding-right: 8px; } .mg-btn-jetzt { min-width: 104px; padding: 0 10px; } }
+@media (max-width: 480px) { .mg-knoepfe { gap: 6px; padding-left: 8px; padding-right: 8px; } .mg-rechts { gap: 6px; } .mg-btn-jetzt { min-width: 96px; padding: 0 8px; } }
 .mg-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 40px; min-width: 40px; padding: 0 12px; border-radius: var(--mg-r); border: 1px solid var(--mg-rand); background: var(--mg-flaeche2); color: var(--mg-text); font: 600 13.5px/1 var(--mg-serif); cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .mg-btn:active { transform: scale(0.97); }
 /* Einfarbige Symbole in der Schriftfarbe des Knopfs */
