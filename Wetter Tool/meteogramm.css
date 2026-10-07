@@ -98,7 +98,11 @@
   background: rgba(27,33,36,0.85); background: color-mix(in srgb, var(--mg-flaeche) 85%, transparent); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
 .mg-vollbild-x[hidden] { display: none; }
 .mg-vollbild-x .mg-i { width: 20px; height: 20px; }
-.mg-vollbild .mg-readout { padding-right: 52px; }   /* Platz für das × oben rechts */
+/* Im Vollbild sitzt das × oben rechts neben der Fahne: Kasten etwas kompakter, nie umbrechen, lange Wetterlage mit … kürzen */
+.mg-vollbild .mg-readout { padding-right: 46px; }
+.mg-vollbild .mg-zeit { flex-wrap: nowrap; max-width: 100%; font-size: 0.92rem; padding: 4px 10px; gap: 6px; }
+.mg-vollbild .mg-zeit > span:first-child { white-space: nowrap; }
+.mg-vollbild .mg-lage { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; font-size: 12px; }
 .mg-vollbild .mg-knoepfe { padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px)); border-bottom: 0; }
 .mg-vollbild .mg-ecke-halter { bottom: calc(var(--mg-haft-unten) + 64px + env(safe-area-inset-bottom, 0px)); }
 .mg-ecke-lupe { cursor: pointer; border: 0; background: transparent; -webkit-tap-highlight-color: transparent; }
