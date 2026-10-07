@@ -104,7 +104,9 @@ nav.topnav { position: sticky; top: 0; z-index: 50; background: var(--surface); 
 nav.topnav, .tabbar { transition: transform .28s ease; }
 html.leisten-weg nav.topnav { transform: translateY(-105%); }
 html.leisten-weg .tabbar { transform: translateY(115%); }
-html.leisten-weg #meteogramm { --mg-haft-oben: 0px !important; --mg-haft-unten: calc(env(safe-area-inset-bottom, 0px) + 6px) !important; }
+html.leisten-weg #meteogramm { --mg-haft-oben: env(safe-area-inset-top, 0px) !important; --mg-haft-unten: calc(env(safe-area-inset-bottom, 0px) + 6px) !important; }
+/* Oben bleibt der Streifen für Notch und Uhrzeit frei und wird abgedeckt, damit das Diagramm nicht darunter durchscheint */
+html.leisten-weg body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; height: env(safe-area-inset-top, 0px); background: var(--surface); z-index: 49; pointer-events: none; }
 html.leisten-weg .nach-oben { bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
 @media (prefers-reduced-motion: reduce) { nav.topnav, .tabbar { transition: none; } }
 body { padding-bottom: env(safe-area-inset-bottom, 0px); }

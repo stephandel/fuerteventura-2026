@@ -69,7 +69,7 @@ Keine – alle entschieden (siehe unten).
 - **Safari-Logik auf der Wetterseite (07.10.2026, live):** Scrollen nach unten (ab 80 px, nach 24 px klarer Strecke)
   blendet Kopfzeile `nav.topnav` und Fußleiste `.tabbar` per `transform` aus (Klasse `leisten-weg` am `<html>`, Block
   `leistenBeimScrollen()` in `../index.html` neben `fahnenAbstand()`); Scrollen nach oben oder Seitenwechsel (hashchange)
-  holt sie zurück. `html.leisten-weg #meteogramm` setzt `--mg-haft-oben: 0` und `--mg-haft-unten` auf den Safe-Area-Rand
+  holt sie zurück. `html.leisten-weg #meteogramm` setzt `--mg-haft-oben` und `--mg-haft-unten` auf die Safe-Area-Ränder (oben Notch/Uhrzeit, abgedeckt per `body::before`)
   (`!important`, damit es den Inline-Wert aus `fahnenAbstand()` schlägt). Gewinn auf dem iPhone ≈ 165 px. Nur Wetterseite;
   Stephan will es ggf. später auf alle Seiten ausdehnen.
 - **Sonnenschein aus der Sonnenkraft (06.10.2026, live, Version `20261006b`):** Open-Meteos `sunshine_duration` zählt
