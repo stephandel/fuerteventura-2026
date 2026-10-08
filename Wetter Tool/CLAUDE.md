@@ -97,6 +97,11 @@ Keine – alle entschieden (siehe unten).
   Vorher brach „… · 08.10. 18:30 · SkylineWebcams ↗“ auf dem iPhone in zwei Zeilen um (Stephan: „stört das Bild“).
   Version `20261008e`: Datum vor der Uhrzeit nur, wenn das Bild von einem anderen Tag stammt als der Strich – so passt
   „Grandes Playas, Corralejo · 22:00 · SkylineWebcams ↗“ auch bei 390 px ungekürzt.
+  **Version `20261008f`:** Die Punkte auf den Kurven liegen nicht mehr im SVG (dort verdeckte sie der schwarze Strich),
+  sondern als `<i class="mg-wpunkt">` in der Ebene `.mg-punkte` direkt nach `.mg-cursor` in `.mg-wrap`; `punktFuer(z)` legt
+  sie bei Bedarf an, `zeichnen()` leert die Ebene, `wertlinienSetzen()` setzt left = `el.cursor.offsetLeft`, top = y.
+  Achtung: `.mg-punkt` (ohne w) sind die Farbpunkte im ☰-Menü – nicht verwechseln. `elementFromPoint` taugt wegen
+  `pointer-events: none` nicht als Test für die Ebenenfolge; stattdessen Zoom-Screenshot.
 - **Sonnenschein aus der Sonnenkraft (06.10.2026, live, Version `20261006b`):** Open-Meteos `sunshine_duration` zählt
   fast jede helle Stunde voll (Schwelle auf den Stundenmittelwert → „Zaun“ aus 60-Minuten-Balken, Tagessumme ≈ Tageslänge).
   Jetzt rechnet `sonneMinuten(direkt, terr)`: `direct_radiation` / (`terrestrial_radiation` × 0,7^(Luftmasse^0,678) × 0,75),

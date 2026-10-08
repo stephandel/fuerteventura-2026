@@ -670,6 +670,7 @@
       }
       s.push('</svg>');
       el.svgWrap.innerHTML = s.join('');
+      if (el.punkte) el.punkte.innerHTML = '';   // Punkte werden in wertlinienSetzen neu angelegt
       el.svgWrap.style.height = hoehe + 'px';
       el.wrap.style.height = hoehe + 'px';
 
@@ -762,8 +763,8 @@
 
       // Waagerechte Linie auf Höhe des gewählten Werts (Lage wird beim Wischen nachgeführt)
       if (z.wertlinie) s.push('<line class="mg-wertlinie" id="' + kid('wl-' + z.id) + '" x1="' + x(0) + '" x2="' + x(n - 1) + '" y1="0" y2="0" stroke="' + z.farbe + '" visibility="hidden"/>');
-      // Punkt auf der Kurve an der gewählten Stelle (nur bei Linien, nicht bei Balken)
-      if (z.wertlinie && z.art !== 'balken') s.push('<circle class="mg-wertpunkt" id="' + kid('wp-' + z.id) + '" r="3.5" fill="' + z.farbe + '" visibility="hidden"/>');
+      // Der Punkt auf der Kurve an der gewählten Stelle liegt seit 08.10.2026 nicht mehr im SVG, sondern in der
+      // Ebene .mg-punkte ueber dem schwarzen Strich (siehe wertlinienSetzen) - sonst verdeckt der Strich den Punkt.
 
       // Tages-Fußzeile unter der Sonnenzeile
       if (z.tagesinfo && g.extra && 24 * pxH >= 60) {
@@ -957,19 +958,28 @@
       el.wrap.style.setProperty('--mg-sicht-mitte', Math.round(mitte) + 'px');
     }
 
+    // Punkt auf der Kurve: liegt als kleines HTML-Element in .mg-punkte (ueber dem schwarzen Strich);
+    // wird beim ersten Bedarf angelegt, bei jedem Neuzeichnen geleert (Zeilenauswahl kann sich aendern)
+    function punktFuer(z){
+      if (!el.punkte) return null;
+      var p = document.getElementById(kid('wpo-' + z.id));
+      if (!p) { p = document.createElement('i'); p.className = 'mg-wpunkt'; p.id = kid('wpo-' + z.id); p.style.background = z.farbe; p.hidden = true; el.punkte.appendChild(p); }
+      return p;
+    }
     function wertlinienSetzen(f){
+      var cursorX = el.cursor ? el.cursor.offsetLeft : null;
       geo.zeilen.forEach(function(g){
         if (!g.z.wertlinie) return;
         var linie = document.getElementById(kid('wl-' + g.z.id)), marke = document.getElementById(kid('wlw-' + g.z.id));
         if (!linie || !marke) return;
-        var w = wertBei(g.z, f), punkt = document.getElementById(kid('wp-' + g.z.id));
-        if (w.v == null) { linie.setAttribute('visibility', 'hidden'); marke.hidden = true; if (punkt) punkt.setAttribute('visibility', 'hidden'); return; }
+        var w = wertBei(g.z, f), punkt = g.z.art !== 'balken' ? punktFuer(g.z) : null;
+        if (w.v == null) { linie.setAttribute('visibility', 'hidden'); marke.hidden = true; if (punkt) punkt.hidden = true; return; }
         var yy = g.yv(Math.max(g.s.lo, Math.min(g.s.hi, w.v)));
         var xx = geo.padL + f * pxH;
         // Linie wie bei Marea: von der Achse bis zum Punkt an der gewählten Stelle
         linie.setAttribute('x1', el.scroll.scrollLeft); linie.setAttribute('x2', xx);
         linie.setAttribute('y1', yy); linie.setAttribute('y2', yy); linie.setAttribute('visibility', 'visible');
-        if (punkt) { punkt.setAttribute('cx', xx); punkt.setAttribute('cy', yy); punkt.setAttribute('visibility', 'visible'); }
+        if (punkt) { punkt.style.left = (cursorX != null ? cursorX : xx - el.scroll.scrollLeft) + 'px'; punkt.style.top = yy + 'px'; punkt.hidden = false; }
         // Zahl an der Achse, so formatiert wie in der Werteliste (Tide mit zwei Stellen)
         var iR = Math.max(0, Math.min(geo.n - 1, Math.round(f)));
         var c = g.z.id === 'tide' ? { wert: dez(w.v, 2) } : (g.z.zelle ? g.z.zelle(w.v, w.v2, daten, iR, null) : { wert: dez(w.v, 1) });
@@ -1482,7 +1492,9 @@
         '<div class="mg-wrap" id="' + kid('wrap') + '">' +
           '<div class="mg-scroll" id="' + kid('scroll') + '"><div class="mg-svgwrap" id="' + kid('svgwrap') + '"></div></div>' +
           '<div class="mg-achse" id="' + kid('achse') + '"></div>' +
-          '<div class="mg-cursor" aria-hidden="true"></div>' +
+          '<div class="mg-cursor" id="' + kid('cursor') + '" aria-hidden="true"></div>' +
+          // Ebene fuer die Punkte auf den Kurven - nach dem Strich, damit sie ueber ihm liegen
+          '<div class="mg-punkte" id="' + kid('punkte') + '" aria-hidden="true"></div>' +
           // Rand-Pfeile: erscheinen, wenn "jetzt" aus dem Bild gewischt ist, und führen zurück
           '<button type="button" class="mg-randpfeil mg-randpfeil-l" id="' + kid('rpl') + '" aria-label="Zurück zu jetzt" title="Zurück zu jetzt">' + ico('chevl') + ico('ziel') + '</button>' +
           '<button type="button" class="mg-randpfeil mg-randpfeil-r" id="' + kid('rpr') + '" aria-label="Zurück zu jetzt" title="Zurück zu jetzt">' + ico('ziel') + ico('chevr') + '</button>' +
@@ -1533,6 +1545,8 @@
       el.svgWrap = document.getElementById(kid('svgwrap'));
       el.achse   = document.getElementById(kid('achse'));
       el.wrap    = document.getElementById(kid('wrap'));
+      el.cursor  = document.getElementById(kid('cursor'));
+      el.punkte  = document.getElementById(kid('punkte'));
       el.zeit    = document.getElementById(kid('zeit'));
       el.werte   = document.getElementById(kid('werte'));
       el.cam     = document.getElementById(kid('cam'));
