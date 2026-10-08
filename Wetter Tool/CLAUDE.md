@@ -92,6 +92,9 @@ Keine – alle entschieden (siehe unten).
   (Stephans ausdrücklicher Wunsch – ein Versuch, Fahne + Diagramm in einen Kasten `.mg-oben` zu stecken, damit sie mit dem
   Diagramm verschwindet, wurde deshalb wieder zurückgenommen). Ist das ☰-Menü offen, fällt die Fahne auf `z-index: 5`
   (`.mg:has(.mg-zeilen-panel:not([hidden]))`), damit das nach oben aufklappende Menü nicht verdeckt wird.
+  **08.10. spät (Version `20261008d`):** Bildunterschrift (`.mg-cam-text`, Webcam und Satellit) ist immer einzeilig:
+  Flex, `white-space: nowrap`; der Name im `<b>` kürzt sich mit …, Uhrzeit/Quelle stehen in `.mg-cam-rest` und bleiben ganz.
+  Vorher brach „… · 08.10. 18:30 · SkylineWebcams ↗“ auf dem iPhone in zwei Zeilen um (Stephan: „stört das Bild“).
 - **Sonnenschein aus der Sonnenkraft (06.10.2026, live, Version `20261006b`):** Open-Meteos `sunshine_duration` zählt
   fast jede helle Stunde voll (Schwelle auf den Stundenmittelwert → „Zaun“ aus 60-Minuten-Balken, Tagessumme ≈ Tageslänge).
   Jetzt rechnet `sonneMinuten(direkt, terr)`: `direct_radiation` / (`terrestrial_radiation` × 0,7^(Luftmasse^0,678) × 0,75),

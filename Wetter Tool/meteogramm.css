@@ -180,8 +180,12 @@
 .mg-cam { position: relative; margin: 0 auto 10px; border-radius: 12px; overflow: hidden; background: var(--mg-flaeche2); border: 1px solid var(--mg-rand); height: clamp(120px, 40vw, 240px); width: calc(100% - 28px); }
 .mg-cam img { width: 100%; height: 100%; object-fit: cover; display: block; transition: filter .3s; }
 .mg-cam.is-leer img { opacity: 0.25; filter: grayscale(1); }
-.mg-cam-text { position: absolute; left: 0; right: 0; bottom: 0; padding: 6px 10px; font-size: 12.5px; color: #fff; background: linear-gradient(0deg, rgba(0,0,0,0.72), rgba(0,0,0,0)); }
-.mg-cam.is-leer .mg-cam-text { background: none; color: var(--mg-text-still); top: 0; display: flex; align-items: center; justify-content: center; text-align: center; }
+/* Bildunterschrift immer einzeilig (08.10.2026): der Name wird notfalls mit … gekuerzt, Uhrzeit und Quelle bleiben ganz */
+.mg-cam-text { position: absolute; left: 0; right: 0; bottom: 0; padding: 6px 10px; font-size: 12.5px; color: #fff; background: linear-gradient(0deg, rgba(0,0,0,0.72), rgba(0,0,0,0));
+  display: flex; align-items: baseline; white-space: nowrap; }
+.mg-cam-text > b { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.mg-cam-rest { flex: 0 0 auto; }
+.mg-cam.is-leer .mg-cam-text { background: none; color: var(--mg-text-still); top: 0; display: flex; align-items: center; justify-content: center; text-align: center; white-space: normal; }
 /* Umschalter zwischen mehreren Kameras eines Orts, oben rechts im Bild */
 .mg-camwahl { position: absolute; top: 8px; right: 8px; display: flex; gap: 4px; z-index: 2; }
 .mg-camwahl[hidden] { display: none; }

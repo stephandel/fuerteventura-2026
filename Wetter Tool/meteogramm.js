@@ -1213,11 +1213,12 @@
       el.cam.classList.remove('is-leer');
       if (camAktuell !== url) { camAktuell = url; el.camImg.src = url; }
       var quelle = cam.seite ? '<a href="' + esc(cam.seite) + '" target="_blank" rel="noopener" style="color:inherit">' + esc(cam.quelle || 'Quelle') + ' ↗</a>' : esc(cam.quelle || '');
-      el.camText.innerHTML = '<b>📷 ' + esc(cam.name) + '</b>' +
+      // Eine Zeile: der Name darf mit … gekuerzt werden, Uhrzeit und Quelle bleiben immer ganz lesbar (mg-cam-rest)
+      el.camText.innerHTML = '<b>📷 ' + esc(cam.name) + '</b><span class="mg-cam-rest">' +
         (cam.hinweis ? ' <span class="mg-camhint">' + esc(cam.hinweis) + '</span>' : '') +
         (live ? ' <span class="mg-live">live</span>'
               : ' · ' + pad2(stempel.getDate()) + '.' + pad2(stempel.getMonth() + 1) + '. ' + pad2(stempel.getHours()) + ':' + pad2(stempel.getMinutes())) +
-        (quelle ? ' · ' + quelle : '');
+        (quelle ? ' · ' + quelle : '') + '</span>';
     }
 
     // ---------- Satelliten- und Regenkarte ----------
@@ -1288,9 +1289,9 @@
       el.kAuflage.hidden = !mitRegen;
       if (mitRegen) el.kAuflage.src = kartenUrl(zeit, true);
       var o = echtNachOrtszeit(zeit);      // beschriftet wird in Ortszeit des Urlaubsorts
-      el.kText.innerHTML = '<b>' + (mitRegen ? '🌧️ Niederschlag' : '🛰️ Satellit') + '</b> · ' +
+      el.kText.innerHTML = '<b>' + (mitRegen ? '🌧️ Niederschlag' : '🛰️ Satellit') + '</b><span class="mg-cam-rest"> · ' +
         pad2(o.getDate()) + '.' + pad2(o.getMonth() + 1) + '. ' + pad2(o.getHours()) + ':' + pad2(o.getMinutes()) +
-        ' · <a href="' + esc(KARTE.link) + '" target="_blank" rel="noopener" style="color:inherit">' + esc(KARTE.quelle) + ' ↗</a>';
+        ' · <a href="' + esc(KARTE.link) + '" target="_blank" rel="noopener" style="color:inherit">' + esc(KARTE.quelle) + ' ↗</a></span>';
     }
 
     function filmSchalten(){
