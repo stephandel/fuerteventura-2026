@@ -108,10 +108,11 @@ html.vollbild #meteogramm { --mg-haft-oben: env(safe-area-inset-top, 0px) !impor
 /* Oben bleibt der Streifen für Notch und Uhrzeit frei und wird abgedeckt, damit das Diagramm nicht darunter durchscheint */
 html.vollbild body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; height: env(safe-area-inset-top, 0px); background: var(--surface); z-index: 49; pointer-events: none; }
 html.vollbild .nach-oben { display: none; }
-/* Im Vollbild nutzt das Tool auf dem Handy die volle Breite: über den 20-px-Seitenrand hinaus, ohne Rahmen und Ecken */
+/* Auf dem Handy nutzt das Wetter-Tool immer die volle Breite (seit 08.10.2026, erst nur im Vollbild):
+   über den 20-px-Seitenrand hinaus, ohne Seitenrahmen und runde Ecken */
 @media (max-width: 560px) {
-  html.vollbild #meteogramm { margin-left: -20px; margin-right: -20px; border-left: 0; border-right: 0; border-radius: 0; }
-  html.vollbild #meteogramm .mg-readout { border-radius: 0 0 12px 12px; }
+  #meteogramm { margin-left: -20px; margin-right: -20px; border-left: 0; border-right: 0; border-radius: 0; }
+  #meteogramm .mg-readout { border-radius: 0 0 12px 12px; }
 }
 @media (prefers-reduced-motion: reduce) { nav.topnav, .tabbar { transition: none; } }
 body { padding-bottom: env(safe-area-inset-bottom, 0px); }

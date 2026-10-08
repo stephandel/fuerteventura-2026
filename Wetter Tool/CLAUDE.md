@@ -75,7 +75,7 @@ Keine – alle entschieden (siehe unten).
   `--mg-haft-oben` = Safe-Area oben (Streifen für Notch/Uhrzeit per `body::before` abgedeckt), `--mg-haft-unten` = 0,
   Knopfleiste bekommt `padding-bottom` + Safe-Area unten und sitzt ganz am Bildschirmrand („so tief wie möglich“),
   Lupe rutscht entsprechend mit. Seitenwechsel (hashchange) beendet das Vollbild (`FUERTE_MG.vollbild(false)`).
-  **08.10.:** Im Vollbild nutzt das Tool auf dem Handy (≤ 560 px) die volle Breite: `html.vollbild #meteogramm` mit
+  **08.10.:** Auf dem Handy (≤ 560 px) nutzt das Tool **immer** die volle Breite (erst nur im Vollbild, dann auf Stephans Wunsch generell): `#meteogramm` mit
   `margin: 0 -20px`, ohne Seitenrahmen und Ecken (CSS in `../index.html`); das Diagramm zeichnet sich über den
   ResizeObserver neu und behält die Stelle. 390 statt 350 px → gut eine Stunde mehr im Bild.
 - **Sonnenschein aus der Sonnenkraft (06.10.2026, live, Version `20261006b`):** Open-Meteos `sunshine_duration` zählt
