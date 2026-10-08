@@ -75,6 +75,9 @@ Keine – alle entschieden (siehe unten).
   `--mg-haft-oben` = Safe-Area oben (Streifen für Notch/Uhrzeit per `body::before` abgedeckt), `--mg-haft-unten` = 0,
   Knopfleiste bekommt `padding-bottom` + Safe-Area unten und sitzt ganz am Bildschirmrand („so tief wie möglich“),
   Lupe rutscht entsprechend mit. Seitenwechsel (hashchange) beendet das Vollbild (`FUERTE_MG.vollbild(false)`).
+  **08.10.:** Im Vollbild nutzt das Tool auf dem Handy (≤ 560 px) die volle Breite: `html.vollbild #meteogramm` mit
+  `margin: 0 -20px`, ohne Seitenrahmen und Ecken (CSS in `../index.html`); das Diagramm zeichnet sich über den
+  ResizeObserver neu und behält die Stelle. 390 statt 350 px → gut eine Stunde mehr im Bild.
 - **Sonnenschein aus der Sonnenkraft (06.10.2026, live, Version `20261006b`):** Open-Meteos `sunshine_duration` zählt
   fast jede helle Stunde voll (Schwelle auf den Stundenmittelwert → „Zaun“ aus 60-Minuten-Balken, Tagessumme ≈ Tageslänge).
   Jetzt rechnet `sonneMinuten(direkt, terr)`: `direct_radiation` / (`terrestrial_radiation` × 0,7^(Luftmasse^0,678) × 0,75),
