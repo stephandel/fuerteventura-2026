@@ -103,10 +103,12 @@
 .mg-vollbild .mg-zeit { flex-wrap: nowrap; max-width: 100%; font-size: 0.92rem; padding: 4px 10px; gap: 6px; }
 .mg-vollbild .mg-zeit > span:first-child { white-space: nowrap; }
 .mg-vollbild .mg-lage { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; font-size: 12px; }
-/* Platz fuer den Home-Balken des iPhones nur, solange die Leiste unten am Rand haftet (Klasse is-haftend, siehe meteogramm.js) */
+/* Im Vollbild haftet die Leiste knapp ueber dem Home-Balken des iPhones (Safe-Area unten), nie darauf.
+   Solange sie wirklich haftet (Klasse is-haftend, siehe meteogramm.js), zieht ::after die Leistenfarbe
+   bis zum Bildschirmrand - so sieht es aus wie eine Leiste bis ganz unten, die Knoepfe bleiben aber frei. */
+.mg-vollbild { --mg-haft-unten: env(safe-area-inset-bottom, 0px) !important; }
 .mg-vollbild .mg-knoepfe { border-bottom: 0; }
-.mg-vollbild .mg-knoepfe.is-haftend { padding-bottom: max(8px, env(safe-area-inset-bottom, 0px)); }
-.mg-vollbild .mg-ecke-halter { bottom: calc(var(--mg-haft-unten) + 64px + env(safe-area-inset-bottom, 0px)); }
+.mg-vollbild .mg-knoepfe.is-haftend::after { content: ""; position: absolute; left: 0; right: 0; top: 100%; height: env(safe-area-inset-bottom, 0px); background: var(--mg-flaeche); }
 .mg-haft-fuss { height: 1px; margin-top: -1px; visibility: hidden; pointer-events: none; }
 .mg-ecke-lupe { cursor: pointer; border: 0; background: transparent; -webkit-tap-highlight-color: transparent; }
 /* Ein Rahmen pro Gruppe: die Knöpfe darin ohne eigenen Rand, Trennstriche dazwischen */

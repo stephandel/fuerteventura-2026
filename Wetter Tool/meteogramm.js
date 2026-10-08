@@ -1539,12 +1539,15 @@
       // solange sie wirklich am Bildschirmrand haftet. Steht sie an ihrer normalen Stelle (Tool nach
       // oben weggescrollt), waere der Platz ein leerer Streifen. Der Fuehler unter der Leiste verraet es.
       (function(){
-        var fuehler = document.getElementById(kid('haftfuss')), leiste = wurzel.querySelector('.mg-knoepfe');
-        if (!fuehler || !leiste || !('IntersectionObserver' in window)) return;
-        new IntersectionObserver(function(eintraege){
-          var e = eintraege[eintraege.length - 1];
-          leiste.classList.toggle('is-haftend', !e.isIntersecting && e.boundingClientRect.top >= (window.innerHeight || 0) - 1);
-        }, { threshold: 0 }).observe(fuehler);
+        var fuehler = document.getElementById(kid('haftfuss')), leiste = wurzel.querySelector('.mg-knoepfe'), offen = false;
+        if (!fuehler || !leiste) return;
+        // Haftet die Leiste, ist sie von ihrer normalen Stelle (direkt ueber dem Fuehler) nach oben verschoben
+        function messen(){ offen = false; leiste.classList.toggle('is-haftend', fuehler.getBoundingClientRect().top - leiste.getBoundingClientRect().bottom > 1); }
+        function anfordern(){ if (!offen) { offen = true; requestAnimationFrame(messen); } }
+        window.addEventListener('scroll', anfordern, { passive: true });
+        window.addEventListener('resize', anfordern);
+        el.haftMessen = messen;
+        messen();
       })();
       if (KARTE) {
         el.karte    = document.getElementById(kid('karte'));
@@ -1712,7 +1715,7 @@
       if (x) x.hidden = !an;
       if (VOLLBILD_CB) { try { VOLLBILD_CB(an); } catch(e){} }
       // Die haftende Fahne rutscht beim Umschalten nach oben - das Diagramm soll dabei an Ort und Stelle bleiben
-      setTimeout(function(){ sichtMitte(); zoomKnoepfe(); }, 320);
+      setTimeout(function(){ sichtMitte(); zoomKnoepfe(); if (el.haftMessen) el.haftMessen(); }, 320);
     }
 
     // Wettermodell: Feld "Mix ▾" mit Aufklapp-Liste (Name, Langname, Hinweis)

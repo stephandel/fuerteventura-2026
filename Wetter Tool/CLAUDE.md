@@ -78,11 +78,14 @@ Keine – alle entschieden (siehe unten).
   **08.10.:** Auf dem Handy (≤ 560 px) nutzt das Tool **immer** die volle Breite (erst nur im Vollbild, dann auf Stephans Wunsch generell): `#meteogramm` mit
   `margin: 0 -20px`, ohne Seitenrahmen und Ecken (CSS in `../index.html`); das Diagramm zeichnet sich über den
   ResizeObserver neu und behält die Stelle. 390 statt 350 px → gut eine Stunde mehr im Bild.
-  **08.10. nachmittags (Version `20261008a`):** Der Platz für den iPhone-Home-Balken unter der Knopfleiste
-  (`padding-bottom: max(8px, safe-area)`) gilt nur noch mit Klasse `is-haftend` – gesetzt per IntersectionObserver
-  auf den Fühler `.mg-haft-fuss` direkt unter der Leiste (unterhalb des Bildschirms = Leiste haftet). Vorher stand
-  der leere Streifen auch dann unter der Leiste, wenn das Tool nach oben weggescrollt war (Stephans „roter Abstand“).
-  Der Rest-Abstand im Vollbild ist die Safe-Area (34 px auf dem iPhone, Home-Balken), kein Fehler.
+  **08.10. nachmittags (Version `20261008b`):** Im Vollbild haftet die Leiste mit `bottom: env(safe-area-inset-bottom)`
+  (`--mg-haft-unten`, in `.mg-vollbild` und `html.vollbild #meteogramm` mit `!important`), also knapp **über** dem
+  iPhone-Home-Balken, nie darauf. Kein `padding-bottom` mehr – das hatte beim Scrollen eine Übergangszone, in der die
+  Leiste ohne Polster auf dem Balken lag (Stephans Beobachtung „liegt über dem schwarzen Anzeiger“), und stand als
+  leerer Streifen auch unter der Leiste, wenn das Tool weggescrollt war („roter Abstand“). Haftet die Leiste wirklich
+  (Klasse `is-haftend`: Fühler `.mg-haft-fuss` direkt unter der Leiste, gemessen bei scroll/resize per rAF – Leiste ist dann
+  von ihrer normalen Stelle nach oben verschoben), zieht `::after` die Leistenfarbe bis zum Bildschirmrand. Getestet mit
+  nachgestellter Safe-Area 34 px: Abstand nie unter 34 px, Klasse stets passend.
 - **Sonnenschein aus der Sonnenkraft (06.10.2026, live, Version `20261006b`):** Open-Meteos `sunshine_duration` zählt
   fast jede helle Stunde voll (Schwelle auf den Stundenmittelwert → „Zaun“ aus 60-Minuten-Balken, Tagessumme ≈ Tageslänge).
   Jetzt rechnet `sonneMinuten(direkt, terr)`: `direct_radiation` / (`terrestrial_radiation` × 0,7^(Luftmasse^0,678) × 0,75),

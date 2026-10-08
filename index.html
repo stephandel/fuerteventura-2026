@@ -21,8 +21,8 @@
 <meta name="apple-mobile-web-app-title" content="Fuerteventura">
 <link rel="stylesheet" href="vendor/leaflet.css">
 <script defer src="vendor/leaflet.js"></script>
-<link rel="stylesheet" href="Wetter%20Tool/meteogramm.css?v=20261008a">
-<script defer src="Wetter%20Tool/meteogramm.js?v=20261008a"></script>
+<link rel="stylesheet" href="Wetter%20Tool/meteogramm.css?v=20261008b">
+<script defer src="Wetter%20Tool/meteogramm.js?v=20261008b"></script>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
 <link rel="apple-touch-icon" sizes="167x167" href="images/apple-touch-icon-167.png">
@@ -104,7 +104,7 @@ nav.topnav { position: sticky; top: 0; z-index: 50; background: var(--surface); 
 nav.topnav, .tabbar { transition: transform .28s ease; }
 html.vollbild nav.topnav { transform: translateY(-105%); }
 html.vollbild .tabbar { transform: translateY(115%); }
-html.vollbild #meteogramm { --mg-haft-oben: env(safe-area-inset-top, 0px) !important; --mg-haft-unten: 0px !important; }
+html.vollbild #meteogramm { --mg-haft-oben: env(safe-area-inset-top, 0px) !important; --mg-haft-unten: env(safe-area-inset-bottom, 0px) !important; }
 /* Oben bleibt der Streifen für Notch und Uhrzeit frei und wird abgedeckt, damit das Diagramm nicht darunter durchscheint */
 html.vollbild body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; height: env(safe-area-inset-top, 0px); background: var(--surface); z-index: 49; pointer-events: none; }
 html.vollbild .nach-oben { display: none; }
