@@ -21,8 +21,8 @@
 <meta name="apple-mobile-web-app-title" content="Fuerteventura">
 <link rel="stylesheet" href="vendor/leaflet.css">
 <script defer src="vendor/leaflet.js"></script>
-<link rel="stylesheet" href="Wetter%20Tool/meteogramm.css?v=20261007c">
-<script defer src="Wetter%20Tool/meteogramm.js?v=20261007a"></script>
+<link rel="stylesheet" href="Wetter%20Tool/meteogramm.css?v=20261008a">
+<script defer src="Wetter%20Tool/meteogramm.js?v=20261008a"></script>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
 <link rel="apple-touch-icon" sizes="167x167" href="images/apple-touch-icon-167.png">
@@ -12822,6 +12822,10 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     function urlSauber(u){
       u = String(u || '').trim();
       if (!u) return '';
+      // Vom Handy geteilt kommt oft „Ortsname https://maps.app.goo.gl/…“ – dann zaehlt nur der Link darin
+      var im = /https?:\/\/[^\s'"<>()\\]+/i.exec(u);
+      if (im) u = im[0].replace(/[.,;:!?]+$/, '');
+      else if (/\s/.test(u)) return '';
       if (!/^https?:\/\//i.test(u)) u = 'https://' + u;
       if (!/^https?:\/\/[^\s'"<>()\\]+$/i.test(u) || u.length > 400) return '';
       // Google-Maps-Adressen vom Rechner sind ellenlang: der Teil ab '/data=' und die Sitzungs-Parameter koennen weg

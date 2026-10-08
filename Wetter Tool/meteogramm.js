@@ -1506,6 +1506,8 @@
             '<div class="mg-zeilen-panel" id="' + kid('zpanel') + '" hidden><h4>Welche Zeilen?</h4></div>' +
           '</span></span>' +
         '</div>' +
+        // Fuehler direkt unter der Knopfleiste: ist er unterhalb des Bildschirms, haftet die Leiste gerade unten
+        '<div class="mg-haft-fuss" id="' + kid('haftfuss') + '" aria-hidden="true"></div>' +
         // Im Vollbild: × oben rechts am Bildschirm führt zurück
         '<button type="button" class="mg-vollbild-x" id="' + kid('vollx') + '" aria-label="Vollbild beenden" title="Vollbild beenden" hidden>' + ico('x') + '</button>' +
         (ANSICHTEN.length > 1 ? '<div class="mg-ansichten" id="' + kid('ansichten') + '" role="tablist" aria-label="Bildansicht"></div>' : '') +
@@ -1533,6 +1535,17 @@
       el.lage    = document.getElementById(kid('lage'));
       el.tipps   = document.getElementById(kid('tipps'));
       el.ansichten = document.getElementById(kid('ansichten'));
+      // Im Vollbild braucht die Knopfleiste unten Platz fuer den Home-Balken des iPhones - aber nur,
+      // solange sie wirklich am Bildschirmrand haftet. Steht sie an ihrer normalen Stelle (Tool nach
+      // oben weggescrollt), waere der Platz ein leerer Streifen. Der Fuehler unter der Leiste verraet es.
+      (function(){
+        var fuehler = document.getElementById(kid('haftfuss')), leiste = wurzel.querySelector('.mg-knoepfe');
+        if (!fuehler || !leiste || !('IntersectionObserver' in window)) return;
+        new IntersectionObserver(function(eintraege){
+          var e = eintraege[eintraege.length - 1];
+          leiste.classList.toggle('is-haftend', !e.isIntersecting && e.boundingClientRect.top >= (window.innerHeight || 0) - 1);
+        }, { threshold: 0 }).observe(fuehler);
+      })();
       if (KARTE) {
         el.karte    = document.getElementById(kid('karte'));
         el.kBasis   = document.getElementById(kid('kbasis'));
