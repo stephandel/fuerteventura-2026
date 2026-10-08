@@ -95,6 +95,8 @@ Keine – alle entschieden (siehe unten).
   **08.10. spät (Version `20261008d`):** Bildunterschrift (`.mg-cam-text`, Webcam und Satellit) ist immer einzeilig:
   Flex, `white-space: nowrap`; der Name im `<b>` kürzt sich mit …, Uhrzeit/Quelle stehen in `.mg-cam-rest` und bleiben ganz.
   Vorher brach „… · 08.10. 18:30 · SkylineWebcams ↗“ auf dem iPhone in zwei Zeilen um (Stephan: „stört das Bild“).
+  Version `20261008e`: Datum vor der Uhrzeit nur, wenn das Bild von einem anderen Tag stammt als der Strich – so passt
+  „Grandes Playas, Corralejo · 22:00 · SkylineWebcams ↗“ auch bei 390 px ungekürzt.
 - **Sonnenschein aus der Sonnenkraft (06.10.2026, live, Version `20261006b`):** Open-Meteos `sunshine_duration` zählt
   fast jede helle Stunde voll (Schwelle auf den Stundenmittelwert → „Zaun“ aus 60-Minuten-Balken, Tagessumme ≈ Tageslänge).
   Jetzt rechnet `sonneMinuten(direkt, terr)`: `direct_radiation` / (`terrestrial_radiation` × 0,7^(Luftmasse^0,678) × 0,75),

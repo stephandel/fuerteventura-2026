@@ -1213,11 +1213,14 @@
       el.cam.classList.remove('is-leer');
       if (camAktuell !== url) { camAktuell = url; el.camImg.src = url; }
       var quelle = cam.seite ? '<a href="' + esc(cam.seite) + '" target="_blank" rel="noopener" style="color:inherit">' + esc(cam.quelle || 'Quelle') + ' ↗</a>' : esc(cam.quelle || '');
-      // Eine Zeile: der Name darf mit … gekuerzt werden, Uhrzeit und Quelle bleiben immer ganz lesbar (mg-cam-rest)
+      // Eine Zeile: der Name darf mit … gekuerzt werden, Uhrzeit und Quelle bleiben immer ganz lesbar (mg-cam-rest).
+      // Das Datum steht nur dabei, wenn das Bild von einem anderen Tag ist als der Strich (die Fahne zeigt den Tag ja schon).
+      var strichT = new Date(daten.t0.getTime() + f * 3600000);
+      var andererTag = stempel && (stempel.getDate() !== strichT.getDate() || stempel.getMonth() !== strichT.getMonth());
       el.camText.innerHTML = '<b>📷 ' + esc(cam.name) + '</b><span class="mg-cam-rest">' +
         (cam.hinweis ? ' <span class="mg-camhint">' + esc(cam.hinweis) + '</span>' : '') +
         (live ? ' <span class="mg-live">live</span>'
-              : ' · ' + pad2(stempel.getDate()) + '.' + pad2(stempel.getMonth() + 1) + '. ' + pad2(stempel.getHours()) + ':' + pad2(stempel.getMinutes())) +
+              : ' · ' + (andererTag ? pad2(stempel.getDate()) + '.' + pad2(stempel.getMonth() + 1) + '. ' : '') + pad2(stempel.getHours()) + ':' + pad2(stempel.getMinutes())) +
         (quelle ? ' · ' + quelle : '') + '</span>';
     }
 
