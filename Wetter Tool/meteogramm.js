@@ -1468,7 +1468,8 @@
             '<div class="mg-modell-panel" id="' + kid('mpanel') + '" role="listbox" aria-label="Wettermodell" hidden></div>' +
           '</span>' +
         '</div>' +
-        // Datum, Uhrzeit und Wetterlage als Fahne oben am Auswahl-Strich; sie bleibt beim Scrollen stehen
+        // Datum, Uhrzeit und Wetterlage als Fahne oben am Auswahl-Strich; sie bleibt beim Scrollen stehen,
+        // solange irgendein Teil des Tools im Bild ist (Stephans Wunsch 08.10.: auch ueber Bild und Tipps)
         '<div class="mg-readout">' +
           '<div class="mg-zeit"><span id="' + kid('zeit') + '"></span><span class="mg-lage" id="' + kid('lage') + '"></span></div>' +
           // darunter die schmale Zeile mit den Werten, die im Diagramm keine Achsen-Zahl haben

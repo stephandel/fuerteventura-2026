@@ -86,6 +86,12 @@ Keine – alle entschieden (siehe unten).
   (Klasse `is-haftend`: Fühler `.mg-haft-fuss` direkt unter der Leiste, gemessen bei scroll/resize per rAF – Leiste ist dann
   von ihrer normalen Stelle nach oben verschoben), zieht `::after` die Leistenfarbe bis zum Bildschirmrand. Getestet mit
   nachgestellter Safe-Area 34 px: Abstand nie unter 34 px, Klasse stets passend.
+  **08.10. abends (Version `20261008c`):** Die Fahne `.mg-readout` hat jetzt `z-index: 8` (über der Knopfleiste 7):
+  scrollt man am Tool vorbei, taucht die Leiste **unter** der Fahne durch, statt sie zu verdecken (Stephan: „liegt über
+  dem schwarzen Anzeiger“). Die Fahne bleibt in beiden Modi oben kleben, solange irgendein Teil des Tools im Bild ist
+  (Stephans ausdrücklicher Wunsch – ein Versuch, Fahne + Diagramm in einen Kasten `.mg-oben` zu stecken, damit sie mit dem
+  Diagramm verschwindet, wurde deshalb wieder zurückgenommen). Ist das ☰-Menü offen, fällt die Fahne auf `z-index: 5`
+  (`.mg:has(.mg-zeilen-panel:not([hidden]))`), damit das nach oben aufklappende Menü nicht verdeckt wird.
 - **Sonnenschein aus der Sonnenkraft (06.10.2026, live, Version `20261006b`):** Open-Meteos `sunshine_duration` zählt
   fast jede helle Stunde voll (Schwelle auf den Stundenmittelwert → „Zaun“ aus 60-Minuten-Balken, Tagessumme ≈ Tageslänge).
   Jetzt rechnet `sonneMinuten(direkt, terr)`: `direct_radiation` / (`terrestrial_radiation` × 0,7^(Luftmasse^0,678) × 0,75),

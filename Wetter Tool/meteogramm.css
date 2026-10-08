@@ -58,7 +58,8 @@
 /* ---- Datumsfahne am oberen Ende des Auswahl-Strichs ----
    Bleibt beim Scrollen der Seite oben stehen, damit man immer sieht,
    zu welcher Stunde die Werte gehören. */
-.mg-readout { position: sticky; top: var(--mg-haft-oben); z-index: 6; display: flex; flex-direction: column; align-items: center; min-width: 0;
+/* z-index 8: liegt ueber der Knopfleiste (7) - scrollt die Leiste an ihr vorbei, taucht sie unter der Fahne durch */
+.mg-readout { position: sticky; top: var(--mg-haft-oben); z-index: 8; display: flex; flex-direction: column; align-items: center; min-width: 0;
   padding: 6px 14px 4px; background: var(--mg-flaeche); border-radius: 0 0 12px 12px; box-shadow: 0 10px 14px -10px rgba(0,0,0,.55); }
 /* Eine Zeile (Stephans Wahl 05.10.2026): Datum, Uhrzeit, Abstand und Wetterlage zusammen im Kasten */
 .mg-zeit { display: inline-flex; align-items: baseline; gap: 8px; flex-wrap: wrap; justify-content: center; padding: 5px 12px; border-radius: 8px;
@@ -108,6 +109,8 @@
    bis zum Bildschirmrand - so sieht es aus wie eine Leiste bis ganz unten, die Knoepfe bleiben aber frei. */
 .mg-vollbild { --mg-haft-unten: env(safe-area-inset-bottom, 0px) !important; }
 .mg-vollbild .mg-knoepfe { border-bottom: 0; }
+/* Ist das ☰-Menue offen (klappt nach oben auf), darf die Fahne es nicht verdecken */
+.mg:has(.mg-zeilen-panel:not([hidden])) .mg-readout { z-index: 5; }
 .mg-vollbild .mg-knoepfe.is-haftend::after { content: ""; position: absolute; left: 0; right: 0; top: 100%; height: env(safe-area-inset-bottom, 0px); background: var(--mg-flaeche); }
 .mg-haft-fuss { height: 1px; margin-top: -1px; visibility: hidden; pointer-events: none; }
 .mg-ecke-lupe { cursor: pointer; border: 0; background: transparent; -webkit-tap-highlight-color: transparent; }
