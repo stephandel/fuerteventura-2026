@@ -1570,9 +1570,23 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
 .ip-row .ip-tile.planned { opacity: .55; }
 .ip-eigen { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
 .ip-eigen[hidden] { display: none; }
-.ip-eigen input[type=text] { flex: 1 1 180px; min-width: 0; min-height: 40px; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface-2); color: var(--ink); font: inherit; font-size: 16px; }
-.ip-eigen select { min-height: 40px; padding: 6px 8px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface-2); color: var(--ink); font: inherit; font-size: 16px; }
 .ip-eigen .btn { min-height: 40px; }
+.ip-eigen .ip-leer { flex: 1 1 220px; }
+/* Dialog fuer eigene Termine (seit 08.10.2026): Symbol, Name, Karte, Website, Bild */
+.ip-e-karte label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 700; }
+.ip-e-karte label small { font-weight: 400; color: var(--ink-dim); }
+.ip-e-karte input, .ip-e-karte select { width: 100%; min-height: 42px; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface-2); color: var(--ink); font: inherit; font-size: 16px; font-weight: 400; }
+.ip-e-karte .zeile select { width: auto; }
+.ip-e-karte .zeile input { flex: 1 1 160px; min-width: 0; }
+.ip-e-karte .bild { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.ip-e-karte .bild .vorschau { width: 96px; height: 72px; object-fit: cover; border-radius: 10px; flex: 0 0 auto; }
+.ip-e-karte .bild .status { flex: 1 1 140px; font-size: 12.5px; color: var(--ink-dim); }
+.ip-e-karte .bild .btn { min-height: 36px; font-size: 13px; }
+.ip-e-karte .knoepfe .loeschen { margin-right: auto; color: var(--bad); border-color: var(--bad); }
+.ip-e-karte .knoepfe .loeschen.sicher { background: var(--bad); color: #fff; }
+.ip-sel-links { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 3px; }
+.ip-sel-links[hidden] { display: none; }
+.ip-sel-links a { font-size: 12px; font-weight: 700; color: var(--teal); text-decoration: none; border: 1px solid var(--border); border-radius: 999px; padding: 2px 9px; }
 .ip-leer { font-size: 12px; color: var(--ink-dim); font-style: italic; }
 
 /* Kacheln im Foto-Stil */
@@ -3392,11 +3406,10 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
         </div>
         <button type="button" class="ip-ortknopf" id="ip-ort" aria-pressed="false">📍 Entfernungen ab meinem Standort</button>
         <div class="ip-row" id="ip-row"></div>
-        <form class="ip-eigen" id="ip-eigen-form" hidden>
-          <select id="ip-eigen-emoji" aria-label="Symbol"><option>📌</option><option>🎂</option><option>🍷</option><option>🤿</option><option>🏄</option><option>💆</option><option>📞</option><option>🛒</option><option>🎶</option><option>📸</option></select>
-          <input type="text" id="ip-eigen-text" placeholder="z. B. Tisch im Hafen 20 Uhr" maxlength="40" aria-label="Was ist geplant?">
-          <button type="submit" class="btn">Kachel anlegen</button>
-        </form>
+        <div class="ip-eigen" id="ip-eigen-form" hidden>
+          <button type="button" class="btn" id="ip-eigen-neu">＋ Eigenen Termin anlegen</button>
+          <span class="ip-leer">Mit Symbol, Name, Google-Maps-Link und Website – das Bild sucht die Seite dann selbst. Zum Ändern oder Löschen eine Kachel antippen und „Bearbeiten“ wählen.</span>
+        </div>
       </div>
       <div class="ip-leiste" id="ip-leiste"></div>
       <div class="ip-energie" id="ip-energie">
@@ -9423,7 +9436,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       ev.push({ typ: 'seite', at: new Date(n.at).getTime(), text: n.text });
     });
     Object.keys(notes || {}).forEach(function(slug){
-      var typ = slug.indexOf('ip:w:') === 0 ? 'wunsch' : slug.indexOf('ip:tb:') === 0 ? 'tagebuch' : 'notiz';
+      var typ = slug.indexOf('ip:w:') === 0 ? 'wunsch' : slug.indexOf('ip:tb:') === 0 ? 'tagebuch' : slug.indexOf('ip:e:') === 0 ? 'eigen' : 'notiz';
       (notes[slug] || []).forEach(function(n){
         if (n.offen) return;
         ev.push({ typ: typ, wer: n.by, at: n.at || 0, slug: slug, text: n.text });
@@ -9464,7 +9477,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       ziel.innerHTML = '<li class="aktiv-leer">Noch nichts passiert. Sobald einer von euch etwas markiert oder eine Notiz schreibt, steht es hier.</li>';
       return;
     }
-    var SYM = { notiz: '💬', herz: '❤️', aus: '🙈', wahl: '✅', haken: '☑️', seite: '✨', wunsch: '💖', tagebuch: '📔' };
+    var SYM = { notiz: '💬', herz: '❤️', aus: '🙈', wahl: '✅', haken: '☑️', seite: '✨', wunsch: '💖', tagebuch: '📔', eigen: '📌' };
     var ipName = function(slug){ try { return Planer ? Planer.name(slug) : slug; } catch(e){ return slug; } };
     var me = whoAmI();
     var peek = document.getElementById('home-aktiv-peek');
@@ -9479,6 +9492,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       if (e.typ === 'herz') return wer + ' ' + (ich ? 'magst' : 'mag') + ' ' + nameVon(e.slug);
       if (e.typ === 'wunsch') return wer + ' ' + (ich ? 'wünschst dir' : 'wünscht sich') + ' ' + ipName(e.slug);
       if (e.typ === 'tagebuch') return wer + ' ' + hat + ' ins Tagebuch geschrieben (' + ipName(e.slug) + ')';
+      if (e.typ === 'eigen') return wer + ' ' + hat + ' Links zu „' + ipName(e.slug) + '“ ergänzt';
       if (e.typ === 'aus') return wer + ' ' + hat + ' ' + nameVon(e.slug) + ' ausgeblendet';
       if (e.typ === 'haken') return wer + ' ' + hat + ' „' + todoTitel(e.slug) + '“ abgehakt';
       return wer + ' ' + hat + ' ' + nameVon(e.slug) + ' als Unterkunft gewählt';
@@ -9499,6 +9513,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       else if (e.typ === 'herz') was = wer + ' ' + (ich ? 'magst' : 'mag') + ' <b>' + escapeHtml(nameVon(e.slug)) + '</b>';
       else if (e.typ === 'wunsch') was = wer + ' ' + (ich ? 'wünschst dir' : 'wünscht sich') + ' <b>' + escapeHtml(ipName(e.slug)) + '</b>';
       else if (e.typ === 'tagebuch') was = wer + ' ' + hat + ' ins Tagebuch geschrieben (<b>' + escapeHtml(ipName(e.slug)) + '</b>): „' + escapeHtml(String(e.text || '').replace(/^★\d\s?/, '').slice(0, 90)) + '“';
+      else if (e.typ === 'eigen') was = wer + ' ' + hat + ' dem eigenen Termin <b>' + escapeHtml(ipName(e.slug)) + '</b> Karte, Website oder Bild hinzugefügt';
       else if (e.typ === 'aus') was = wer + ' ' + hat + ' <b>' + escapeHtml(nameVon(e.slug)) + '</b> ausgeblendet';
       else if (e.typ === 'haken') was = wer + ' ' + hat + ' „<b>' + escapeHtml(todoTitel(e.slug)) + '</b>“ abgehakt';
       else was = wer + ' ' + hat + ' <b>' + escapeHtml(nameVon(e.slug)) + '</b> als Unterkunft gewählt';
@@ -12779,8 +12794,10 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
         // alte Kachel aus der ersten Fassung - wird beim Laden auf den Markt des Tages umgestellt
         c = { id: ref, g: 'frei', t: 'Markt bummeln', s: 'welcher, steht im Tag', e: '🏪', img: 'images/kachel-markt.webp', len: 0, k: 'frei' };
       } else if (ref.indexOf('e:') === 0) {
-        var rest = ref.slice(2), sp = rest.indexOf(' ');
-        c = { id: ref, g: 'eigen', t: sp > 0 ? rest.slice(sp + 1) : rest, s: 'eigener Termin', e: sp > 0 ? rest.slice(0, sp) : '📌', len: 0, k: 'eigen' };
+        // Eigener Termin: Karte, Website und Bild liegen als gemeinsame Notiz 'ip:e:…' – deshalb nicht zwischenspeichern
+        var rest = ref.slice(2), sp = rest.indexOf(' '), inf = eigenInfo(ref);
+        var sx = 'eigener Termin' + (inf.m ? ' · 🗺' : '') + (inf.w ? ' · 🌐' : '');
+        return { id: ref, g: 'eigen', t: sp > 0 ? rest.slice(sp + 1) : rest, s: sx, e: sp > 0 ? rest.slice(0, sp) : '📌', len: 0, k: 'eigen', img: inf.b, maps: inf.m, web: inf.w };
       } else {
         FREI.concat(ESSEN).forEach(function(x){ if (x.id === ref) c = x; });
         if (c) { c.g = c.id.charAt(0) === 'f' ? 'frei' : 'essen'; c.k = c.g; c.len = 0; }
@@ -12798,6 +12815,57 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       return refs.map(kat).filter(Boolean);
     }
     function eigeneVorlagen(){ try { var a = JSON.parse(localStorage.getItem(EIGEN_KEY) || '[]'); return Array.isArray(a) ? a : []; } catch(e){ return []; } }
+    function vorlagenSetzen(l){ try { localStorage.setItem(EIGEN_KEY, JSON.stringify(l.slice(-30))); } catch(e){} }
+    // Karte, Website und Bild eines eigenen Termins: gemeinsame Notiz 'ip:e:<Symbol Name>' mit JSON {m, w, b};
+    // die juengste lesbare Notiz gilt. So sehen beide Handys dieselben Links, ohne dass der Server geaendert werden muss.
+    function eigenSlug(ref){ return 'ip:e:' + ref.slice(2); }
+    function urlSauber(u){
+      u = String(u || '').trim();
+      if (!u) return '';
+      if (!/^https?:\/\//i.test(u)) u = 'https://' + u;
+      if (!/^https?:\/\/[^\s'"<>()\\]+$/i.test(u) || u.length > 400) return '';
+      // Google-Maps-Adressen vom Rechner sind ellenlang: der Teil ab '/data=' und die Sitzungs-Parameter koennen weg
+      if (/^https?:\/\/(www\.)?google\.[a-z.]+\/maps\//i.test(u)) {
+        u = u.replace(/\/data=[^?#]*/, '/').replace(/([?&])(entry|g_ep|g_st|shorturl)=[^&#]*/g, '$1').replace(/[?&]+(#|$)/, '$1').replace(/\?&+/, '?');
+      }
+      return u;
+    }
+    function eigenInfo(ref){
+      var l = (typeof notes !== 'undefined' && notes[eigenSlug(ref)]) || [], best = null;
+      l.forEach(function(n){
+        if (best && (n.at || 0) < (best.at || 0)) return;
+        try { var o = JSON.parse(n.text || ''); if (o && typeof o === 'object') best = { at: n.at, o: o }; } catch(e){}
+      });
+      var o = best ? best.o : {};
+      return { m: urlSauber(o.m), w: urlSauber(o.w), b: urlSauber(o.b) };
+    }
+    function eigenInfoSetzen(ref, inf){
+      var me = whoAmI(); if (!me) return false;
+      var slug = eigenSlug(ref), alt = (typeof notes !== 'undefined' && notes[slug]) || [];
+      alt.slice().forEach(function(n){ if (n.by === me) removeNote(slug, n.id); });
+      var o = {}; if (inf.m) o.m = inf.m; if (inf.w) o.w = inf.w; if (inf.b) o.b = inf.b;
+      if (!Object.keys(o).length) return true;
+      var txt = JSON.stringify(o);
+      if (txt.length > 500) { delete o.b; txt = JSON.stringify(o); }   // der Server nimmt hoechstens 500 Zeichen
+      if (txt.length > 500) { delete o.w; txt = JSON.stringify(o); }
+      if (Object.keys(o).length) addNote(slug, txt);
+      return true;
+    }
+    // Vorschaubild zu einem Link: microlink.io liest die Seite und gibt das Teilen-Bild zurueck (bei Google Maps das Ortsfoto).
+    // Ohne Schluessel, 50 Abfragen am Tag – fuer eine Handvoll Termine reicht das.
+    function vorschauHolen(url){
+      return fetch('https://api.microlink.io/?url=' + encodeURIComponent(url), { mode: 'cors' })
+        .then(function(r){ return r.json(); })
+        .then(function(d){
+          var ok = d && d.status === 'success' && d.data;
+          return { bild: ok && d.data.image && d.data.image.url ? urlSauber(d.data.image.url) : '', titel: ok && d.data.title ? String(d.data.title) : '' };
+        }).catch(function(){ return { bild: '', titel: '' }; });
+    }
+    function eigenLinksHtml(c, klein){
+      if (!c || !c.maps && !c.web) return '';
+      return (c.maps ? '<a class="' + (klein ? '' : 'btn') + '" href="' + esc(c.maps) + '" target="_blank" rel="noopener">🗺 ' + (klein ? 'Karte' : 'In Google Maps öffnen') + ' ↗</a>' : '') +
+             (c.web ? '<a class="' + (klein ? '' : 'btn btn-outline') + '" href="' + esc(c.web) + '" target="_blank" rel="noopener">🌐 Website ↗</a>' : '');
+    }
 
     // ---- Plan (lokal + gemeinsam) ----
     function gueltig(p){ return p && typeof p.uid === 'string' && typeof p.ref === 'string' && tagVon(p.day) && (p.slot === 'tag' || p.slot === 'abend'); }
@@ -13557,6 +13625,11 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
         '<a class="ip-hero" href="#kalender" data-ip-zuheute="1" style="' + bild + '"><div class="he" aria-hidden="true">' + esc(c ? c.e : sonder ? sonder.e : '☀️') + '</div><div class="ht">' + esc(titel) + '</div><div class="hs">' + esc(unter) + '</div>' +
         (f.length ? '<div class="pills">' + f.slice(0, 4).map(function(x){ return '<span>' + esc(x.t) + '</span>'; }).join('') + '</div>' : '') + '</a>';
       if (!abend) h += heuteModus(t, c);
+      // Eigene Termine des Tages mit Karte oder Website: Knoepfe direkt unter dem Kopf
+      haupt.concat(ab).forEach(function(x){
+        if (x.g !== 'eigen' || !(x.maps || x.web)) return;
+        h += '<div class="ip-hm"><div class="ip-hm-next"><span class="lbl">' + (ab.indexOf(x) >= 0 ? 'Abends' : 'Eigener Termin') + '</span><b>' + esc(x.e + ' ' + x.t) + '</b><div class="ip-hm-btns">' + eigenLinksHtml(x, false) + '</div></div></div>';
+      });
       if (wsH && wsH.hinweise.length && !abend) h += '<div class="ip-hinweise">' + wsH.hinweise.map(function(x){ return '<div class="ip-hw ' + (x.l === 'rot' ? 'bad' : x.l === 'gelb' ? 'good' : 'info') + '">' + esc(x.m) + '</div>'; }).join('') + '</div>';
       // Calima heute oder morgen: eigener Hinweis, unabhaengig vom Plan
       var wHeute = wxTag(t.key), wMorgen = TAGE[t.i + 1] ? wxTag(TAGE[t.i + 1].key) : null;
@@ -13611,7 +13684,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     // Auswahl-Leiste unten (Antippen, dann Tag antippen)
     var selbar = document.createElement('div');
     selbar.className = 'ip-selbar'; selbar.hidden = true; selbar.setAttribute('role', 'status');
-    selbar.innerHTML = '<div class="ip-sel-bild" aria-hidden="true"></div><div class="ip-sel-text"><b></b><span></span></div><div class="ip-sel-btns"><button type="button" class="wunsch">🤍 Wunsch</button><button type="button" class="weg">🗑 Entfernen</button><button type="button" class="ab">Fertig</button></div>';
+    selbar.innerHTML = '<div class="ip-sel-bild" aria-hidden="true"></div><div class="ip-sel-text"><b></b><span></span><div class="ip-sel-links" hidden></div></div><div class="ip-sel-btns"><button type="button" class="edit" hidden>✎ Bearbeiten</button><button type="button" class="wunsch">🤍 Wunsch</button><button type="button" class="weg">🗑 Entfernen</button><button type="button" class="ab">Fertig</button></div>';
     var trash = document.createElement('div');
     trash.className = 'ip-trash'; trash.setAttribute('data-ip-drop', 'trash'); trash.textContent = '🗑 Hier loslassen zum Entfernen';
     var toastEl = document.createElement('div');
@@ -13633,9 +13706,12 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
         selbar.querySelector('.ip-sel-text span').textContent = 'Tippe auf den Tag, mit dem alles getauscht werden soll';
         selbar.querySelector('.weg').hidden = true;
         selbar.querySelector('.wunsch').hidden = true;
+        selbar.querySelector('.edit').hidden = true;
+        selbar.querySelector('.ip-sel-links').hidden = true;
       } else if (s) {
-        var wb = selbar.querySelector('.wunsch'), mw = !!wuensche(s.ref)[whoAmI()];
-        wb.hidden = s.ref.indexOf('e:') === 0;
+        var wb = selbar.querySelector('.wunsch'), mw = !!wuensche(s.ref)[whoAmI()], eigen = s.ref.indexOf('e:') === 0;
+        wb.hidden = eigen;
+        selbar.querySelector('.edit').hidden = !eigen;
         wb.classList.toggle('an', mw); wb.textContent = mw ? '❤️ Wunsch' : '🤍 Wunsch';
         var c = kat(s.ref), p = null;
         if (s.uid) plan.forEach(function(x){ if (x.uid === s.uid) p = x; });
@@ -13643,6 +13719,8 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
         b.style.cssText = stil(c); b.textContent = c.img ? '' : c.e;
         selbar.querySelector('b').textContent = c.t;
         selbar.querySelector('.ip-sel-text span').textContent = t ? 'Steht am ' + WD[t.wd] + ' ' + t.lab + ' · tippe auf einen anderen Tag zum Verschieben' : 'Tippe auf „Tagsüber“ oder „Abends“ eines Tages';
+        var lk = selbar.querySelector('.ip-sel-links'), lh = eigen ? eigenLinksHtml(c, true) : '';
+        lk.innerHTML = lh; lk.hidden = !lh;
         selbar.querySelector('.weg').hidden = !s.uid;
       }
       leisteZeichnen(); ablageZeichnen();
@@ -13656,6 +13734,97 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       meldung(mw ? 'Auf deiner Wunschliste' : 'Von deiner Wunschliste genommen');
     });
     selbar.querySelector('.weg').addEventListener('click', function(){ if (sel && sel.uid) { var u = sel.uid; sel = null; entfernen(u); } waehlen(null); });
+    selbar.querySelector('.edit').addEventListener('click', function(){ if (sel && sel.ref && sel.ref.indexOf('e:') === 0) eigenDialog(sel.ref); });
+
+    // ---- Eigener Termin: anlegen, bearbeiten, loeschen (seit 08.10.2026) ----
+    var EIGEN_SYMBOLE = ['📌', '🎂', '🍷', '🍽️', '🤿', '🏄', '💆', '📞', '🛒', '🎶', '📸', '⛵', '🚴', '🎁'];
+    function eigenDialog(ref){
+      var alt = ref ? kat(ref) : null, inf = ref ? eigenInfo(ref) : { m: '', w: '', b: '' };
+      var bild = inf.b, bildWeg = false, suche = 0, suchTimer = null;
+      var ov = document.createElement('div');
+      ov.className = 'ip-tb-ov';
+      ov.innerHTML = '<div class="ip-tb-karte ip-e-karte" role="dialog" aria-modal="true" aria-labelledby="ip-e-t">' +
+        '<h3 id="ip-e-t">' + (alt ? '✎ Termin bearbeiten' : '📌 Eigener Termin') + '</h3>' +
+        '<div class="zeile"><select class="sym" aria-label="Symbol">' + EIGEN_SYMBOLE.map(function(s){ return '<option' + (alt && alt.e === s ? ' selected' : '') + '>' + s + '</option>'; }).join('') + (alt && EIGEN_SYMBOLE.indexOf(alt.e) < 0 ? '<option selected>' + esc(alt.e) + '</option>' : '') + '</select>' +
+        '<input class="name" type="text" maxlength="40" placeholder="z. B. Tisch im Hafen 20 Uhr" aria-label="Was ist geplant?" value="' + (alt ? esc(alt.t) : '') + '"></div>' +
+        '<label>🗺 Google-Maps-Link <small>in Google Maps den Ort öffnen → „Teilen“ → Link kopieren</small><input class="maps" type="url" inputmode="url" autocapitalize="off" placeholder="https://maps.app.goo.gl/…" value="' + esc(inf.m) + '"></label>' +
+        '<label>🌐 Website <small>z. B. vom Restaurant oder Veranstalter</small><input class="web" type="url" inputmode="url" autocapitalize="off" placeholder="https://…" value="' + esc(inf.w) + '"></label>' +
+        '<div class="bild"><img class="vorschau" alt="" hidden><span class="status"></span><button type="button" class="btn btn-outline bild-weg" hidden>Bild entfernen</button></div>' +
+        '<p class="hinweis">Name, Links und Bild seht ihr beide. Die Kachel auf den Tagen bleibt erhalten, auch wenn du hier etwas änderst.</p>' +
+        '<div class="knoepfe">' + (alt ? '<button type="button" class="btn btn-outline loeschen">🗑 Löschen</button>' : '') + '<button type="button" class="btn btn-outline ab">Abbrechen</button><button type="button" class="btn ok">' + (alt ? 'Speichern' : 'Kachel anlegen') + '</button></div></div>';
+      document.body.appendChild(ov);
+      var nameEl = ov.querySelector('.name'), mapsEl = ov.querySelector('.maps'), webEl = ov.querySelector('.web');
+      var vs = ov.querySelector('.vorschau'), st = ov.querySelector('.status'), weg = ov.querySelector('.bild-weg');
+      function bildZeigen(){
+        vs.hidden = !bild; weg.hidden = !bild;
+        if (bild) { vs.src = bild; st.textContent = 'Dieses Bild kommt auf die Kachel.'; }
+        else st.textContent = (mapsEl.value.trim() || webEl.value.trim()) ? (bildWeg ? 'Ohne Bild – die Kachel zeigt das Symbol.' : 'Kein Bild gefunden – die Kachel zeigt das Symbol.') : 'Sobald ein Link drinsteht, sucht die Seite ein passendes Bild.';
+      }
+      function bildSuchen(){
+        var u = urlSauber(mapsEl.value) || urlSauber(webEl.value);
+        if (!u || bildWeg) { bildZeigen(); return; }
+        var nr = ++suche;
+        st.textContent = 'Bild wird gesucht …';
+        vorschauHolen(u).then(function(r){
+          if (nr !== suche) return;
+          if (r.bild) bild = r.bild;
+          else if (u !== urlSauber(webEl.value) && urlSauber(webEl.value)) return vorschauHolen(urlSauber(webEl.value)).then(function(r2){ if (nr === suche) { if (r2.bild) bild = r2.bild; bildZeigen(); } });
+          // Name noch leer: den Namen des Orts vorschlagen (ohne „· Spain“-Anhang)
+          if (!nameEl.value.trim() && r.titel && !/^Google Maps$/i.test(r.titel)) nameEl.value = r.titel.replace(/\s*[·|–-]\s*(Spain|Spanien|Google Maps)\s*$/i, '').slice(0, 40);
+          bildZeigen();
+        });
+      }
+      function linkGeaendert(){ bildWeg = false; clearTimeout(suchTimer); suchTimer = setTimeout(bildSuchen, 700); }
+      [mapsEl, webEl].forEach(function(el){ el.addEventListener('input', linkGeaendert); el.addEventListener('change', function(){ clearTimeout(suchTimer); bildSuchen(); }); });
+      weg.addEventListener('click', function(){ bild = ''; bildWeg = true; bildZeigen(); });
+      bildZeigen();
+      function zu(){ ov.remove(); }
+      ov.addEventListener('click', function(ev){ if (ev.target === ov) zu(); });
+      ov.querySelector('.ab').addEventListener('click', zu);
+      var lb = ov.querySelector('.loeschen');
+      if (lb) lb.addEventListener('click', function(){
+        if (!lb.classList.contains('sicher')) {
+          var n = plan.filter(function(p){ return p.ref === ref; }).length;
+          lb.classList.add('sicher'); lb.textContent = n ? 'Wirklich? Steht auf ' + n + (n === 1 ? ' Tag' : ' Tagen') : 'Wirklich löschen?';
+          setTimeout(function(){ lb.classList.remove('sicher'); lb.textContent = '🗑 Löschen'; }, 3500);
+          return;
+        }
+        var me = whoAmI();
+        vorlagenSetzen(eigeneVorlagen().filter(function(r){ return r !== ref; }));
+        var vorher = plan.length;
+        plan = plan.filter(function(p){ return p.ref !== ref; });
+        if (me) ((typeof notes !== 'undefined' && notes[eigenSlug(ref)]) || []).slice().forEach(function(n){ if (n.by === me) removeNote(eigenSlug(ref), n.id); });
+        zu(); sel = null; waehlen(null);
+        meldung(vorher > plan.length ? 'Termin gelöscht und von ' + (vorher - plan.length) + (vorher - plan.length === 1 ? ' Tag' : ' Tagen') + ' genommen' : 'Termin gelöscht');
+        geaendert();
+      });
+      ov.querySelector('.ok').addEventListener('click', function(){
+        var txt = nameEl.value.replace(/\|/g, '/').replace(/\s+/g, ' ').trim().slice(0, 40);
+        if (!txt) { nameEl.focus(); return; }
+        var neu = { m: urlSauber(mapsEl.value), w: urlSauber(webEl.value), b: bild };
+        var neuRef = 'e:' + ov.querySelector('.sym').value + ' ' + txt;
+        var mitInfo = !!(neu.m || neu.w || neu.b), altInfo = ref ? eigenInfo(ref) : { m: '', w: '', b: '' };
+        var infoAnders = neu.m !== altInfo.m || neu.w !== altInfo.w || neu.b !== altInfo.b;
+        if ((mitInfo || (ref && neuRef !== ref && (altInfo.m || altInfo.w || altInfo.b))) && !whoAmI()) { askWho(true); st.textContent = 'Bitte erst sagen, wer du bist – dann die Links noch einmal speichern.'; return; }
+        var l = eigeneVorlagen();
+        if (ref && neuRef !== ref) {
+          // Umbenannt oder neues Symbol: Kacheln auf den Tagen mitnehmen, Links unter dem neuen Namen ablegen
+          plan.forEach(function(p){ if (p.ref === ref) p.ref = neuRef; });
+          l = l.filter(function(r){ return r !== ref; });
+          var me2 = whoAmI();
+          if (me2) ((typeof notes !== 'undefined' && notes[eigenSlug(ref)]) || []).slice().forEach(function(n){ if (n.by === me2) removeNote(eigenSlug(ref), n.id); });
+          eigenInfoSetzen(neuRef, neu);
+        } else if (infoAnders) {
+          eigenInfoSetzen(neuRef, neu);
+        }
+        if (l.indexOf(neuRef) < 0) l.push(neuRef);
+        vorlagenSetzen(l);
+        zu();
+        if (ref) { sel = null; waehlen(null); meldung('Gespeichert'); geaendert(); }
+        else { tab = 'eigen'; waehlen({ ref: neuRef, uid: null }); meldung('Kachel angelegt – jetzt auf einen Tag tippen'); }
+      });
+      setTimeout(function(){ (alt ? mapsEl : nameEl).focus(); }, 50);
+    }
 
     // ---- Ziehen: Maus sofort, Finger nach kurzem Festhalten ----
     var zug = null, klickSperre = false, raf = 0;
@@ -13811,19 +13980,8 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     // ---- Knoepfe ----
     var tabs = $('ip-tabs');
     if (tabs) tabs.addEventListener('click', function(e){ var b = e.target.closest('.ip-tab'); if (b) { tab = b.getAttribute('data-tab'); ablageZeichnen(); } });
-    var form = $('ip-eigen-form');
-    if (form) form.addEventListener('submit', function(e){
-      e.preventDefault();
-      var inp = $('ip-eigen-text'), txt = inp.value.replace(/\|/g, '/').replace(/\s+/g, ' ').trim().slice(0, 40);
-      if (!txt) { inp.focus(); return; }
-      var ref = 'e:' + $('ip-eigen-emoji').value + ' ' + txt, l = eigeneVorlagen();
-      if (l.indexOf(ref) < 0) l.push(ref);
-      try { localStorage.setItem(EIGEN_KEY, JSON.stringify(l.slice(-30))); } catch(e2){}
-      inp.value = ''; inp.blur();
-      waehlen({ ref: ref, uid: null });
-      meldung('Kachel angelegt – jetzt auf einen Tag tippen');
-    });
     function knopf(id, fn){ var b = $(id); if (b) b.addEventListener('click', fn); }
+    knopf('ip-eigen-neu', function(){ eigenDialog(null); });
     knopf('ip-zuheute', function(){ zuTag(heuteIdx(), true); });
     knopf('ip-ort', function(){
       if (ortAn && meinOrt) { ortAn = false; ablageZeichnen(); return; }
@@ -13834,7 +13992,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
         alles(); meldung('Sortiert nach Entfernung von hier');
       }, function(err){ b.textContent = '📍 Entfernungen ab meinem Standort'; meldung(standortFehlerText(err)); });
     });
-    knopf('ip-neu', function(){ tab = 'eigen'; ablageZeichnen(); var i2 = $('ip-eigen-text'); if (i2) i2.focus(); });
+    knopf('ip-neu', function(){ tab = 'eigen'; ablageZeichnen(); eigenDialog(null); });
     knopf('ip-leeren', function(){
       var b = $('ip-leeren'), l = b.querySelector('span');
       if (!plan.length) { meldung('Der Plan ist schon leer'); return; }
@@ -13883,6 +14041,7 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
     function name(slug){
       var m = /^ip:tb:(\d{4}-\d{2}-\d{2})$/.exec(slug);
       if (m) { var tt = tagVon(m[1]); return tt ? WD[tt.wd] + ' ' + tt.lab : m[1]; }
+      if (String(slug).indexOf('ip:e:') === 0) return String(slug).slice(5).replace(/^\S+\s/, '');
       var c = kat(String(slug).replace(/^ip:w:/, ''));
       return c ? c.t : slug;
     }
