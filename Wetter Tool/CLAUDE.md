@@ -5,7 +5,7 @@ findet unten alles, um nahtlos weiterzumachen. Die Bedienung und Einstellungen d
 `README.md`, ausführlichere Hintergründe im Gedächtnis des Projekts (Notizen `fuerte-meteogramm`,
 `fuerte-webcams`, `fuerte-satellitenbilder`, `fuerte-mondbild`, `fuerte-offene-punkte`).
 
-Stand: **05.10.2026**
+Stand: **09.10.2026**
 
 ## Für wen
 
@@ -66,6 +66,21 @@ Keine – alle entschieden (siehe unten).
 
 ## Entschieden
 
+- **Fahne hinter der Menüleiste + Fragezeichen im Regenbild (09.10.2026, Version `20261009a`):** Zwei Fehler von
+  Stephans iPhone-Screenshot (Seite als App vom Startbildschirm, Safe-Area oben ≈ 47 px). (1) Außerhalb des Vollbilds
+  war der schwarze Kasten mit Datum/Uhrzeit (`.mg-zeit`) nicht zu sehen – er klebte **hinter** der Menüleiste, nur die
+  Werte-Zeile schaute heraus. Ursache: `../index.html` maß `nav.offsetHeight` nur einmal beim Start, und iOS kennt den
+  Safe-Area-Streifen in dem Moment noch nicht (Leiste wird erst danach um die Safe-Area höher). Jetzt: `fahnenAbstand()`
+  misst `getBoundingClientRect().height`, ein `ResizeObserver` mit `{ box: 'border-box' }` (wichtig: content-box sieht den
+  Padding-Zuwachs nicht) auf Menü- und Fußleiste, dazu hashchange/pageshow/visibilitychange und zwei verzögerte Messungen
+  (400/1500 ms). Nachgestellt mit Playwright: Padding nachträglich auf 47 px → `--mg-haft-oben` springt von 65 auf 112 px.
+  (2) Der blaue Kasten mit „?“ mitten im Regenbild ist Safaris Zeichen für ein Bild, das nicht lädt: EUMETSAT lieferte
+  am 09.10. abends für die Regen-Auflage `mtg_fd:h40b` (und zeitweise auch für das Basisbild) **HTTP 500** bei den
+  jüngsten Zeitpunkten, obwohl GetCapabilities Daten bis 21:00Z versprach; Bilder von 15:00Z kamen. Jetzt in
+  `meteogramm.js`: `auflageLaden(zeit)` blendet die Auflage aus, bis `load` feuert; bei `error` probiert das Tool bis zu
+  6 Bilder (= 1 Std.) früher (`auflageVersuch`), die Unterschrift bekommt dann „· Regen 21:20“ (`auflageHinweis()`,
+  `.mg-k-hinweis`), nach 7 Fehlschlägen „· kein Regenbild“ und die Auflage bleibt verborgen. Getestet mit `page.route`
+  (500 ab 20:30Z → Rückfall auf 20:20Z; alles 500 → Hinweis, kein Kasten). Unterschrift bleibt bei 390 px einzeilig.
 - **Vollbild statt Safari-Logik (07.10.2026, live, Version `20261007a`):** Die Scroll-Automatik vom Vormittag ist
   wieder raus (Stephan: lieber bewusst schalten). Jetzt: Knopf ⤢ `.mg-btn-voll` in der Knopfleiste (rechts neben der
   Jetzt-Gruppe, vor ☰; Raster `minmax(max-content,1fr) auto minmax(max-content,1fr)`, Rechtsgruppe `.mg-rechts`),

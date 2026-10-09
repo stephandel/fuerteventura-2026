@@ -1293,18 +1293,35 @@
     }
 
     var kartenAktuell = null;
+    // Regen-Auflage: EUMETSAT liefert fuer die juengsten Zeitpunkte manchmal Fehler (HTTP 500, 09.10.2026 beobachtet).
+    // Dann wuerde das iPhone einen blauen Kasten mit Fragezeichen mitten ins Bild malen. Deshalb bleibt die Auflage
+    // verborgen, bis sie wirklich geladen ist, und bei einem Fehler probiert das Tool bis zu 6 Bilder (= 1 Std.) frueher.
+    var auflageZeit = null, auflageVersuch = 0;
+    function auflageLaden(zeit){
+      auflageZeit = zeit;
+      el.kAuflage.hidden = true;
+      el.kAuflage.src = kartenUrl(zeit, true);
+    }
     function kartenBildSetzen(zeit){
       var mitRegen = ansicht === 'regen';
       var schluessel = zeit.getTime() + '|' + mitRegen;
       if (kartenAktuell === schluessel) return;
       kartenAktuell = schluessel;
       el.kBasis.src = kartenUrl(zeit, false);
-      el.kAuflage.hidden = !mitRegen;
-      if (mitRegen) el.kAuflage.src = kartenUrl(zeit, true);
+      auflageVersuch = 0;
+      if (mitRegen) auflageLaden(zeit);
+      else { el.kAuflage.hidden = true; auflageZeit = null; }
       var o = echtNachOrtszeit(zeit);      // beschriftet wird in Ortszeit des Urlaubsorts
       el.kText.innerHTML = '<b>' + (mitRegen ? '🌧️ Niederschlag' : '🛰️ Satellit') + '</b><span class="mg-cam-rest"> · ' +
         pad2(o.getDate()) + '.' + pad2(o.getMonth() + 1) + '. ' + pad2(o.getHours()) + ':' + pad2(o.getMinutes()) +
         ' · <a href="' + esc(KARTE.link) + '" target="_blank" rel="noopener" style="color:inherit">' + esc(KARTE.quelle) + ' ↗</a></span>';
+    }
+    // Hinweis hinten an der Bildunterschrift, wenn das Regenbild fehlt oder aelter ist als das Satellitenbild
+    function auflageHinweis(text){
+      if (!el.kText) return;
+      var alt = el.kText.querySelector('.mg-k-hinweis');
+      if (alt) alt.remove();
+      if (text) el.kText.insertAdjacentHTML('beforeend', '<span class="mg-cam-rest mg-k-hinweis"> · ' + esc(text) + '</span>');
     }
 
     function filmSchalten(){
@@ -1578,6 +1595,23 @@
         if (el.play) el.play.addEventListener('click', function(ev){ ev.stopPropagation(); filmSchalten(); });
         el.kBasis.addEventListener('error', function(){
           el.kText.textContent = 'Für diesen Zeitpunkt gibt es noch kein Satellitenbild.';
+        });
+        // Regen-Auflage: erst zeigen, wenn sie da ist; bei Fehler frueheres Bild versuchen, sonst Hinweis statt Fragezeichen
+        el.kAuflage.addEventListener('load', function(){
+          if (ansicht !== 'regen' || !auflageZeit) return;
+          el.kAuflage.hidden = false;
+          if (auflageVersuch > 0) {
+            var o = echtNachOrtszeit(auflageZeit);
+            auflageHinweis('Regen ' + pad2(o.getHours()) + ':' + pad2(o.getMinutes()));
+          } else auflageHinweis('');
+        });
+        el.kAuflage.addEventListener('error', function(){
+          el.kAuflage.hidden = true;
+          if (ansicht !== 'regen' || !auflageZeit) return;
+          if (auflageVersuch < 6) {
+            auflageVersuch++;
+            auflageLaden(new Date(auflageZeit.getTime() - KARTE.schritt * 60000));
+          } else auflageHinweis('kein Regenbild');
         });
       }
       if (el.ansichten) {

@@ -21,8 +21,8 @@
 <meta name="apple-mobile-web-app-title" content="Fuerteventura">
 <link rel="stylesheet" href="vendor/leaflet.css">
 <script defer src="vendor/leaflet.js"></script>
-<link rel="stylesheet" href="Wetter%20Tool/meteogramm.css?v=20261008f">
-<script defer src="Wetter%20Tool/meteogramm.js?v=20261008f"></script>
+<link rel="stylesheet" href="Wetter%20Tool/meteogramm.css?v=20261009a">
+<script defer src="Wetter%20Tool/meteogramm.js?v=20261009a"></script>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
 <link rel="apple-touch-icon" sizes="167x167" href="images/apple-touch-icon-167.png">
@@ -10346,10 +10346,20 @@ details.aktiv-kasten[open] > summary { margin-bottom: 2px; }
       // … und die Knopfleiste haftet unten, knapp über der festen Fußleiste (Heute · Plan · …)
       var mgZiel = document.getElementById('meteogramm'), nav = document.querySelector('nav.topnav'), fuss = document.querySelector('.tabbar-inner');
       function fahnenAbstand(){
-        if (nav) mgZiel.style.setProperty('--mg-haft-oben', nav.offsetHeight + 'px');
+        if (nav) mgZiel.style.setProperty('--mg-haft-oben', Math.round(nav.getBoundingClientRect().height) + 'px');
         if (fuss) { var r = fuss.getBoundingClientRect(); mgZiel.style.setProperty('--mg-haft-unten', Math.max(0, Math.round(window.innerHeight - r.top) + 6) + 'px'); }
       }
       fahnenAbstand(); window.addEventListener('resize', fahnenAbstand);
+      // 09.10.2026: Auf dem iPhone (als App vom Startbildschirm) kennt die Seite den Streifen für Uhrzeit/Notch
+      // (safe-area) beim Start noch nicht – die Menüleiste wird erst danach höher. Mit dem alten einmaligen Messen
+      // klebte die Fahne dann hinter der Leiste (nur die Werte-Zeile schaute heraus). Deshalb: neu messen, sobald
+      // sich Menü- oder Fußleiste in der Größe ändern, beim Seitenwechsel und kurz nach dem Start.
+      // (border-box: sonst zählt der Beobachter den Safe-Area-Innenabstand der Leiste nicht mit)
+      if (window.ResizeObserver) { var ro = new ResizeObserver(fahnenAbstand); if (nav) ro.observe(nav, { box: 'border-box' }); if (fuss) ro.observe(fuss, { box: 'border-box' }); }
+      window.addEventListener('hashchange', fahnenAbstand);
+      window.addEventListener('pageshow', fahnenAbstand);
+      document.addEventListener('visibilitychange', function(){ if (!document.hidden) fahnenAbstand(); });
+      setTimeout(fahnenAbstand, 400); setTimeout(fahnenAbstand, 1500);
 
       // Vollbild des Wetter-Tools: beim Wechsel auf eine andere Seite immer beenden
       window.addEventListener('hashchange', function(){ if (window.FUERTE_MG) window.FUERTE_MG.vollbild(false); });
