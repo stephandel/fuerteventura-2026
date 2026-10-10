@@ -66,6 +66,32 @@ Keine – alle entschieden (siehe unten).
 
 ## Entschieden
 
+- **Sechser-Paket vom 10.10.2026 (Version `20261010f`, Stephans Wünsche):**
+  1. **Doppeltipp ins Diagramm = Grundstellung:** `zuGrundstellung()` setzt den Zoom auf `zoomStandard()` (die Stufe, bei der
+     ≥ 48 Stunden ins Bild passen; auf dem iPhone 0,42 → 52 h) und springt dann wie bisher zu jetzt (`zuJetzt()`).
+     Doppeltipp auf die Lupe bleibt Vollbild.
+  2. **Zoomstufen feiner:** `ZOOMS` hat 17 Stufen (Faktor 1,19 = ⁴√2, von 2 bis 0,125). Knöpfe springen zwei Stufen (×1,41),
+     Geste/Mausrad eine; Geste-Schwelle 1,08 / 0,925 (vorher 1,12 / 0,89). Alte gemerkte Werte (0,7 …) werden auf die nächste
+     Stufe gelegt (log-Abstand).
+  3. **Werks-Reihenfolge der Zeilen** in `../index.html` (`zeilen`): Sonne, Bewölkung, Regen, Temperatur, UV · Wind · Wellen,
+     Tide, Wasser · Luftfeuchte, Saharastaub (Himmel → Wind → Meer → Rest). Einmalige Übernahme auch auf Geräten mit eigener
+     Sortierung: Flag `fuerte-mg-sortierung-2026-10-10` löscht `fuerte-mg-reihenfolge` einmal. `zeilenStandard` ohne `feuchte`.
+  4. **Player** (`.mg-player`, fixed, z-index 200): öffnet per Tipp aufs Bild oder Knopf `.mg-bild-player` (oben links im Bild).
+     Die echten Kästen `.mg-karte`/`.mg-cam` ziehen in `.mg-pl-bild` um (Platzhalter-Kommentar `pl.platz`), beim Schließen zurück –
+     so bleibt die ganze Ladelogik. Oben Reiter Webcam/Satellit/Regen (`ansichtSetzen`) + ×; unten ‹ ▶/⏸ › , Spur
+     `<input type=range class=mg-pl-spur>` (Punkt 22 px, Fortschritt per `--mg-anteil`), Uhrzeit, Rückblick 2/6/12/24 Std.
+     Treibt den **Zeitraffer** (`zf`): öffnen = `zf.aktiv`, Start auf dem neuesten Bild, nicht automatisch abspielen; Spur →
+     `zf.i`, `zfSchritt()`; `zfLeiste()` ruft `playerLeiste()` als Erstes. Zoom in der Bühne: zwei Finger 1–5×, ein Finger
+     verschiebt, Doppeltipp 1×/2,5×, Mausrad/Doppelklick am Laptop (`playerGesten`, Transform auf `.mg-pl-bild`). Schließen
+     = `zfBeenden(false)`, body-overflow zurück, Esc.
+  5. **Knopfleiste links:** `.mg-links` mit ↻ (nur noch 40 px) und Farbwahl `.mg-btn-farbe` → `.mg-farb-panel` (klappt nach
+     oben, 60 % durchsichtig). `FARBEN`: Wie die Seite / Weiß / Elfenbein / Sand / Hellblau / Nachtblau / Anthrazit / Schwarz;
+     `farbeAnwenden()` setzt `--mg-flaeche/-flaeche2/-rand/-text/-text-still` inline am Baustein (`data-farbe`), merk `farbe`.
+  6. **Probeseite `farbprobe.html`** (live unter `…/Wetter%20Tool/farbprobe.html`, merkschluessel `probe-mg`): echtes Tool +
+     nachgebauter Seitenkopf/Fußleiste, Knopf „🎛 Regler“ → je Element (Zeilenmenü, Farbmenü, Knopfleiste, Fahne, Datumskasten,
+     Zoom-Ecke, Bildunterschrift, Diagrammfläche, Seitenkopf, Fußleiste) Farbe + Durchsichtigkeit + Weichzeichner, Grundfarbe-
+     Vorgaben, hell/dunkel, Schlüssel (JSON) zum Kopieren. Wahl liegt in `localStorage probe-farben`. Wenn Stephan einen
+     Schlüssel schickt: Werte in `meteogramm.css` übernehmen (rgba + blur je Selektor).
 - **☰-Zeilenfenster gespiegelt (10.10.2026, Version `20261010a`, Probe auf Stephans Wunsch):** `.mg-zeilen-panel` sitzt
   rechts unter/über dem ☰-Knopf (`right: 8px; left: auto`, auch auf dem Handy – die alte Regel `left/right: 14px` ist weg),
   `width: max-content` (≈ 239 px, so breit wie „Saharastaub (Calima)“ + Haken + Griff), `.mg-zeile` und `label` mit

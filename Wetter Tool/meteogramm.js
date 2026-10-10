@@ -238,7 +238,12 @@
       lupe:   '<circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.3-4.3"/>',
       plus:   '<path d="M12 6v12M6 12h12"/>',
       minus:  '<path d="M6 12h12"/>',
-      ziel:   '<circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="1.8" fill="currentColor" stroke="none"/>'
+      ziel:   '<circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="1.8" fill="currentColor" stroke="none"/>',
+      // seit 10.10.2026: Farbwahl (halb gefüllter Kreis), Player (Rahmen mit Dreieck), Abspielen, Pause
+      farbe:  '<circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor" stroke="none"/>',
+      player: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9l5 3-5 3z" fill="currentColor" stroke="none"/>',
+      play:   '<path d="M7 5l12 7-12 7z" fill="currentColor" stroke="none"/>',
+      pause:  '<path d="M7 5v14M17 5v14" stroke-width="3"/>'
     };
     function ico(name){ return '<svg class="mg-i" viewBox="0 0 24 24" aria-hidden="true" focusable="false">' + SYMBOL[name] + '</svg>'; }
 
@@ -256,11 +261,22 @@
     var el = {}, daten = null, cache = {}, geo = null, altT0 = null, datenNr = 0;
     var pxH = 26, idxJetzt = 0, sammler = 0, camAktuell = null;
     // Zoom: 1 = normal (gut ein Tag im Bild), kleiner = mehr Tage auf einmal
-    // Zoom-Stufen: die Knöpfe springen je zwei Stufen (2 / 1 / ½ / ¼ / ⅛), die
-    // Zwei-Finger-Geste nimmt auch die Zwischenstufen - so fühlt sie sich feiner an.
-    var ZOOMS = [2, 1.4, 1, 0.7, 0.5, 0.35, 0.25, 0.18, 0.125];
+    // Zoom-Stufen (seit 10.10.2026 feiner, Stephans Wunsch): 17 Stufen, jede ist das 1,19-Fache der
+    // nächsten (vierte Wurzel aus 2). Die Knöpfe springen je zwei Stufen (= ×1,41), die Zwei-Finger-
+    // Geste und das Mausrad nehmen jede einzelne - so fühlt es sich an wie stufenlos.
+    var ZOOMS = [2, 1.68, 1.41, 1.19, 1, 0.84, 0.71, 0.59, 0.5, 0.42, 0.35, 0.3, 0.25, 0.21, 0.18, 0.15, 0.125];
     var zoom = parseFloat(merkLesen('zoom', '1'));
-    if (ZOOMS.indexOf(zoom) < 0) zoom = 1;
+    // Gemerkte Werte aus der alten Stufenliste (0,7 / 0,35 / 0,18 …) auf die nächste neue Stufe legen
+    if (!(zoom > 0)) zoom = 1;
+    zoom = ZOOMS.reduce(function(best, z){ return Math.abs(Math.log(z / zoom)) < Math.abs(Math.log(best / zoom)) ? z : best; }, ZOOMS[0]);
+    // Grundstellung ("default", Doppeltipp ins Diagramm): die Stufe, bei der gut zwei Tage ins Bild passen
+    function zoomStandard(){
+      var W = el.scroll ? el.scroll.clientWidth : 390;
+      var basis = W < 560 ? Math.max(18, Math.min(40, Math.floor(W / 26))) : PXH_BREIT;
+      var wunsch = (W / 48) / basis;               // so viel Zoom zeigt genau 48 Stunden
+      var k = ZOOMS.findIndex(function(z){ return z <= wunsch + 1e-9; });
+      return k < 0 ? ZOOMS[ZOOMS.length - 1] : ZOOMS[k];
+    }
     var datumPlatz = 104;
     var webcam = { shots: [], speicher: false, ort: null };
     var ort = merkLesen('ort', ORTE[0].id);
@@ -1421,6 +1437,7 @@
     }
     // Die schmale Leiste unter dem Bild: Fortschritt, Zeitraum, Tempo
     function zfLeiste(){
+      playerLeiste();                 // der Player (10.10.2026) läuft mit demselben Takt
       if (!el.film) return;
       if (!zf.aktiv) { el.film.hidden = true; return; }
       var n = zf.bilder.length, i = Math.min(zf.i, n - 1);
@@ -1527,7 +1544,14 @@
         // Knopfleiste direkt unter dem Diagramm: ↻ links, ‹ Jetzt › als Gruppe in der Mitte, ☰ rechts.
         // Sie haftet unten am Bildschirm, solange das Tool im Bild ist (CSS: position sticky).
         '<div class="mg-knoepfe">' +
-          '<button type="button" class="mg-btn mg-btn-frisch" id="' + kid('frisch') + '" aria-label="Werte auffrischen" title="Werte neu holen">' + ico('frisch') + '</button>' +
+          // Links (10.10.2026): ↻ nur noch so breit wie nötig, daneben die Farbwahl für den Hintergrund des Tools
+          '<span class="mg-links">' +
+            '<button type="button" class="mg-btn mg-btn-frisch" id="' + kid('frisch') + '" aria-label="Werte auffrischen" title="Werte neu holen">' + ico('frisch') + '</button>' +
+            '<span class="mg-farbwahl">' +
+              '<button type="button" class="mg-btn mg-btn-farbe" id="' + kid('fbtn') + '" aria-expanded="false" aria-label="Hintergrundfarbe" title="Hintergrundfarbe des Wetter-Tools">' + ico('farbe') + '</button>' +
+              '<div class="mg-farb-panel" id="' + kid('fpanel') + '" hidden></div>' +
+            '</span>' +
+          '</span>' +
           '<div class="mg-mitte"><div class="mg-gruppe">' +
             '<button type="button" class="mg-btn" id="' + kid('zurueck') + '" aria-label="Einen Tag zurück" title="Einen Tag zurück">' + ico('chevl') + '</button>' +
             '<button type="button" class="mg-btn mg-btn-jetzt" id="' + kid('jetzt') + '" title="Zu jetzt springen und Werte neu holen"><span class="mg-jt">Jetzt</span><span class="mg-jrel" id="' + kid('jrel') + '"></span></button>' +
@@ -1549,14 +1573,18 @@
           '<img class="mg-k-basis" id="' + kid('kbasis') + '" alt="Satellitenbild" decoding="async">' +
           '<img class="mg-k-auflage" id="' + kid('kauflage') + '" alt="" decoding="async" hidden>' +
           (FILM_LEISTE ? '' : '<button type="button" class="mg-play" id="' + kid('play') + '" aria-label="Film abspielen">▶</button>') +
+          '<button type="button" class="mg-bild-player" data-player="1" aria-label="Bild groß im Player öffnen" title="Groß ansehen, zoomen, vor- und zurückspulen">' + ico('player') + '</button>' +
           '<div class="mg-cam-text" id="' + kid('ktext') + '"></div>' +
         '</div>' : '') +
         '<div class="mg-cam" id="' + kid('cam') + '" hidden><img id="' + kid('camimg') + '" alt="Webcam-Bild" decoding="async" referrerpolicy="no-referrer">' +
           '<div class="mg-camwahl" id="' + kid('camwahl') + '" hidden></div>' +
+          '<button type="button" class="mg-bild-player" data-player="1" aria-label="Bild groß im Player öffnen" title="Groß ansehen, zoomen, vor- und zurückspulen">' + ico('player') + '</button>' +
           '<div class="mg-cam-text" id="' + kid('camtext') + '"></div></div>' +
+        // Player (10.10.2026): Vollbild-Ansicht für Webcam/Satellit/Regen mit Zoom und Spulleiste - wird beim Öffnen gefüllt
+        '<div class="mg-player" id="' + kid('player') + '" hidden></div>' +
         (FILM_LEISTE ? '<div class="mg-film" id="' + kid('film') + '" hidden></div>' : '') +
         '<div class="mg-tipps" id="' + kid('tipps') + '" hidden></div>' +
-        '<div class="mg-foot"><span>← Wischen → · Antippen holt die Stelle in die Mitte · Doppeltipp springt zu jetzt · Zwei Finger zoomen</span><span id="' + kid('quelle') + '"></span></div>';
+        '<div class="mg-foot"><span>← Wischen → · Antippen holt die Stelle in die Mitte · Doppeltipp: zurück zu jetzt, zwei Tage im Bild · Zwei Finger zoomen · Bild antippen öffnet den Player</span><span id="' + kid('quelle') + '"></span></div>';
 
       el.scroll  = document.getElementById(kid('scroll'));
       el.svgWrap = document.getElementById(kid('svgwrap'));
@@ -1646,6 +1674,8 @@
       reiter(kid('orte'), ORTE, function(){ return ort; }, function(id){ if (zf.aktiv) zfBeenden(false); ort = id; merkSchreiben('ort', id); laden(); });
       modellWahl();
       zeilenPanel();
+      farbPanel();
+      playerEinrichten();
       sortierenImDiagramm();
 
       el.scroll.addEventListener('scroll', anzeigen, { passive: true });
@@ -1678,10 +1708,16 @@
       }
       // Einmal tippen setzt den Strich dorthin, zweimal schnell tippen springt zu jetzt.
       // Der einfache Tipp wartet deshalb kurz, ob ein zweiter folgt.
+      // Doppeltipp = Grundstellung (10.10.2026): zurück zu jetzt UND Zoom auf "gut zwei Tage im Bild"
+      function zuGrundstellung(){
+        var z = zoomStandard();
+        if (z !== zoom) { zoom = z; merkSchreiben('zoom', String(zoom)); zeichnen(false); zoomKnoepfe(); zoomHinweis(); }
+        zuJetzt();
+      }
       var tippTimer = 0;
       el.scroll.addEventListener('click', function(ev){
         if (!geo) return;
-        if (tippTimer) { clearTimeout(tippTimer); tippTimer = 0; zuJetzt(); return; }
+        if (tippTimer) { clearTimeout(tippTimer); tippTimer = 0; zuGrundstellung(); return; }
         var r = el.scroll.getBoundingClientRect();
         var idx = (ev.clientX - r.left + el.scroll.scrollLeft - geo.padL) / pxH;
         tippTimer = setTimeout(function(){ tippTimer = 0; zentrieren(idx, true); }, 280);
@@ -1710,8 +1746,9 @@
         if (ev.touches.length !== 2 || kneif === null) return;
         ev.preventDefault();                           // die Seite soll dabei nicht mitzoomen
         var d = fingerAbstand(ev), q = d / kneif;
-        if (q > 1.12) { zoomen(-1, true); kneif = d; }
-        else if (q < 0.89) { zoomen(1, true); kneif = d; }
+        // Stufen sind seit 10.10.2026 feiner (×1,19) - entsprechend reicht eine kleinere Fingerbewegung je Stufe
+        if (q > 1.08) { zoomen(-1, true); kneif = d; }
+        else if (q < 0.925) { zoomen(1, true); kneif = d; }
       }, { passive: false });
       ['touchend', 'touchcancel'].forEach(function(t){ el.scroll.addEventListener(t, function(ev){ if (ev.touches.length < 2) kneif = null; }, { passive: true }); });
       var radSperre = 0;
@@ -1798,6 +1835,183 @@
         malen(); zu(); quelleText(); laden();
       });
       document.addEventListener('click', zu);
+    }
+
+    // ---------- Hintergrundfarbe des Tools (10.10.2026, Stephans Wunsch) ----------
+    // Knopf links neben ↻. "Wie die Seite" nimmt die Farben der umgebenden Seite (hell/dunkel),
+    // alle anderen setzen die --mg-Variablen fest am Baustein - gemerkt im Browser (merk 'farbe').
+    var FARBEN = [
+      { id:'seite',     name:'Wie die Seite' },
+      { id:'weiss',     name:'Weiß',      flaeche:'#ffffff', flaeche2:'#f1f1f1', rand:'#d8d8d8', text:'#1c1a17', still:'#5b564c' },
+      { id:'elfenbein', name:'Elfenbein', flaeche:'#f8f5ea', flaeche2:'#efeadb', rand:'#ddd6c2', text:'#1c1a17', still:'#5b564c' },
+      { id:'sand',      name:'Sand',      flaeche:'#efe4cf', flaeche2:'#e4d6ba', rand:'#d2c2a3', text:'#2a2419', still:'#6b5f4b' },
+      { id:'himmel',    name:'Hellblau',  flaeche:'#e8f1f8', flaeche2:'#d9e7f2', rand:'#c2d4e3', text:'#15232e', still:'#4d6275' },
+      { id:'nacht',     name:'Nachtblau', flaeche:'#0f1b2b', flaeche2:'#16253a', rand:'#26384f', text:'#e6edf5', still:'#9fb0c4' },
+      { id:'anthrazit', name:'Anthrazit', flaeche:'#1b2124', flaeche2:'#202729', rand:'#303836', text:'#ede9e0', still:'#b4ac9c' },
+      { id:'schwarz',   name:'Schwarz',   flaeche:'#000000', flaeche2:'#121212', rand:'#2c2c2c', text:'#f2f2f2', still:'#a8a8a8' }
+    ];
+    var farbe = merkLesen('farbe', 'seite');
+    function farbeAnwenden(id){
+      var f = FARBEN.filter(function(x){ return x.id === id; })[0] || FARBEN[0];
+      farbe = f.id; merkSchreiben('farbe', farbe);
+      ['flaeche', 'flaeche2', 'rand', 'text', 'still'].forEach(function(k){
+        var name = '--mg-' + (k === 'still' ? 'text-still' : k);
+        if (f.flaeche) wurzel.style.setProperty(name, f[k]); else wurzel.style.removeProperty(name);
+      });
+      wurzel.setAttribute('data-farbe', farbe);
+    }
+    function farbPanel(){
+      var btn = document.getElementById(kid('fbtn')), panel = document.getElementById(kid('fpanel'));
+      if (!btn || !panel) return;
+      farbeAnwenden(farbe);
+      function malen(){
+        panel.innerHTML = '<h4>Hintergrund</h4>' + FARBEN.map(function(f){
+          var probe = f.flaeche ? 'background:' + f.flaeche + ';border-color:' + f.rand : 'background:linear-gradient(135deg,#f8f5ea 50%,#1b2124 50%)';
+          return '<button type="button" class="mg-farb-wahl' + (f.id === farbe ? ' is-on' : '') + '" data-farbe="' + f.id + '"><i style="' + probe + '"></i>' + esc(f.name) + '</button>';
+        }).join('');
+      }
+      malen();
+      function zu(){ panel.hidden = true; btn.setAttribute('aria-expanded', 'false'); }
+      btn.addEventListener('click', function(ev){ ev.stopPropagation(); var auf = panel.hidden; panel.hidden = !auf; btn.setAttribute('aria-expanded', String(auf)); });
+      panel.addEventListener('click', function(ev){
+        ev.stopPropagation();
+        var b = ev.target.closest('.mg-farb-wahl'); if (!b) return;
+        farbeAnwenden(b.getAttribute('data-farbe')); malen();
+      });
+      document.addEventListener('click', function(){ if (!panel.hidden) zu(); });
+    }
+
+    // ---------- Player (10.10.2026, Stephans Wunsch) ----------
+    // Webcam, Satellit oder Regen groß über der ganzen Seite - wie ein Video: Zwei-Finger-Zoom und
+    // Verschieben im Bild, ▶/⏸, ein Bild vor/zurück und eine Spulleiste mit Punkt, der durch die
+    // Bilder der letzten Stunden führt. Nutzt den Zeitraffer (zf): die echten Bildkästen ziehen in
+    // den Player um, damit alle Lade-Logik bleibt, wie sie ist; beim Schließen wandern sie zurück.
+    var pl = { offen: false, platz: null, s: 1, tx: 0, ty: 0, altOverflow: '' };
+    function playerEinrichten(){
+      el.player = document.getElementById(kid('player'));
+      if (!el.player) return;
+      wurzel.addEventListener('click', function(ev){
+        if (ev.target.closest('.mg-bild-player')) { ev.stopPropagation(); playerOeffnen(); return; }
+        // Tipp aufs Bild selbst (nicht auf Knöpfe oder Links darin) öffnet den Player ebenfalls
+        var bild = ev.target.closest('.mg-cam img, .mg-karte img');
+        if (bild && !pl.offen && !ev.target.closest('a, button')) playerOeffnen();
+      });
+      el.player.addEventListener('click', function(ev){
+        var b = ev.target.closest('button'); if (!b) return;
+        ev.stopPropagation();
+        if (b.getAttribute('data-zu')) playerSchliessen();
+        else if (b.getAttribute('data-pp')) { if (zf.laeuft) zfPause(); else { if (zf.i >= zf.bilder.length - 1) zf.i = 0; zf.halt = 0; zfSpielen(); } }
+        else if (b.getAttribute('data-spanne')) { zf.spanne = +b.getAttribute('data-spanne'); merkSchreiben('film-spanne', zf.spanne); zfBilder(); zf.i = zf.bilder.length - 1; zf.halt = 0; zfSchritt(); }
+        else if (b.getAttribute('data-ansicht')) ansichtSetzen(b.getAttribute('data-ansicht'));
+        else if (b.getAttribute('data-schritt')) { if (zf.laeuft) zfPause(); zf.halt = 0; zf.i = Math.max(0, Math.min(zf.bilder.length - 1, zf.i + (+b.getAttribute('data-schritt')))); zfSchritt(); }
+      });
+      el.player.addEventListener('input', function(ev){
+        if (!ev.target.classList.contains('mg-pl-spur')) return;
+        if (zf.laeuft) zfPause();
+        zf.halt = 0; zf.i = +ev.target.value; zfSchritt();
+      });
+      document.addEventListener('keydown', function(ev){ if (pl.offen && ev.key === 'Escape') playerSchliessen(); });
+    }
+    function playerOeffnen(){
+      if (!el.player || pl.offen || !daten) return;
+      pl.offen = true;
+      if (!zf.aktiv) { zf.aktiv = true; zfBilder(); zf.i = zf.bilder.length - 1; zf.halt = 0; }
+      el.player.innerHTML =
+        '<div class="mg-pl-kopf"><span class="mg-pl-tabs">' + ANSICHTEN.map(function(a){
+            return '<button type="button" class="mg-pl-tab" data-ansicht="' + a.id + '">' + esc(a.name) + '</button>'; }).join('') + '</span>' +
+          '<button type="button" class="mg-pl-x" data-zu="1" aria-label="Player schließen" title="Schließen">' + ico('x') + '</button></div>' +
+        '<div class="mg-pl-buehne" id="' + kid('plbuehne') + '"><div class="mg-pl-bild" id="' + kid('plbild') + '"></div></div>' +
+        '<div class="mg-pl-leiste">' +
+          '<div class="mg-pl-zeile1">' +
+            '<button type="button" class="mg-pl-btn" data-schritt="-1" aria-label="Ein Bild zurück" title="Ein Bild zurück">' + ico('chevl') + '</button>' +
+            '<button type="button" class="mg-pl-btn mg-pl-pp" data-pp="1" aria-label="Abspielen">' + ico('play') + '</button>' +
+            '<button type="button" class="mg-pl-btn" data-schritt="1" aria-label="Ein Bild vor" title="Ein Bild vor">' + ico('chevr') + '</button>' +
+            '<input type="range" class="mg-pl-spur" min="0" max="0" value="0" step="1" aria-label="Zeit im Film">' +
+            '<span class="mg-pl-zeit" id="' + kid('plzeit') + '"></span>' +
+          '</div>' +
+          '<div class="mg-pl-zeile2"><span class="mg-pl-was">Rückblick</span>' + [2, 6, 12, 24].map(function(h){
+            return '<button type="button" class="mg-film-wahl" data-spanne="' + h + '">' + h + ' Std.</button>'; }).join('') +
+            '<span class="mg-pl-tipp">Zwei Finger zoomen · Doppeltipp 1× / 2,5×</span></div>' +
+        '</div>';
+      var bild = document.getElementById(kid('plbild'));
+      var erstes = el.karte || el.cam;
+      pl.platz = document.createComment('player-platz');
+      erstes.parentNode.insertBefore(pl.platz, erstes);
+      if (el.karte) bild.appendChild(el.karte);
+      if (el.cam) bild.appendChild(el.cam);
+      pl.s = 1; pl.tx = 0; pl.ty = 0; buehneSetzen();
+      el.player.hidden = false;
+      pl.altOverflow = document.body.style.overflow; document.body.style.overflow = 'hidden';
+      playerGesten(document.getElementById(kid('plbuehne')));
+      zfSchritt();                  // Bild, Strich und Spur auf einen Stand bringen
+      playerLeiste();
+    }
+    function playerSchliessen(){
+      if (!pl.offen) return;
+      pl.offen = false;
+      if (zf.laeuft) zfPause();
+      if (pl.platz && pl.platz.parentNode) {
+        if (el.karte) pl.platz.parentNode.insertBefore(el.karte, pl.platz);
+        if (el.cam) pl.platz.parentNode.insertBefore(el.cam, pl.platz);
+        pl.platz.parentNode.removeChild(pl.platz);
+      }
+      pl.platz = null;
+      el.player.hidden = true; el.player.innerHTML = '';
+      document.body.style.overflow = pl.altOverflow || '';
+      zfBeenden(false);
+    }
+    // Spur, Uhrzeit, ▶/⏸ und Reiter im Player nachführen (wird aus zfLeiste() gerufen)
+    function playerLeiste(){
+      if (!pl.offen || !el.player || !daten) return;
+      var spur = el.player.querySelector('.mg-pl-spur'), zeit = document.getElementById(kid('plzeit')), pp = el.player.querySelector('.mg-pl-pp');
+      var n = zf.bilder.length, i = Math.max(0, Math.min(zf.i, n - 1));
+      if (spur) { spur.max = Math.max(0, n - 1); spur.value = i; spur.style.setProperty('--mg-anteil', (n > 1 ? i / (n - 1) * 100 : 100).toFixed(1) + '%'); }
+      if (zeit && n) { var d = new Date(daten.t0.getTime() + zf.bilder[i] * 3600000); zeit.textContent = pad2(d.getHours()) + ':' + pad2(d.getMinutes()); }
+      if (pp) { pp.innerHTML = ico(zf.laeuft ? 'pause' : 'play'); pp.setAttribute('aria-label', zf.laeuft ? 'Anhalten' : 'Abspielen'); }
+      [].forEach.call(el.player.querySelectorAll('.mg-pl-tab'), function(b){ b.classList.toggle('is-on', b.getAttribute('data-ansicht') === ansicht); });
+      [].forEach.call(el.player.querySelectorAll('[data-spanne]'), function(b){ b.classList.toggle('is-on', +b.getAttribute('data-spanne') === zf.spanne); });
+    }
+    function buehneSetzen(){
+      var b = document.getElementById(kid('plbild')); if (!b) return;
+      b.style.transform = 'translate(' + pl.tx.toFixed(1) + 'px,' + pl.ty.toFixed(1) + 'px) scale(' + pl.s.toFixed(3) + ')';
+    }
+    // Zwei Finger zoomen (1× bis 5×), ein Finger verschiebt das vergrößerte Bild, Doppeltipp springt
+    // zwischen 1× und 2,5×. Am Laptop: Mausrad und Doppelklick.
+    function playerGesten(stage){
+      var d0 = null, s0 = 1, p0 = null, t0 = null, bewegt = false, letzterTipp = 0;
+      function abstand(t){ return Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY); }
+      function begrenzen(){
+        var r = stage.getBoundingClientRect();
+        var mx = (pl.s - 1) * r.width / 2, my = (pl.s - 1) * r.height / 2;
+        pl.tx = Math.max(-mx, Math.min(mx, pl.tx)); pl.ty = Math.max(-my, Math.min(my, pl.ty));
+      }
+      function wechsel(){ pl.s = pl.s > 1 ? 1 : 2.5; pl.tx = 0; pl.ty = 0; buehneSetzen(); }
+      stage.addEventListener('touchstart', function(ev){
+        if (ev.touches.length === 2) { d0 = abstand(ev.touches); s0 = pl.s; p0 = null; }
+        else if (ev.touches.length === 1) { p0 = { x: ev.touches[0].clientX, y: ev.touches[0].clientY }; t0 = { x: pl.tx, y: pl.ty }; bewegt = false; }
+      }, { passive: true });
+      stage.addEventListener('touchmove', function(ev){
+        if (ev.touches.length === 2 && d0) { ev.preventDefault(); pl.s = Math.max(1, Math.min(5, s0 * abstand(ev.touches) / d0)); begrenzen(); buehneSetzen(); }
+        else if (ev.touches.length === 1 && p0 && pl.s > 1) {
+          ev.preventDefault();
+          var dx = ev.touches[0].clientX - p0.x, dy = ev.touches[0].clientY - p0.y;
+          if (Math.abs(dx) + Math.abs(dy) > 6) bewegt = true;
+          pl.tx = t0.x + dx; pl.ty = t0.y + dy; begrenzen(); buehneSetzen();
+        }
+      }, { passive: false });
+      ['touchend', 'touchcancel'].forEach(function(t){
+        stage.addEventListener(t, function(ev){
+          if (ev.touches.length < 2) d0 = null;
+          if (ev.touches.length === 0) {
+            var jetzt = Date.now();
+            if (p0 && !bewegt && jetzt - letzterTipp < 320) { letzterTipp = 0; wechsel(); }
+            else letzterTipp = jetzt;
+            p0 = null;
+          }
+        }, { passive: true });
+      });
+      stage.addEventListener('wheel', function(ev){ ev.preventDefault(); pl.s = Math.max(1, Math.min(5, pl.s * (ev.deltaY < 0 ? 1.15 : 1 / 1.15))); begrenzen(); buehneSetzen(); }, { passive: false });
+      stage.addEventListener('dblclick', function(ev){ ev.preventDefault(); wechsel(); });
     }
 
     function zeilenPanel(){

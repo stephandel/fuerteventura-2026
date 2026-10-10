@@ -317,3 +317,53 @@
 .mg-film-was { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--mg-text-still); min-width: 74px; }
 .mg-film-wahl { border: 0; background: none; color: var(--mg-text-still); font: 600 13px/1 var(--mg-serif); padding: 8px 1px 6px; border-bottom: 2px solid transparent; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .mg-film-wahl.is-on { color: var(--mg-text); border-bottom-color: var(--mg-akzent); }
+
+/* ---- Links in der Knopfleiste (10.10.2026): ↻ schmal, daneben die Farbwahl ---- */
+.mg-links { display: inline-flex; align-items: center; gap: 6px; }
+.mg-btn-frisch { min-width: 40px; padding: 0 8px; }
+.mg-farbwahl { position: relative; }
+.mg-farb-panel { position: absolute; left: 0; bottom: calc(100% + 6px); z-index: 30; width: max-content; padding: 6px; border: 1px solid var(--mg-rand); border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  background: var(--mg-flaeche); background: color-mix(in srgb, var(--mg-flaeche) 60%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); transform-origin: bottom left; animation: mg-auf .18s ease-out; }
+.mg-farb-panel[hidden] { display: none; }
+.mg-farb-panel h4 { margin: 4px 8px 6px; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--mg-text-still); }
+.mg-farb-wahl { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 40px; padding: 6px 10px 6px 8px; border: 0; border-radius: 9px; background: transparent; color: var(--mg-text); font: 500 13.5px/1 var(--mg-serif); cursor: pointer; text-align: left; white-space: nowrap; -webkit-tap-highlight-color: transparent; }
+.mg-farb-wahl:hover { background: var(--mg-flaeche2); }
+.mg-farb-wahl.is-on { background: var(--mg-flaeche2); box-shadow: inset 2px 0 0 var(--mg-akzent); }
+.mg-farb-wahl i { width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--mg-rand); flex: none; }
+
+/* ---- Player (10.10.2026): Webcam/Satellit/Regen groß, mit Zoom und Spulleiste ---- */
+.mg-bild-player { position: absolute; left: 8px; top: 8px; z-index: 2; width: 34px; height: 34px; border-radius: 9px; border: 1px solid rgba(255,255,255,0.25); background: rgba(0,0,0,0.5); color: #fff;
+  display: inline-flex; align-items: center; justify-content: center; cursor: pointer; backdrop-filter: blur(3px); -webkit-tap-highlight-color: transparent; }
+.mg-bild-player .mg-i { width: 17px; height: 17px; }
+.mg-karte .mg-play ~ .mg-bild-player { left: 58px; }
+.mg-player { position: fixed; inset: 0; z-index: 200; background: #000; color: #fff; display: flex; flex-direction: column; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); font-family: var(--mg-serif); }
+.mg-player[hidden] { display: none; }
+.mg-player .mg-bild-player { display: none; }
+.mg-pl-kopf { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 10px; }
+.mg-pl-tabs { display: flex; gap: 6px; }
+.mg-pl-tab { min-height: 34px; padding: 0 12px; border-radius: 9px; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.08); color: #fff; font: 600 13px/1 var(--mg-serif); cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.mg-pl-tab.is-on { background: #fff; color: #000; border-color: #fff; }
+.mg-pl-x { width: 38px; height: 38px; flex: none; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: #fff; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.mg-pl-buehne { flex: 1; min-height: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; touch-action: none; }
+.mg-pl-bild { width: 100%; transform-origin: center center; will-change: transform; }
+.mg-player .mg-karte, .mg-player .mg-cam { width: 100%; max-height: none; margin: 0; border: 0; border-radius: 0; }
+.mg-player .mg-cam { height: auto; background: #000; }
+.mg-player .mg-cam img { height: auto; max-height: 72vh; object-fit: contain; }
+.mg-player .mg-karte { max-height: 72vh; }
+.mg-player .mg-cam-text { font-size: 13px; }
+.mg-pl-leiste { padding: 6px 12px 8px; }
+.mg-pl-zeile1 { display: flex; align-items: center; gap: 8px; }
+.mg-pl-btn { width: 40px; height: 40px; flex: none; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: #fff; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.mg-pl-pp { width: 46px; height: 46px; background: #fff; color: #000; border-color: #fff; }
+.mg-pl-spur { flex: 1; min-width: 0; height: 30px; margin: 0; -webkit-appearance: none; appearance: none; background: transparent; cursor: pointer; }
+.mg-pl-spur::-webkit-slider-runnable-track { height: 4px; border-radius: 2px; background: linear-gradient(90deg, var(--mg-akzent) var(--mg-anteil, 0%), rgba(255,255,255,0.3) var(--mg-anteil, 0%)); }
+.mg-pl-spur::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; margin-top: -9px; border-radius: 50%; background: #fff; border: 2px solid var(--mg-akzent); box-shadow: 0 1px 4px rgba(0,0,0,0.5); }
+.mg-pl-spur::-moz-range-track { height: 4px; border-radius: 2px; background: rgba(255,255,255,0.3); }
+.mg-pl-spur::-moz-range-progress { height: 4px; border-radius: 2px; background: var(--mg-akzent); }
+.mg-pl-spur::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: #fff; border: 2px solid var(--mg-akzent); }
+.mg-pl-zeit { font-family: var(--mg-mono); font-size: 14px; font-weight: 700; min-width: 44px; text-align: right; }
+.mg-pl-zeile2 { display: flex; align-items: baseline; gap: 2px 12px; margin-top: 2px; flex-wrap: wrap; }
+.mg-player .mg-film-wahl { color: rgba(255,255,255,0.65); }
+.mg-player .mg-film-wahl.is-on { color: #fff; }
+.mg-pl-was { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: rgba(255,255,255,0.6); }
+.mg-pl-tipp { margin-left: auto; font-size: 11px; color: rgba(255,255,255,0.5); white-space: nowrap; }

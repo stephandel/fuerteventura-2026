@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Farbprobe – Wetter-Tool</title>
+<link rel="stylesheet" href="meteogramm.css">
+<style>
+  /* Probeseite (10.10.2026): das echte Wetter-Tool, dazu ein nachgebauter Seitenkopf und eine Fußleiste
+     wie auf der Fuerteventura-Seite. Unten rechts der Knopf „Regler“ öffnet die Einstellungen:
+     je Element Farbe, Durchsichtigkeit und Weichzeichner. Die Wahl bleibt im Browser gespeichert
+     und lässt sich als „Schlüssel“ kopieren und im Chat einfügen. */
+  :root { color-scheme: dark; --surface:#1b2124; --surface-2:#202729; --border:#303836;
+          --ink:#ede9e0; --ink-dim:#b4ac9c; --teal:#4bc4cb; --ochre:#e0a24f; --page:#14181a; }
+  :root[data-theme="light"] { color-scheme: light; --surface:#f8f8f4; --surface-2:#eeeee6; --border:#d7d6c9;
+          --ink:#1c1a17; --ink-dim:#5b564c; --teal:#0f6e76; --ochre:#b5741f; --page:#fffdf7; }
+  html { touch-action: pan-x pan-y; }
+  body { margin:0; background:var(--page); color:var(--ink); font:15px/1.55 "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif; }
+  .probe-kopf { position: sticky; top: 0; z-index: 50; display:flex; align-items:center; justify-content:space-between; padding: calc(env(safe-area-inset-top,0px) + 10px) 16px 10px; background: var(--surface); border-bottom:1px solid var(--border); }
+  .probe-kopf b { font-size: 1.2rem; color: var(--ochre); }
+  .probe-kopf span { font-size: 12px; color: var(--ink-dim); }
+  .seite { max-width:760px; margin:0 auto; padding:14px 0 150px; }
+  #wetter { --mg-haft-oben: 58px; --mg-haft-unten: 76px; }
+  @media (max-width: 560px) { #wetter .mg { border-left:0; border-right:0; border-radius:0; } }
+  .probe-fuss { position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; display:flex; justify-content:space-around; padding: 10px 8px calc(env(safe-area-inset-bottom,0px) + 10px); background: var(--surface); border-top:1px solid var(--border); font-size: 12px; color: var(--ink-dim); }
+  .probe-fuss span { display:flex; flex-direction:column; align-items:center; gap:3px; }
+  .probe-fuss i { font-style:normal; font-size:18px; }
+  .probe-fuss .is-on { color: var(--teal); }
+
+  /* Regler-Fenster */
+  .regler-knopf { position: fixed; right: 12px; bottom: calc(env(safe-area-inset-bottom,0px) + 70px); z-index: 90; min-height: 44px; padding: 0 16px; border-radius: 22px; border: 1px solid var(--border); background: var(--teal); color: #06222a; font: 700 14px/1 inherit; cursor: pointer; box-shadow: 0 6px 18px rgba(0,0,0,.35); }
+  .regler { position: fixed; left: 0; right: 0; bottom: 0; z-index: 95; max-height: 78vh; overflow-y: auto; padding: 12px 16px calc(env(safe-area-inset-bottom,0px) + 16px); background: var(--surface); border-top: 1px solid var(--border); border-radius: 18px 18px 0 0; box-shadow: 0 -10px 30px rgba(0,0,0,.4); transform: translateY(105%); transition: transform .25s ease; }
+  .regler.is-auf { transform: none; }
+  .regler h2 { margin: 0 0 8px; font-size: 1.05rem; display:flex; justify-content:space-between; align-items:center; }
+  .regler h2 button { border:0; background:none; color: var(--ink-dim); font-size: 22px; cursor:pointer; }
+  .regler label { display:block; font-size: 12px; color: var(--ink-dim); margin: 10px 0 4px; }
+  .regler select, .regler input[type=text], .regler textarea { width:100%; box-sizing:border-box; min-height: 40px; padding: 6px 10px; border-radius: 10px; border:1px solid var(--border); background: var(--surface-2); color: var(--ink); font: inherit; }
+  .regler textarea { min-height: 64px; font: 12px/1.4 ui-monospace, Menlo, monospace; }
+  .zeile { display:flex; align-items:center; gap: 10px; }
+  .zeile input[type=range] { flex:1; min-width:0; }
+  .zeile output { min-width: 52px; text-align:right; font: 700 13px/1 Arial, sans-serif; }
+  .zeile input[type=color] { width: 46px; height: 36px; padding: 0; border: 1px solid var(--border); border-radius: 8px; background: none; }
+  .knoepfe { display:flex; flex-wrap:wrap; gap: 6px; margin-top: 8px; }
+  .knoepfe button { min-height: 38px; padding: 0 12px; border-radius: 10px; border:1px solid var(--border); background: var(--surface-2); color: var(--ink); font: 600 13px/1 inherit; cursor:pointer; }
+  .knoepfe button.is-on { border-color: var(--teal); color: var(--teal); }
+  .vorgaben { display:flex; flex-wrap:wrap; gap: 6px; }
+  .vorgaben button { display:inline-flex; align-items:center; gap:6px; }
+  .vorgaben i { width: 16px; height: 16px; border-radius: 50%; border: 1px solid var(--border); }
+  .hinweis { font-size: 12px; color: var(--ink-dim); margin: 8px 0 0; }
+</style>
+</head>
+<body>
+<header class="probe-kopf"><b>🐦 Fuerteventura</b><span>Farbprobe · nachgebauter Seitenkopf</span></header>
+<div class="seite">
+  <div id="wetter"></div>
+</div>
+<nav class="probe-fuss"><span><i>🏠</i>Heute</span><span><i>📅</i>Plan</span><span><i>🧭</i>Entdecken</span><span class="is-on"><i>🌤️</i>Wetter</span><span><i>…</i>Reise</span></nav>
+
+<button type="button" class="regler-knopf" id="regler-auf">🎛 Regler</button>
+<section class="regler" id="regler" aria-label="Farbregler">
+  <h2>Farben &amp; Durchsicht <button type="button" id="regler-zu" aria-label="Schließen">×</button></h2>
+  <div class="knoepfe">
+    <button type="button" id="thema">Seite: dunkel</button>
+    <button type="button" id="menu-auf">☰-Zeilenmenü öffnen</button>
+    <button type="button" id="farbe-auf">Farbmenü öffnen</button>
+  </div>
+
+  <label for="element">Welches Element?</label>
+  <select id="element"></select>
+
+  <label>Farbe</label>
+  <div class="zeile"><input type="color" id="farbe"><input type="text" id="farbe-text" placeholder="#rrggbb" spellcheck="false"></div>
+
+  <label for="durchsicht">Durchsichtigkeit</label>
+  <div class="zeile"><input type="range" id="durchsicht" min="0" max="100" step="1"><output id="durchsicht-out"></output></div>
+
+  <label for="blur">Weichzeichner dahinter</label>
+  <div class="zeile"><input type="range" id="blur" min="0" max="24" step="1"><output id="blur-out"></output></div>
+
+  <div class="knoepfe">
+    <button type="button" id="element-zurueck">Dieses Element zurücksetzen</button>
+    <button type="button" id="alles-zurueck">Alles zurücksetzen</button>
+  </div>
+
+  <label>Grundfarbe des ganzen Tools (wie der Farb-Knopf in der Leiste)</label>
+  <div class="vorgaben" id="vorgaben"></div>
+
+  <label for="schluessel">Schlüssel (kopieren und im Chat einfügen)</label>
+  <textarea id="schluessel" readonly></textarea>
+  <div class="knoepfe"><button type="button" id="kopieren">Schlüssel kopieren</button></div>
+  <p class="hinweis">Alles wird im Browser gemerkt. Die Durchsichtigkeit gilt für die Fläche hinter dem Text; der Weichzeichner verwischt, was dahinter liegt.</p>
+</section>
+
+<script src="meteogramm.js"></script>
+<script>
+(function(){
+  // ---- Das echte Wetter-Tool, eingestellt wie auf der Fuerteventura-Seite ----
+  var mg = Meteogramm.einbauen({
+    ziel: '#wetter', zeitzone: 'Atlantic/Canary', merkschluessel: 'probe-mg',
+    bildspeicher: 'https://fuerte-sync.stephanhandel.workers.dev',
+    orte: [
+      { id:'corralejo', name:'Corralejo',  lat:28.7297, lon:-13.8672, meer:{ lat:28.7297, lon:-13.8672 } },
+      { id:'cotillo',   name:'El Cotillo', lat:28.6855, lon:-14.0110, meer:{ lat:28.69,   lon:-14.03   } },
+      { id:'sotavento', name:'Sotavento',  lat:28.1560, lon:-14.2275, meer:{ lat:28.145,  lon:-14.21   } }
+    ],
+    zeilen: ['sonne','wolken','regen','temp','uv','wind','welle','tide','wasser','feuchte','staub'],
+    zeilenStandard: ['sonne','wolken','regen','temp','uv','wind','welle','tide','wasser','staub'],
+    tagesSymbol: true, mond: true, filmLeiste: true,
+    kameras: {
+      corralejo: { name:'Grandes Playas, Corralejo', live:'https://cdn.skylinewebcams.com/live6086.jpg', quelle:'SkylineWebcams', seite:'https://www.skylinewebcams.com/en/webcam/espana/canarias/corralejo/grandes-playas-corralejo.html' },
+      cotillo:   { id:'cotillo', name:'El Cotillo, Hafen', live:'https://www.meteosurfcanarias.com/1-webcams/webcam-el-cotillo.jpg', quelle:'MeteoSurf Canarias', seite:'https://www.meteosurfcanarias.com/webcams/new/de/strand-webcams-insel_fuerteventura.php' },
+      sotavento: [
+        { id:'sotavento', name:'Sotavento, Playa Barca', live:'https://i.ytimg.com/vi/8CxYZ4tPTmo/maxresdefault_live.jpg', quelle:'René Egli · YouTube', seite:'https://www.youtube.com/watch?v=8CxYZ4tPTmo' },
+        { id:'jandia', name:'Faro de Jandía, Morro Jable', live:'https://www.meteosurfcanarias.com/1-webcams/webcam-faro-jandia.jpg', quelle:'MeteoSurf Canarias', seite:'https://www.meteosurfcanarias.com/webcams/new/de/strand-webcams-insel_fuerteventura.php' }
+      ]
+    }
+  });
+
+  // ---- Welche Elemente lassen sich einfärben? (Auswahl, Standardfarbe aus dem Stil, Standard-Durchsicht/Blur) ----
+  var ELEMENTE = [
+    { id:'zeilen',   name:'☰ Zeilenmenü',            sel:'.mg-zeilen-panel',  sicht:60, blur:12 },
+    { id:'farbmenu', name:'Farbmenü (Knopf links)',   sel:'.mg-farb-panel',    sicht:40, blur:12 },
+    { id:'leiste',   name:'Knopfleiste unten',        sel:'.mg-knoepfe',       sicht:0,  blur:0 },
+    { id:'fahne',    name:'Fahne (haftender Kopf)',   sel:'.mg-readout',       sicht:0,  blur:0 },
+    { id:'zeit',     name:'Datumskasten in der Fahne',sel:'.mg-zeit',          sicht:0,  blur:0, text:true },
+    { id:'ecke',     name:'Zoom-Ecke − 🔍 +',          sel:'.mg-ecke',          sicht:50, blur:3 },
+    { id:'bildtext', name:'Bildunterschrift',          sel:'.mg-cam-text',      sicht:28, blur:0, verlauf:true },
+    { id:'tool',     name:'Diagrammfläche (ganzes Tool)', sel:'.mg',            sicht:0,  blur:0 },
+    { id:'kopf',     name:'Seitenkopf (oben)',         sel:'.probe-kopf',       sicht:0,  blur:0 },
+    { id:'fuss',     name:'Fußleiste der Seite',       sel:'.probe-fuss',       sicht:0,  blur:0 }
+  ];
+  var VORGABEN = [
+    { id:'seite', name:'Wie die Seite' }, { id:'weiss', name:'Weiß', f:'#ffffff' }, { id:'elfenbein', name:'Elfenbein', f:'#f8f5ea' },
+    { id:'sand', name:'Sand', f:'#efe4cf' }, { id:'himmel', name:'Hellblau', f:'#e8f1f8' }, { id:'nacht', name:'Nachtblau', f:'#0f1b2b' },
+    { id:'anthrazit', name:'Anthrazit', f:'#1b2124' }, { id:'schwarz', name:'Schwarz', f:'#000000' }
+  ];
+
+  var stil = document.createElement('style'); document.head.appendChild(stil);
+  var wahl = {};
+  try { wahl = JSON.parse(localStorage.getItem('probe-farben') || '{}') || {}; } catch(e){ wahl = {}; }
+  var thema = localStorage.getItem('probe-thema') || 'dark';
+
+  function $(id){ return document.getElementById(id); }
+  function hex(rgb){            // "rgb(27, 33, 36)" → "#1b2124"
+    var m = /rgba?\(\s*(\d+)[,\s]+(\d+)[,\s]+(\d+)/.exec(rgb || '');
+    if (!m) return '#1b2124';
+    return '#' + [m[1], m[2], m[3]].map(function(n){ return ('0' + (+n).toString(16)).slice(-2); }).join('');
+  }
+  function rgba(h, sicht){
+    var r = parseInt(h.slice(1, 3), 16), g = parseInt(h.slice(3, 5), 16), b = parseInt(h.slice(5, 7), 16);
+    return 'rgba(' + r + ',' + g + ',' + b + ',' + ((100 - sicht) / 100).toFixed(2) + ')';
+  }
+  // Die Farbe, die das Element gerade von selbst hat (wenn man noch nichts gewählt hat)
+  function eigeneFarbe(e){
+    var n = document.querySelector(e.sel);
+    if (!n) return '#1b2124';
+    var bg = getComputedStyle(n).backgroundColor;
+    if (/^rgba\(0, 0, 0, 0\)$/.test(bg) || bg === 'transparent') bg = getComputedStyle(document.querySelector('.mg') || document.body).backgroundColor;
+    return hex(bg);
+  }
+  function anwenden(){
+    var regeln = [];
+    ELEMENTE.forEach(function(e){
+      var w = wahl[e.id]; if (!w) return;
+      var bg = rgba(w.farbe, w.sicht);
+      regeln.push(e.sel + ' { background: ' + bg + ' !important; background-image: none !important; backdrop-filter: blur(' + w.blur + 'px) !important; -webkit-backdrop-filter: blur(' + w.blur + 'px) !important; }');
+    });
+    stil.textContent = regeln.join('\n');
+    $('schluessel').value = JSON.stringify({ thema: thema, elemente: wahl, grundfarbe: localStorage.getItem('probe-mg-farbe') || 'seite' });
+    try { localStorage.setItem('probe-farben', JSON.stringify(wahl)); } catch(e){}
+  }
+  function reglerFuellen(){
+    var e = ELEMENTE.filter(function(x){ return x.id === $('element').value; })[0];
+    var w = wahl[e.id] || { farbe: eigeneFarbe(e), sicht: e.sicht, blur: e.blur };
+    $('farbe').value = w.farbe; $('farbe-text').value = w.farbe;
+    $('durchsicht').value = w.sicht; $('durchsicht-out').value = w.sicht + ' %';
+    $('blur').value = w.blur; $('blur-out').value = w.blur + ' px';
+  }
+  function merken(){
+    var e = ELEMENTE.filter(function(x){ return x.id === $('element').value; })[0];
+    var f = $('farbe-text').value.trim(); if (!/^#[0-9a-f]{6}$/i.test(f)) f = $('farbe').value;
+    wahl[e.id] = { farbe: f.toLowerCase(), sicht: +$('durchsicht').value, blur: +$('blur').value };
+    $('durchsicht-out').value = $('durchsicht').value + ' %'; $('blur-out').value = $('blur').value + ' px';
+    anwenden();
+  }
+
+  // ---- Regler aufbauen ----
+  $('element').innerHTML = ELEMENTE.map(function(e){ return '<option value="' + e.id + '">' + e.name + '</option>'; }).join('');
+  $('element').addEventListener('change', reglerFuellen);
+  $('farbe').addEventListener('input', function(){ $('farbe-text').value = $('farbe').value; merken(); });
+  $('farbe-text').addEventListener('change', function(){ if (/^#[0-9a-f]{6}$/i.test($('farbe-text').value.trim())) { $('farbe').value = $('farbe-text').value.trim(); merken(); } });
+  $('durchsicht').addEventListener('input', merken);
+  $('blur').addEventListener('input', merken);
+  $('element-zurueck').addEventListener('click', function(){ delete wahl[$('element').value]; anwenden(); reglerFuellen(); });
+  $('alles-zurueck').addEventListener('click', function(){ wahl = {}; anwenden(); reglerFuellen(); });
+  $('vorgaben').innerHTML = VORGABEN.map(function(v){
+    return '<button type="button" data-grund="' + v.id + '"><i style="background:' + (v.f || 'linear-gradient(135deg,#f8f5ea 50%,#1b2124 50%)') + '"></i>' + v.name + '</button>';
+  }).join('');
+  $('vorgaben').addEventListener('click', function(ev){
+    var b = ev.target.closest('button'); if (!b) return;
+    // denselben Weg nehmen wie der Farb-Knopf in der Leiste: Eintrag anklicken
+    var knopf = document.querySelector('.mg-farb-wahl[data-farbe="' + b.getAttribute('data-grund') + '"]');
+    if (knopf) knopf.click(); else { try { localStorage.setItem('probe-mg-farbe', b.getAttribute('data-grund')); } catch(e){} location.reload(); return; }
+    [].forEach.call($('vorgaben').querySelectorAll('button'), function(x){ x.classList.toggle('is-on', x === b); });
+    setTimeout(function(){ anwenden(); reglerFuellen(); }, 50);
+  });
+  $('kopieren').addEventListener('click', function(){
+    var t = $('schluessel'); t.select();
+    try { navigator.clipboard.writeText(t.value); $('kopieren').textContent = 'Kopiert ✓'; } catch(e){ document.execCommand('copy'); $('kopieren').textContent = 'Kopiert ✓'; }
+    setTimeout(function(){ $('kopieren').textContent = 'Schlüssel kopieren'; }, 1500);
+  });
+  $('regler-auf').addEventListener('click', function(){ $('regler').classList.add('is-auf'); reglerFuellen(); });
+  $('regler-zu').addEventListener('click', function(){ $('regler').classList.remove('is-auf'); });
+  $('menu-auf').addEventListener('click', function(){ var b = document.querySelector('.mg-zeilenwahl > button'); if (b) b.click(); $('regler').classList.remove('is-auf'); });
+  $('farbe-auf').addEventListener('click', function(){ var b = document.querySelector('.mg-btn-farbe'); if (b) b.click(); $('regler').classList.remove('is-auf'); });
+  function themaSetzen(t){
+    thema = t; document.documentElement.setAttribute('data-theme', t === 'light' ? 'light' : 'dark');
+    $('thema').textContent = 'Seite: ' + (t === 'light' ? 'hell' : 'dunkel');
+    try { localStorage.setItem('probe-thema', t); } catch(e){}
+    anwenden();
+  }
+  $('thema').addEventListener('click', function(){ themaSetzen(thema === 'light' ? 'dark' : 'light'); });
+  themaSetzen(thema);
+  // Menüs sollen beim Regeln offen bleiben dürfen: Tipp ins Regler-Fenster schließt sie nicht
+  $('regler').addEventListener('click', function(ev){ ev.stopPropagation(); });
+  $('regler').addEventListener('input', function(ev){ ev.stopPropagation(); });
+  anwenden();
+  reglerFuellen();
+})();
+</script>
+</body>
+</html>
