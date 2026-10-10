@@ -2,7 +2,11 @@
 <html lang="de">
 <meta charset="utf-8">
 <title>Fuerteventura Reiseplaner</title>
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<!-- 10.10.2026: Kein Pinch-Zoom der ganzen Seite mehr. Beim Zwei-Finger-Zoom im Wetter-Diagramm vergrößerte das iPhone
+     sonst die komplette Seite - Menüleiste und Fahne rutschten aus dem Bild, der Rand wurde abgeschnitten. Die Schriftgröße
+     lässt sich weiterhin im Zahnrad-Menü einstellen; Karten (Leaflet) zoomen mit eigener Geste. -->
+<script>document.addEventListener('gesturestart', function(e){ e.preventDefault(); }, { passive: false });</script>
 <meta name="theme-color" content="#0f6e76">
 <script>
 // Einstellungen (Zahnrad) vor dem ersten Zeichnen anwenden - sonst blitzt
@@ -81,7 +85,7 @@
   --home-tint: #241f16;
 }
 * { box-sizing: border-box; }
-html { color-scheme: light dark; scroll-behavior: smooth; }
+html { color-scheme: light dark; scroll-behavior: smooth; touch-action: pan-x pan-y; } /* pan-x pan-y: iOS 13+ lässt die Seite dann nicht mehr per Pinch zoomen (siehe Hinweis beim viewport-Meta) */
 body { margin: 0; background: var(--page); color: var(--ink); font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif; font-size: 15px; line-height: 1.55; }
 h1, h2, h3, h4 { font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif; font-weight: 700; letter-spacing: -0.015em; text-wrap: balance; margin: 0; color: var(--ink); }
 .num { font-family: "JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
