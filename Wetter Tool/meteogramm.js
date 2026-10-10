@@ -1804,7 +1804,7 @@
       var btn = document.getElementById(kid('zbtn')), panel = document.getElementById(kid('zpanel'));
 
       function malen(){
-        panel.innerHTML = '<h4>Welche Zeilen? · Zum Umsortieren ziehen</h4>' +
+        panel.innerHTML = '<h4>Welche Zeilen?<small>Zum Umsortieren ziehen</small></h4>' +
           '<div class="mg-zliste">' + reihenfolge.map(function(id){
             var z = KATALOG[id];
             return '<div class="mg-zeile" data-id="' + id + '">' +

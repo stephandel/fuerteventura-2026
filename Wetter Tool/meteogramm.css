@@ -138,18 +138,21 @@
 
 /* ---- Zeilenauswahl ---- */
 .mg-zeilenwahl { position: relative; }
-.mg-zeilen-panel { position: absolute; right: 0; top: calc(100% + 6px); z-index: 30; background: var(--mg-flaeche); border: 1px solid var(--mg-rand); border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); padding: 8px; min-width: 232px; max-width: calc(100vw - 32px); max-height: min(62vh, 470px); overflow-y: auto; -webkit-overflow-scrolling: touch; }
+/* Seit 10.10.2026 (Stephans Wunsch): gespiegelt (Griff und Haken rechts, Text rechtsbündig), so schmal wie der
+   längste Zeilenname, leicht durchsichtig mit Weichzeichner dahinter. Sitzt rechts unter/über dem ☰-Knopf. */
+.mg-zeilen-panel { position: absolute; right: 0; top: calc(100% + 6px); z-index: 30; background: var(--mg-flaeche); background: color-mix(in srgb, var(--mg-flaeche) 80%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--mg-rand); border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); padding: 6px; width: max-content; min-width: 0; max-width: calc(100vw - 32px); max-height: min(62vh, 470px); overflow-y: auto; -webkit-overflow-scrolling: touch; }
 .mg-zeilen-panel[hidden] { display: none; }
 /* Haftet die Leiste unten am Bildschirm, klappt das Menü nach oben auf */
 .mg-zeilen-panel.is-oben { top: auto; bottom: calc(100% + 6px); }
-.mg-zeilen-panel h4 { margin: 4px 8px 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--mg-text-still); }
-.mg-zeilen-panel label { display: flex; align-items: center; gap: 10px; padding: 7px 8px; border-radius: 9px; cursor: pointer; font-size: 13.5px; min-height: 40px; }
+.mg-zeilen-panel h4 { margin: 4px 8px 6px; font-size: 11px; line-height: 1.3; text-align: right; text-transform: uppercase; letter-spacing: 0.08em; color: var(--mg-text-still); }
+.mg-zeilen-panel h4 small { display: block; font-size: 10px; font-weight: 500; text-transform: none; letter-spacing: 0; opacity: 0.85; }
+.mg-zeilen-panel label { display: flex; flex-direction: row-reverse; align-items: center; gap: 8px; padding: 6px 6px; border-radius: 9px; cursor: pointer; font-size: 13.5px; min-height: 40px; text-align: right; white-space: nowrap; }
 .mg-zeilen-panel label:hover { background: var(--mg-flaeche2); }
 .mg-zeilen-panel input { width: 20px; height: 20px; flex: none; accent-color: var(--mg-akzent); }
 .mg-zeilen-panel .mg-punkt { width: 9px; height: 9px; border-radius: 50%; flex: none; }
 /* Zeilen im Menü lassen sich mit dem Griff links umsortieren */
 .mg-zliste { touch-action: pan-y; }
-.mg-zeile { display: flex; align-items: center; border-radius: 9px; }
+.mg-zeile { display: flex; flex-direction: row-reverse; align-items: center; border-radius: 9px; }
 .mg-zeile label { flex: 1; min-width: 0; }
 .mg-zeile:hover { background: var(--mg-flaeche2); }
 .mg-zeile.is-zieht { background: var(--mg-flaeche2); opacity: 0.85; outline: 1px dashed var(--mg-akzent); }
@@ -278,7 +281,7 @@
   .mg-tabs { flex: 1 1 auto; }
   .mg-tab { flex: 1; padding: 0 6px; text-align: center; font-size: 13px; }
   .mg-zeilenwahl { position: static; }
-  .mg-zeilen-panel { left: 14px; right: 14px; min-width: 0; max-width: none; }
+  .mg-zeilen-panel { left: auto; right: 8px; min-width: 0; max-width: calc(100vw - 16px); }
 }
 
 /* ---- Tipps zum Tag unter dem Diagramm (wahlfrei, cfg.tipps) ----
