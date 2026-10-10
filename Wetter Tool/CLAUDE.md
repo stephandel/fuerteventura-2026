@@ -70,7 +70,7 @@ Keine – alle entschieden (siehe unten).
   rechts unter/über dem ☰-Knopf (`right: 8px; left: auto`, auch auf dem Handy – die alte Regel `left/right: 14px` ist weg),
   `width: max-content` (≈ 239 px, so breit wie „Saharastaub (Calima)“ + Haken + Griff), `.mg-zeile` und `label` mit
   `flex-direction: row-reverse` (Griff ⠿ ganz rechts, dann Haken, Farbpunkt, Name rechtsbündig), Überschrift zweizeilig
-  (`<h4>Welche Zeilen?<small>Zum Umsortieren ziehen</small>`), Hintergrund `color-mix(… 70 %, transparent)` (Stephan: „30 % durchsichtig“, Version `20261010b`) plus
+  (`<h4>Welche Zeilen?<small>Zum Umsortieren ziehen</small>`), Hintergrund `color-mix(… 50 %, transparent)` (Stephan: erst 20 %, dann 30 %, seit Version `20261010d` 50 % durchsichtig) plus
   `backdrop-filter: blur(12px)`. **Version `20261010c`:** klappt **immer nach oben** auf (`is-oben` fest in `zeilenPanel()`,
   die Messung „Platz unten?“ ist weg), Höchsthöhe `calc(100dvh - var(--mg-haft-oben) - 80px)` statt `min(62vh, 470px)`,
   damit alle 11 Zeilen (≈ 500 px) ohne Scrollen passen; kurze Aufklapp-Animation `mg-auf` (Ursprung unten rechts). Rückbau: diese CSS-Regeln auf den Stand vor Commit „Zeilenfenster gespiegelt“ setzen.
