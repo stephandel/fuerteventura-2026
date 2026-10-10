@@ -1818,12 +1818,8 @@
       btn.addEventListener('click', function(ev){
         ev.stopPropagation();
         var zu = panel.hidden;
-        // Die Leiste haftet unten am Bildschirm - ist dort kein Platz, klappt das Menü nach oben auf
-        if (zu) {
-          panel.hidden = false;                       // erst zeigen, dann messen
-          var r = btn.getBoundingClientRect(), unten = (global.innerHeight || 0) - r.bottom;
-          panel.classList.toggle('is-oben', unten < panel.offsetHeight + 12 && r.top > unten);
-        }
+        // Seit 10.10.2026 (Stephans Wunsch): klappt immer vom ☰-Knopf nach oben auf, hoch genug für alle Zeilen
+        panel.classList.add('is-oben');
         panel.hidden = !zu;
         btn.setAttribute('aria-expanded', String(zu));
       });

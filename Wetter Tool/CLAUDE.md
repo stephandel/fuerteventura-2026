@@ -71,7 +71,9 @@ Keine – alle entschieden (siehe unten).
   `width: max-content` (≈ 239 px, so breit wie „Saharastaub (Calima)“ + Haken + Griff), `.mg-zeile` und `label` mit
   `flex-direction: row-reverse` (Griff ⠿ ganz rechts, dann Haken, Farbpunkt, Name rechtsbündig), Überschrift zweizeilig
   (`<h4>Welche Zeilen?<small>Zum Umsortieren ziehen</small>`), Hintergrund `color-mix(… 70 %, transparent)` (Stephan: „30 % durchsichtig“, Version `20261010b`) plus
-  `backdrop-filter: blur(12px)`. Rückbau: diese CSS-Regeln auf den Stand vor Commit „Zeilenfenster gespiegelt“ setzen.
+  `backdrop-filter: blur(12px)`. **Version `20261010c`:** klappt **immer nach oben** auf (`is-oben` fest in `zeilenPanel()`,
+  die Messung „Platz unten?“ ist weg), Höchsthöhe `calc(100dvh - var(--mg-haft-oben) - 80px)` statt `min(62vh, 470px)`,
+  damit alle 11 Zeilen (≈ 500 px) ohne Scrollen passen; kurze Aufklapp-Animation `mg-auf` (Ursprung unten rechts). Rückbau: diese CSS-Regeln auf den Stand vor Commit „Zeilenfenster gespiegelt“ setzen.
 - **Fahne hinter der Menüleiste + Fragezeichen im Regenbild (09.10.2026, Version `20261009a`):** Zwei Fehler von
   Stephans iPhone-Screenshot (Seite als App vom Startbildschirm, Safe-Area oben ≈ 47 px). (1) Außerhalb des Vollbilds
   war der schwarze Kasten mit Datum/Uhrzeit (`.mg-zeit`) nicht zu sehen – er klebte **hinter** der Menüleiste, nur die
