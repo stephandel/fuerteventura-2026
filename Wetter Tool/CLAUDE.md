@@ -70,7 +70,7 @@ Keine – alle entschieden (siehe unten).
   rechts unter/über dem ☰-Knopf (`right: 8px; left: auto`, auch auf dem Handy – die alte Regel `left/right: 14px` ist weg),
   `width: max-content` (≈ 239 px, so breit wie „Saharastaub (Calima)“ + Haken + Griff), `.mg-zeile` und `label` mit
   `flex-direction: row-reverse` (Griff ⠿ ganz rechts, dann Haken, Farbpunkt, Name rechtsbündig), Überschrift zweizeilig
-  (`<h4>Welche Zeilen?<small>Zum Umsortieren ziehen</small>`), Hintergrund `color-mix(… 80 %, transparent)` plus
+  (`<h4>Welche Zeilen?<small>Zum Umsortieren ziehen</small>`), Hintergrund `color-mix(… 70 %, transparent)` (Stephan: „30 % durchsichtig“, Version `20261010b`) plus
   `backdrop-filter: blur(12px)`. Rückbau: diese CSS-Regeln auf den Stand vor Commit „Zeilenfenster gespiegelt“ setzen.
 - **Fahne hinter der Menüleiste + Fragezeichen im Regenbild (09.10.2026, Version `20261009a`):** Zwei Fehler von
   Stephans iPhone-Screenshot (Seite als App vom Startbildschirm, Safe-Area oben ≈ 47 px). (1) Außerhalb des Vollbilds

@@ -140,7 +140,7 @@
 .mg-zeilenwahl { position: relative; }
 /* Seit 10.10.2026 (Stephans Wunsch): gespiegelt (Griff und Haken rechts, Text rechtsbündig), so schmal wie der
    längste Zeilenname, leicht durchsichtig mit Weichzeichner dahinter. Sitzt rechts unter/über dem ☰-Knopf. */
-.mg-zeilen-panel { position: absolute; right: 0; top: calc(100% + 6px); z-index: 30; background: var(--mg-flaeche); background: color-mix(in srgb, var(--mg-flaeche) 80%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--mg-rand); border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); padding: 6px; width: max-content; min-width: 0; max-width: calc(100vw - 32px); max-height: min(62vh, 470px); overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.mg-zeilen-panel { position: absolute; right: 0; top: calc(100% + 6px); z-index: 30; background: var(--mg-flaeche); background: color-mix(in srgb, var(--mg-flaeche) 70%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--mg-rand); border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); padding: 6px; width: max-content; min-width: 0; max-width: calc(100vw - 32px); max-height: min(62vh, 470px); overflow-y: auto; -webkit-overflow-scrolling: touch; }
 .mg-zeilen-panel[hidden] { display: none; }
 /* Haftet die Leiste unten am Bildschirm, klappt das Menü nach oben auf */
 .mg-zeilen-panel.is-oben { top: auto; bottom: calc(100% + 6px); }
