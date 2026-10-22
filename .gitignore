@@ -19,6 +19,8 @@
 !dossiers/*.pdf
 !kombi-rechner.html
 !reisetag.html
+!tests/
+!tests/*.mjs
 
 # Mac-Systemdateien immer ignorieren, auch in freigegebenen Ordnern
 .DS_Store
