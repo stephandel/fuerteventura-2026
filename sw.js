@@ -1,6 +1,6 @@
 // Service Worker für den Fuerteventura-Reiseplaner.
 // Zweck: (1) Benachrichtigungen anzeigen dürfen, (2) die Seite offline verfügbar halten.
-var CACHE = 'fuerte-v119';
+var CACHE = 'fuerte-v120';
 var CORE = ['./', './index.html', './manifest.json', './Wetter%20Tool/meteogramm.js', './Wetter%20Tool/meteogramm.css', './vendor/leaflet.js', './vendor/leaflet.css'];
 
 self.addEventListener('install', function(e){
@@ -28,7 +28,8 @@ self.addEventListener('fetch', function(e){
       caches.open(CACHE).then(function(c){ c.put(e.request, copy).catch(function(){}); });
       return res;
     }).catch(function(){
-      return caches.match(e.request).then(function(hit){
+      // ignoreSearch: die Seite lädt das Wetter-Tool mit ?v=…, CORE speichert es ohne (fremde Server cached der SW nie)
+      return caches.match(e.request, { ignoreSearch: true }).then(function(hit){
         return hit || caches.match('./index.html');
       });
     })
