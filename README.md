@@ -32,6 +32,13 @@ landen online. Alles andere in diesem Ordner bleibt lokal.
 | `_sicherungen/` | Sicherungskopien vor größeren Änderungen (Excel-Stände, Worker-Stand). |
 | `_generator-quelle/` | Python-Skript und Fotos, mit denen die Villa-Unterseiten erzeugt wurden. |
 
+## Wetter-Baustein (Meteogramm)
+
+- **Heimat seit 21.10.2026:** `Wetter Apps/WetterPro Nachbauten/gemeinsam/meteogramm.js/.css`. Hier in `Wetter Tool/` liegt nur eine Kopie; Änderungen dort machen, dann im Nachbauten-Ordner `python3 meteogramm-holen.py` (kopiert hierher).
+- **Stand 22.10.2026:** Baustein aus Nachbauten `81b6238` (Pfeilspitze am Auswahl-Strich, 11-px-Schrift, Vollbild als Blatt über dem ganzen Bildschirm mit „Fertig“/Esc/Zurück). Der eigene Vollbild-Melder der App (CSS-Klasse `vollbild` am `<html>`, blendete Kopf- und Fußleiste aus) ist entfernt, weil das Blatt das jetzt selbst erledigt.
+- **Nach jedem Holen:** Versionsparameter `?v=` der beiden Einbindungen oben in `index.html` und `CACHE` in `sw.js` hochzählen, sonst lädt der Browser den alten Stand.
+- **Test:** `node --test tests/sw-speicher.test.mjs` (Offline-Speicher). Lokal ansehen: `python3 -m http.server <port>` hier im Ordner; Fehler zum Sync-Server (`fuerte-sync…workers.dev`, „Access-Control“) sind lokal normal, der Server lehnt `localhost` ab (403).
+
 ## Andere Reisen in diesem Ordner
 
 Liegen gesammelt in `Andere Reisen/`:

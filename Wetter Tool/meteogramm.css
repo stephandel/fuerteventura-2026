@@ -93,14 +93,28 @@
   padding: 8px 14px; background: var(--mg-flaeche); border-top: 1px solid var(--mg-rand); border-bottom: 1px solid var(--mg-rand); }
 .mg-mitte { display: flex; justify-content: center; min-width: 0; }
 .mg-rechts { display: inline-flex; justify-content: flex-end; gap: 8px; }
-/* ---- Vollbild (07.10.2026): Knopf ⤢ in der Leiste, × oben rechts, Leiste ganz unten am Bildschirmrand ---- */
-.mg-vollbild-x { position: fixed; top: calc(env(safe-area-inset-top, 0px) + 8px); right: 10px; z-index: 80; display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50%;
-  border: 1px solid var(--mg-rand); color: var(--mg-text); cursor: pointer; -webkit-tap-highlight-color: transparent;
-  background: rgba(27,33,36,0.85); background: color-mix(in srgb, var(--mg-flaeche) 85%, transparent); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
-.mg-vollbild-x[hidden] { display: none; }
-.mg-vollbild-x .mg-i { width: 20px; height: 20px; }
-/* Im Vollbild sitzt das × oben rechts neben der Fahne: Kasten etwas kompakter, nie umbrechen, lange Wetterlage mit … kürzen */
-.mg-vollbild .mg-readout { padding-right: 46px; }
+/* ---- Vollbild (07.10.2026, Blatt seit A32 am 21.10.2026): Knopf ⤢ in der Leiste oder Doppeltipp auf die Lupe ----
+   Der Baustein legt sich fest über den ganzen Bildschirm (an alle vier Ränder geheftet), Safe Areas als Innenabstand,
+   oben ein Kopf mit „Fertig“ (44 px), das Blatt scrollt in sich. z-index 90: über Seitenleisten der Apps, unter dem Player (200).
+   !important, weil Apps den Behälter mit eigenen Regeln gestalten (ID-Selektoren, Eckenradius, Rand, Innenabstand, Inline-Stil). */
+.mg.mg-vollbild { position: fixed !important; inset: 0 !important; z-index: 90 !important; width: auto !important; height: auto !important; max-width: none !important; min-height: 0 !important;
+  margin: 0 !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; background: var(--mg-flaeche) !important;
+  padding: 0 env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px) !important;
+  overflow-x: hidden !important; overflow-y: auto !important; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
+  --mg-haft-oben: calc(44px + env(safe-area-inset-top, 0px)) !important;
+  animation: mg-vb-auf .25s ease-out; }
+@keyframes mg-vb-auf { from { opacity: 0; transform: scale(0.985); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .mg.mg-vollbild { animation: none; } }
+.mg-vb-kopf { position: sticky; top: 0; z-index: 9; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  min-height: calc(44px + env(safe-area-inset-top, 0px)); padding: env(safe-area-inset-top, 0px) 4px 0 14px; background: var(--mg-flaeche); }
+.mg-vb-kopf[hidden] { display: none; }
+.mg-vb-titel { min-width: 0; font: 600 15px/1.3 var(--mg-serif); color: var(--mg-text-still); }
+/* „Fertig“ bleibt Text, auch bei großer Schrift (Apple-Muster für Blätter) */
+.mg-vb-fertig { flex: none; display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; padding: 0 10px; border: 0; border-radius: var(--mg-r);
+  background: transparent; color: var(--mg-akzent); font: 600 17px/1 var(--mg-serif); cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.mg-vb-fertig:active { opacity: 0.6; }
+.mg-vb-fertig:focus-visible { outline: 2px solid var(--mg-akzent); outline-offset: -2px; }
+/* Im Vollbild: Kasten der Fahne etwas kompakter, nie umbrechen, lange Wetterlage mit … kürzen */
 .mg-vollbild .mg-zeit { flex-wrap: nowrap; max-width: 100%; font-size: 0.92rem; padding: 4px 10px; gap: 6px; }
 .mg-vollbild .mg-zeit > span:first-child { white-space: nowrap; }
 .mg-vollbild .mg-lage { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; font-size: 12px; }
@@ -218,21 +232,29 @@
 .mg-ax-wert { position: absolute; right: 3px; font-family: var(--mg-mono); font-size: 11px; font-weight: 700; line-height: 14px; padding: 1px 3px; border-radius: 4px; background: var(--mg-flaeche); box-shadow: 0 0 0 1px currentColor; z-index: 1; }
 .mg-ax-wert[hidden] { display: none; }
 .mg-ax-datum { position: absolute; left: 0; padding: 0 10px 0 8px; display: flex; align-items: center; background: var(--mg-flaeche); font-size: 12px; font-weight: 700; color: var(--mg-text); white-space: nowrap; border-radius: 0 6px 6px 0; }
-.mg-cursor { position: absolute; top: 0; bottom: 0; left: 50%; width: 0; border-left: 2px solid var(--mg-text); opacity: 0.85; pointer-events: none; }
-.mg-cursor::before { content: ""; position: absolute; top: 0; left: -6px; border: 5px solid transparent; border-top: 7px solid var(--mg-text); }
+/* Auswahl-Strich: Farbe kommt aus border-color (Apps setzen sie dort). Die Linie ist ::after, damit nur sie die Lücke
+   über der Tagesinfo bekommt (--mg-cursor-maske aus meteogramm.js); eine Maske am Strich selbst schnitt die Spitze ab (B7). */
+.mg-cursor { position: absolute; top: 0; bottom: 0; left: 50%; width: 0; border: 0 solid var(--mg-text); opacity: 0.85; pointer-events: none; }
+.mg-cursor::after { content: ""; position: absolute; top: 0; bottom: 0; left: 0; border-left: 2px solid; border-left-color: inherit;
+  -webkit-mask-image: var(--mg-cursor-maske, none); mask-image: var(--mg-cursor-maske, none); }
+.mg-cursor::before { content: ""; position: absolute; top: 0; left: -4px; border: 5px solid transparent; border-top: 7px solid var(--mg-text); }
 
 /* ---- Schwebende Helfer im Diagramm ---- */
 /* Zoom-Ecke: − 🔍 + rechts unten über der Zeitachse, halb durchsichtig */
 /* Der Halter steht am Ende des Diagramm-Blocks und haftet am unteren Bildrand (über der Knopfleiste),
    solange das Diagramm nach unten über den Bildschirm hinausragt. */
-.mg-ecke-halter { position: sticky; bottom: calc(var(--mg-haft-unten) + 64px); z-index: 3; height: 0; }
-.mg-ecke { position: absolute; right: 8px; bottom: 8px; display: inline-flex; align-items: stretch; border: 1px solid var(--mg-rand); border-radius: var(--mg-r); overflow: hidden;
+.mg-ecke-halter { display: flex; justify-content: flex-end; padding: 6px 8px 0; }   /* eigene Zeile unter dem Diagramm (A9) */
+.mg-ecke { display: inline-flex; align-items: stretch; border: 1px solid var(--mg-rand); border-radius: var(--mg-r); overflow: hidden;
   background: rgba(27,33,36,0.5); background: color-mix(in srgb, var(--mg-flaeche) 50%, transparent); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
-.mg-ecke .mg-btn { min-height: 30px; min-width: 32px; padding: 0 7px; border: 0; border-radius: 0; background: transparent; }
+.mg-ecke .mg-btn { min-height: 44px; min-width: 44px; padding: 0 7px; border: 0; border-radius: 0; background: transparent; }
 .mg-ecke .mg-btn .mg-i { width: 15px; height: 15px; }
-.mg-ecke-lupe { display: inline-flex; align-items: center; padding: 0 5px; color: var(--mg-text-still); }
+.mg-ecke-lupe { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; padding: 0 5px; color: var(--mg-text-still); }
 .mg-ecke-lupe .mg-i { width: 13px; height: 13px; }
 .mg-ecke > * + * { border-left: 1px solid var(--mg-rand); }
+/* Weniger Transparenz gewünscht: deckende statt gläserne Knöpfe und Menüs (A32) */
+@media (prefers-reduced-transparency: reduce) {
+  .mg-ecke, .mg-randpfeil, .mg-zeilen-panel, .mg-farb-panel { background: var(--mg-flaeche); -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
 /* Rand-Pfeil zurück zu jetzt: erscheint nur, wenn "jetzt" aus dem Bild gewischt ist */
 .mg-randpfeil { position: absolute; top: var(--mg-sicht-mitte, 50%); transform: translateY(-50%); z-index: 3; display: none; align-items: center; min-height: 36px; padding: 0 7px; gap: 1px;
   border: 1px solid var(--mg-rand); border-radius: var(--mg-r); color: var(--mg-text); cursor: pointer; -webkit-tap-highlight-color: transparent;
@@ -267,10 +289,13 @@
 .mg-svg .mg-linie { fill: none; stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
 .mg-svg .mg-linie2 { fill: none; stroke-width: 1.6; stroke-dasharray: 4 3; opacity: 0.8; }
 .mg-svg .mg-flaeche { opacity: 0.16; }
-.mg-svg .mg-mark { fill: var(--mg-text); font-size: 10.5px; font-weight: 700; paint-order: stroke; stroke: var(--mg-flaeche); stroke-width: 3px; stroke-linejoin: round; }
-.mg-svg .mg-sonne { fill: var(--ochre, #e0a24f); font-weight: 700; font-size: 10.5px; }
-.mg-svg .mg-tagesinfo { font-size: 10.5px; }
+/* Marken, Sonnenzeiten und Tagesinfo: 11 px, die Untergrenze (B7, 22.10.2026; vorher 10,5 px) */
+.mg-svg .mg-mark { fill: var(--mg-text); font-size: 11px; font-weight: 700; paint-order: stroke; stroke: var(--mg-flaeche); stroke-width: 3px; stroke-linejoin: round; }
+.mg-svg .mg-sonne { fill: var(--ochre, #e0a24f); font-weight: 700; font-size: 11px; }
+.mg-svg .mg-tagesinfo { font-size: 11px; }
 .mg-svg .mg-tagesinfo-stark { font-size: 11px; font-weight: 700; fill: var(--mg-text); }
+/* Die Jetzt-Linie läuft je nach Uhrzeit durch die Tagesinfo: Text liegt darüber (meteogramm.js), Hof in Bandfarbe hält ihn lesbar */
+.mg-svg :is(.mg-tagesinfo, .mg-tagesinfo-stark) { paint-order: stroke; stroke: var(--mg-flaeche2); stroke-width: 3px; stroke-linejoin: round; }
 .mg-svg .mg-jetzt { stroke: var(--mg-akzent); stroke-width: 1.5; stroke-dasharray: 4 3; }
 .mg-svg .mg-jetzt-t { fill: var(--mg-akzent); font-weight: 700; }
 .mg-svg .mg-cam-mark { fill: var(--ochre, #e0a24f); opacity: 0.85; }

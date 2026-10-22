@@ -18,6 +18,9 @@
 (function (global) {
   'use strict';
 
+  // Neu geladen, während ein Vollbild-Blatt offen war (A32): der Verlaufseintrag gehört zu keinem Blatt mehr
+  try { if (global.history && history.state && history.state.wpVollbild === 'mg') history.replaceState(null, ''); } catch(e){}
+
   // ---------- Vorgaben ----------
 
   var MODELLE_STANDARD = [
@@ -173,7 +176,14 @@
     var WERTE_KLUG = cfg.werteKlug === true;
     // Vollbild (07.10.2026): Knopf in der Leiste oder Doppeltipp auf die Lupe. Die Seite kann über
     // cfg.vollbild(an) ihre eigenen Leisten ausblenden; der Baustein selbst setzt die Klasse mg-vollbild.
+    // Seit A32 (21.10.2026) ist das ein Blatt über dem ganzen Bildschirm: „Fertig“, Esc und Zurück schließen,
+    // der Rest der Seite ist solange inert. vollbildStart: gleich im Blatt aufbauen; beiVollbildZu(): meldet das
+    // Schließen (z. B. zurück zum vorherigen Reiter); zurueckGeste: false legt keinen Verlaufseintrag an.
     var VOLLBILD_CB = typeof cfg.vollbild === 'function' ? cfg.vollbild : null;
+    var VOLLBILD_START = cfg.vollbildStart === true;
+    var BEI_VOLLBILD_ZU = typeof cfg.beiVollbildZu === 'function' ? cfg.beiVollbildZu : null;
+    var ZURUECK_GESTE = cfg.zurueckGeste !== false;
+    var VOLLBILD_TITEL = cfg.vollbildTitel || 'Meteogramm';
     var vollbild = false;
     var WERTE_PAARE = cfg.wertePaare || [['tide', 'wasser'], ['sonne', 'uv'], ['regen', 'wolken'], ['staub', 'feuchte']];
     var MODELLE = cfg.modelle && cfg.modelle.length ? cfg.modelle : MODELLE_STANDARD;
@@ -257,6 +267,22 @@
     // Maße
     var BAND_TAG = 22, BAND_CAM = 16, TITEL_H = 22, BAND_UNTEN = 24, TAGESINFO_H = MOND ? 50 : 34;
     var ZEILE_H_SCHMAL = 72, ZEILE_H_BREIT = 92, PXH_BREIT = 24;
+    // Vollbild im Querformat (B7, 22.10.2026): Kopf, Fahne und Knopfleiste lassen auf Telefonen quer nur 150–220 px fürs
+    // Diagramm; mit 92 px je Zeile passte keine zweite ganz hinein. Flach: die Zeilenhöhe wird aus dem freien Platz
+    // berechnet, sodass die ersten zwei Zeilen ganz passen (20–44 px), die Tagesinfo zeigt dann nur die Sonnenstunden.
+    var ZEILE_H_FLACH_MIN = 20, ZEILE_H_FLACH_MAX = 44, TAGESINFO_H_FLACH = 20, gezeichnetFlachH = 0, gezeichnetFlach = false;
+    function flach(){ var h = global.innerHeight || 0, w = global.innerWidth || 0; return vollbild && h < 500 && w > h; }
+    function flachHoehe(){
+      if (!flach()) return 0;
+      // Freier Platz direkt gemessen: Unterkante der Fahne (samt Kopf und allem, was eine App darüber zeigt, z. B. Orte-Reiter)
+      // bis Oberkante der unten haftenden Knopfleiste, 4 px Reserve. offset* statt Bildschirmlage: die Öffnen-Animation skaliert.
+      var ro = wurzel.querySelector('.mg-readout'), kn = wurzel.querySelector('.mg-knoepfe'), extra = 0;
+      if (!ro || !kn) return ZEILE_H_FLACH_MAX;
+      var frei = wurzel.clientHeight - (parseFloat(getComputedStyle(wurzel).paddingBottom) || 0) - kn.offsetHeight - (ro.offsetTop + ro.offsetHeight) - 4;
+      sichtbareZeilen().slice(0, 2).forEach(function(z){ if (z.tagesinfo) extra += TAGESINFO_H_FLACH; });
+      var h = Math.floor((frei - BAND_TAG - BAND_CAM - 2 * TITEL_H - extra - 2) / 2);
+      return Math.max(ZEILE_H_FLACH_MIN, Math.min(ZEILE_H_FLACH_MAX, h));
+    }
 
     var el = {}, daten = null, cache = {}, geo = null, altT0 = null, datenNr = 0;
     var pxH = 26, idxJetzt = 0, sammler = 0, camAktuell = null;
@@ -608,7 +634,8 @@
       var schmal = W < 560;
       pxH = (schmal ? Math.max(18, Math.min(40, Math.floor(W / 26))) : PXH_BREIT) * zoom;
       var tagB = 24 * pxH;                       // so viele Pixel breit ist ein Tag
-      var zeileH = schmal ? ZEILE_H_SCHMAL : ZEILE_H_BREIT;
+      gezeichnetFlachH = flachHoehe(); gezeichnetFlach = gezeichnetFlachH > 0;
+      var zeileH = gezeichnetFlachH || (schmal ? ZEILE_H_SCHMAL : ZEILE_H_BREIT);
 
       var ZEILEN = sichtbareZeilen();
       var n = daten.zeit.length;
@@ -619,7 +646,7 @@
       var y = BAND_TAG + BAND_CAM, zeilen = [];
       ZEILEN.forEach(function(z){
         var s = skala(z);
-        var extra = z.tagesinfo ? TAGESINFO_H : 0;
+        var extra = z.tagesinfo ? (gezeichnetFlach ? TAGESINFO_H_FLACH : TAGESINFO_H) : 0;
         var g = { z: z, s: s, y0: y + TITEL_H, h: zeileH, yt: y, extra: extra };
         g.yv = function(v){ return g.y0 + g.h - (v - s.lo) / (s.hi - s.lo) * g.h; };
         zeilen.push(g);
@@ -684,11 +711,24 @@
         var std = ((idxJetzt % 24) + 24) % 24;
         if (Math.min(std, 24 - std) > 2.5) s.push('<text class="mg-jetzt-t" x="' + (x(idxJetzt) + 4) + '" y="15">Jetzt</text>');
       }
+      zeilen.forEach(function(g){ zeichneTagesinfo(s, g, x, pxH); });
       s.push('</svg>');
       el.svgWrap.innerHTML = s.join('');
       if (el.punkte) el.punkte.innerHTML = '';   // Punkte werden in wertlinienSetzen neu angelegt
       el.svgWrap.style.height = hoehe + 'px';
       el.wrap.style.height = hoehe + 'px';
+      // Auswahl-Strich: Lücke über der Tagesinfo (B7, 22.10.2026). Er liegt als eigene Ebene über der Zeichnung und lief
+      // sonst je nach Uhrzeit durch Sonnenstunden, Sonnenzeiten und Mond; dort gibt es keine Kurve zum Ablesen.
+      if (el.cursor) {
+        var stopps = ['#000 0px'];
+        if (24 * pxH >= 60) zeilen.forEach(function(g){
+          if (!g.z.tagesinfo || !g.extra) return;
+          var a = g.y0 + g.h, b2 = a + g.extra;
+          stopps.push('#000 ' + a + 'px', 'transparent ' + a + 'px', 'transparent ' + b2 + 'px', '#000 ' + b2 + 'px');
+        });
+        // nur auf die Linie (::after), die Spitze oben bleibt ganz
+        el.cursor.style.setProperty('--mg-cursor-maske', stopps.length > 1 ? 'linear-gradient(to bottom, ' + stopps.join(', ') + ', #000 100%)' : 'none');
+      }
 
       // Feste Achse links
       var a = [];
@@ -696,8 +736,12 @@
         a.push('<div class="mg-ax-titel" style="top:' + g.yt + 'px;height:' + TITEL_H + 'px">' +
           '<span class="mg-ax-punkt" style="background:' + g.z.farbe + '"></span>' +
           esc(g.z.titel) + (g.z.einheit ? ' <small>in ' + esc(g.z.einheit) + '</small>' : '') + '</div>');
+        var letzteTy = null;
         g.s.ticks.forEach(function(t){
           var ty = Math.max(g.y0, Math.min(g.y0 + g.h - 14, g.yv(t) - 7));
+          // Flach (Vollbild quer) stehen die Zahlen sonst übereinander: nur jede, die 14 px Abstand zur letzten hat
+          if (gezeichnetFlach && letzteTy !== null && Math.abs(ty - letzteTy) < 14) return;
+          letzteTy = ty;
           var txt = (g.z.id === 'welle' || g.z.id === 'tide' || g.z.id === 'regen' || (g.z.id === 'wasser' && t % 1)) ? dez(t, 1) : Math.round(t);
           a.push('<div class="mg-ax-tick" style="top:' + ty + 'px">' + txt + '</div>');
         });
@@ -757,10 +801,25 @@
         (daten.sonnenunter || []).forEach(function(iso){ var xi = idxFuerIso(iso); if (xi >= 0 && xi < n) s.push('<text class="mg-sonne" x="' + x(xi) + '" y="' + (g.yt + 15) + '" text-anchor="middle">↓ ' + iso.slice(11, 16) + '</text>'); });
       }
 
+      // Marken (B7, 22.10.2026): Grundlinie bleibt in der Zeile (nicht im Titelstreifen, nicht in der nächsten Zeile).
+      // Passt sie nicht über (Hoch) bzw. unter (Tief) den Punkt, kommt sie auf die andere Seite, sonst rechts neben ihn,
+      // nie auf ihn. Eine Marke, die eine schon gesetzte überdecken würde, entfällt (Punkt bleibt). Breite: 11 px fett ≈ 6,5 px je Zeichen.
+      var gesetzt = [];
+      function marke(mx, py, hoch, ab, txt){
+        var oben = g.y0 + 10.5, unten = g.y0 + g.h - 3, w = txt.length * 6.5, passt = function(v){ return v >= oben && v <= unten; };
+        var yb = hoch ? py - ab[0] : py + ab[1], anders = hoch ? py + ab[1] : py - ab[0];
+        if (!passt(yb)) {
+          if (passt(anders)) yb = anders;
+          else { mx += w / 2 + 6; yb = Math.max(oben, Math.min(unten, py + 4)); }
+        }
+        if (gesetzt.some(function(q){ return Math.abs(q.x - mx) < (q.w + w) / 2 + 2 && Math.abs(q.y - yb) < 13; })) return;
+        gesetzt.push({ x: mx, y: yb, w: w });
+        s.push('<text class="mg-mark" x="' + mx + '" y="' + yb + '" text-anchor="middle">' + txt + '</text>');
+      }
       if (z.extrema === 'tag') {
         tagesExtrema(F).forEach(function(e){
           s.push('<circle cx="' + x(e.i) + '" cy="' + g.yv(e.v) + '" r="3" fill="' + z.farbe + '"/>');
-          if (24 * pxH >= 60) s.push('<text class="mg-mark" x="' + x(e.i) + '" y="' + (e.hoch ? g.yv(e.v) - 7 : g.yv(e.v) + 14) + '" text-anchor="middle">' + (e.hoch ? '↑ ' : '↓ ') + Math.round(e.v) + '°</text>');
+          if (24 * pxH >= 60) marke(x(e.i), g.yv(e.v), e.hoch, [7, 14], (e.hoch ? '↑ ' : '↓ ') + Math.round(e.v) + '°');
         });
       }
       if (z.extrema === 'tide') {
@@ -773,7 +832,7 @@
         ex.forEach(function(e){
           s.push('<circle cx="' + x(e.i) + '" cy="' + g.yv(e.v) + '" r="' + (pxH < 5 ? 2.5 : 3.5) + '" fill="' + z.farbe + '"/>');
           var dt = new Date(daten.t0.getTime() + e.i * 3600000);
-          if (pxH >= 7) s.push('<text class="mg-mark" x="' + x(e.i) + '" y="' + (e.hoch ? g.yv(e.v) - 8 : g.yv(e.v) + 15) + '" text-anchor="middle">' + pad2(dt.getHours()) + ':' + pad2(dt.getMinutes()) + '</text>');
+          if (pxH >= 7) marke(x(e.i), g.yv(e.v), e.hoch, [8, 15], pad2(dt.getHours()) + ':' + pad2(dt.getMinutes()));
         });
       }
 
@@ -781,8 +840,12 @@
       if (z.wertlinie) s.push('<line class="mg-wertlinie" id="' + kid('wl-' + z.id) + '" x1="' + x(0) + '" x2="' + x(n - 1) + '" y1="0" y2="0" stroke="' + z.farbe + '" visibility="hidden"/>');
       // Der Punkt auf der Kurve an der gewählten Stelle liegt seit 08.10.2026 nicht mehr im SVG, sondern in der
       // Ebene .mg-punkte ueber dem schwarzen Strich (siehe wertlinienSetzen) - sonst verdeckt der Strich den Punkt.
+    }
 
-      // Tages-Fußzeile unter der Sonnenzeile
+    // Tages-Fußzeile unter der Sonnenzeile. Wird nach der Jetzt-Linie gezeichnet (B7, 22.10.2026): je nach Uhrzeit
+    // kreuzt die Linie den Text, vorher lag sie darüber; jetzt liegt der Text mit Hof in Bandfarbe oben (CSS .mg-tagesinfo).
+    function zeichneTagesinfo(s, g, x, pxH){
+      var z = g.z;
       if (z.tagesinfo && g.extra && 24 * pxH >= 60) {
         var basis = g.y0 + g.h;
         daten.tage.forEach(function(t){
@@ -790,7 +853,7 @@
           if (t.bis - t.von < 6) return;                 // angeschnittene Tage weglassen
           var stunden = t.sonneMin / 60;
           s.push('<text class="mg-tagesinfo-stark" x="' + mitte + '" y="' + (basis + 15) + '" text-anchor="middle">☀ ' + dez(stunden, 1) + ' h</text>');
-          if (24 * pxH < 150) return;              // herausgezoomt: nur die Sonnenstunden
+          if (24 * pxH < 150 || gezeichnetFlach) return;   // herausgezoomt oder flach: nur die Sonnenstunden
           var unten = (t.auf && t.unter ? t.auf + ' – ' + t.unter : '') + (t.uvMax != null ? '  ·  UV ' + Math.round(t.uvMax) : '');
           if (unten) s.push('<text class="mg-tagesinfo" x="' + mitte + '" y="' + (basis + 28) + '" text-anchor="middle">' + unten + '</text>');
           if (MOND && t.mond) {
@@ -1508,6 +1571,9 @@
     function aufbauen(){
       wurzel.classList.add('mg');
       wurzel.innerHTML =
+        // Kopf des Vollbild-Blatts (A32): Titel links, „Fertig“ rechts; außerhalb des Blatts versteckt
+        '<div class="mg-vb-kopf" hidden><span class="mg-vb-titel" id="' + kid('vbtitel') + '">' + esc(VOLLBILD_TITEL) + '</span>' +
+          '<button type="button" class="mg-vb-fertig" id="' + kid('fertig') + '">Fertig</button></div>' +
         '<div class="mg-top">' +
           '<div class="mg-tabs" id="' + kid('orte') + '" role="tablist" aria-label="Ort"></div>' +
           // Wettermodell als kleines Feld "Mix ▾" rechts neben den Orten; Antippen klappt die Liste auf
@@ -1532,15 +1598,15 @@
           // Rand-Pfeile: erscheinen, wenn "jetzt" aus dem Bild gewischt ist, und führen zurück
           '<button type="button" class="mg-randpfeil mg-randpfeil-l" id="' + kid('rpl') + '" aria-label="Zurück zu jetzt" title="Zurück zu jetzt">' + ico('chevl') + ico('ziel') + '</button>' +
           '<button type="button" class="mg-randpfeil mg-randpfeil-r" id="' + kid('rpr') + '" aria-label="Zurück zu jetzt" title="Zurück zu jetzt">' + ico('ziel') + ico('chevr') + '</button>' +
-          // Zoom: kleines − 🔍 + rechts unten (dazu Zwei-Finger-Geste und Strg+Mausrad). Der Halter haftet
-          // am unteren Bildrand über der Knopfleiste, solange das Diagramm länger ist als der Bildschirm.
+          // Zoom: −, Lupe, + (dazu Zwei-Finger-Geste und Strg+Mausrad), steht unter dem Diagramm
+          '<div class="mg-zoomhinweis" id="' + kid('zoomhinweis') + '" aria-live="polite"></div>' +
+        '</div>' +
+        // Eigene Zeile unter dem Diagramm, damit die Knöpfe weder Kurven noch Zeitachse verdecken (A9, Durchgang 21.10.2026)
           '<div class="mg-ecke-halter"><div class="mg-ecke">' +
             '<button type="button" class="mg-btn" id="' + kid('zoomraus') + '" aria-label="Herauszoomen: mehr Tage zeigen" title="Mehr Tage zeigen">' + ico('minus') + '</button>' +
             '<button type="button" class="mg-ecke-lupe" id="' + kid('lupe') + '" aria-label="Vollbild: zweimal tippen" title="Zweimal tippen: Vollbild an/aus">' + ico('lupe') + '</button>' +
             '<button type="button" class="mg-btn" id="' + kid('zoomrein') + '" aria-label="Hineinzoomen: weniger Stunden zeigen" title="Genauer zeigen">' + ico('plus') + '</button>' +
           '</div></div>' +
-          '<div class="mg-zoomhinweis" id="' + kid('zoomhinweis') + '" aria-live="polite"></div>' +
-        '</div>' +
         // Knopfleiste direkt unter dem Diagramm: ↻ links, ‹ Jetzt › als Gruppe in der Mitte, ☰ rechts.
         // Sie haftet unten am Bildschirm, solange das Tool im Bild ist (CSS: position sticky).
         '<div class="mg-knoepfe">' +
@@ -1566,8 +1632,6 @@
         '</div>' +
         // Fuehler direkt unter der Knopfleiste: ist er unterhalb des Bildschirms, haftet die Leiste gerade unten
         '<div class="mg-haft-fuss" id="' + kid('haftfuss') + '" aria-hidden="true"></div>' +
-        // Im Vollbild: × oben rechts am Bildschirm führt zurück
-        '<button type="button" class="mg-vollbild-x" id="' + kid('vollx') + '" aria-label="Vollbild beenden" title="Vollbild beenden" hidden>' + ico('x') + '</button>' +
         (ANSICHTEN.length > 1 ? '<div class="mg-ansichten" id="' + kid('ansichten') + '" role="tablist" aria-label="Bildansicht"></div>' : '') +
         (KARTE ? '<div class="mg-karte" id="' + kid('karte') + '" hidden>' +
           '<img class="mg-k-basis" id="' + kid('kbasis') + '" alt="Satellitenbild" decoding="async">' +
@@ -1610,6 +1674,7 @@
         function anfordern(){ if (!offen) { offen = true; requestAnimationFrame(messen); } }
         window.addEventListener('scroll', anfordern, { passive: true });
         window.addEventListener('resize', anfordern);
+        wurzel.addEventListener('scroll', anfordern, { passive: true });   // im Vollbild-Blatt scrollt der Baustein selbst
         el.haftMessen = messen;
         messen();
       })();
@@ -1681,6 +1746,8 @@
       el.scroll.addEventListener('scroll', anzeigen, { passive: true });
       global.addEventListener('scroll', sichtMitte, { passive: true });
       global.addEventListener('resize', sichtMitte);
+      global.addEventListener('resize', flachPruefen);
+      wurzel.addEventListener('scroll', sichtMitte, { passive: true });
       // Wer selbst ins Diagramm greift, übernimmt - der Zeitraffer hört auf
       ['pointerdown', 'wheel', 'touchstart'].forEach(function(t){
         el.scroll.addEventListener(t, function(){ if (zf.aktiv) zfBeenden(false); }, { passive: true });
@@ -1727,15 +1794,17 @@
       document.getElementById(kid('rpr')).addEventListener('click', zuJetzt);
       document.getElementById(kid('frisch')).addEventListener('click', function(){ auffrischen(true); });
 
-      // Vollbild: Knopf, × oben rechts, Doppeltipp auf die Lupe
+      // Vollbild: Knopf, „Fertig“ oben rechts, Doppeltipp auf die Lupe, Esc, Zurück
       document.getElementById(kid('voll')).addEventListener('click', function(){ vollbildSetzen(!vollbild); });
-      document.getElementById(kid('vollx')).addEventListener('click', function(){ vollbildSetzen(false); });
+      document.getElementById(kid('fertig')).addEventListener('click', function(){ vollbildSetzen(false); });
       var lupeTipp = 0;
       document.getElementById(kid('lupe')).addEventListener('click', function(){
         var jetzt = Date.now();
-        if (jetzt - lupeTipp < 350) { lupeTipp = 0; vollbildSetzen(!vollbild); }
+        if (jetzt - lupeTipp < 350) { lupeTipp = 0; vollbildSetzen(!vollbild, false, document.getElementById(kid('lupe'))); }
         else lupeTipp = jetzt;
       });
+      document.addEventListener('keydown', vbTaste);
+      global.addEventListener('popstate', vbZurueck);
 
       // Zoom-Gesten: zwei Finger auseinander/zusammen (Handy) und Strg + Mausrad (Laptop).
       // Je Stufe genügt eine deutliche Bewegung; danach zählt der Abstand neu.
@@ -1794,18 +1863,77 @@
       });
     }
 
-    // Vollbild an/aus: Klasse am Baustein, Knopf-Symbol, × einblenden, Seite benachrichtigen
-    function vollbildSetzen(an){
+    // Vollbild an/aus (A32): Der Baustein wird zum Blatt über dem ganzen Bildschirm (CSS .mg-vollbild), bekommt
+    // role="dialog", sperrt den Rest der Seite (inert, kein Mitscrollen) und legt einen Verlaufseintrag an, damit
+    // Zurück (Browser, Wischgeste, Android-Taste) das Blatt schließt statt die Seite zu verlassen.
+    // ausVerlauf: Schließen kam vom Zurück selbst (dann nicht noch einmal zurückgehen); oeffner: dorthin kehrt der Fokus zurück.
+    // zurueck: so viele history.back() sind unterwegs; ihr spätes popstate darf ein inzwischen neu geöffnetes Blatt nicht schließen
+    var vb = { gesperrt: [], overflow: '', gepusht: false, oeffner: null, zurueck: 0 };
+    function vollbildSetzen(an, ausVerlauf, oeffner){
       an = !!an;
       if (an === vollbild) return;
       vollbild = an;
       wurzel.classList.toggle('mg-vollbild', an);
-      var b = document.getElementById(kid('voll')), x = document.getElementById(kid('vollx'));
-      if (b) { b.innerHTML = ico(an ? 'vollaus' : 'voll'); b.setAttribute('aria-pressed', String(an)); b.title = an ? 'Vollbild beenden' : 'Vollbild: Kopf- und Fußleiste der Seite ausblenden'; }
-      if (x) x.hidden = !an;
+      var b = document.getElementById(kid('voll')), kopf = wurzel.querySelector('.mg-vb-kopf');
+      if (b) { b.innerHTML = ico(an ? 'vollaus' : 'voll'); b.setAttribute('aria-pressed', String(an)); b.title = an ? 'Vollbild beenden' : 'Vollbild: über den ganzen Bildschirm'; }
+      if (kopf) kopf.hidden = !an;
+      flachPruefen();   // nach dem Kopf: er zählt beim freien Platz mit
+      if (an) {
+        wurzel.setAttribute('role', 'dialog'); wurzel.setAttribute('aria-modal', 'true'); wurzel.setAttribute('aria-label', VOLLBILD_TITEL + ' im Vollbild');
+        seiteSperren(true);
+        vb.oeffner = oeffner || b;
+        if (ZURUECK_GESTE) { try { history.pushState({ wpVollbild: 'mg' }, ''); vb.gepusht = true; } catch(e){} }
+        querTipp();
+        var f = document.getElementById(kid('fertig')); if (f) f.focus({ preventScroll: true });
+      } else {
+        wurzel.removeAttribute('role'); wurzel.removeAttribute('aria-modal'); wurzel.removeAttribute('aria-label');
+        seiteSperren(false);
+        if (vb.gepusht) {
+          vb.gepusht = false;
+          if (!ausVerlauf && history.state && history.state.wpVollbild === 'mg') { try { vb.zurueck++; history.back(); } catch(e){ vb.zurueck--; } }
+        }
+        var z = vb.oeffner && vb.oeffner.isConnected ? vb.oeffner : b; vb.oeffner = null;
+        if (z) z.focus({ preventScroll: true });
+      }
       if (VOLLBILD_CB) { try { VOLLBILD_CB(an); } catch(e){} }
+      if (!an && BEI_VOLLBILD_ZU) { try { BEI_VOLLBILD_ZU(); } catch(e){} }
       // Die haftende Fahne rutscht beim Umschalten nach oben - das Diagramm soll dabei an Ort und Stelle bleiben
       setTimeout(function(){ sichtMitte(); zoomKnoepfe(); if (el.haftMessen) el.haftMessen(); }, 320);
+    }
+    // Zeilenhöhe neu wählen, wenn das Blatt quer/flach wird oder nicht mehr (Öffnen, Schließen, Drehen); Stelle bleibt
+    function flachPruefen(){
+      if (!geo || !el.scroll || !el.scroll.isConnected || flachHoehe() === gezeichnetFlachH) return;
+      var alt = idxAusScroll(); zeichnen(false); zentrieren(alt, false);
+    }
+    // Alles außer dem Blatt inert machen: auf jeder Ebene vom Baustein bis <body> die Geschwister. Was schon inert war, bleibt unberührt.
+    function seiteSperren(an){
+      if (an) {
+        vb.gesperrt = [];
+        for (var k = wurzel; k && k !== document.body && k.parentNode; k = k.parentNode) {
+          Array.prototype.forEach.call(k.parentNode.children, function(g){
+            if (g === k || g.hasAttribute('inert') || /^(SCRIPT|STYLE|LINK|TEMPLATE)$/.test(g.tagName)) return;
+            g.setAttribute('inert', ''); vb.gesperrt.push(g);
+          });
+        }
+        vb.overflow = document.documentElement.style.overflow; document.documentElement.style.overflow = 'hidden';
+      } else {
+        vb.gesperrt.forEach(function(g){ g.removeAttribute('inert'); }); vb.gesperrt = [];
+        document.documentElement.style.overflow = vb.overflow || '';
+      }
+    }
+    function vbTaste(ev){ if (vollbild && ev.key === 'Escape' && !ev.defaultPrevented) { ev.preventDefault(); vollbildSetzen(false); } }
+    function vbZurueck(){
+      // Das eigene Zurück von „Fertig“ kommt an. Wurde inzwischen neu geöffnet, steht der Verlauf jetzt vor dem Blatt
+      // (WebKit springt zum Ziel von damals): Eintrag neu anlegen, damit die Zurück-Geste wieder das Blatt schließt.
+      if (vb.zurueck > 0) { vb.zurueck--; if (!vb.zurueck && vollbild && vb.gepusht && !(history.state && history.state.wpVollbild === 'mg')) { try { history.pushState({ wpVollbild: 'mg' }, ''); } catch(e){} } return; }
+      if (vollbild && vb.gepusht) { vb.gepusht = false; vollbildSetzen(false, true); }
+    }
+    // Einmal je Gerät, nur auf dem iPhone im Hochformat: Querformat ist der Hauptnutzen des Vollbilds
+    function querTipp(){
+      var t = document.getElementById(kid('vbtitel')); if (!t) return;
+      t.textContent = VOLLBILD_TITEL;
+      if (!/iPhone/.test(navigator.userAgent || '') || merkLesen('quer-tipp', '') || global.innerWidth > global.innerHeight) return;
+      merkSchreiben('quer-tipp', '1'); t.textContent = 'Quer drehen zeigt mehr Stunden';
     }
 
     // Wettermodell: Feld "Mix ▾" mit Aufklapp-Liste (Name, Langname, Hinweis)
@@ -1910,7 +2038,8 @@
         if (zf.laeuft) zfPause();
         zf.halt = 0; zf.i = +ev.target.value; zfSchritt();
       });
-      document.addEventListener('keydown', function(ev){ if (pl.offen && ev.key === 'Escape') playerSchliessen(); });
+      // preventDefault: ein offenes Vollbild-Blatt darunter bleibt bei diesem Esc offen
+      document.addEventListener('keydown', function(ev){ if (pl.offen && ev.key === 'Escape') { ev.preventDefault(); playerSchliessen(); } });
     }
     function playerOeffnen(){
       if (!el.player || pl.offen || !daten) return;
@@ -2239,6 +2368,7 @@
     aufbauen();
     quelleText();
     laden();
+    if (VOLLBILD_START) vollbildSetzen(true);
 
     // Kommt die Seite nach laengerer Zeit zurueck in den Vordergrund, koennen
     // Stunden vergangen sein - dann gleich auffrischen.
@@ -2261,7 +2391,12 @@
       zeichnen: function(){ zeichnen(false); },
       zeigeOrt: function(id){ if (ORTE.some(function(o){ return o.id === id; })) { ort = id; merkSchreiben('ort', id); laden(); } },
       auffrischen: function(){ auffrischen(true); },
-      abbauen: function(){ clearInterval(uhr); if (auffrischUhr) clearTimeout(auffrischUhr); filmStopp(); if (zf.uhr) clearInterval(zf.uhr); wurzel.innerHTML = ''; wurzel.classList.remove('mg'); }
+      abbauen: function(){
+        // Offenes Blatt: Sperre aufheben; der Verlaufseintrag bleibt (ein Zurück ohne sichtbare Wirkung), sonst liefe ein späteres Zurück ins Leere
+        if (vollbild) { vollbild = false; vb.gepusht = false; seiteSperren(false); }
+        document.removeEventListener('keydown', vbTaste); global.removeEventListener('popstate', vbZurueck); global.removeEventListener('resize', flachPruefen);
+        wurzel.classList.remove('mg-vollbild'); wurzel.removeAttribute('role'); wurzel.removeAttribute('aria-modal'); wurzel.removeAttribute('aria-label');
+        clearInterval(uhr); if (auffrischUhr) clearTimeout(auffrischUhr); filmStopp(); if (zf.uhr) clearInterval(zf.uhr); wurzel.innerHTML = ''; wurzel.classList.remove('mg'); }
     };
   }
 
