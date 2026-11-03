@@ -59,10 +59,12 @@
    Bleibt beim Scrollen der Seite oben stehen, damit man immer sieht,
    zu welcher Stunde die Werte gehören. */
 /* z-index 8: liegt ueber der Knopfleiste (7) - scrollt die Leiste an ihr vorbei, taucht sie unter der Fahne durch */
-.mg-readout { position: sticky; top: var(--mg-haft-oben); z-index: 8; display: flex; flex-direction: column; align-items: center; min-width: 0;
+.mg-readout { position: sticky; top: var(--mg-haft-oben); z-index: 8; display: flex; flex-direction: column; align-items: center; min-width: 0; box-sizing: border-box;
   padding: 6px 14px 4px; background: var(--mg-flaeche); border-radius: 0 0 12px 12px; box-shadow: 0 10px 14px -10px rgba(0,0,0,.55); }
 /* Eine Zeile (Stephans Wahl 05.10.2026): Datum, Uhrzeit, Abstand und Wetterlage zusammen im Kasten */
-.mg-zeit { display: inline-flex; align-items: baseline; gap: 8px; flex-wrap: wrap; justify-content: center; padding: 5px 12px; border-radius: 8px;
+/* W3 (03.11.2026): Kasten immer volle Breite (align-self) und gleiche Höhe (min-height aus meteogramm.js fahneRuhig), Ziffern gleich breit,
+   damit Kasten, Strich und Spitze nicht mehr mit der Textlänge springen */
+.mg-zeit { display: inline-flex; align-self: stretch; align-items: baseline; align-content: center; gap: 8px; flex-wrap: wrap; justify-content: center; padding: 5px 12px; border-radius: 8px; font-variant-numeric: tabular-nums; box-sizing: border-box;
   background: var(--mg-text); color: var(--mg-flaeche); font-family: var(--mg-mono); font-size: 1rem; font-weight: 700; }
 .mg-rel { font-family: var(--mg-serif); font-size: 12.5px; font-weight: 600; color: var(--mg-flaeche); opacity: .72; }
 .mg-lage { display: inline-flex; align-items: baseline; gap: 5px; margin-left: 2px; padding-left: 10px; border-left: 1px solid var(--mg-flaeche); font: 600 13px/1.2 var(--mg-serif); color: var(--mg-flaeche); opacity: .9; }

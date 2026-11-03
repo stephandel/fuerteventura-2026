@@ -637,6 +637,7 @@
       gezeichnetFlachH = flachHoehe(); gezeichnetFlach = gezeichnetFlachH > 0;
       var zeileH = gezeichnetFlachH || (schmal ? ZEILE_H_SCHMAL : ZEILE_H_BREIT);
 
+      fahneRuhig(true);
       var ZEILEN = sichtbareZeilen();
       var n = daten.zeit.length;
       var padL = Math.ceil(W / 2), padR = Math.ceil(W / 2);
@@ -934,6 +935,33 @@
       datumsLabelsPruefen();
     }
 
+    // W3 (03.11.2026): Die Fahne über dem Auswahl-Strich wuchs und schrumpfte mit der Textlänge (eine oder zwei Zeilen, Werte-Zeile
+    // ein- oder zweizeilig); Strich, Spitze und Diagramm sprangen dabei auf und ab. Der Kasten ist jetzt immer so hoch wie mit der
+    // längsten Wetterlage (vorab gemessen), die Fahne wächst höchstens und schrumpft erst beim nächsten Neuzeichnen (Breite, Zeilen).
+    function fahneRuhig(neu){
+      var ro = el.zeit && el.zeit.parentNode && el.zeit.parentNode.parentNode, box = el.zeit && el.zeit.parentNode;
+      if (!ro || !box) return;
+      if (neu) {
+        ro.style.minHeight = ''; box.style.minHeight = '';
+        var zAlt = el.zeit.innerHTML, lAlt = el.lage.innerHTML, hoch = 0, gesehen = {};
+        // längste Abstandsangaben: „vor 35 Std.“ und bei weiter Vorschau „in 88 Tagen“ (zweite Meinung 03.11.2026)
+        ['vor 35 Std.', 'in 88 Tagen'].forEach(function(rel){
+          el.zeit.innerHTML = '<b>28.10. · 22:58</b> <span class="mg-rel">' + rel + '</span>';
+          gesehen = {};
+          Object.keys(WMO_TEXT).forEach(function(c){
+            if (gesehen[WMO_TEXT[c]]) return; gesehen[WMO_TEXT[c]] = 1;
+            el.lage.innerHTML = '<span class="mg-lage-i">' + wmoIcon(+c, 1) + '</span>' + esc(WMO_TEXT[c]);
+            hoch = Math.max(hoch, box.offsetHeight);
+          });
+        });
+        el.zeit.innerHTML = zAlt; el.lage.innerHTML = lAlt;
+        if (hoch) box.style.minHeight = hoch + 'px';
+        return;
+      }
+      var h = ro.offsetHeight;
+      if (h > (parseFloat(ro.style.minHeight) || 0)) ro.style.minHeight = h + 'px';
+    }
+
     function wertBei(z, f){
       var F = daten[z.feld] || [], n = F.length;
       if (z.art === 'balken') {
@@ -1020,6 +1048,7 @@
         }
         el.werte.innerHTML = zellen.join('');
         el.werte.hidden = !zellen.length;
+        fahneRuhig(false);
         wertlinienSetzen(f);
         tippsZeigen(f);
         bildZeigen(f);
