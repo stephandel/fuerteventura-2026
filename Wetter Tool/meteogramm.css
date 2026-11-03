@@ -257,8 +257,8 @@
 @media (prefers-reduced-transparency: reduce) {
   .mg-ecke, .mg-randpfeil, .mg-zeilen-panel, .mg-farb-panel { background: var(--mg-flaeche); -webkit-backdrop-filter: none; backdrop-filter: none; }
 }
-/* Rand-Pfeil zurück zu jetzt: erscheint nur, wenn "jetzt" aus dem Bild gewischt ist */
-.mg-randpfeil { position: absolute; top: var(--mg-sicht-mitte, 50%); transform: translateY(-50%); z-index: 3; display: none; align-items: center; min-height: 36px; padding: 0 7px; gap: 1px;
+/* Rand-Pfeil zurück zu jetzt: erscheint nur, wenn "jetzt" aus dem Bild gewischt ist; Tippfläche mind. 44 × 44 px (P-ef52) */
+.mg-randpfeil { position: absolute; top: var(--mg-sicht-mitte, 50%); transform: translateY(-50%); z-index: 3; display: none; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; padding: 0 7px; gap: 1px;
   border: 1px solid var(--mg-rand); border-radius: var(--mg-r); color: var(--mg-text); cursor: pointer; -webkit-tap-highlight-color: transparent;
   background: rgba(27,33,36,0.88); background: color-mix(in srgb, var(--mg-flaeche) 88%, transparent); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
 .mg-randpfeil .mg-i { width: 16px; height: 16px; }
